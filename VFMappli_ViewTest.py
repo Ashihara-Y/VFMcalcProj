@@ -3,6 +3,7 @@ from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, 
 from Flet_inputDialogTest_class import Initial_Inputs
 
 initial_inputs = Initial_Inputs()
+#final_inputs = Final_Inputs()
 
 def main(page: Page):
     page.title = "VFM計算アプリ"

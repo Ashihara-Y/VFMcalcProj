@@ -1,13 +1,14 @@
 import flet as ft
 import joblib
-#import sqlite3
 import pandas as pd
-import jgb_rates
 
-class Initial_Inputs(ft.UserControl):
+class Final_Inputs(ft.UserControl):
+
+    initial_inputs = joblib.load('Initial_Inputs.pkl')
+
     def __init__(self):
         super().__init__()
-        self.title = "初期入力"
+        self.title = "最終入力"
         self.width = 500
         self.height = 500
         self.resizable = False
@@ -19,10 +20,15 @@ class Initial_Inputs(ft.UserControl):
         #self.dd5.value = '1'
 
     def build(self):
-        self.dd1 = ft.Dropdown(
-            label="管理者の種別",
+        self.tx1 = ft.Text(f'管理者の種別：{self.initial_inputs.mgmy_type}')
+        self.tx2 = ft.Text(f'事業の方式：{self.initial_inputs.proj_ctgry}')
+        self.tx3 = ft.Text(f'事業の類型：{self.initial_inputs.proj_type}')
+
+        self.tx4 = ft.Text('事業期間') 
+        self.sb1 = ft.Slider(
+            label="事業期間",
             hint_text="管理者の種別を選択してください", 
-            width=400,
+            value=self.initial_inputs.proj_years,
             options=[
                 ft.dropdown.Option("国"),
                 ft.dropdown.Option("都道府県"),
