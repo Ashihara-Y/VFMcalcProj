@@ -67,5 +67,5 @@ def main(page: Page):
     page.on_view_pop = view_pop
     page.go(page.route)
     
-flet.app(target=main)
+ft.app(target=main)
 #flet.app(target=main, view=flet.TERMINAL)))
