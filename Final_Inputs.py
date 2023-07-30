@@ -26,14 +26,8 @@ class Final_Inputs(ft.UserControl):
 
         self.tx4 = ft.Text('事業期間') 
         self.sb1 = ft.Slider(
-            label="事業期間",
-            hint_text="管理者の種別を選択してください", 
             value=self.initial_inputs.proj_years,
-            options=[
-                ft.dropdown.Option("国"),
-                ft.dropdown.Option("都道府県"),
-                ft.dropdown.Option("市町村"),
-            ],
+            min=10, max=30, divisions=1, label="{value}年"
         )
         self.dd2 = ft.Dropdown(
             label="事業の方式",
