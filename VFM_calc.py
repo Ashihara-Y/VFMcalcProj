@@ -1,36 +1,55 @@
-import os, sys, argparse, logging, time, datetime, re
-from pathlib import Path
+#import os, sys, argparse, logging, time, datetime, re
+#from pathlib import Path
 import pandas as pd
-#import flet as ft
-import shelve as sv
-import joblib as jl
+import flet as ft
+#import shelve as sv
+import joblib
+from Final_Inputs import Final_Inputs
 
 class PSC:
-    def __init__(self, inputs_path, inputs_name):
-        self.inputs_path = Path(inputs_path)
-        self.inputs_name = inputs_name
-        self.inputs_file = inputs_path / inputs_name
-        self.psc = sv.open(self.inputs_file, writeback=True)
-        #tmp_dir = Path('temp')
+    def __init__(self):
+        self.final_inputs = joblib.load('final_inputs.pkl')
+    
+    def calc(self):
+        shisetsu_seibi_total = float(self.final_inputs['shisetsu_seibi'])
+        ijikanri_unnei_total = float(self.final_inputs['ijikanri_unnei']) * (int(self.final_inputs['proj_years']) - int(self.final_inputs['const_years']))
+        hojokin_kan = shisetsu_seibi_total * (float(self.final_inputs['hojo'])/100)
+        if self.final_inputs['mgmt_type'] == '国':
+            hojokin_kan = 0 
+        ribarai_kan = (shisetsu_seibi_total - hojokin_kan) * float(self.final_inputs['kisai_jutou'])/100 * (1 - float(self.final_inputs['kisai_koufu'])/100) * float(self.final_inputs['chisai_kinri'])
+        if self.final_inputs['mgmt_type'] == '国':
+            ribarai_kan = 0
+        koufukin_kan = (shisetsu_seibi_total - hojokin_kan) * float(self.final_inputs['kisai_jutou'])/100 * float(self.final_inputs['kisai_koufu'])/100
+
+        shisetsu_seibi_reduc_total = shisetsu_seibi_total * (float(self.final_inputs['reduc_shisetsu'])/100)
+        ijikanri_unnei_reduc_total = ijikanri_unnei_total * (float(self.final_inputs['reduc_ijikanri'])/100)
+        
+        SPC_capital = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total) * 0.1
+        SPC_yobihi = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total) * 0.1
+        SPC_keihi_total = float(self.final_inputs['SPC_keihi']) * int(self.final_inputs['proj_years'])
+        if SPC_keihi_total == 0:
+            SPC_capital = SPC_yobihi = 0
+        hojokin_min = (shisetsu_seibi_reduc_total) *  (float(self.final_inputs['hojo'])/100)
+        ribarai_min = (((shisetsu_seibi_reduc_total - hojokin_min) * (1-float(self.final_inputs['kisai_jutou'])/100)) + (SPC_capital + SPC_yobihi)) * (float(self.final_inputs['kijun_kinri']) + float(self.final_inputs['lg_spread']))/100
+        ribarai_min_chisai = (shisetsu_seibi_reduc_total - hojokin_min) * (float(self.final_inputs['kisai_jutou'])/100) * (1 - float(self.final_inputs['kisai_koufu'])/100) * float(self.final_inputs['chisai_kinri'])
+        koufukin_min = (shisetsu_seibi_reduc_total - hojokin_min) * (float(self.final_inputs['kisai_jutou'])/100) * float(self.final_inputs['kisai_koufu'])/100
+        
+        ribarai_kanmin_sa = ribarai_min - ribarai_kan
+        
+        kappu_genka_s = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total + ribarai_min + SPC_capital + SPC_yobihi + SPC_keihi_total) / (1 - float(self.final_inputs['zeimae_rieki'])/100)
+        zeimae_rieki_gaku = kappu_genka_s * float(self.final_inputs['zeimae_rieki'])/100
+        nouzei_gaku = zeimae_rieki_gaku * float(self.final_inputs['zei_total'])/100
+        zeigo_rieki_gaku = zeimae_rieki_gaku - nouzei_gaku
+        
+        zei_modori_gaku = zeimae_rieki_gaku * float(self.final_inputs['zei_modori'])/100
         #tmp_sub1_file = tmp_dir / 'sub1' / 'file1.txt'
 
 class LCC:
-    def __init__(self, inputs_path,inputs_name):
-        self.lcc_path = lcc_path
-        self.lcc_name = lcc_name
-        self.lcc_file = os.path.join(self.lcc_path, self.lcc_name)
-        self.lcc = sv.open(self.lcc_file, writeback=True)
-
+    def __init__(self):
+        pass
 class VFM:
-    def __init__(self, vfm_path, vfm_name, vfm_version):
-        self.vfm_path = vfm_path
-        self.vfm_name = vfm_name
-        self.vfm_version = vfm_version
-        self.vfm_file = os.path.join(self.vfm_path, self.vfm_name)
-        self.vfm = pd.read_csv(self.vfm_file, sep='\t', dtype=str)
-        self.vfm = self.vfm[self.vfm['version'] == self.vfm_version]
-        self.vfm = self.vfm[self.vfm['status'] == 'active']
-
+    def __init__(self):
+        pass
 class Initial_inputs:
     def __init__(
             self, 

@@ -85,7 +85,7 @@ class Initial_Inputs(ft.UserControl):
             value="1",
             options=[
                 ft.dropdown.Option("1"),
-                ft.dropdown.Option("2"),#ft.dropdown.Option("BOT"),
+                ft.dropdown.Option("2"),
                 ft.dropdown.Option("3")
             ],
         )
