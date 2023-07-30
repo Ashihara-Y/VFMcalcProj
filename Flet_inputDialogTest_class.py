@@ -90,7 +90,7 @@ class Initial_Inputs(ft.UserControl):
             ],
         )
         self.b = ft.ElevatedButton(text="選択", on_click=self.button_clicked)
-        return ft.Column([self.dd1, self.dd2, self.dd3, self.dd4, self.dd5, self.b])
+        return ft.Column([self.dd1, self.dd2, self.dd3, self.dd4, self.dd5, self.b], scroll=ft.ScrollMode.ALWAYS)
 
 #def main(page: ft.Page):
     
@@ -149,5 +149,5 @@ class Initial_Inputs(ft.UserControl):
             }
         
         joblib.dump(initail_inputs, 'Initial_Inputs.pkl')
-        ft.page.client_storage.set("Initial_Inputs", initail_inputs)
-        ft.page.save_state(initail_inputs)
+        #ft.page.ClientStorage.set("Initial_Inputs", initail_inputs)
+        #ft.page.save_state(initail_inputs)

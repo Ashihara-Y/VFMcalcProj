@@ -1,8 +1,9 @@
 import flet
 from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, Text, View, colors, icons, padding, theme)
 from Flet_inputDialogTest_class import Initial_Inputs
+from Final_Inputs import Final_Inputs
 
-initial_inputs = Initial_Inputs()
+#initial_inputs = Initial_Inputs()
 #final_inputs = Final_Inputs()
 
 def main(page: Page):
@@ -18,8 +19,8 @@ def main(page: Page):
                 
                 [   
                     AppBar(title=Text("VFM計算アプリ Initial Inputs")),
-                    initial_inputs,
-                    ElevatedButton("Go to Final Inputs", on_click=open_final_inputs),
+                    Initial_Inputs(),
+                    ElevatedButton("入力確認へ", on_click=open_final_inputs),
                 ],
             ), 
         )
@@ -29,8 +30,8 @@ def main(page: Page):
                     "/final_inputs",
                     [
                         AppBar(title=Text("VFM計算アプリ Final Inputs")),
-                        Text("Final Inputs", style="headlineMedium"),
-                        ElevatedButton("Go to Calculation", on_click=open_calculation),
+                        Final_Inputs(),
+                        ElevatedButton("計算へ", on_click=open_calculation),
                     ],
                 ),
             )
