@@ -44,13 +44,32 @@ class PSC:
         zei_modori_gaku = zeimae_rieki_gaku * float(self.final_inputs['zei_modori'])/100
         
         
-        PSC = {}
+        PSC_income_total = float(hojokin_kan + koufukin_kan)
+        PSC_expense_total = float(shisetsu_seibi_total + ijikanri_unnei_total + ribarai_kan + ribarai_kanmin_sa + SPC_capital + SPC_yobihi + SPC_keihi_total)
+        PSC_net_expense = float(PSC_expense_total - PSC_income_total)
         
-        LCC = {}#tmp_sub1_file = tmp_dir / 'sub1' / 'file1.txt'
+        LCC_income_total = float(hojokin_min + koufukin_min + zei_modori_gaku)
+        LCC_expense_total = float(shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total + ribarai_min + ribarai_min_chisai + zeimae_rieki_gaku + SPC_capital + SPC_yobihi + SPC_keihi_total)
+        LCC_net_expense = float(LCC_expense_total - LCC_income_total)
 
-class LCC:
-    def __init__(self):
-        pass
+        discount_rate = float(self.final_inputs['kijun_kinri']) + float(self.final_inputs['kitai_bukka'])
+
+        ijikanri_years = int(self.final_inputs['proj_years']) - int(self.final_inputs['const_years'])
+
+        rakusatsu_ritsu = 0.95
+
+        PSC_const_rate = shisetsu_seibi_total / (shisetsu_seibi_total + ijikanri_unnei_total)
+        PSC_ijikanri_rate = ijikanri_unnei_total / (shisetsu_seibi_total + ijikanri_unnei_total)
+
+        risk_adj = ribarai_kanmin_sa + SPC_capital + SPC_keihi_total + SPC_yobihi
+        risk_adj_const = risk_adj * PSC_const_rate
+        risk_adj_ijikanri = risk_adj * PSC_ijikanri_rate
+
+        PSC_net_expense_const = (risk_adj_const + shisetsu_seibi_total + ribarai_kan + hojokin_kan) * rakusatsu_ritsu
+        PSC_net_expense_ijikanri = (risk_adj_ijikanri + ijikanri_unnei_total) * rakusatsu_ritsu
+        
+        #NPV_PSC = PSC_net_expense / ((1 + discount_rate/100)**int(self.final_inputs['proj_years']))
+    
 class VFM:
     def __init__(self):
         pass
