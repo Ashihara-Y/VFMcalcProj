@@ -68,7 +68,33 @@ class PSC_LCC:
         PSC_net_expense_const_kk = (risk_adj_koufu_const + shisetsu_seibi_total + ribarai_kan - hojokin_kan) * rakusatsu_ritsu
         PSC_net_expense_ijikanri_kk = (risk_adj_koufu_ijikanri + ijikanri_unnei_total) * rakusatsu_ritsu
 
-        #NPV_PSC = PSC_net_expense / ((1 + discount_rate/100)**int(self.final_inputs['proj_years']))
+        res_PSC_LCC = {
+            "LCC_net_expense": LCC_net_expense, 
+            "PSC_net_expense_const_kk": PSC_net_expense_const_kk,
+            "PSC_net_expense_ijikanri_kk": PSC_net_expense_ijikanri_kk,
+            "proj_years":self.final_inputs['proj_years'],
+            "const_years":self.final_inputs['const_years'],
+            "ijikanri_years":ijikanri_years,
+            "discount_rate":discount_rate,
+            "zei_modori":self.initial_inputs['zei_modori'],
+            "lg_spread":self.initial_inputs['lg_spread'],
+            "zei_total":self.initial_inputs['zei_total'],
+            "growth":self.initial_inputs['growth'],
+            "kitai_bukka":self.initial_inputs['kitai_bukka'],
+            "shisetsu_seibi":self.sl3.value,
+            "ijikanri_unnei":self.sl4.value,
+            "reduc_shisetsu":self.sl5.value,
+            "reduc_ijikanri":self.sl6.value,
+            "pre_kyoukouka":self.initial_inputs['pre_kyoukouka'],
+            "kisai_jutou":self.sl7.value,
+            "kisai_koufu":self.sl8.value,
+            "zeimae_rieki":self.initial_inputs['zeimae_rieki'],
+            "SPC_keihi":self.sl10.value,
+            "hojo":self.sl9.value
+            }
+    
+        return res_PSC_LCC
+    
     
 class VFM:
     def __init__(self):
