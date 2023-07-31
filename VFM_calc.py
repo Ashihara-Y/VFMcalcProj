@@ -5,6 +5,9 @@ import flet as ft
 #import shelve as sv
 import joblib
 from Final_Inputs import Final_Inputs
+from simpledt import DataFrame
+import plotly.express as px
+from flet.plotly_chart import PlotlyChart
 
 class PSC_LCC:
     def __init__(self):
@@ -75,91 +78,74 @@ class PSC_LCC:
             "proj_years":self.final_inputs['proj_years'],
             "const_years":self.final_inputs['const_years'],
             "ijikanri_years":ijikanri_years,
-            "discount_rate":discount_rate,
-            "zei_modori":self.initial_inputs['zei_modori'],
-            "lg_spread":self.initial_inputs['lg_spread'],
-            "zei_total":self.initial_inputs['zei_total'],
-            "growth":self.initial_inputs['growth'],
-            "kitai_bukka":self.initial_inputs['kitai_bukka'],
-            "shisetsu_seibi":self.sl3.value,
-            "ijikanri_unnei":self.sl4.value,
-            "reduc_shisetsu":self.sl5.value,
-            "reduc_ijikanri":self.sl6.value,
-            "pre_kyoukouka":self.initial_inputs['pre_kyoukouka'],
-            "kisai_jutou":self.sl7.value,
-            "kisai_koufu":self.sl8.value,
-            "zeimae_rieki":self.initial_inputs['zeimae_rieki'],
-            "SPC_keihi":self.sl10.value,
-            "hojo":self.sl9.value
+            "discount_rate":discount_rate
             }
-    
+
+        joblib.dump(res_PSC_LCC, 'res_PSC_LCC.pkl') 
         return res_PSC_LCC
     
     
 class VFM:
     def __init__(self):
-        pass
-class Initial_inputs:
-    def __init__(
-            self, 
-            mgmt_type, 
-            proj_ctgry, 
-            proj_type, 
-            shisetsu_seibi_jurai, 
-            ijikanri_unnei_jurai_nen,
-            proj_years,
-            const_years,
-            reduc_shisetuseibi=0.9, 
-            reduc_ijikannri=0.9, 
-            pre_kyoukouka=False, 
-            lg_spread=1.5, 
-            kisai_jutou=0.0, 
-            kisai_koufu=0.0, 
-            zeimae_rieki=8.5, 
-            zei_total=41.98, 
-            SPC_keihi=1.0, 
-            hojo=0.0, 
-            growth=0.0):
-        self.mgmt_type = mgmt_type
-        self.proj_ctgry = proj_ctgry
-        self.proj_type = proj_type
-        self.shisetsu_seibi_jurai = shisetsu_seibi_jurai
-        self.ijikanri_unnei_jurai_nen = ijikanri_unnei_jurai_nen
-        self.reduc_shisetuseibi = reduc_shisetuseibi
-        self.reduc_ijikannri = reduc_ijikannri
-        self.pre_kyoukouka = pre_kyoukouka
-        self.lg_spread = lg_spread
-        self.kisai_jutou = kisai_jutou
-        self.kisai_koufu = kisai_koufu
-        self.zeimae_rieki = zeimae_rieki
-        self.zei_total = zei_total
-        self.SPC_keihi = SPC_keihi
-        self.hojo = hojo
-        self.growth = growth
-        self.proj_years = proj_years
-        self.const_years = const_years
+        self.res_PSC_LCC = joblib.load('res_PSC_LCC.pkl')
+    
+    def calc_VFM(self):
+        LCC_net_expense = self.res_PSC_LCC['LCC_net_expense']
+        PSC_net_expense_const_kk = self.res_PSC_LCC['PSC_net_expense_const_kk']
+        PSC_net_expense_ijikanri_kk = self.res_PSC_LCC['PSC_net_expense_ijikanri_kk']
+        proj_years = self.res_PSC_LCC['proj_years']
+        const_years = self.res_PSC_LCC['const_years']
+        ijikanri_years = self.res_PSC_LCC['ijikanri_years']
+        discount_rate = self.res_PSC_LCC['discount_rate']
+        
+        PSC_const = []
+        PSC_ijikanri = []
+        LCC = []
+        
+        for i in range(proj_years):
+            LCC.append(LCC_net_expense/proj_years)
 
-class Inputs_from_DB:
-    def __init__(self, JGB_rates, JRB_rates, kitai_bukka):
-        self.JGB_rates = JGB_rates
-        self.JRB_rates = JRB_rates
-        self.kitai_bukka = kitai_bukka
+        for i in range(const_years):
+            PSC_const.append(PSC_net_expense_const_kk/const_years)
 
-#　Inputs＿from＿db には、SQLite３からの入力メソッドをつける。アプリ起動時にこのクラスを初期化して、DBからデータを得て、Shelveに書き出す。
-# Initial_inputsには、Shelveへの書き出しメソッドをつける。
-# PSCとLCCには、Shelveからの読み込みメソッドをつける。
-# 入力の修正は、Shelveの保存内容を書き換える（WritebackをTrueにして書き換える）。まず既存の値があるかを確認して、あれば入力欄に表示、修正した入力をShelveに書き出す。
+        for i in range(ijikanri_years):
+            PSC_ijikanri.append(PSC_net_expense_ijikanri_kk/ijikanri_years)
 
-# s = shelve.open('test_shelf.db', writeback=True)
-#try:
-#    print s['key1']
-#    s['key1']['new_value'] = 'this was not here before'
-#    print s['key1']
-#finally:
-#    s.close()
-#
-#s = shelve.open('test_shelf.db', writeback=True)
-#try:
-#    print s['key1']
-#finally:
-#    s.close()
+        df_LCC = pd.DataFrame(LCC, columns=['LCC_net_expense'])
+
+        df_PSC_const = pd.DataFrame(PSC_const, columns=['PSC_net_expense_const'])
+        df_PSC_ijikanri = pd.DataFrame(PSC_ijikanri, columns=['PSC_net_expense_iji'])
+        
+        #LCC
+        LCC_discount_factor = [(1/(1+discount_rate))** i for i in range(1, proj_years+1)]
+        df_LCC['LCC_discount_factor'] = LCC_discount_factor
+        # calculate the present value of each cash flow
+        df_LCC['LCC_present_value'] = df_LCC['LCC_net_expense'] * df_LCC['LCC_discount_factor']
+        
+        #PSC
+        PSC_const_discount_factor = [(1/(1-discount_rate))** i for i in reversed(range(const_years))]
+        PSC_iji_discount_factor = [(1/(1+discount_rate))** i for i in range(1, ijikanri_years+1)]
+        df_PSC_const['PSC_const_discount_factor'] = PSC_const_discount_factor
+        df_PSC_ijikanri['PSC_iji_discount_factor'] = PSC_iji_discount_factor
+        df_PSC_const['PSC_const_present_value'] = df_PSC_const['PSC_net_expense_const'] * df_PSC_const['PSC_const_discount_factor']
+        df_PSC_ijikanri['PSC_iji_present_value'] = df_PSC_ijikanri['PSC_net_expense_iji'] * df_PSC_ijikanri['PSC_iji_discount_factor']
+        
+        df_PSC = pd.concat([df_PSC_const['PSC_const_present_value'], df_PSC_ijikanri['PSC_iji_present_value']]).reset_index(drop=True)
+        df_PSC.columns = ['PSC_present_value']
+
+        df_PV_cf = pd.concat([df_PSC, df_LCC['LCC_present_value']], axis=1)
+        df_PV_cf = df_PV_cf.set_axis(['PSC_present_value', 'LCC_present_value'], axis=1)
+
+        PSC = df_PV_cf['PSC_present_value'].sum()
+        LCC = df_PV_cf['LCC_present_value'].sum()
+        VFM = PSC - LCC
+        VFM_percent = VFM/PSC*100
+
+        #to ft.datatable
+        simpledt_df = DataFrame(df_PV_cf)
+        simpledt_dt = simpledt_df.datatable
+        #ft.page.add(simpledt_dt)
+
+        #to Plotly_chart
+        fig = px.bar(df_PV_cf, x=df_PV_cf.index, y=['PSC_present_value', 'LCC_present_value'], barmode='group')
+        #ft.page.add(PlotlyChart(fig, expand=True))
