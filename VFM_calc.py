@@ -61,12 +61,12 @@ class PSC:
         PSC_const_rate = shisetsu_seibi_total / (shisetsu_seibi_total + ijikanri_unnei_total)
         PSC_ijikanri_rate = ijikanri_unnei_total / (shisetsu_seibi_total + ijikanri_unnei_total)
 
-        risk_adj = ribarai_kanmin_sa + SPC_capital + SPC_keihi_total + SPC_yobihi
-        risk_adj_const = risk_adj * PSC_const_rate
-        risk_adj_ijikanri = risk_adj * PSC_ijikanri_rate
+        risk_adj_koufu = ribarai_kanmin_sa + SPC_capital + SPC_keihi_total + SPC_yobihi - koufukin_kan
+        risk_adj_koufu_const = risk_adj_koufu * PSC_const_rate
+        risk_adj_koufu_ijikanri = risk_adj_koufu * PSC_ijikanri_rate
 
-        PSC_net_expense_const_kk = (risk_adj_const + shisetsu_seibi_total + ribarai_kan + hojokin_kan) * rakusatsu_ritsu
-        PSC_net_expense_ijikanri_kk = (risk_adj_ijikanri + ijikanri_unnei_total) * rakusatsu_ritsu
+        PSC_net_expense_const_kk = (risk_adj_koufu_const + shisetsu_seibi_total + ribarai_kan - hojokin_kan) * rakusatsu_ritsu
+        PSC_net_expense_ijikanri_kk = (risk_adj_koufu_ijikanri + ijikanri_unnei_total) * rakusatsu_ritsu
 
         #NPV_PSC = PSC_net_expense / ((1 + discount_rate/100)**int(self.final_inputs['proj_years']))
     
