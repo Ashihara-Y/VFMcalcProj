@@ -21,7 +21,7 @@ def main(page: Page):
                     AppBar(title=Text("VFM計算アプリ Initial Inputs")),
                     Initial_Inputs(),
                     ElevatedButton("入力確認へ", on_click=open_final_inputs),
-                ], ft.ScrolMode.ALWAYS
+                ], scroll=ft.ScrollMode.ALWAYS
             ), 
         )
         if page.route == "/final_inputs":
@@ -32,7 +32,7 @@ def main(page: Page):
                         AppBar(title=Text("VFM計算アプリ Final Inputs")),
                         Final_Inputs(),
                         ElevatedButton("計算へ", on_click=open_calculation),
-                    ], ft.ScrolMode.ALWAYS
+                    ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
         elif page.route == "/calculation":
@@ -43,7 +43,7 @@ def main(page: Page):
                         AppBar(title=Text("VFM計算アプリ Calculation")),
                         Text("Calculation", style="headlineMedium"),
                         ElevatedButton("Go to Initial Inputs", on_click=open_initial_inputs),
-                    ], ft.ScrolMode.ALWAYS
+                    ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
         page.update()

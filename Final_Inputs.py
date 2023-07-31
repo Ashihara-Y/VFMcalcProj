@@ -21,52 +21,52 @@ class Final_Inputs(ft.UserControl):
         self.tx4 = ft.Text('事業期間') 
         self.sl1 = ft.Slider(
             value=int(self.initial_inputs['proj_years']),
-            min=10, max=30, divisions=1, label="{value}年"
+            min=10, max=30, divisions=20, label="{value}年"
         )
         self.tx5 = ft.Text('施設整備期間')
         self.sl2 = ft.Slider(
             value=int(self.initial_inputs['const_years']),
-            min=1, max=3, divisions=1, label="{value}年"
+            min=1, max=3, divisions=2, label="{value}年"
         )
         self.tx6 = ft.Text('施設整備費')
         self.sl3 = ft.Slider(
             value=float(self.initial_inputs['shisetsu_seibi']),
-            min=100, max=99999, divisions=10, label="{value}百万円"
+            min=100, max=100000, divisions=10000, label="{value}百万円"
         )
         self.tx7 = ft.Text('維持管理運営費')
         self.sl4 = ft.Slider(
             value=float(self.initial_inputs['ijikanri_unnei']),
-            min=0, max=999, divisions=5, label="{value}百万円",
+            min=0, max=1000, divisions=1000, label="{value}百万円",
         )
         self.tx8 = ft.Text('施設整備費の削減率')
         self.sl5 = ft.Slider(
             value=float(self.initial_inputs['reduc_shisetsu']),
-            min=85, max=95, divisions=5, label="{value}%"
+            min=85, max=95, divisions=10, label="{value}%"
         )
         self.tx9 = ft.Text('維持管理運営費の削減率')
         self.sl6 = ft.Slider(
             value=float(self.initial_inputs['reduc_ijikanri']),
-            min=85, max=95, divisions=5, label="{value}%"
+            min=85, max=95, divisions=10, label="{value}%"
         )
         self.tx10 = ft.Text('起債充当率')
         self.sl7 = ft.Slider(
             value=float(self.initial_inputs['kisai_jutou']),
-            min=0, max=100, divisions=5, label="{value}%"
+            min=0, max=100, divisions=100, label="{value}%"
         )
         self.tx11 = ft.Text('起債への交付金カバー率')
         self.sl8 = ft.Slider(
             value=float(self.initial_inputs['kisai_koufu']),
-            min=0, max=50, divisions=10, label="{value}%"
+            min=0, max=50, divisions=50, label="{value}%"
         )
         self.tx12 = ft.Text('補助率')
         self.sl9 = ft.Slider(
             value=float(self.initial_inputs['hojo']),
-            min=0, max=60, divisions=1, label="{value}%"
+            min=0, max=60, divisions=50, label="{value}%"
         )
         self.tx13 = ft.Text('SPC経費年額')
         self.sl10 = ft.Slider(
             value=float(self.initial_inputs['SPC_keihi']),
-            min=0, max=15, divisions=1, label="{value}百万円"
+            min=0, max=15, divisions=15, label="{value}百万円"
         )
         self.b = ft.ElevatedButton(text="確認", on_click=self.button_clicked)
         return ft.Column([#self.tx1, self.tx2, self.tx3, 

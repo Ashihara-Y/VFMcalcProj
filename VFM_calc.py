@@ -42,7 +42,11 @@ class PSC:
         zeigo_rieki_gaku = zeimae_rieki_gaku - nouzei_gaku
         
         zei_modori_gaku = zeimae_rieki_gaku * float(self.final_inputs['zei_modori'])/100
-        #tmp_sub1_file = tmp_dir / 'sub1' / 'file1.txt'
+        
+        
+        PSC = {}
+        
+        LCC = {}#tmp_sub1_file = tmp_dir / 'sub1' / 'file1.txt'
 
 class LCC:
     def __init__(self):
