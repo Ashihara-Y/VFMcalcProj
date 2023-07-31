@@ -6,7 +6,7 @@ import flet as ft
 import joblib
 from Final_Inputs import Final_Inputs
 
-class PSC:
+class PSC_LCC:
     def __init__(self):
         self.final_inputs = joblib.load('final_inputs.pkl')
     
