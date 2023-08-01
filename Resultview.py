@@ -21,18 +21,21 @@ class Results(ft.UserControl):
     def build(self):
 
         self.b = ft.ElevatedButton(text="結果表示", on_click=self.button_clicked)
-        return ft.Column([self.b ], scroll=ft.ScrollMode.ALWAYS)
+        self.b2 = ft.ElevatedButton(text="結果表示2", on_click=self.view_make)
+        return ft.Column([self.b, self.b2], scroll=ft.ScrollMode.ALWAYS)
+    
     
 #class VFM:
     def button_clicked(self,e):
-        #to ft.datatable
-        simpledt_df = DataFrame(self.results['df_PV_cf'])
-        simpledt_dt = simpledt_df.datatable
-        ft.page.add(simpledt_dt)
-
         #to Plotly_chart
         df_PV_cf = self.results['df_PV_cf']
         fig = px.bar(df_PV_cf, x=df_PV_cf.index, y=['PSC_present_value', 'LCC_present_value'], barmode='group')
-        ft.page.add(PlotlyChart(fig, expand=True))
-        
+        #ft.Page.page.add(PlotlyChart(self.fig, expand=True)) 
+        return fig
+    
+    def view_make(self, e, page: ft.Page):
+        self.self.fig = self.button_clicked(self)
+        #page.add(self.simpledt_dt)
+        page.add(PlotlyChart(self.fig, expand=True))
+        page.update()
         

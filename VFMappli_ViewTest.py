@@ -51,10 +51,11 @@ def main(page: Page):
         elif page.route == "/save_results":
             page.views.append(
                 View(
-                    "/results",
+                    "/save_results",
                     [
                         AppBar(title=Text("結果表示")),
                         Results(),
+                        #Results(self).view_make()),
                         ElevatedButton("終了", on_click=open_initial_inputs),
                     ], scroll=ft.ScrollMode.ALWAYS
                 ),
@@ -72,9 +73,6 @@ def main(page: Page):
 
     def open_calculation(e):
         page.go("/calculation")
-
-    def open_results(e):
-        page.go("/results")
 
     def open_save_results(e):
         page.go("/save_results")
