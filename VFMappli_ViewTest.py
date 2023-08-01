@@ -2,6 +2,8 @@ import flet as ft
 from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, Text, View, colors, icons, padding, theme)
 from Flet_inputDialogTest_class import Initial_Inputs
 from Final_Inputs import Final_Inputs
+from VFM_calc import PSC_LCC
+from Resultview import Results
 
 #initial_inputs = Initial_Inputs()
 #final_inputs = Final_Inputs()
@@ -18,9 +20,9 @@ def main(page: Page):
                 "/",
                 
                 [   
-                    AppBar(title=Text("VFM計算アプリ Initial Inputs")),
+                    AppBar(title=Text("初期入力")),
                     Initial_Inputs(),
-                    ElevatedButton("入力確認へ", on_click=open_final_inputs),
+                    ElevatedButton("入力確認へ", on_click=open_final_inputs)
                 ], scroll=ft.ScrollMode.ALWAYS
             ), 
         )
@@ -29,7 +31,7 @@ def main(page: Page):
                 View(
                     "/final_inputs",
                     [
-                        AppBar(title=Text("VFM計算アプリ Final Inputs")),
+                        AppBar(title=Text("入力確認")),
                         Final_Inputs(),
                         ElevatedButton("計算へ", on_click=open_calculation),
                     ], scroll=ft.ScrollMode.ALWAYS
@@ -40,9 +42,20 @@ def main(page: Page):
                 View(
                     "/calculation",
                     [
-                        AppBar(title=Text("VFM計算アプリ Calculation")),
-                        Text("Calculation", style="headlineMedium"),
-                        ElevatedButton("Go to Initial Inputs", on_click=open_initial_inputs),
+                        AppBar(title=Text("計算")),
+                        PSC_LCC(),
+                        ElevatedButton("結果表示へ", on_click=open_save_results),
+                    ], scroll=ft.ScrollMode.ALWAYS
+                ),
+            )
+        elif page.route == "/save_results":
+            page.views.append(
+                View(
+                    "/results",
+                    [
+                        AppBar(title=Text("結果表示")),
+                        Results(),
+                        ElevatedButton("終了", on_click=open_initial_inputs),
                     ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
@@ -59,6 +72,12 @@ def main(page: Page):
 
     def open_calculation(e):
         page.go("/calculation")
+
+    def open_results(e):
+        page.go("/results")
+
+    def open_save_results(e):
+        page.go("/save_results")
 
     def open_initial_inputs(e):
         page.go("/")

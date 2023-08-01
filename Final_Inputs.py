@@ -10,24 +10,24 @@ class Final_Inputs(ft.UserControl):
         super().__init__()
         self.title = "最終入力"
         self.width = 500
-        self.height = 500
-        self.resizable = False
+        self.height = 800
+        self.resizable = True
 
     def build(self):
         #self.tx1 = ft.Text(f'管理者の種別：{self.initial_inputs['mgmt_type']}')
         #self.tx2 = ft.Text(f'事業の方式：{self.initial_inputs['proj_ctgry']}')
         #self.tx3 = ft.Text(f'事業の類型：{self.initial_inputs['proj_type']}')
 
-        self.tx4 = ft.Text('事業期間') 
-        self.sl1 = ft.Slider(
-            value=int(self.initial_inputs['proj_years']),
-            min=10, max=30, divisions=20, label="{value}年"
-        )
-        self.tx5 = ft.Text('施設整備期間')
-        self.sl2 = ft.Slider(
-            value=int(self.initial_inputs['const_years']),
-            min=1, max=3, divisions=2, label="{value}年"
-        )
+        #self.tx4 = ft.Text('事業期間') 
+        #self.sl1 = ft.Slider(
+        #    value=int(self.initial_inputs['proj_years']),
+        #    min=10, max=30, divisions=20, label="{value}年"
+        #)
+        #self.tx5 = ft.Text('施設整備期間')
+        #self.sl2 = ft.Slider(
+        #    value=int(self.initial_inputs['const_years']),
+        #    min=1, max=3, divisions=2, label="{value}年"
+        #)
         self.tx6 = ft.Text('施設整備費')
         self.sl3 = ft.Slider(
             value=float(self.initial_inputs['shisetsu_seibi']),
@@ -70,8 +70,8 @@ class Final_Inputs(ft.UserControl):
         )
         self.b = ft.ElevatedButton(text="確認", on_click=self.button_clicked)
         return ft.Column([#self.tx1, self.tx2, self.tx3, 
-                          self.tx4, self.sl1, 
-                          self.tx5, self.sl2, 
+                          #self.tx4, self.sl1, 
+                          #self.tx5, self.sl2, 
                           self.tx6, self.sl3, 
                           self.tx7, self.sl4, 
                           self.tx8, self.sl5, 
@@ -80,7 +80,8 @@ class Final_Inputs(ft.UserControl):
                           self.tx11, self.sl8, 
                           self.tx12, self.sl9, 
                           self.tx13, self.sl10,
-                          self.b], scroll=ft.ScrollMode.ALWAYS)
+                          self.b 
+                        ], scroll=ft.ScrollMode.ALWAYS)
 
 #def main(page: ft.Page):
     
@@ -90,8 +91,8 @@ class Final_Inputs(ft.UserControl):
             "mgmt_type":self.initial_inputs['mgmt_type'], 
             "proj_ctgry":self.initial_inputs['proj_ctgry'],
             "proj_type":self.initial_inputs['proj_type'],
-            "proj_years":self.sl1.value,
-            "const_years":self.sl2.value,
+            "proj_years":self.initial_inputs['proj_years'],
+            "const_years":self.initial_inputs['const_years'],
             "kijun_kinri":self.initial_inputs['kijun_kinri'],
             "chisai_kinri":self.initial_inputs['chisai_kinri'],
             "zei_modori":self.initial_inputs['zei_modori'],

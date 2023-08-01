@@ -10,7 +10,7 @@ class Initial_Inputs(ft.UserControl):
         self.title = "初期入力"
         self.width = 500
         self.height = 500
-        self.resizable = False
+        self.resizable = True
 
         #self.dd1.value = '国'
         #self.dd2.value = 'サービス購入型'

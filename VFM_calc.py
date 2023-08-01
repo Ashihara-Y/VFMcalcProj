@@ -9,11 +9,18 @@ from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
 
-class PSC_LCC:
+class PSC_LCC(ft.UserControl):
+
+    final_inputs = joblib.load('final_inputs.pkl')
+
     def __init__(self):
-        self.final_inputs = joblib.load('final_inputs.pkl')
-    
-    def calc(self):
+        super().__init__()
+        self.title = "計算"
+        self.width = 500
+        self.height = 200
+        self.resizable = True
+
+    def build(self):
         shisetsu_seibi_total = float(self.final_inputs['shisetsu_seibi'])
         ijikanri_unnei_total = float(self.final_inputs['ijikanri_unnei']) * (int(self.final_inputs['proj_years']) - int(self.final_inputs['const_years']))
         hojokin_kan = shisetsu_seibi_total * (float(self.final_inputs['hojo'])/100)
@@ -82,21 +89,21 @@ class PSC_LCC:
             }
 
         joblib.dump(res_PSC_LCC, 'res_PSC_LCC.pkl') 
-        return res_PSC_LCC
+
+        self.b = ft.ElevatedButton(text="計算", on_click=self.calc_VFM)
+        return ft.Column([self.b ], scroll=ft.ScrollMode.ALWAYS)
     
-    
-class VFM:
-    def __init__(self):
-        self.res_PSC_LCC = joblib.load('res_PSC_LCC.pkl')
-    
-    def calc_VFM(self):
-        LCC_net_expense = self.res_PSC_LCC['LCC_net_expense']
-        PSC_net_expense_const_kk = self.res_PSC_LCC['PSC_net_expense_const_kk']
-        PSC_net_expense_ijikanri_kk = self.res_PSC_LCC['PSC_net_expense_ijikanri_kk']
-        proj_years = self.res_PSC_LCC['proj_years']
-        const_years = self.res_PSC_LCC['const_years']
-        ijikanri_years = self.res_PSC_LCC['ijikanri_years']
-        discount_rate = self.res_PSC_LCC['discount_rate']
+#class VFM:
+    def calc_VFM(self,e):
+        res_PSC_LCC = joblib.load('res_PSC_LCC.pkl')
+
+        LCC_net_expense = float(res_PSC_LCC['LCC_net_expense'])
+        PSC_net_expense_const_kk = float(res_PSC_LCC['PSC_net_expense_const_kk'])
+        PSC_net_expense_ijikanri_kk = float(res_PSC_LCC['PSC_net_expense_ijikanri_kk'])
+        proj_years = int(res_PSC_LCC['proj_years'])
+        const_years = int(res_PSC_LCC['const_years'])
+        ijikanri_years = int(res_PSC_LCC['ijikanri_years'])
+        discount_rate = float(res_PSC_LCC['discount_rate'])
         
         PSC_const = []
         PSC_ijikanri = []
@@ -142,10 +149,20 @@ class VFM:
         VFM_percent = VFM/PSC*100
 
         #to ft.datatable
-        simpledt_df = DataFrame(df_PV_cf)
-        simpledt_dt = simpledt_df.datatable
+        #simpledt_df = DataFrame(df_PV_cf)
+        #simpledt_dt = simpledt_df.datatable
         #ft.page.add(simpledt_dt)
 
         #to Plotly_chart
-        fig = px.bar(df_PV_cf, x=df_PV_cf.index, y=['PSC_present_value', 'LCC_present_value'], barmode='group')
-        #ft.page.add(PlotlyChart(fig, expand=True))
+        #fig = px.bar(df_PV_cf, x=df_PV_cf.index, y=['PSC_present_value', 'LCC_present_value'], barmode='group')
+        #ft.page.add(PlotlyChart(fig, expand=True), simpledt_dt)
+        
+        results = {
+            'df_PV_cf': df_PV_cf,
+            'PSC': PSC,
+            'LCC': LCC,
+            'VFM': VFM,
+            'VFM_percent': VFM_percent
+        }
+
+        joblib.dump(results, 'results.pkl')
