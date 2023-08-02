@@ -103,7 +103,7 @@ class PSC_LCC(ft.UserControl):
         proj_years = int(res_PSC_LCC['proj_years'])
         const_years = int(res_PSC_LCC['const_years'])
         ijikanri_years = int(res_PSC_LCC['ijikanri_years'])
-        discount_rate = float(res_PSC_LCC['discount_rate'])
+        discount_rate = float(res_PSC_LCC['discount_rate'])/100
         
         PSC_const = []
         PSC_ijikanri = []
@@ -159,6 +159,9 @@ class PSC_LCC(ft.UserControl):
         
         results = {
             'df_PV_cf': df_PV_cf,
+            'LCC_discount_factor': LCC_discount_factor,
+            'PSC_const_discount_factor': PSC_const_discount_factor,
+            'PSC_iji_discount_factor': PSC_iji_discount_factor,
             'PSC': PSC,
             'LCC': LCC,
             'VFM': VFM,

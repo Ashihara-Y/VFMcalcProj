@@ -25,11 +25,18 @@ class Results(ft.UserControl):
         df_PV_cf = self.results['df_PV_cf']
         self.fig = px.bar(df_PV_cf, x=df_PV_cf.index, y=['PSC_present_value', 'LCC_present_value'], barmode='group')
         self.graph = PlotlyChart(self.fig, expand=True)
+
+        #to ft.datatable
+        simpledt_df = DataFrame(df_PV_cf)
+        simpledt_dt = simpledt_df.datatable
+        self.table = simpledt_dt
+
         return ft.Card(
             content=ft.Container(
                 content=ft.Column(
                     controls=[
                         self.graph,
+                        self.table,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                 ),
