@@ -1,3 +1,5 @@
+import sys
+sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
 #import shelve as sv
@@ -14,7 +16,7 @@ class Results(ft.UserControl):
     def __init__(self):
         super().__init__()
         self.title = "結果"
-        self.width = 800
+        self.width = 1000
         self.height = 800
         self.resizable = True
 
@@ -27,33 +29,35 @@ class Results(ft.UserControl):
         self.graph = PlotlyChart(self.fig, expand=True)
 
         #to ft.datatable
-        simpledt_df = DataFrame(df_PV_cf)
+        simpledt_df = DataFrame(df_PV_cf.transpose())
         simpledt_dt = simpledt_df.datatable
         self.table = simpledt_dt
+
+        PSC = self.results['PSC']
+        LCC = self.results['LCC']
+        VFM = self.results['VFM']
+        VFM_percent = self.results['VFM_percent']
+        self.tx_PSC = ft.Text(PSC)
+        self.tx_LCC = ft.Text(LCC)
+        self.tx_VFM = ft.Text(VFM)
+        self.tx_VFM_percent = ft.Text(VFM_percent)
+
 
         return ft.Card(
             content=ft.Container(
                 content=ft.Column(
                     controls=[
+                        self.tx_PSC, self.tx_LCC, self.tx_VFM, self.tx_VFM_percent,
                         self.graph,
                         self.table,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                 ),
-                width=800,
+                width=1000,
                 padding=16,
             )
-        )        #return ft.Column([self.b, self.b2], scroll=ft.ScrollMode.ALWAYS)
+        ) 
     
     
-#class VFM:
-#    def button_clicked(self,e):
-#        #to Plotly_chart
-        
-    
-#    def view_make(self, e, page: ft.Page):
-#        self.self.fig = self.button_clicked(self)
-#        #page.add(self.simpledt_dt)
-#        page.add(PlotlyChart(self.fig, expand=True))
-#        page.update()
+
         

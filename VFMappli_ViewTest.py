@@ -1,3 +1,5 @@
+import sys
+sys.dont_write_bytecode = True
 import flet as ft
 from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, Text, View, colors, icons, padding, theme)
 from Flet_inputDialogTest_class import Initial_Inputs
@@ -27,6 +29,7 @@ def main(page: Page):
             ), 
         )
         if page.route == "/final_inputs":
+            #page.views.clear()
             page.views.append(
                 View(
                     "/final_inputs",
@@ -38,6 +41,7 @@ def main(page: Page):
                 ),
             )
         elif page.route == "/calculation":
+            #page.views.clear()
             page.views.append(
                 View(
                     "/calculation",
@@ -49,6 +53,7 @@ def main(page: Page):
                 ),
             )
         elif page.route == "/save_results":
+            #page.views.clear()
             page.views.append(
                 View(
                     "/save_results",

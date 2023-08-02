@@ -1,3 +1,5 @@
+import sys
+sys.dont_write_bytecode = True
 #import os, sys, argparse, logging, time, datetime, re
 #from pathlib import Path
 import pandas as pd
@@ -82,8 +84,8 @@ class PSC_LCC(ft.UserControl):
             "LCC_net_expense": LCC_net_expense, 
             "PSC_net_expense_const_kk": PSC_net_expense_const_kk,
             "PSC_net_expense_ijikanri_kk": PSC_net_expense_ijikanri_kk,
-            "proj_years":self.final_inputs['proj_years'],
-            "const_years":self.final_inputs['const_years'],
+            "proj_years":int(self.final_inputs['proj_years']),
+            "const_years":int(self.final_inputs['const_years']),
             "ijikanri_years":ijikanri_years,
             "discount_rate":discount_rate
             }
@@ -147,15 +149,6 @@ class PSC_LCC(ft.UserControl):
         LCC = df_PV_cf['LCC_present_value'].sum()
         VFM = PSC - LCC
         VFM_percent = VFM/PSC*100
-
-        #to ft.datatable
-        #simpledt_df = DataFrame(df_PV_cf)
-        #simpledt_dt = simpledt_df.datatable
-        #ft.page.add(simpledt_dt)
-
-        #to Plotly_chart
-        #fig = px.bar(df_PV_cf, x=df_PV_cf.index, y=['PSC_present_value', 'LCC_present_value'], barmode='group')
-        #ft.page.add(PlotlyChart(fig, expand=True), simpledt_dt)
         
         results = {
             'df_PV_cf': df_PV_cf,
