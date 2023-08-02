@@ -1,8 +1,14 @@
-import flet
+import sys
+sys.dont_write_bytecode = True
+import flet as ft
 from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, Text, View, colors, icons, padding, theme)
 from Flet_inputDialogTest_class import Initial_Inputs
+from Final_Inputs import Final_Inputs
+from VFM_calc import PSC_LCC
+from Resultview import Results
 
-initial_inputs = Initial_Inputs()
+#initial_inputs = Initial_Inputs()
+#final_inputs = Final_Inputs()
 
 def main(page: Page):
     page.title = "VFM計算アプリ"
@@ -16,32 +22,47 @@ def main(page: Page):
                 "/",
                 
                 [   
-                    AppBar(title=Text("VFM計算アプリ Initial Inputs")),
-                    initial_inputs,
-                    ElevatedButton("Go to Final Inputs", on_click=open_final_inputs),
-                ],
+                    AppBar(title=Text("初期入力")),
+                    Initial_Inputs(),
+                    ElevatedButton("入力確認へ", on_click=open_final_inputs)
+                ], scroll=ft.ScrollMode.ALWAYS
             ), 
         )
         if page.route == "/final_inputs":
+            #page.views.clear()
             page.views.append(
                 View(
                     "/final_inputs",
                     [
-                        AppBar(title=Text("VFM計算アプリ Final Inputs")),
-                        Text("Final Inputs", style="headlineMedium"),
-                        ElevatedButton("Go to Calculation", on_click=open_calculation),
-                    ],
+                        AppBar(title=Text("入力確認")),
+                        Final_Inputs(),
+                        ElevatedButton("計算へ", on_click=open_calculation),
+                    ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
         elif page.route == "/calculation":
+            #page.views.clear()
             page.views.append(
                 View(
                     "/calculation",
                     [
-                        AppBar(title=Text("VFM計算アプリ Calculation")),
-                        Text("Calculation", style="headlineMedium"),
-                        ElevatedButton("Go to Initial Inputs", on_click=open_initial_inputs),
-                    ],
+                        AppBar(title=Text("計算")),
+                        PSC_LCC(),
+                        ElevatedButton("結果表示へ", on_click=open_save_results),
+                    ], scroll=ft.ScrollMode.ALWAYS
+                ),
+            )
+        elif page.route == "/save_results":
+            #page.views.clear()
+            page.views.append(
+                View(
+                    "/save_results",
+                    [
+                        AppBar(title=Text("結果表示")),
+                        Results(),
+                        #Results(self).view_make()),
+                        ElevatedButton("終了", on_click=open_initial_inputs),
+                    ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
         page.update()
@@ -58,6 +79,9 @@ def main(page: Page):
     def open_calculation(e):
         page.go("/calculation")
 
+    def open_save_results(e):
+        page.go("/save_results")
+
     def open_initial_inputs(e):
         page.go("/")
 
@@ -65,5 +89,5 @@ def main(page: Page):
     page.on_view_pop = view_pop
     page.go(page.route)
     
-flet.app(target=main)
+ft.app(target=main)
 #flet.app(target=main, view=flet.TERMINAL)))

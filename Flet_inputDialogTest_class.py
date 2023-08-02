@@ -1,3 +1,5 @@
+import sys
+sys.dont_write_bytecode = True
 import flet as ft
 import joblib
 #import sqlite3
@@ -10,13 +12,7 @@ class Initial_Inputs(ft.UserControl):
         self.title = "初期入力"
         self.width = 500
         self.height = 500
-        self.resizable = False
-
-        #self.dd1.value = '国'
-        #self.dd2.value = 'サービス購入型'
-        #self.dd3.value = 'BTO'
-        #self.dd4.value = '20'
-        #self.dd5.value = '1'
+        self.resizable = True
 
     def build(self):
         self.dd1 = ft.Dropdown(
@@ -24,8 +20,8 @@ class Initial_Inputs(ft.UserControl):
             hint_text="管理者の種別を選択してください", 
             width=400,
             options=[
-                ft.dropdown.Option("国"),
-                ft.dropdown.Option("都道府県"),
+                #ft.dropdown.Option("国"),
+                #ft.dropdown.Option("都道府県"),
                 ft.dropdown.Option("市町村"),
             ],
         )
@@ -85,17 +81,17 @@ class Initial_Inputs(ft.UserControl):
             value="1",
             options=[
                 ft.dropdown.Option("1"),
-                ft.dropdown.Option("2"),#ft.dropdown.Option("BOT"),
+                ft.dropdown.Option("2"),
                 ft.dropdown.Option("3")
             ],
         )
         self.b = ft.ElevatedButton(text="選択", on_click=self.button_clicked)
-        return ft.Column([self.dd1, self.dd2, self.dd3, self.dd4, self.dd5, self.b])
+        return ft.Column([self.dd1, self.dd2, self.dd3, self.dd4, self.dd5, self.b], scroll=ft.ScrollMode.ALWAYS)
 
 #def main(page: ft.Page):
     
     def button_clicked(self, e):        
-        jgb_rates.JGB_rates_conv()
+        #jgb_rates.JGB_rates_conv()
         JGB_rates_df = pd.read_csv('JGB_rates.csv', sep='\t', encoding='shift_jis', header=None, names=['year', 'rate'])
         #JRB_rates_df = pd.read_csv('JRB_rates.csv', sep='\t', encoding='shift_jis', header=None, names=['year', 'rate'])
 
@@ -106,7 +102,7 @@ class Initial_Inputs(ft.UserControl):
         r1 = float(JGB_rates_df[JGB_rates_df['year']==r_idx]['rate'].iloc[0])
         #r2 = float(JRB_rates_df[JRB_rates_df['year']==r_idx]['rate'].iloc[0])
         r2 = 0.729
-
+        
         if self.dd1.value == '国':
             zei_modori = 27.8
             hojo = 0.0
@@ -122,16 +118,18 @@ class Initial_Inputs(ft.UserControl):
             hojo = 30.0
             kisai_jutou = 75.0
             kisai_koufu = 30.0
-
+        else:
+            pass
+        
         initail_inputs = {
             "mgmt_type":self.dd1.value, 
             "proj_ctgry":self.dd2.value, 
             "proj_type":self.dd3.value,
             "proj_years":self.dd4.value,
             "const_years":self.dd5.value,
-            "kijun_kinri":r1,
-            "chisai_kinri":r2,
-            "zei_modori":zei_modori,
+            "kijun_kinri":float(r1),
+            "chisai_kinri":float(r2),
+            "zei_modori":float(zei_modori),
             "lg_spread":1.5,
             "zei_total":41.98,
             "growth":0.0,
@@ -141,13 +139,15 @@ class Initial_Inputs(ft.UserControl):
             "reduc_shisetsu":90.0,
             "reduc_ijikanri":90.0,
             "pre_kyoukouka":False,
-            "kisai_jutou":kisai_jutou,
-            "kisai_koufu":kisai_koufu,
+            "kisai_jutou":float(kisai_jutou),
+            "kisai_koufu":float(kisai_koufu),
             "zeimae_rieki":8.5,
             "SPC_keihi":15.0,
-            "hojo":hojo,
+            "hojo":float(hojo),
             }
         
         joblib.dump(initail_inputs, 'Initial_Inputs.pkl')
-        ft.page.client_storage.set("Initial_Inputs", initail_inputs)
-        ft.page.save_state(initail_inputs)
+        #ft.page.client_storage.set("Initial_Inputs", initail_inputs)
+
+
+        #ft.page.save_state(initail_inputs)

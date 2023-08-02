@@ -1,97 +1,164 @@
-import os, sys, argparse, logging, time, datetime, re
-from pathlib import Path
+import sys
+sys.dont_write_bytecode = True
+#import os, sys, argparse, logging, time, datetime, re
+#from pathlib import Path
 import pandas as pd
-#import flet as ft
-import shelve as sv
-import joblib as jl
+import flet as ft
+#import shelve as sv
+import joblib
+from Final_Inputs import Final_Inputs
+from simpledt import DataFrame
+import plotly.express as px
+from flet.plotly_chart import PlotlyChart
 
-class PSC:
-    def __init__(self, inputs_path, inputs_name):
-        self.inputs_path = Path(inputs_path)
-        self.inputs_name = inputs_name
-        self.inputs_file = inputs_path / inputs_name
-        self.psc = sv.open(self.inputs_file, writeback=True)
-        #tmp_dir = Path('temp')
-        #tmp_sub1_file = tmp_dir / 'sub1' / 'file1.txt'
+class PSC_LCC(ft.UserControl):
 
-class LCC:
-    def __init__(self, inputs_path,inputs_name):
-        self.lcc_path = lcc_path
-        self.lcc_name = lcc_name
-        self.lcc_file = os.path.join(self.lcc_path, self.lcc_name)
-        self.lcc = sv.open(self.lcc_file, writeback=True)
+    final_inputs = joblib.load('final_inputs.pkl')
 
-class VFM:
-    def __init__(self, vfm_path, vfm_name, vfm_version):
-        self.vfm_path = vfm_path
-        self.vfm_name = vfm_name
-        self.vfm_version = vfm_version
-        self.vfm_file = os.path.join(self.vfm_path, self.vfm_name)
-        self.vfm = pd.read_csv(self.vfm_file, sep='\t', dtype=str)
-        self.vfm = self.vfm[self.vfm['version'] == self.vfm_version]
-        self.vfm = self.vfm[self.vfm['status'] == 'active']
+    def __init__(self):
+        super().__init__()
+        self.title = "計算"
+        self.width = 500
+        self.height = 200
+        self.resizable = True
 
-class Initial_inputs:
-    def __init__(
-            self, 
-            mgmt_type, 
-            proj_ctgry, 
-            proj_type, 
-            shisetsu_seibi_jurai, 
-            ijikanri_unnei_jurai_nen,
-            proj_years,
-            const_years,
-            reduc_shisetuseibi=0.9, 
-            reduc_ijikannri=0.9, 
-            pre_kyoukouka=False, 
-            lg_spread=1.5, 
-            kisai_jutou=0.0, 
-            kisai_koufu=0.0, 
-            zeimae_rieki=8.5, 
-            zei_total=41.98, 
-            SPC_keihi=1.0, 
-            hojo=0.0, 
-            growth=0.0):
-        self.mgmt_type = mgmt_type
-        self.proj_ctgry = proj_ctgry
-        self.proj_type = proj_type
-        self.shisetsu_seibi_jurai = shisetsu_seibi_jurai
-        self.ijikanri_unnei_jurai_nen = ijikanri_unnei_jurai_nen
-        self.reduc_shisetuseibi = reduc_shisetuseibi
-        self.reduc_ijikannri = reduc_ijikannri
-        self.pre_kyoukouka = pre_kyoukouka
-        self.lg_spread = lg_spread
-        self.kisai_jutou = kisai_jutou
-        self.kisai_koufu = kisai_koufu
-        self.zeimae_rieki = zeimae_rieki
-        self.zei_total = zei_total
-        self.SPC_keihi = SPC_keihi
-        self.hojo = hojo
-        self.growth = growth
-        self.proj_years = proj_years
-        self.const_years = const_years
+    def build(self):
+        shisetsu_seibi_total = float(self.final_inputs['shisetsu_seibi'])
+        ijikanri_unnei_total = float(self.final_inputs['ijikanri_unnei']) * (int(self.final_inputs['proj_years']) - int(self.final_inputs['const_years']))
+        hojokin_kan = shisetsu_seibi_total * (float(self.final_inputs['hojo'])/100)
+        if self.final_inputs['mgmt_type'] == '国':
+            hojokin_kan = 0 
+        ribarai_kan = (shisetsu_seibi_total - hojokin_kan) * float(self.final_inputs['kisai_jutou'])/100 * (1 - float(self.final_inputs['kisai_koufu'])/100) * float(self.final_inputs['chisai_kinri'])
+        if self.final_inputs['mgmt_type'] == '国':
+            ribarai_kan = 0
+        koufukin_kan = (shisetsu_seibi_total - hojokin_kan) * float(self.final_inputs['kisai_jutou'])/100 * float(self.final_inputs['kisai_koufu'])/100
 
-class Inputs_from_DB:
-    def __init__(self, JGB_rates, JRB_rates, kitai_bukka):
-        self.JGB_rates = JGB_rates
-        self.JRB_rates = JRB_rates
-        self.kitai_bukka = kitai_bukka
+        shisetsu_seibi_reduc_total = shisetsu_seibi_total * (float(self.final_inputs['reduc_shisetsu'])/100)
+        ijikanri_unnei_reduc_total = ijikanri_unnei_total * (float(self.final_inputs['reduc_ijikanri'])/100)
+        
+        SPC_capital = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total) * 0.1
+        SPC_yobihi = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total) * 0.1
+        SPC_keihi_total = float(self.final_inputs['SPC_keihi']) * int(self.final_inputs['proj_years'])
+        if SPC_keihi_total == 0:
+            SPC_capital = SPC_yobihi = 0
+        hojokin_min = (shisetsu_seibi_reduc_total) *  (float(self.final_inputs['hojo'])/100)
+        ribarai_min = (((shisetsu_seibi_reduc_total - hojokin_min) * (1-float(self.final_inputs['kisai_jutou'])/100)) + (SPC_capital + SPC_yobihi)) * (float(self.final_inputs['kijun_kinri']) + float(self.final_inputs['lg_spread']))/100
+        ribarai_min_chisai = (shisetsu_seibi_reduc_total - hojokin_min) * (float(self.final_inputs['kisai_jutou'])/100) * (1 - float(self.final_inputs['kisai_koufu'])/100) * float(self.final_inputs['chisai_kinri'])
+        koufukin_min = (shisetsu_seibi_reduc_total - hojokin_min) * (float(self.final_inputs['kisai_jutou'])/100) * float(self.final_inputs['kisai_koufu'])/100
+        
+        ribarai_kanmin_sa = ribarai_min - ribarai_kan
+        
+        kappu_genka_s = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total + ribarai_min + SPC_capital + SPC_yobihi + SPC_keihi_total) / (1 - float(self.final_inputs['zeimae_rieki'])/100)
+        zeimae_rieki_gaku = kappu_genka_s * float(self.final_inputs['zeimae_rieki'])/100
+        nouzei_gaku = zeimae_rieki_gaku * float(self.final_inputs['zei_total'])/100
+        zeigo_rieki_gaku = zeimae_rieki_gaku - nouzei_gaku
+        
+        zei_modori_gaku = zeimae_rieki_gaku * float(self.final_inputs['zei_modori'])/100
+        
+        
+        PSC_income_total = float(hojokin_kan + koufukin_kan)
+        PSC_expense_total = float(shisetsu_seibi_total + ijikanri_unnei_total + ribarai_kan + ribarai_kanmin_sa + SPC_capital + SPC_yobihi + SPC_keihi_total)
+        PSC_net_expense = float(PSC_expense_total - PSC_income_total)
+        
+        LCC_income_total = float(hojokin_min + koufukin_min + zei_modori_gaku)
+        LCC_expense_total = float(shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total + ribarai_min + ribarai_min_chisai + zeimae_rieki_gaku + SPC_capital + SPC_yobihi + SPC_keihi_total)
+        LCC_net_expense = float(LCC_expense_total - LCC_income_total)
 
-#　Inputs＿from＿db には、SQLite３からの入力メソッドをつける。アプリ起動時にこのクラスを初期化して、DBからデータを得て、Shelveに書き出す。
-# Initial_inputsには、Shelveへの書き出しメソッドをつける。
-# PSCとLCCには、Shelveからの読み込みメソッドをつける。
-# 入力の修正は、Shelveの保存内容を書き換える（WritebackをTrueにして書き換える）。まず既存の値があるかを確認して、あれば入力欄に表示、修正した入力をShelveに書き出す。
+        discount_rate = float(self.final_inputs['kijun_kinri']) + float(self.final_inputs['kitai_bukka'])
 
-# s = shelve.open('test_shelf.db', writeback=True)
-#try:
-#    print s['key1']
-#    s['key1']['new_value'] = 'this was not here before'
-#    print s['key1']
-#finally:
-#    s.close()
-#
-#s = shelve.open('test_shelf.db', writeback=True)
-#try:
-#    print s['key1']
-#finally:
-#    s.close()
+        ijikanri_years = int(self.final_inputs['proj_years']) - int(self.final_inputs['const_years'])
+
+        rakusatsu_ritsu = 0.95
+
+        PSC_const_rate = shisetsu_seibi_total / (shisetsu_seibi_total + ijikanri_unnei_total)
+        PSC_ijikanri_rate = ijikanri_unnei_total / (shisetsu_seibi_total + ijikanri_unnei_total)
+
+        risk_adj_koufu = ribarai_kanmin_sa + SPC_capital + SPC_keihi_total + SPC_yobihi - koufukin_kan
+        risk_adj_koufu_const = risk_adj_koufu * PSC_const_rate
+        risk_adj_koufu_ijikanri = risk_adj_koufu * PSC_ijikanri_rate
+
+        PSC_net_expense_const_kk = (risk_adj_koufu_const + shisetsu_seibi_total + ribarai_kan - hojokin_kan) * rakusatsu_ritsu
+        PSC_net_expense_ijikanri_kk = (risk_adj_koufu_ijikanri + ijikanri_unnei_total) * rakusatsu_ritsu
+
+        res_PSC_LCC = {
+            "LCC_net_expense": LCC_net_expense, 
+            "PSC_net_expense_const_kk": PSC_net_expense_const_kk,
+            "PSC_net_expense_ijikanri_kk": PSC_net_expense_ijikanri_kk,
+            "proj_years":int(self.final_inputs['proj_years']),
+            "const_years":int(self.final_inputs['const_years']),
+            "ijikanri_years":ijikanri_years,
+            "discount_rate":discount_rate
+            }
+
+        joblib.dump(res_PSC_LCC, 'res_PSC_LCC.pkl') 
+
+        self.b = ft.ElevatedButton(text="計算", on_click=self.calc_VFM)
+        return ft.Column([self.b ], scroll=ft.ScrollMode.ALWAYS)
+    
+#class VFM:
+    def calc_VFM(self,e):
+        res_PSC_LCC = joblib.load('res_PSC_LCC.pkl')
+
+        LCC_net_expense = float(res_PSC_LCC['LCC_net_expense'])
+        PSC_net_expense_const_kk = float(res_PSC_LCC['PSC_net_expense_const_kk'])
+        PSC_net_expense_ijikanri_kk = float(res_PSC_LCC['PSC_net_expense_ijikanri_kk'])
+        proj_years = int(res_PSC_LCC['proj_years'])
+        const_years = int(res_PSC_LCC['const_years'])
+        ijikanri_years = int(res_PSC_LCC['ijikanri_years'])
+        discount_rate = float(res_PSC_LCC['discount_rate'])/100
+        
+        PSC_const = []
+        PSC_ijikanri = []
+        LCC = []
+        
+        for i in range(proj_years):
+            LCC.append(LCC_net_expense/proj_years)
+
+        for i in range(const_years):
+            PSC_const.append(PSC_net_expense_const_kk/const_years)
+
+        for i in range(ijikanri_years):
+            PSC_ijikanri.append(PSC_net_expense_ijikanri_kk/ijikanri_years)
+
+        df_LCC = pd.DataFrame(LCC, columns=['LCC_net_expense'])
+
+        df_PSC_const = pd.DataFrame(PSC_const, columns=['PSC_net_expense_const'])
+        df_PSC_ijikanri = pd.DataFrame(PSC_ijikanri, columns=['PSC_net_expense_iji'])
+        
+        #LCC
+        LCC_discount_factor = [(1/(1+discount_rate))** i for i in range(1, proj_years+1)]
+        df_LCC['LCC_discount_factor'] = LCC_discount_factor
+        # calculate the present value of each cash flow
+        df_LCC['LCC_present_value'] = df_LCC['LCC_net_expense'] * df_LCC['LCC_discount_factor']
+        
+        #PSC
+        PSC_const_discount_factor = [(1/(1-discount_rate))** i for i in reversed(range(const_years))]
+        PSC_iji_discount_factor = [(1/(1+discount_rate))** i for i in range(1, ijikanri_years+1)]
+        df_PSC_const['PSC_const_discount_factor'] = PSC_const_discount_factor
+        df_PSC_ijikanri['PSC_iji_discount_factor'] = PSC_iji_discount_factor
+        df_PSC_const['PSC_const_present_value'] = df_PSC_const['PSC_net_expense_const'] * df_PSC_const['PSC_const_discount_factor']
+        df_PSC_ijikanri['PSC_iji_present_value'] = df_PSC_ijikanri['PSC_net_expense_iji'] * df_PSC_ijikanri['PSC_iji_discount_factor']
+        
+        df_PSC = pd.concat([df_PSC_const['PSC_const_present_value'], df_PSC_ijikanri['PSC_iji_present_value']]).reset_index(drop=True)
+        df_PSC.columns = ['PSC_present_value']
+
+        df_PV_cf = pd.concat([df_PSC, df_LCC['LCC_present_value']], axis=1)
+        df_PV_cf = df_PV_cf.set_axis(['PSC_present_value', 'LCC_present_value'], axis=1)
+
+        PSC = df_PV_cf['PSC_present_value'].sum()
+        LCC = df_PV_cf['LCC_present_value'].sum()
+        VFM = PSC - LCC
+        VFM_percent = VFM/PSC*100
+        
+        results = {
+            'df_PV_cf': df_PV_cf,
+            'LCC_discount_factor': LCC_discount_factor,
+            'PSC_const_discount_factor': PSC_const_discount_factor,
+            'PSC_iji_discount_factor': PSC_iji_discount_factor,
+            'PSC': PSC,
+            'LCC': LCC,
+            'VFM': VFM,
+            'VFM_percent': VFM_percent
+        }
+
+        joblib.dump(results, 'results.pkl')
