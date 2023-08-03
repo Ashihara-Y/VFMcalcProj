@@ -2,6 +2,15 @@ import sys
 sys.dont_write_bytecode = True
 import flet as ft
 import joblib
+from joblib import Memory
+from tempfile import mkdtemp
+import os
+
+savedir = mkdtemp()
+filename = os.path.join(savedir, 'initial_inputs.joblib')
+cachedir = savedir
+memory = Memory(cachedir, verbose=0)
+
 #import sqlite3
 import pandas as pd
 import jgb_rates
@@ -89,7 +98,7 @@ class Initial_Inputs(ft.UserControl):
         return ft.Column([self.dd1, self.dd2, self.dd3, self.dd4, self.dd5, self.b], scroll=ft.ScrollMode.ALWAYS)
 
 #def main(page: ft.Page):
-    
+    @Memory.cache
     def button_clicked(self, e):        
         #jgb_rates.JGB_rates_conv()
         JGB_rates_df = pd.read_csv('JGB_rates.csv', sep='\t', encoding='shift_jis', header=None, names=['year', 'rate'])
@@ -147,5 +156,7 @@ class Initial_Inputs(ft.UserControl):
             }
         
         joblib.dump(initail_inputs, 'Initial_Inputs.pkl')
+        return initail_inputs
+    
         #ft.page.ClientStorage.set("Initial_Inputs", initail_inputs)
         #ft.page.save_state(initail_inputs)
