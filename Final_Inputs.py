@@ -5,7 +5,7 @@ import joblib
 import pandas as pd
 import tempfile
 import pathlib
-savedir = mkdtemp(dir='.') # 一時ディレクトリを作成
+savedir = tempfile.mkdtemp(dir='.') # 一時ディレクトリを作成
 filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
 
 
