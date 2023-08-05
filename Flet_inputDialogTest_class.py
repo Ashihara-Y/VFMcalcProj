@@ -5,9 +5,10 @@ import joblib
 from joblib import Memory
 from tempfile import mkdtemp
 import os
+import pathlib
 
-savedir = mkdtemp()
-filename = os.path.join(savedir, 'initial_inputs.joblib')
+savedir = pathlib.Path(mkdtemp(dir='.')) # 一時ディレクトリを作成
+filename = savedir / 'initial_inputs.joblib' # 一時ディレクトリにファイルを作成
 #cachedir = savedir
 #memory = Memory(cachedir, verbose=0)
 
@@ -157,4 +158,6 @@ class Initial_Inputs(ft.UserControl):
         
         joblib.dump(initail_inputs, filename)
         #return initail_inputs#ft.page.ClientStorage.set("Initial_Inputs", initail_inputs)
-        #ft.page.save_state(initail_inputs)
+        ft.page.session.clear()
+        ft.page.session.set('initial_inputs', initail_inputs)
+        ft.page.save_state(initail_inputs)

@@ -5,13 +5,14 @@ import joblib
 import pandas as pd
 import tempfile
 import pathlib
-savedir = tempfile.mkdtemp(dir='.') # 一時ディレクトリを作成
+
+savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
 filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
 
 
 class Final_Inputs(ft.UserControl):
 
-    initial_inputs = joblib.load('Initial_Inputs.pkl') #Paheを指定する必要がある！Pathlibを使うか？
+    initial_inputs = ft.page.session.get('initial_inputs') #Paheを指定する必要がある！Pathlibを使うか？
 
     def __init__(self):
         super().__init__()
@@ -112,5 +113,5 @@ class Final_Inputs(ft.UserControl):
             }
         
         joblib.dump(final_inputs, filename)
-        #ft.page.client_storage.set("Final_Inputs", final_inputs)
-        #ft.page.save_state(final_inputs)
+        ft.page.client_storage.set("final_inputs", final_inputs)
+        ft.page.save_state(final_inputs)

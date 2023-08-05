@@ -10,13 +10,17 @@ from Final_Inputs import Final_Inputs
 from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
-savedir = mkdtemp()
-filename01 = os.path.join(savedir, 'res_PSC_LCC.joblib')
-filename02 = os.path.join(savedir, 'results.joblib')
+import tempfile
+import pathlib
+
+savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
+
+filename01 = savedir / 'res_PSC_LCC.joblib'
+filename02 = savedir / 'results.joblib'
 
 class PSC_LCC(ft.UserControl):
 
-    final_inputs = joblib.load('final_inputs.pkl')
+    final_inputs = joblib.load('final_inputs.joblib')
 
     def __init__(self):
         super().__init__()
