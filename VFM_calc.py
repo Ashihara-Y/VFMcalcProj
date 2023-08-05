@@ -10,6 +10,9 @@ from Final_Inputs import Final_Inputs
 from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
+savedir = mkdtemp()
+filename01 = os.path.join(savedir, 'res_PSC_LCC.joblib')
+filename02 = os.path.join(savedir, 'results.joblib')
 
 class PSC_LCC(ft.UserControl):
 
@@ -88,9 +91,9 @@ class PSC_LCC(ft.UserControl):
             "const_years":int(self.final_inputs['const_years']),
             "ijikanri_years":ijikanri_years,
             "discount_rate":discount_rate
-            }
+        }
 
-        joblib.dump(res_PSC_LCC, 'res_PSC_LCC.pkl') 
+        joblib.dump(res_PSC_LCC, filename01) 
 
         self.b = ft.ElevatedButton(text="計算", on_click=self.calc_VFM)
         return ft.Column([self.b ], scroll=ft.ScrollMode.ALWAYS)
@@ -161,4 +164,4 @@ class PSC_LCC(ft.UserControl):
             'VFM_percent': VFM_percent
         }
 
-        joblib.dump(results, 'results.pkl')
+        joblib.dump(results, filename02)

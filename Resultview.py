@@ -11,7 +11,7 @@ from flet.plotly_chart import PlotlyChart
 
 class Results(ft.UserControl):
 
-    results = joblib.load('results.pkl')
+    results = joblib.load('results.joblib')
 
     def __init__(self):
         super().__init__()
