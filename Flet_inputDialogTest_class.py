@@ -2,12 +2,12 @@ import sys
 sys.dont_write_bytecode = True
 import flet as ft
 import joblib
-from joblib import Memory
+#from joblib import Memory
 from tempfile import mkdtemp
 import os
 import pathlib
 
-#savedir = pathlib.Path(mkdtemp(suffix=None, prefix=None, dir='.')) # 一時ディレクトリを作成
+#savedir = pathlib.Path(mkdtemp(dir='.')) # 一時ディレクトリを作成
 #filename = savedir / 'initial_inputs.joblib' # 一時ディレクトリにファイルを作成
 #cachedir = savedir
 #memory = Memory(cachedir, verbose=0)

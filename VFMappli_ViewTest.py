@@ -1,7 +1,7 @@
 import sys
 sys.dont_write_bytecode = True
 import flet as ft
-from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, Text, View, colors, icons, padding)
+#from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, Text, View, colors, icons, padding, js)
 from Flet_inputDialogTest_class import Initial_Inputs
 from Final_Inputs import Final_Inputs
 from VFM_calc import PSC_LCC
@@ -10,7 +10,7 @@ from Resultview import Results
 #initial_inputs = Initial_Inputs()
 #final_inputs = Final_Inputs()
 
-def main(page: Page):
+def main(page: ft.Page):
     page.title = "VFM計算アプリ"
     print("Initial Inputs", page.route)
 
@@ -18,13 +18,13 @@ def main(page: Page):
         print("Route changed to:", e.route)
         page.views.clear()
         page.views.append(
-            View(
+            ft.View(
                 "/",
                 
                 [   
-                    AppBar(title=Text("初期入力")),
+                    ft.AppBar(title=Text("初期入力")),
                     Initial_Inputs(),
-                    ElevatedButton("入力確認へ", on_click=open_final_inputs)
+                    ft.ElevatedButton("入力確認へ", on_click=open_final_inputs)
                 ], scroll=ft.ScrollMode.ALWAYS
             ), 
         )
@@ -43,25 +43,25 @@ def main(page: Page):
         elif page.route == "/calculation":
             #page.views.clear()
             page.views.append(
-                View(
+                ft.View(
                     "/calculation",
                     [
                         AppBar(title=Text("計算")),
                         PSC_LCC(),
-                        ElevatedButton("結果表示へ", on_click=open_save_results),
+                        ft.ElevatedButton("結果表示へ", on_click=open_save_results),
                     ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
         elif page.route == "/save_results":
             #page.views.clear()
             page.views.append(
-                View(
+                ft.View(
                     "/save_results",
                     [
-                        AppBar(title=Text("結果表示")),
+                        ft.AppBar(title=ft.Text("結果表示")),
                         Results(),
                         #Results(self).view_make()),
-                        ElevatedButton("終了", on_click=open_initial_inputs),
+                        ft.ElevatedButton("終了", on_click=open_initial_inputs),
                     ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
