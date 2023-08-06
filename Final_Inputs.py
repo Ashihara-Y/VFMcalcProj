@@ -6,8 +6,8 @@ import pandas as pd
 import tempfile
 import pathlib
 
-savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
-filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
+#savedir = pathlib.Path(tempfile.mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
+#filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
 
 class Final_Inputs(ft.UserControl):
 
@@ -18,7 +18,7 @@ class Final_Inputs(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-        self.initial_inputs = ft.joblib.load('initial_inputs') #Paheを指定する必要がある！Pathlibを使うか？
+        self.initial_inputs = joblib.load('initial_inputs.joblib') 
 
     def build(self):
         self.tx1 = ft.Text(str(self.initial_inputs['mgmt_type']))
@@ -111,6 +111,6 @@ class Final_Inputs(ft.UserControl):
             "hojo":float(self.sl9.value)
             }
         
-        joblib.dump(final_inputs, filename)
+        joblib.dump(final_inputs, 'final_inputs.joblib')
         #ft.page.client_storage.set("final_inputs", final_inputs)
         #ft.page.save_state(final_inputs)

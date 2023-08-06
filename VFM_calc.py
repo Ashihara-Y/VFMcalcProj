@@ -13,10 +13,10 @@ from flet.plotly_chart import PlotlyChart
 import tempfile
 import pathlib
 
-savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
+#savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
 
-filename01 = savedir / 'res_PSC_LCC.joblib'
-filename02 = savedir / 'results.joblib'
+#filename01 = savedir / 'res_PSC_LCC.joblib'
+#filename02 = savedir / 'results.joblib'
 
 class PSC_LCC(ft.UserControl):
 
@@ -97,7 +97,7 @@ class PSC_LCC(ft.UserControl):
             "discount_rate":discount_rate
         }
 
-        joblib.dump(res_PSC_LCC, filename01) 
+        joblib.dump(res_PSC_LCC, 'res_PSC_LCC.joblib') 
 
         self.b = ft.ElevatedButton(text="計算", on_click=self.calc_VFM)
         return ft.Column([self.b ], scroll=ft.ScrollMode.ALWAYS)
@@ -168,4 +168,4 @@ class PSC_LCC(ft.UserControl):
             'VFM_percent': VFM_percent
         }
 
-        joblib.dump(results, filename02)
+        joblib.dump(results, 'results.joblib')

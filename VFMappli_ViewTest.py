@@ -1,7 +1,7 @@
 import sys
 sys.dont_write_bytecode = True
 import flet as ft
-from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, Text, View, colors, icons, padding, js)
+from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, Text, View, colors, icons, padding)
 from Flet_inputDialogTest_class import Initial_Inputs
 from Final_Inputs import Final_Inputs
 from VFM_calc import PSC_LCC
