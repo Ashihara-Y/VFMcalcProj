@@ -9,10 +9,7 @@ import pathlib
 savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
 filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
 
-
 class Final_Inputs(ft.UserControl):
-
-    initial_inputs = ft.page.session.get('initial_inputs') #Paheを指定する必要がある！Pathlibを使うか？
 
     def __init__(self):
         super().__init__()
@@ -20,6 +17,8 @@ class Final_Inputs(ft.UserControl):
         self.width = 500
         self.height = 800
         self.resizable = True
+
+        self.initial_inputs = ft.joblib.load('initial_inputs') #Paheを指定する必要がある！Pathlibを使うか？
 
     def build(self):
         self.tx1 = ft.Text(str(self.initial_inputs['mgmt_type']))
@@ -113,5 +112,5 @@ class Final_Inputs(ft.UserControl):
             }
         
         joblib.dump(final_inputs, filename)
-        ft.page.client_storage.set("final_inputs", final_inputs)
-        ft.page.save_state(final_inputs)
+        #ft.page.client_storage.set("final_inputs", final_inputs)
+        #ft.page.save_state(final_inputs)

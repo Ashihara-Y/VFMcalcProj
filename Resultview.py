@@ -11,8 +11,6 @@ from flet.plotly_chart import PlotlyChart
 
 class Results(ft.UserControl):
 
-    results = joblib.load('results.joblib')
-
     def __init__(self):
         super().__init__()
         self.title = "結果"
@@ -20,8 +18,9 @@ class Results(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-    def build(self):
+        self.results = joblib.load('results.joblib')
 
+    def build(self):
         #self.b = ft.ElevatedButton(text="結果表示", on_click=self.button_clicked)
         #self.b2 = ft.ElevatedButton(text="結果表示2", on_click=self.view_make)
         df_PV_cf = self.results['df_PV_cf']
