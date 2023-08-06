@@ -36,22 +36,22 @@ def main(page: ft.Page):
                     [
                         ft.AppBar(title=ft.Text("入力確認")),
                         Final_Inputs(),
-                        ft.ElevatedButton("計算へ", on_click=open_calculation),
+                        ft.ElevatedButton("計算へ", on_click=open_save_results),
                     ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
-        elif page.route == "/calculation":
-            #page.views.clear()
-            page.views.append(
-                ft.View(
-                    "/calculation",
-                    [
-                        ft.AppBar(title=ft.Text("計算")),
-                        PSC_LCC(),
-                        ft.ElevatedButton("結果表示へ", on_click=open_save_results),
-                    ], scroll=ft.ScrollMode.ALWAYS
-                ),
-            )
+        #elif page.route == "/calculation":
+        #    #page.views.clear()
+        #    page.views.append(
+        #        ft.View(
+        #            "/calculation",
+        #            [
+        #                ft.AppBar(title=ft.Text("計算")),
+        #                PSC_LCC(),
+        #                ft.ElevatedButton("結果表示へ", on_click=open_save_results),
+        #            ], scroll=ft.ScrollMode.ALWAYS
+        #        ),
+        #    )
         elif page.route == "/save_results":
             #page.views.clear()
             page.views.append(
@@ -59,6 +59,9 @@ def main(page: ft.Page):
                     "/save_results",
                     [
                         ft.AppBar(title=ft.Text("結果表示")),
+                        #PSC_LCC(),
+                        #PSC_LCC.calc_PSC_LCC(self),
+                        #PSC_LCC.calc_VFM(self),
                         Results(),
                         #Results(self).view_make()),
                         ft.ElevatedButton("終了", on_click=open_initial_inputs),
@@ -76,8 +79,8 @@ def main(page: ft.Page):
     def open_final_inputs(e):
         page.go("/final_inputs")
 
-    def open_calculation(e):
-        page.go("/calculation")
+    #def open_calculation(e):
+    #    page.go("/calculation")
 
     def open_save_results(e):
         page.go("/save_results")

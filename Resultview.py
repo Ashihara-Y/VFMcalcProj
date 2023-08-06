@@ -4,7 +4,7 @@ import pandas as pd
 import flet as ft
 #import shelve as sv
 import joblib
-#from Final_Inputs import Final_Inputs
+from Final_Inputs import Final_Inputs
 from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
@@ -21,6 +21,7 @@ class Results(ft.UserControl):
         self.height = 800
         self.resizable = True
 
+        #self.final=inputs = joblib.load('final_inputs.joblib')
         self.results = joblib.load('results.joblib')
 
     def build(self):

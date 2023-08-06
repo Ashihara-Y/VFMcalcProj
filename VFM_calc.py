@@ -18,18 +18,18 @@ import pathlib
 #filename01 = savedir / 'res_PSC_LCC.joblib'
 #filename02 = savedir / 'results.joblib'
 
-class PSC_LCC(ft.UserControl):
+class PSC_LCC:
 
     def __init__(self):
-        super().__init__()
-        self.title = "計算"
-        self.width = 500
-        self.height = 200
-        self.resizable = True
+        #super().__init__()
+        #self.title = "計算"
+        #self.width = 500
+        #self.height = 200
+        #self.resizable = True
 
         self.final_inputs = joblib.load('final_inputs.joblib')
 
-    def build(self):
+    def calc_PSC_LCC(self):
         shisetsu_seibi_total = float(self.final_inputs['shisetsu_seibi'])
         ijikanri_unnei_total = float(self.final_inputs['ijikanri_unnei']) * (int(self.final_inputs['proj_years']) - int(self.final_inputs['const_years']))
         hojokin_kan = shisetsu_seibi_total * (float(self.final_inputs['hojo'])/100)
@@ -99,11 +99,11 @@ class PSC_LCC(ft.UserControl):
 
         joblib.dump(res_PSC_LCC, 'res_PSC_LCC.joblib') 
 
-        self.b = ft.ElevatedButton(text="計算", on_click=self.calc_VFM)
-        return ft.Column([self.b ], scroll=ft.ScrollMode.ALWAYS)
+        #self.b = ft.ElevatedButton(text="計算", on_click=self.calc_VFM)
+        #return ft.Column([self.b ], scroll=ft.ScrollMode.ALWAYS)
     
 #class VFM:
-    def calc_VFM(self,e):
+    def calc_VFM(self):
         res_PSC_LCC = joblib.load('res_PSC_LCC.joblib')
 
         LCC_net_expense = float(res_PSC_LCC['LCC_net_expense'])
