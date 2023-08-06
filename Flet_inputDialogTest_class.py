@@ -30,8 +30,8 @@ class Initial_Inputs(ft.UserControl):
             hint_text="管理者の種別を選択してください", 
             width=400,
             options=[
-                #ft.dropdown.Option("国"),
-                #ft.dropdown.Option("都道府県"),
+                ft.dropdown.Option("国"),
+                ft.dropdown.Option("都道府県"),
                 ft.dropdown.Option("市町村"),
             ],
         )

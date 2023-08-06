@@ -27,7 +27,7 @@ class PSC_LCC(ft.UserControl):
         self.height = 200
         self.resizable = True
 
-        self.final_inputs = joblib.load(savedir / 'final_inputs.joblib')
+        self.final_inputs = joblib.load('final_inputs.joblib')
 
     def build(self):
         shisetsu_seibi_total = float(self.final_inputs['shisetsu_seibi'])
@@ -104,7 +104,7 @@ class PSC_LCC(ft.UserControl):
     
 #class VFM:
     def calc_VFM(self,e):
-        res_PSC_LCC = joblib.load(savedir / 'res_PSC_LCC.joblib')
+        res_PSC_LCC = joblib.load('res_PSC_LCC.joblib')
 
         LCC_net_expense = float(res_PSC_LCC['LCC_net_expense'])
         PSC_net_expense_const_kk = float(res_PSC_LCC['PSC_net_expense_const_kk'])

@@ -22,7 +22,7 @@ def main(page: ft.Page):
                 "/",
                 
                 [   
-                    ft.AppBar(title=Text("初期入力")),
+                    ft.AppBar(title=ft.Text("初期入力")),
                     Initial_Inputs(),
                     ft.ElevatedButton("入力確認へ", on_click=open_final_inputs)
                 ], scroll=ft.ScrollMode.ALWAYS
@@ -31,12 +31,12 @@ def main(page: ft.Page):
         if page.route == "/final_inputs":
             #page.views.clear()
             page.views.append(
-                View(
+                ft.View(
                     "/final_inputs",
                     [
-                        AppBar(title=Text("入力確認")),
+                        ft.AppBar(title=ft.Text("入力確認")),
                         Final_Inputs(),
-                        ElevatedButton("計算へ", on_click=open_calculation),
+                        ft.ElevatedButton("計算へ", on_click=open_calculation),
                     ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
@@ -46,7 +46,7 @@ def main(page: ft.Page):
                 ft.View(
                     "/calculation",
                     [
-                        AppBar(title=Text("計算")),
+                        ft.AppBar(title=ft.Text("計算")),
                         PSC_LCC(),
                         ft.ElevatedButton("結果表示へ", on_click=open_save_results),
                     ], scroll=ft.ScrollMode.ALWAYS
