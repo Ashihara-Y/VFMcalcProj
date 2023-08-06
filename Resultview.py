@@ -11,7 +11,7 @@ from flet.plotly_chart import PlotlyChart
 from tempfile import mkdtemp
 import pathlib
 
-savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
+#savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
 class Results(ft.UserControl):
 
     def __init__(self):
@@ -21,7 +21,7 @@ class Results(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-        self.results = joblib.load(savedir / 'results.joblib')
+        self.results = joblib.load('results.joblib')
 
     def build(self):
         #self.b = ft.ElevatedButton(text="結果表示", on_click=self.button_clicked)

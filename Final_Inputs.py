@@ -18,7 +18,7 @@ class Final_Inputs(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-        self.initial_inputs = joblib.load('initial_inputs') #Paheを指定する必要がある！Pathlibを使うか？
+        self.initial_inputs = joblib.load('initial_inputs.joblib') #Paheを指定する必要がある！Pathlibを使うか？
 
     def build(self):
         self.tx1 = ft.Text(str(self.initial_inputs['mgmt_type']))
