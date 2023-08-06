@@ -21,7 +21,7 @@ class Initial_Inputs(ft.UserControl):
         super().__init__()
         self.title = "初期入力"
         self.width = 500
-        self.height = 500
+        self.height = 370
         self.resizable = True
 
     def build(self):
