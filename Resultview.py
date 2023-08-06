@@ -36,6 +36,9 @@ class Results(ft.UserControl):
         simpledt_dt = simpledt_df.datatable
         self.table = simpledt_dt
 
+        lv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True, horizontal=True)
+        lv.controls.append(self.table)
+
         PSC = self.results['PSC']
         LCC = self.results['LCC']
         VFM = self.results['VFM']
@@ -45,17 +48,17 @@ class Results(ft.UserControl):
         self.tx_VFM = ft.Text(VFM)
         self.tx_VFM_percent = ft.Text(VFM_percent)
 
-
         return ft.Card(
             content=ft.Container(
                 content=ft.Column(
                     controls=[
                         self.tx_PSC, self.tx_LCC, self.tx_VFM, self.tx_VFM_percent,
                         self.graph,
-                        self.table,
+                        lv,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                 ),
+                #content=lv,
                 width=1000,
                 padding=16,
             )
