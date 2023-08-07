@@ -2,14 +2,10 @@ import sys
 sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
-#import shelve as sv
 import joblib
-from Final_Inputs import Final_Inputs
 from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
-from tempfile import mkdtemp
-import pathlib
 
 #savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
 class Results(ft.UserControl):
