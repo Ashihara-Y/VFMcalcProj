@@ -1,17 +1,10 @@
 import sys
 sys.dont_write_bytecode = True
-#import os, sys, argparse, logging, time, datetime, re
-#from pathlib import Path
 import pandas as pd
 import flet as ft
-#import shelve as sv
 import joblib
-#from Final_Inputs import Final_Inputs
 from simpledt import DataFrame
 import plotly.express as px
-#from flet.plotly_chart import PlotlyChart
-#import tempfile
-#import pathlib
 
 
 def calc_PSC_LCC():
@@ -85,9 +78,6 @@ def calc_PSC_LCC():
     }
 
     joblib.dump(res_PSC_LCC, 'res_PSC_LCC.joblib') 
-
-        #self.b = ft.ElevatedButton(text="計算", on_click=self.calc_VFM)
-        #return ft.Column([self.b ], scroll=ft.ScrollMode.ALWAYS)
     
 #class VFM:
 def calc_VFM():
