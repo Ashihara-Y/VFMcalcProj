@@ -110,7 +110,7 @@ class Initial_Inputs(ft.UserControl):
         y,d = divmod(int(self.dd5.value), 5)
 
         if d > 2:
-            r_idx = str(y * 5 + 1) + '年'
+            r_idx = str((y+1) * 5) + '年'
         elif d <= 2:
             r_idx = str(y * 5) + '年'
 
