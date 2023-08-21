@@ -111,5 +111,5 @@ class Final_Inputs(ft.UserControl):
             }
         
         joblib.dump(final_inputs, 'final_inputs.joblib')
-        vc.calc_PSC_LCC()
-        vc.calc_VFM()
+        res_PSC_LCC = vc.calc_PSC_LCC(final_inputs)
+        vc.calc_VFM(res_PSC_LCC)

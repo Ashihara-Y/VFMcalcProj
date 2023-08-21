@@ -3,12 +3,12 @@ sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
 import joblib
-from simpledt import DataFrame
-import plotly.express as px
+#from simpledt import DataFrame
+#import plotly.express as px
 
 
-def calc_PSC_LCC():
-    final_inputs = joblib.load('final_inputs.joblib')
+def calc_PSC_LCC(final_inputs):
+    #final_inputs = joblib.load('final_inputs.joblib')
 
     shisetsu_seibi_total = float(final_inputs['shisetsu_seibi'])
     ijikanri_unnei_total = float(final_inputs['ijikanri_unnei']) * (int(final_inputs['proj_years']) - int(final_inputs['const_years']))
@@ -79,10 +79,11 @@ def calc_PSC_LCC():
     }
 
     joblib.dump(res_PSC_LCC, 'res_PSC_LCC.joblib') 
+    return res_PSC_LCC
     
 #class VFM:
-def calc_VFM():
-    res_PSC_LCC = joblib.load('res_PSC_LCC.joblib')
+def calc_VFM(res_PSC_LCC):
+    #res_PSC_LCC = joblib.load('res_PSC_LCC.joblib')
 
     LCC_net_expense = float(res_PSC_LCC['LCC_net_expense'])
     PSC_net_expense_const_kk = float(res_PSC_LCC['PSC_net_expense_const_kk'])
