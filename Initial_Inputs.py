@@ -105,10 +105,15 @@ class Initial_Inputs(ft.UserControl):
         JGB_rates_df = pd.read_csv('JGB_rates.csv', sep='\t', encoding='shift_jis', header=None, names=['year', 'rate'])
         #JRB_rates_df = pd.read_csv('JRB_rates.csv', sep='\t', encoding='shift_jis', header=None, names=['year', 'rate'])
 
-        year_select = ['10年', '10年', '10年', '15年', '15年', '15年', '15年', '15年', '20年', '20年', '20年', '20年', '20年', '25年', '25年', '25年', '25年', '25年', '30年', '30年', '30年']
+        #year_select = ['10年', '10年', '10年', '15年', '15年', '15年', '15年', '15年', '20年', '20年', '20年', '20年', '20年', '25年', '25年', '25年', '25年', '25年', '30年', '30年', '30年']
 
-        y = int(self.dd5.value) - 10
-        r_idx = year_select[y]
+        y,d = divmod(int(self.dd5.value), 5)
+
+        if d > 2:
+            r_idx = str(y * 5 + 1) + '年'
+        elif d <= 2:
+            r_idx = str(y * 5) + '年'
+
         r1 = float(JGB_rates_df[JGB_rates_df['year']==r_idx]['rate'].iloc[0])
         #r2 = float(JRB_rates_df[JRB_rates_df['year']==r_idx]['rate'].iloc[0])
         r2 = 0.729

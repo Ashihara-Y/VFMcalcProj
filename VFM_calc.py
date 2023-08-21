@@ -71,10 +71,11 @@ def calc_PSC_LCC():
         "LCC_net_expense": LCC_net_expense, 
         "PSC_net_expense_const_kk": PSC_net_expense_const_kk,
         "PSC_net_expense_ijikanri_kk": PSC_net_expense_ijikanri_kk,
-        "proj_years":int(final_inputs['proj_years']),
-        "const_years":int(final_inputs['const_years']),
-        "ijikanri_years":ijikanri_years,
-        "discount_rate":discount_rate
+        "proj_years": int(final_inputs['proj_years']),
+        "const_years": int(final_inputs['const_years']),
+        "ijikanri_years": ijikanri_years,
+        "discount_rate": discount_rate,
+        "rakusatsu_ritsu": rakusatsu_ritsu
     }
 
     joblib.dump(res_PSC_LCC, 'res_PSC_LCC.joblib') 

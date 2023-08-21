@@ -1,14 +1,10 @@
 import sys
 sys.dont_write_bytecode = True
 import flet as ft
-#from flet import (AppBar, ButtonStyle, Column, Container, ElevatedButton, Page, Text, View, colors, icons, padding, js)
 from Initial_Inputs import Initial_Inputs
 from Final_Inputs import Final_Inputs
-#from VFM_calc import PSC_LCC
 from Resultview import Results
 
-#initial_inputs = Initial_Inputs()
-#final_inputs = Final_Inputs()
 
 def main(page: ft.Page):
     page.title = "VFM計算アプリ"
@@ -40,18 +36,6 @@ def main(page: ft.Page):
                     ], scroll=ft.ScrollMode.ALWAYS
                 ),
             )
-        #elif page.route == "/calculation":
-        #    #page.views.clear()
-        #    page.views.append(
-        #        ft.View(
-        #            "/calculation",
-        #            [
-        #                ft.AppBar(title=ft.Text("計算")),
-        #                PSC_LCC(),
-        #                ft.ElevatedButton("結果表示へ", on_click=open_save_results),
-        #            ], scroll=ft.ScrollMode.ALWAYS
-        #        ),
-        #    )
         elif page.route == "/save_results":
             #page.views.clear()
             page.views.append(
