@@ -103,20 +103,20 @@ class Initial_Inputs(ft.UserControl):
     def button_clicked(self, e):        
         #jgb_rates.JGB_rates_conv()
         JGB_rates_df = pd.read_csv('JGB_rates.csv', sep='\t', encoding='shift_jis', header=None, names=['year', 'rate'])
-        #JRB_rates_df = pd.read_csv('JRB_rates.csv', sep='\t', encoding='shift_jis', header=None, names=['year', 'rate'])
+        JRB_rates_df = pd.read_csv('JRB_rates.csv', encoding='shift_jis', header=None, names=['year', 'rate'])
 
         #year_select = ['10年', '10年', '10年', '15年', '15年', '15年', '15年', '15年', '20年', '20年', '20年', '20年', '20年', '25年', '25年', '25年', '25年', '25年', '30年', '30年', '30年']
 
         y,d = divmod(int(self.dd5.value), 5)
 
         if d > 2:
-            r_idx = str((y+1) * 5) + '年'
+            r_idx = str((y+1) * 5)
         elif d <= 2:
-            r_idx = str(y * 5) + '年'
+            r_idx = str(y * 5)
 
-        r1 = float(JGB_rates_df[JGB_rates_df['year']==r_idx]['rate'].iloc[0])
-        #r2 = float(JRB_rates_df[JRB_rates_df['year']==r_idx]['rate'].iloc[0])
-        r2 = 0.729
+        r1 = float(JGB_rates_df[JGB_rates_df['year'].replace('年','')==r_idx]['rate'].iloc[0])
+        r2 = float(JRB_rates_df[JRB_rates_df['year'].replace('年','')==r_idx]['rate'].iloc[0])
+        #r2 = 0.729
         
         if self.dd1.value == '国':
             zei_modori = 27.8
@@ -151,8 +151,8 @@ class Initial_Inputs(ft.UserControl):
             "kitai_bukka":2.0,
             "shisetsu_seibi":2000.0,
             "ijikanri_unnei":50.0,
-            "reduc_shisetsu":90.0,
-            "reduc_ijikanri":90.0,
+            "reduc_shisetsu":10.0,
+            "reduc_ijikanri":10.0,
             "pre_kyoukouka":False,
             "kisai_jutou":float(kisai_jutou),
             "kisai_koufu":float(kisai_koufu),

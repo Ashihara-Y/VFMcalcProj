@@ -20,8 +20,8 @@ def calc_PSC_LCC(final_inputs):
         ribarai_kan = 0
     koufukin_kan = (shisetsu_seibi_total - hojokin_kan) * float(final_inputs['kisai_jutou'])/100 * float(final_inputs['kisai_koufu'])/100
 
-    shisetsu_seibi_reduc_total = shisetsu_seibi_total * (float(final_inputs['reduc_shisetsu'])/100)
-    ijikanri_unnei_reduc_total = ijikanri_unnei_total * (float(final_inputs['reduc_ijikanri'])/100)
+    shisetsu_seibi_reduc_total = shisetsu_seibi_total * (1- float(final_inputs['reduc_shisetsu'])/100)
+    ijikanri_unnei_reduc_total = ijikanri_unnei_total * (1- float(final_inputs['reduc_ijikanri'])/100)
         
     SPC_capital = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total) * 0.1
     SPC_yobihi = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total) * 0.1
