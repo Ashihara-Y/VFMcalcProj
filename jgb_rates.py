@@ -35,7 +35,7 @@ def JGB_rates_conv():
 
     JGB_rate_5_30_12M_M = JGB_rate_5_30.resample('M').mean().tail(12).mean()
 
-    JGB_rate_5_30_12M_M.to_csv('JGB_rates.csv', sep='\t', encoding='shift_jis', mode='w', header=False)
+    JGB_rate_5_30_12M_M.to_csv('JGB_rates.csv', sep='\t', encoding='utf-8', mode='w', header=False)
 
 if __name__ == '__main__':
     JGB_rates_conv()

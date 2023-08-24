@@ -102,20 +102,23 @@ class Initial_Inputs(ft.UserControl):
     #@Memory.cache
     def button_clicked(self, e):        
         #jgb_rates.JGB_rates_conv()
-        JGB_rates_df = pd.read_csv('JGB_rates.csv', sep='\t', encoding='shift_jis', header=None, names=['year', 'rate'])
-        JRB_rates_df = pd.read_csv('JRB_rates.csv', encoding='shift_jis', header=None, names=['year', 'rate'])
+        JGB_rates_df = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None, names=['year', 'rate']).set_index('year')
+        JRB_rates_df = pd.read_csv('JRB_rates.csv', encoding='utf-8', header=None, names=['year', 'rate']).set_index('year')
+
+        #JG_r_df = JGB_rates_df['year'].apply(lambda x: x.replace('年', ''))
+        #JR_r_df = JRB_rates_df['year'].apply(lambda x: x.replace('年', ''))
 
         #year_select = ['10年', '10年', '10年', '15年', '15年', '15年', '15年', '15年', '20年', '20年', '20年', '20年', '20年', '25年', '25年', '25年', '25年', '25年', '30年', '30年', '30年']
 
-        y,d = divmod(int(self.dd5.value), 5)
+        y,d = divmod(int(self.dd4.value), 5)
 
         if d > 2:
-            r_idx = str((y+1) * 5)
+            r_idx = str((y+1) * 5) + '年'
         elif d <= 2:
-            r_idx = str(y * 5)
+            r_idx = str(y * 5) + '年'
 
-        r1 = float(JGB_rates_df[JGB_rates_df['year'].replace('年','')==r_idx]['rate'].iloc[0])
-        r2 = float(JRB_rates_df[JRB_rates_df['year'].replace('年','')==r_idx]['rate'].iloc[0])
+        r1 = JGB_rates_df.loc[r_idx].iloc[0]
+        r2 = JRB_rates_df.loc[r_idx].iloc[0]
         #r2 = 0.729
         
         if self.dd1.value == '国':
@@ -136,14 +139,14 @@ class Initial_Inputs(ft.UserControl):
         else:
             pass
         
-        initail_inputs = {
+        initial_inputs = {
             "mgmt_type":self.dd1.value, 
             "proj_ctgry":self.dd2.value, 
             "proj_type":self.dd3.value,
             "proj_years":self.dd4.value,
             "const_years":self.dd5.value,
-            "kijun_kinri":float(r1),
-            "chisai_kinri":float(r2),
+            "kijun_kinri":r1,
+            "chisai_kinri":r2,
             "zei_modori":float(zei_modori),
             "lg_spread":1.5,
             "zei_total":41.98,
@@ -161,7 +164,7 @@ class Initial_Inputs(ft.UserControl):
             "hojo":float(hojo),
             }
         
-        joblib.dump(initail_inputs, 'initial_inputs.joblib')
+        joblib.dump(initial_inputs, 'initial_inputs.joblib')
         #return initail_inputs#ft.page.ClientStorage.set("Initial_Inputs", initail_inputs)
         #ft.page.session.clear()
         #ft.page.session.set('initial_inputs', initail_inputs)

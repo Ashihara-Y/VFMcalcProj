@@ -40,12 +40,12 @@ class Final_Inputs(ft.UserControl):
         self.tx8 = ft.Text('施設整備費の削減率')
         self.sl5 = ft.Slider(
             value=float(self.initial_inputs['reduc_shisetsu']),
-            min=0, max=20, divisions=1, label="{value}%"
+            min=0, max=20, divisions=20, label="{value}%"
         )
         self.tx9 = ft.Text('維持管理運営費の削減率')
         self.sl6 = ft.Slider(
             value=float(self.initial_inputs['reduc_ijikanri']),
-            min=0, max=20, divisions=1, label="{value}%"
+            min=0, max=20, divisions=20, label="{value}%"
         )
         self.tx10 = ft.Text('起債充当率')
         self.sl7 = ft.Slider(
