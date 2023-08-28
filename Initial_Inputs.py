@@ -119,6 +119,11 @@ class Initial_Inputs(ft.UserControl):
         r1 = JGB_rates_df.loc[r_idx].iloc[0]
         r2 = JRB_rates_df.loc[r_idx].iloc[0]
 
+        kitai_bukka_j = pd.read_csv('BOJ_ExpInflRate_down.csv', encoding='shift-jis', skiprows=1).dropna().iloc[-1,1]
+        gonensai_rimawari = JGB_rates_df.loc['5年'].iloc[0]
+        #gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
+        kitai_bukka = gonensai_rimawari - kitai_bukka_j
+
         if self.dd1.value == "国":
             zei_modori = 27.8
             hojo = 0.0
@@ -149,7 +154,7 @@ class Initial_Inputs(ft.UserControl):
             "lg_spread": 1.5,
             "zei_total": 41.98,
             "growth": 0.0,
-            "kitai_bukka": 2.0,
+            "kitai_bukka": float(kitai_bukka),
             "shisetsu_seibi": 2000.0,
             "ijikanri_unnei": 50.0,
             "reduc_shisetsu": 10.0,
