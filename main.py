@@ -5,7 +5,7 @@ import flet as ft
 from Initial_Inputs import Initial_Inputs
 from Final_Inputs import Final_Inputs
 from Resultview import Results
-
+import save_results
 # from save_results import saveToDB
 
 
@@ -68,7 +68,7 @@ def main(page: ft.Page):
         page.go("/save_results")
 
     def open_initial_inputs(e):
-        # save_results.savToDB()
+        save_results.save_ddb()
         page.go("/")
 
     page.on_route_change = route_change
