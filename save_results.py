@@ -18,13 +18,13 @@ def save_ddb():
     calc_id = timeflake.random()
 
     df_PV_cf = results["df_PV_cf"].round(3)
-    LCC_dc_fctr = results["LCC_discount_factor"]
-    PSC_ct_dc_fctr = results["PSC_const_discount_factor"]
-    PSC_iji_dc_fctr = results["PSC_iji_discount_factor"] 
+    LCC_dc_fctr = pd.Series(results["LCC_discount_factor"])
+    PSC_ct_dc_fctr = pd.Series(results["PSC_const_discount_factor"])
+    PSC_iji_dc_fctr = pd.Series(results["PSC_iji_discount_factor"]) 
 
-    PSC_dc_fctr = pd.concat([PSC_ct_dc_fctr, PSC_iji_dc_fctr], axis=1).reset_index(drop=True)
-    PSC_LCC_dc_fctr = pd.concat([PSC_dc_fctr, LCC_dc_fctr], axis=0)
-    df_PV_cf_dc = pd.concat([df_PV_cf, PSC_LCC_dc_fctr], axis=0)
+    PSC_dc_fctr = pd.concat([PSC_ct_dc_fctr, PSC_iji_dc_fctr], axis=0).reset_index(drop=True)
+    PSC_LCC_dc_fctr = pd.concat([PSC_dc_fctr, LCC_dc_fctr], axis=1, ignore_index=True)
+    df_PV_cf_dc = pd.concat([df_PV_cf, PSC_LCC_dc_fctr], axis=1, ignore_index=True)
 
     user_id_c = []
     calc_id_c = []
@@ -52,11 +52,11 @@ def save_ddb():
     #dt_res_PSC_LCC = pa.Table.from_pandas(res_PSC_LCC)
 
     con = duckdb.connect('file' + str(calc_id) + '.db')
-    con.sql('DROP TABLE table_dccf')
+    con.sql('DROP TABLE IF EXISTS table_dccf')
     con.sql("CREATE TABLE table_dccf AS SELECT * FROM df_PV_cf_dc")
-    con.sql('DROP TABLE table_final_inputs')
+    con.sql('DROP TABLE IF EXISTS table_final_inputs')
     con.sql("CREATE TABLE table_final_inputs AS SELECT * FROM final_inputs")
-    con.sql('DROP TABLE table_res_PSC_LCC')
+    con.sql('DROP TABLE IF EXISTS table_res_PSC_LCC')
     con.sql("CREATE TABLE table_res_PSC_LCC AS SELECT * FROM res_PSC_LCC")
 
 #   

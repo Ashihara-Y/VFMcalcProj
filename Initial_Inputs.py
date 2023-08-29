@@ -3,7 +3,8 @@ import sys
 sys.dont_write_bytecode = True
 import flet as ft
 import joblib
-#from flet_core.session_storage import SessionStorage
+
+# from flet_core.session_storage import SessionStorage
 import pandas as pd
 import jgb_rates
 
@@ -103,9 +104,9 @@ class Initial_Inputs(ft.UserControl):
             names=["year", "rate"],
         ).set_index("year")
         JRB_rates_df = pd.read_csv(
-            "JRB_rates.csv", 
-            encoding="utf-8", 
-            header=None, 
+            "JRB_rates.csv",
+            encoding="utf-8",
+            header=None,
             names=["year", "rate"],
         ).set_index("year")
 
@@ -119,10 +120,14 @@ class Initial_Inputs(ft.UserControl):
         r1 = JGB_rates_df.loc[r_idx].iloc[0]
         r2 = JRB_rates_df.loc[r_idx].iloc[0]
 
-        kitai_bukka_j = pd.read_csv('BOJ_ExpInflRate_down.csv', encoding='shift-jis', skiprows=1).dropna().iloc[-1,1]
-        gonensai_rimawari = JGB_rates_df.loc['5年'].iloc[0]
-        #gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
-        kitai_bukka = gonensai_rimawari - kitai_bukka_j
+        kitai_bukka_j = (
+            pd.read_csv("BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
+            .dropna()
+            .iloc[-1, 1]
+        )
+        gonensai_rimawari = JGB_rates_df.loc["5年"].iloc[0]
+        # gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
+        kitai_bukka = kitai_bukka_j - gonensai_rimawari
 
         if self.dd1.value == "国":
             zei_modori = 27.8
@@ -168,5 +173,5 @@ class Initial_Inputs(ft.UserControl):
         }
 
         joblib.dump(initial_inputs, "initial_inputs.joblib")
-        #s_storage = SessionStorage
-        #ft.page.SessionStorage.set(key="initial_inputs", value=initial_inputs)
+        # s_storage = SessionStorage
+        # ft.page.SessionStorage.set(key="initial_inputs", value=initial_inputs)

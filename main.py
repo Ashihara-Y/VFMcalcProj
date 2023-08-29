@@ -35,7 +35,7 @@ def main(page: ft.Page):
                     [
                         ft.AppBar(title=ft.Text("入力確認")),
                         Final_Inputs(),
-                        ft.ElevatedButton("計算へ", on_click=open_save_results),
+                        ft.ElevatedButton("計算", on_click=open_save_results),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
