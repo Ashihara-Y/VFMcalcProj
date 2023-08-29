@@ -9,6 +9,9 @@ __pycache__/
 #Joblib
 *.joblib
 
+#duckdb file
+*.db
+
 # Distribution / packaging
 .Python
 build/

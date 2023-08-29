@@ -28,6 +28,9 @@ def save_ddb():
 
     user_id_c = []
     calc_id_c = []
+    datetime_c = []
+
+    dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
 
     for i in range(len(LCC_dc_fctr)):
         user_id_c.append(user_id)
@@ -35,22 +38,24 @@ def save_ddb():
     for i in range(len(LCC_dc_fctr)):
         calc_id_c.append(str(calc_id))
 
+    for i in range(len(LCC_dc_fctr)):
+        datetime_c.append(dtime)
+
     df_PV_cf_dc['user_id'] = user_id_c
     df_PV_cf_dc['calc_id'] = calc_id_c
-
-    #dt_PV_cf_dc = pa.Table.from_pandas(df_PV_cf_dc)
+    df_PV_cf_dc['datetime'] = datetime_c
     
     final_inputs = pd.DataFrame(final_inputs, index=[0])
     res_PSC_LCC = pd.DataFrame(res_PSC_LCC, index=[0])
 
     final_inputs['user_id'] = user_id
     final_inputs['calc_id'] = str(calc_id)
+    final_inputs['datetime'] = dtime
     res_PSC_LCC['user_id'] = user_id
     res_PSC_LCC['calc_id'] = str(calc_id)
+    res_PSC_LCC['datetime'] = dtime
 
-    #dt_final_inputs = pa.Table.from_pandas(final_inputs)
-    #dt_res_PSC_LCC = pa.Table.from_pandas(res_PSC_LCC)
-
+    
     con = duckdb.connect('file' + str(calc_id) + '.db')
     con.sql('DROP TABLE IF EXISTS table_dccf')
     con.sql("CREATE TABLE table_dccf AS SELECT * FROM df_PV_cf_dc")
