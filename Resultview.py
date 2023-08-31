@@ -169,7 +169,8 @@ class View_saved(ft.UserControl):
         LCC = round(float(self.results["LCC"]), 3)
         VFM = round(float(self.results["VFM"]), 3)
         VFM_percent = self.results["VFM_percent"]
-
+        
+        res_list = []
         saved_list = glob.glob('file*.db')
         for file in saved_list:
             con = duckdb.connect(file)
@@ -220,15 +221,11 @@ class View_saved(ft.UserControl):
                 columns={0:'値'}
             )
 
-            simpledt_df_finalinputs = DataFrame(res_final_inputs.transpose())
-            simpledt_df_PSC_LCC = DataFrame(res_PSC_LCC.transpose())
-            simpledt_df_dccf = DataFrame(res_dccf)
-            simpledt_dt_finalinputs = simpledt_df_finalinputs.datatable
-            simpledt_dt_PSC_LCC = simpledt_df_PSC_LCC.datatable
-            simpledt_dt_dccf = simpledt_df_dccf.datatable
-            #self.table = simpledt_dt
+            simpledt_df_res_detail = DataFrame(res_detail)
+            #simpledt_dt_res_detail = simpledt_df_res_detail.datatable
+            res_list.append(simpledt_dt_res_detail)
+            #リストから、各データフレームを取り出して、戦闘の日付を見出し用に読み込んで、順にDataTableに変換して表示していく。Datetimeを抽出して見出しにする。
 
-        self.final_inputs = joblib.load('final_inputs.joblib')
         self.res_PSC_LCC = joblib.load('res_PSC_LCC.joblib')
         self.results = joblib.load("results.joblib")
 
