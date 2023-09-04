@@ -32,13 +32,14 @@ class View_saved(ft.UserControl):
             con = duckdb.connect(file)
             timestamp = con.sql('select datetime from table_final_inputs').df().iloc[0,0].timestamp()
 
+            res_vfm = con.sql('select * from table_vfm_results').df().transpose()
             res_final_inputs = con.sql('select * from table_final_inputs').df().transpose()
             res_PSC_LCC = con.sql('select * from table_PSC_LCC').df()[['LCC_net_expense','PSC_net_expense_const_kk','PSC_net_expense_ijikanri_kk','discount_rate','rakusatsu_ritsu']].transpose()
             res_detail = pd.concat([res_final_inputs, res_PSC_LCC], axis=0)
-            res_detail['PSC'] = PSC
-            res_detail['LCC'] = LCC
-            res_detail['VFM'] = VFM
-            res_detail['VFM_percent'] = VFM_percent
+            res_detail['PSC'] = res_vfm['PSC']
+            res_detail['LCC'] = res_vfm['LCC']
+            res_detail['VFM'] = res_vfm['VFM']
+            res_detail['VFM_percent'] = res_vfm['VFM_percent']
 
             res_detail = res_detail.reindex(['datetime','user_id','calc_id','PSC','LCC','VFM','VFM_percent','mgmt_type','proj_ctgry','proj_type','proj_years','const_years','shisetsu_seibi','ijikanri_unnei','reduc_shisetsu','reduc_ijikanri','hojo','kisai_jutou','kisai_koufu','SPC_keihi','zeimae_rieki','zei_total','zei_modori','PSC_net_expense_const_kk','PSC_net_expense_ijikanri_kk','rakusatsu_ritsu','LCC_net_expense','discount_rate','kijun_kinri','kitai_bukka','lg_spread','chisai_kinri'])
             res_detail = res_detail.rename(index={
