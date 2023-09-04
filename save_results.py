@@ -45,6 +45,15 @@ def save_ddb():
     df_PV_cf_dc['calc_id'] = calc_id_c
     df_PV_cf_dc['datetime'] = datetime_c
     
+    vfm_results_psc = results["PSC"]
+    vfm_results_lcc = results["LCC"]
+    vfm_results_vfm = results["VFM"]
+    vfm_results_vfm_percent = results["VFM_percent"]
+    vfm_results = list[vfm_results_psc, vfm_results_lcc, vfm_results_vfm, vfm_results_vfm_percent]
+    vfm_results = pd.DataFrame(vfm_results, index=['PSC', 'LCC', 'VFM', 'VFM_percent'])
+    vfm_results['user_id'] = user_id
+    vfm_results['calc_id'] = str(calc_id)
+
     final_inputs = pd.DataFrame(final_inputs, index=[0])
     res_PSC_LCC = pd.DataFrame(res_PSC_LCC, index=[0])
 
@@ -54,7 +63,6 @@ def save_ddb():
     res_PSC_LCC['user_id'] = user_id
     res_PSC_LCC['calc_id'] = str(calc_id)
     res_PSC_LCC['datetime'] = dtime
-
     
     con = duckdb.connect('file' + str(calc_id) + '.db')
     con.sql('DROP TABLE IF EXISTS table_dccf')
@@ -63,5 +71,7 @@ def save_ddb():
     con.sql("CREATE TABLE table_final_inputs AS SELECT * FROM final_inputs")
     con.sql('DROP TABLE IF EXISTS table_res_PSC_LCC')
     con.sql("CREATE TABLE table_res_PSC_LCC AS SELECT * FROM res_PSC_LCC")
+    con.sql('DROP TABLE IF EXISTS table_vfm_results')
+    con.sql("CREATE TABLE table_vfm_results AS SELECT * FROM vfm_results")
 
 #   
