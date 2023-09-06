@@ -4,7 +4,8 @@ sys.dont_write_bytecode = True
 import flet as ft
 from Initial_Inputs import Initial_Inputs
 from Final_Inputs import Final_Inputs
-from Resultview import Results, Results_detail, View_saved
+from Resultview import Results, Results_detail
+from view_saved import View_saved
 import save_results
 # from save_results import saveToDB
 

@@ -24,23 +24,21 @@ class View_saved(ft.UserControl):
         #VFM = round(float(self.results["VFM"]), 3)
         #VFM_percent = self.results["VFM_percent"]
         
+        db_saved_list = glob.glob('file*.db')
+        db_saved_list.sort(reverse=True)
         self.res_summ_list = []
         self.res_detail_list = []
-
-        db_saved_list = glob.glob('file*.db')
+       
         for file in db_saved_list:
             con = duckdb.connect(file)
-            timestamp = con.sql('select datetime from table_final_inputs').df().iloc[0,0].timestamp()
+            #timestamp = con.sql('select datetime from table_final_inputs').df().iloc[0,0].timestamp()
 
-            res_vfm = con.sql('select * from table_vfm_results').df().transpose()
+            res_vfm = con.sql('select * from table_vfm_results').df()[['PSC','LCC','VFM','VFM_percent']].transpose()
             res_final_inputs = con.sql('select * from table_final_inputs').df().transpose()
-            res_PSC_LCC = con.sql('select * from table_PSC_LCC').df()[['LCC_net_expense','PSC_net_expense_const_kk','PSC_net_expense_ijikanri_kk','discount_rate','rakusatsu_ritsu']].transpose()
+            res_PSC_LCC = con.sql('select * from table_res_PSC_LCC').df()[['LCC_net_expense','PSC_net_expense_const_kk','PSC_net_expense_ijikanri_kk','discount_rate','rakusatsu_ritsu']].transpose()
             res_detail = pd.concat([res_final_inputs, res_PSC_LCC], axis=0)
-            res_detail['PSC'] = res_vfm['PSC']
-            res_detail['LCC'] = res_vfm['LCC']
-            res_detail['VFM'] = res_vfm['VFM']
-            res_detail['VFM_percent'] = res_vfm['VFM_percent']
-
+            res_detail = pd.concat([res_detail, res_vfm], axis=0)
+        
             res_detail = res_detail.reindex(['datetime','user_id','calc_id','PSC','LCC','VFM','VFM_percent','mgmt_type','proj_ctgry','proj_type','proj_years','const_years','shisetsu_seibi','ijikanri_unnei','reduc_shisetsu','reduc_ijikanri','hojo','kisai_jutou','kisai_koufu','SPC_keihi','zeimae_rieki','zei_total','zei_modori','PSC_net_expense_const_kk','PSC_net_expense_ijikanri_kk','rakusatsu_ritsu','LCC_net_expense','discount_rate','kijun_kinri','kitai_bukka','lg_spread','chisai_kinri'])
             res_detail = res_detail.rename(index={
                 'datetime':'作成日時',
@@ -77,51 +75,42 @@ class View_saved(ft.UserControl):
                 'chisai_kinri':'地方債利回り'},
                 columns={0:'値'}
             )
+            res_summary = res_detail.reindex(['作成日時','ユーザーID','計算結果ID','PSC現在価値総額','LCC現在価値総額','VFM金額','VFM(%)','施設管理者種別','事業類型','事業方式','事業期間','施設整備期間','施設整備費','維持管理運営費（年額）','削減率（施設整備費）','削減率（維持管理運営費）','割引率','基準金利','期待物価上昇率'])
 
             simpledt_df_res_detail = DataFrame(res_detail)
-            self.res_list.append(simpledt_df_res_detail)
+            simpledt_df_res_summary = DataFrame(res_summary)
+            self.res_detail_list.append(simpledt_df_res_detail)
+            self.res_summ_list.append(simpledt_df_res_summary)
             #リストから、各データフレームを取り出して、戦闘の日付を見出し用に読み込んで、順にDataTableに変換して表示していく。Datetimeを抽出して見出しにする。
 
-        self.res_PSC_LCC = joblib.load('res_PSC_LCC.joblib')
-        self.results = joblib.load("results.joblib")
+        #self.res_PSC_LCC = joblib.load('res_PSC_LCC.joblib')
+        #self.results = joblib.load("results.joblib")
 
     def build(self):
-        df_PV_cf = self.results["df_PV_cf"].round(3)
-        self.fig = px.bar(
-            df_PV_cf,
-            x=df_PV_cf.index,
-            y=["PSC_present_value", "LCC_present_value"],
-            barmode="group",
+
+        # Smmary table
+        #self.summ_table_list = []
+        summ_lv = ft.ListView(
+            expand=1, spacing=10, padding=20, auto_scroll=True, first_item_prototype=True, horizontal=True
         )
-        self.graph = PlotlyChart(self.fig, expand=True)
+        for df in self.res_summ_list:
+            table = df.datatable
+            #self.summ_table_list.append(table)
 
-        # to ft.datatable
-        self.table_list = []
-        simpledt_df = DataFrame(self.res_list.pop())
-        simpledt_dt = simpledt_df.datatable
-        self.table_list.append(simpledt_dt)
-
-        lv = ft.ListView(
-            expand=1, spacing=10, padding=20, auto_scroll=True
-        )
-        lv.controls.append(self.table)
-
-        PSC = round(float(self.results["PSC"]), 3)
-        LCC = round(float(self.results["LCC"]), 3)
-        VFM = round(float(self.results["VFM"]), 3)
-        VFM_percent = self.results["VFM_percent"]
+            summ_lv.controls.append(table)
+            summ_lv.controls.append(ft.VerticalDivider())
 
         return ft.Card(
             content=ft.Container(
                 content=ft.Column(
                     controls=[
-                        self.graph,
-                        lv,
+                        summ_lv,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                 ),
                 # content=lv,
-                width=1000,
+                width=1800,
+                height=1800,
                 padding=16,
             )
         )

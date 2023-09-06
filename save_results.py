@@ -1,4 +1,4 @@
-import sqlalchemy
+#import sqlalchemy
 import pandas as pd
 import joblib
 import flet as ft
@@ -8,7 +8,7 @@ import timeflake
 import datetime
 import duckdb
 import pyarrow as pa
-import pathlib
+#import pathlib
 
 def save_ddb():
     final_inputs = joblib.load("final_inputs.joblib")
@@ -49,8 +49,8 @@ def save_ddb():
     vfm_results_lcc = results["LCC"]
     vfm_results_vfm = results["VFM"]
     vfm_results_vfm_percent = results["VFM_percent"]
-    vfm_results = list[vfm_results_psc, vfm_results_lcc, vfm_results_vfm, vfm_results_vfm_percent]
-    vfm_results = pd.DataFrame(vfm_results, index=['PSC', 'LCC', 'VFM', 'VFM_percent'])
+    vfm_results = {'PSC':vfm_results_psc, 'LCC':vfm_results_lcc, 'VFM':vfm_results_vfm, 'VFM_percent':vfm_results_vfm_percent}
+    vfm_results = pd.DataFrame(vfm_results, index=[0])
     vfm_results['user_id'] = user_id
     vfm_results['calc_id'] = str(calc_id)
 
