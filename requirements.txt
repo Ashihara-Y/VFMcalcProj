@@ -1,0 +1,15 @@
+pandas
+pyarrow
+prefect
+fastapi
+flet
+simpledatatable
+kaleido
+plotly
+duckdb
+joblib
+jupyter
+playwright
+python-ulid
+timeflake
+pymupdf
