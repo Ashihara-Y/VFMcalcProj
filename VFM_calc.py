@@ -1,9 +1,9 @@
 import sys
-
 sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
 import joblib
+#import duckdb
 
 # from simpledt import DataFrame
 # import plotly.express as px
@@ -153,7 +153,7 @@ def calc_PSC_LCC(final_inputs):
         "rakusatsu_ritsu": rakusatsu_ritsu,
     }
 
-    joblib.dump(res_PSC_LCC, "res_PSC_LCC.joblib")
+    #joblib.dump(res_PSC_LCC, "res_PSC_LCC.joblib")
     return res_PSC_LCC
 
 
@@ -232,6 +232,7 @@ def calc_VFM(res_PSC_LCC):
     VFM_percent = VFM / PSC * 100
 
     results = {
+        "res_PSC_LCC": res_PSC_LCC,
         "df_PV_cf": df_PV_cf,
         "LCC_discount_factor": LCC_discount_factor,
         "PSC_const_discount_factor": PSC_const_discount_factor,

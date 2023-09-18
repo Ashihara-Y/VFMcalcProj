@@ -24,18 +24,17 @@ class View_saved(ft.UserControl):
         #VFM = round(float(self.results["VFM"]), 3)
         #VFM_percent = self.results["VFM_percent"]
         
-        db_saved_list = glob.glob('file*.db')
-        db_saved_list.sort(reverse=True)
+        save_res_list = glob.glob('save_results_*.joblib')
+        save_res_list.sort(reverse=True)
         self.res_summ_list = []
         self.res_detail_list = []
        
-        for file in db_saved_list:
-            con = duckdb.connect(file)
-            #timestamp = con.sql('select datetime from table_final_inputs').df().iloc[0,0].timestamp()
+        for file in save_res_list:
+            results = joblib.load(file)
 
-            res_vfm = con.sql('select * from table_vfm_results').df()[['PSC','LCC','VFM','VFM_percent']].transpose()
-            res_final_inputs = con.sql('select * from table_final_inputs').df().transpose()
-            res_PSC_LCC = con.sql('select * from table_res_PSC_LCC').df()[['LCC_net_expense','PSC_net_expense_const_kk','PSC_net_expense_ijikanri_kk','discount_rate','rakusatsu_ritsu']].transpose()
+            res_vfm = results['vfm_results'].transpose()
+            res_final_inputs = results['final_inputs'].transpose()
+            res_PSC_LCC = results['res_PSC_LCC'][['LCC_net_expense','PSC_net_expense_const_kk','PSC_net_expense_ijikanri_kk','discount_rate','rakusatsu_ritsu']].transpose()
             res_detail = pd.concat([res_final_inputs, res_PSC_LCC], axis=0)
             res_detail = pd.concat([res_detail, res_vfm], axis=0)
         
@@ -75,7 +74,7 @@ class View_saved(ft.UserControl):
                 'chisai_kinri':'地方債利回り'},
                 columns={0:'値'}
             )
-            res_summary = res_detail.reindex(['作成日時','ユーザーID','計算結果ID','PSC現在価値総額','LCC現在価値総額','VFM金額','VFM(%)','施設管理者種別','事業類型','事業方式','事業期間','施設整備期間','施設整備費','維持管理運営費（年額）','削減率（施設整備費）','削減率（維持管理運営費）','割引率','基準金利','期待物価上昇率'])
+            res_summary = res_detail.reindex(['作成日時','VFM(%)','施設管理者種別','事業類型','事業方式','事業期間','施設整備期間','削減率（施設整備費）','削減率（維持管理運営費）','割引率'])
 
             simpledt_df_res_detail = DataFrame(res_detail)
             simpledt_df_res_summary = DataFrame(res_summary)

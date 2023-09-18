@@ -1,12 +1,12 @@
 import sys
-
 sys.dont_write_bytecode = True
+import os
 import flet as ft
 import joblib
 import pandas as pd
-
-# import tempfile
-# import pathlib
+#import duckdb
+import tinydb
+from tinydb import TinyDB, Query
 import VFM_calc as vc
 
 # savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
@@ -21,9 +21,15 @@ class Final_Inputs(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-        self.initial_inputs = joblib.load(
-            "initial_inputs.joblib"
-        )  # Paheを指定する必要がある！Pathlibを使うか？
+        #self.initial_inputs = joblib.load(
+        #    "initial_inputs.joblib"
+        #)  
+        db = TinyDB("ii_db.json")
+        self.initial_inputs = db.all()[0]
+        #initial_inputs_df['年限'] = ['5年', '10年', '15年', '20年', '25年', '30年']
+        #initial_inputs_df.set_index('年限', inplace=True)
+        #initial_inputs_df = initial_inputs_dt.to_pandas()
+        #self.initial_inputs = initial_inputs_df
 
     def build(self):
         self.tx1 = ft.Text(str(self.initial_inputs["mgmt_type"]))
@@ -151,6 +157,11 @@ class Final_Inputs(ft.UserControl):
             "hojo": float(self.sl9.value),
         }
 
-        joblib.dump(final_inputs, "final_inputs.joblib")
+        if os.path.exists("fi_db.json"):
+            os.remove("fi_db.json")
+        db = TinyDB('fi_db.json')
+        db.insert(final_inputs)
+        #joblib.dump(final_inputs, "final_inputs.joblib")
+        
         res_PSC_LCC = vc.calc_PSC_LCC(final_inputs)
         vc.calc_VFM(res_PSC_LCC)
