@@ -1,5 +1,4 @@
 import sys
-
 sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
@@ -7,7 +6,7 @@ import joblib
 from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
-#import duckdb
+import sqlite3
 #import glob
 
 
@@ -20,7 +19,10 @@ class Results(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-        self.results = joblib.load("results.joblib")
+        con = sqlite3.connect("results.db")
+        self.res_PSC_LCC = pd.read_sql_query("SELECT * FROM res_PSC_LCC", con)
+        self.final_inputs = pd.read_sql_query("SELECT * FROM final_inputs", con)
+
 
     def build(self):
         df_PV_cf = self.results["df_PV_cf"].round(3)

@@ -8,7 +8,7 @@ import pandas as pd
 import tinydb
 from tinydb import TinyDB, Query
 import VFM_calc as vc
-
+import sqlite3
 # savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
 # filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
 
@@ -21,15 +21,8 @@ class Final_Inputs(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-        #self.initial_inputs = joblib.load(
-        #    "initial_inputs.joblib"
-        #)  
         db = TinyDB("ii_db.json")
         self.initial_inputs = db.all()[0]
-        #initial_inputs_df['年限'] = ['5年', '10年', '15年', '20年', '25年', '30年']
-        #initial_inputs_df.set_index('年限', inplace=True)
-        #initial_inputs_df = initial_inputs_dt.to_pandas()
-        #self.initial_inputs = initial_inputs_df
 
     def build(self):
         self.tx1 = ft.Text(str(self.initial_inputs["mgmt_type"]))
@@ -157,10 +150,12 @@ class Final_Inputs(ft.UserControl):
             "hojo": float(self.sl9.value),
         }
 
-        if os.path.exists("fi_db.json"):
-            os.remove("fi_db.json")
-        db = TinyDB('fi_db.json')
-        db.insert(final_inputs)
+        if os.path.exists("final_inputs.db"):
+            os.remove("final_inputs.db")
+        con = sqlite3.connect('fi_db.json')
+        df_fi = pd.DataFrame.from_dict(final_inputs)
+        df_fi.to_sql('final_inputs', con, if_exists='replace')
+        con.close()
         #joblib.dump(final_inputs, "final_inputs.joblib")
         
         res_PSC_LCC = vc.calc_PSC_LCC(final_inputs)

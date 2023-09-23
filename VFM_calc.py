@@ -3,7 +3,10 @@ sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
 import joblib
-#import duckdb
+import sqlite3
+from ulid import ULID
+import timeflake
+import save_results
 
 # from simpledt import DataFrame
 # import plotly.express as px
@@ -43,7 +46,8 @@ def calc_PSC_LCC(final_inputs):
         1 - float(final_inputs["reduc_ijikanri"]) / 100
     )
 
-    SPC_capital = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total) * 0.1
+    shihon_hiritsu = 0.1
+    SPC_capital = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total) * shihon_hiritsu
     SPC_yobihi = (shisetsu_seibi_reduc_total + ijikanri_unnei_reduc_total) * 0.1
     SPC_keihi_total = float(final_inputs["SPC_keihi"]) * int(final_inputs["proj_years"])
     if SPC_keihi_total == 0:
@@ -225,22 +229,42 @@ def calc_VFM(res_PSC_LCC):
 
     df_PV_cf = pd.concat([df_PSC, df_LCC["LCC_present_value"]], axis=1)
     df_PV_cf = df_PV_cf.set_axis(["PSC_present_value", "LCC_present_value"], axis=1)
+    df_PV_cf['LCC_discount_factor'] = LCC_discount_factor
+    PSC_discount_factor = PSC_const_discount_factor + PSC_iji_discount_factor
+    df_PV_cf['PSC_discount_factor'] = PSC_discount_factor
+
+    res_PSC_LCC_df = pd.DataFrame(res_PSC_LCC, index=[0])
 
     PSC = df_PV_cf["PSC_present_value"].sum()
     LCC = df_PV_cf["LCC_present_value"].sum()
     VFM = PSC - LCC
     VFM_percent = VFM / PSC * 100
+    PSC_LCC_VFM_df = pd.DataFrame(
+        {
+            "PSC": PSC,
+            "LCC": LCC,
+            "VFM": VFM,
+            "VFM_percent": VFM_percent,
+        },
+        index=[0],
+    )
 
     results = {
-        "res_PSC_LCC": res_PSC_LCC,
-        "df_PV_cf": df_PV_cf,
-        "LCC_discount_factor": LCC_discount_factor,
-        "PSC_const_discount_factor": PSC_const_discount_factor,
-        "PSC_iji_discount_factor": PSC_iji_discount_factor,
-        "PSC": PSC,
-        "LCC": LCC,
-        "VFM": VFM,
-        "VFM_percent": VFM_percent,
+        "res_PSC_LCC": res_PSC_LCC, #Dict to DataFrame to SQLite
+        "df_PV_cf": df_PV_cf, #DataFrame to SQLite
+        "LCC_discount_factor": LCC_discount_factor, #List to DataFrame to SQLite
+        "PSC_const_discount_factor": PSC_const_discount_factor, #List to DataFrame to SQLite
+        "PSC_iji_discount_factor": PSC_iji_discount_factor, #List to DataFrame to SQLite
+        "PSC": PSC, #Float to DataFrame to SQLite
+        "LCC": LCC, #Float to DataFrame to SQLite
+        "VFM": VFM, #Float to DataFrame to SQLite
+        "VFM_percent": VFM_percent, #Float to DataFrame to SQLite
     }
 
-    joblib.dump(results, "results.joblib")
+    con = sqlite3.connect("./results.db")
+    res_PSC_LCC_df.to_sql("res_PSC_LCC", con, if_exists="replace")
+    df_PV_cf.to_sql("df_PV_cf", con, if_exists="replace")
+    PSC_LCC_VFM_df.to_sql("PSC_LCC_VFM_df", con, if_exists="replace")
+    con.close()
+
+    save_results.save_ddb(results)    #joblib.dump(results, "results.joblib")

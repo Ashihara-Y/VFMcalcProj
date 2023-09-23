@@ -49,16 +49,16 @@ def main(page: ft.Page):
                     [
                         ft.AppBar(title=ft.Text("結果要約")),
                         Results(),
-                        ft.ElevatedButton("詳細", on_click=open_save_results),
+                        ft.ElevatedButton("結果一覧", on_click=open_saved_list),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
             )
-        elif page.route == "/save_results":
+        elif page.route == "":
             # page.views.clear()
             page.views.append(
                 ft.View(
-                    "/save_results",
+                    "",
                     [
                         ft.AppBar(title=ft.Text("結果詳細")),
                         Results_detail(),
