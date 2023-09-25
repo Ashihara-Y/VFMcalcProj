@@ -10,6 +10,8 @@ from flet.plotly_chart import PlotlyChart
 import sqlite3
 import glob
 import Resultview
+import tinydb
+from tinydb import TinyDB, Query
 
 
 class View_saved(ft.UserControl):
@@ -20,21 +22,25 @@ class View_saved(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-        save_res_list = glob.glob("save_results_*.db")
-        save_res_list.sort(reverse=True)
+        save_res_01_list = glob.glob("res_01_db_*.json")
+        save_res_01_list.sort(reverse=True)
+        
+        #save_res_02_list = glob.glob("res_02_db_*.json")
+        #save_res_02_list.sort(reverse=True)
+
         self.res_summ_list = []
         # self.res_detail_list = []
 
-        for file in save_res_list:
-            con = sqlite3.connect(file)
-            results = pd.read_sql_query('', con)
-
-            res_vfm = pd.read_sql_query('SELECT * FROM vfm_results', con)
-            res_final_inputs = pd.read_sql_query('SELECT * FROM final_inputs', con)
-            res_PSC_LCC = pd.read_sql_query("SELECT LCC_net_expense, PSC_net_expense_const_kk, PSC_net_expense_ijikanri_kk, discount_rate, rakusatsu_ritsu FROM res_PSC_LCC", con)
+        for file in save_res_01_list:
+            con = TinyDB(file)
+            res_detail = con.all()[0]
+            res_detail = pd.DataFrame(data=res_detail, index=[0])
+            #res_vfm = pd.read_sql_query('SELECT * FROM vfm_results', con)
+            #res_final_inputs = pd.read_sql_query('SELECT * FROM final_inputs', con)
+            #res_PSC_LCC = pd.read_sql_query("SELECT LCC_net_expense, PSC_net_expense_const_kk, PSC_net_expense_ijikanri_kk, discount_rate, rakusatsu_ritsu FROM res_PSC_LCC", con)
             
-            res_detail = pd.concat([res_final_inputs, res_PSC_LCC], axis=1)
-            res_detail = pd.concat([res_detail, res_vfm], axis=1)
+            #res_detail = pd.concat([res_final_inputs, res_PSC_LCC], axis=1)
+            #res_detail = pd.concat([res_detail, res_vfm], axis=1)
 
             res_detail = res_detail.reindex(
                 columns=[

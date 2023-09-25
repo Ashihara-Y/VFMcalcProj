@@ -4,7 +4,7 @@ import os
 import flet as ft
 import joblib
 import pandas as pd
-#import duckdb
+import duckdb
 import tinydb
 from tinydb import TinyDB, Query
 import VFM_calc as vc
@@ -150,12 +150,16 @@ class Final_Inputs(ft.UserControl):
             "hojo": float(self.sl9.value),
         }
 
-        if os.path.exists("final_inputs.db"):
-            os.remove("final_inputs.db")
-        con = sqlite3.connect('fi_db.json')
-        df_fi = pd.DataFrame.from_dict(final_inputs)
-        df_fi.to_sql('final_inputs', con, if_exists='replace')
-        con.close()
+        if os.path.exists("fi_db.json"):
+            os.remove("fi_db.json")
+        db = TinyDB('fi_db.json')
+        db.insert(final_inputs)#if os.path.exists("final_inputs.db"):
+        #    os.remove("final_inputs.db")
+        #con = sqlite3.connect('final_inputs.db')
+        #con = duckdb.connect('final_inputs.db')
+        #df_fi = pd.DataFrame(data=final_inputs, index=[1])
+        #con.sql('create table final_inputs as select * from df_fi')
+        #con.close()
         #joblib.dump(final_inputs, "final_inputs.joblib")
         
         res_PSC_LCC = vc.calc_PSC_LCC(final_inputs)

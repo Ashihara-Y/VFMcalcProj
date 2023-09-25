@@ -1,12 +1,16 @@
 import sys
 sys.dont_write_bytecode = True
+import os
 import pandas as pd
 import flet as ft
 import joblib
 import sqlite3
+import duckdb
+import tinydb
+from tinydb import TinyDB
 from ulid import ULID
 import timeflake
-import save_results
+import save_results as sr
 
 # from simpledt import DataFrame
 # import plotly.express as px
@@ -234,6 +238,15 @@ def calc_VFM(res_PSC_LCC):
     df_PV_cf['PSC_discount_factor'] = PSC_discount_factor
 
     res_PSC_LCC_df = pd.DataFrame(res_PSC_LCC, index=[0])
+    res_PSC_LCC_df = res_PSC_LCC_df.reindex(columns=[
+        "LCC_net_expense",
+        "PSC_net_expense_const_kk",
+        "PSC_net_expense_ijikanri_kk",
+        "ijikanri_years",
+        "discount_rate",
+        "rakusatsu_ritsu",
+        ]
+    )
 
     PSC = df_PV_cf["PSC_present_value"].sum()
     LCC = df_PV_cf["LCC_present_value"].sum()
@@ -250,21 +263,51 @@ def calc_VFM(res_PSC_LCC):
     )
 
     results = {
-        "res_PSC_LCC": res_PSC_LCC, #Dict to DataFrame to SQLite
-        "df_PV_cf": df_PV_cf, #DataFrame to SQLite
-        "LCC_discount_factor": LCC_discount_factor, #List to DataFrame to SQLite
-        "PSC_const_discount_factor": PSC_const_discount_factor, #List to DataFrame to SQLite
-        "PSC_iji_discount_factor": PSC_iji_discount_factor, #List to DataFrame to SQLite
-        "PSC": PSC, #Float to DataFrame to SQLite
-        "LCC": LCC, #Float to DataFrame to SQLite
-        "VFM": VFM, #Float to DataFrame to SQLite
-        "VFM_percent": VFM_percent, #Float to DataFrame to SQLite
+        "LCC_net_expense": format(res_PSC_LCC['LCC_net_expense'], '.3f'),
+        "PSC_net_expense_const_kk": format(res_PSC_LCC['PSC_net_expense_const_kk'], '.3f'),
+        "PSC_net_expense_ijikanri_kk": format(res_PSC_LCC['PSC_net_expense_ijikanri_kk'], '.3f'),
+        "ijikanri_years": res_PSC_LCC['ijikanri_years'],
+        "discount_rate": format(res_PSC_LCC['discount_rate'], '.3f'),
+        "rakusatsu_ritsu": res_PSC_LCC['rakusatsu_ritsu'],
+    #    "df_PV_cf": df_PV_cf, #DataFrame to SQLite
+    #    "LCC_discount_factor": LCC_discount_factor, #List to DataFrame to SQLite
+    #    "PSC_const_discount_factor": PSC_const_discount_factor, #List to DataFrame to SQLite
+    #    "PSC_iji_discount_factor": PSC_iji_discount_factor, #List to DataFrame to SQLite
+        "PSC": format(PSC, '.3f'), #Float to DataFrame to SQLite
+        "LCC": format(LCC, '.3f'), #Float to DataFrame to SQLite
+        "VFM": format(VFM, '.3f'), #Float to DataFrame to SQLite
+        "VFM_percent": format(VFM_percent, '.3f'), #Float to DataFrame to SQLite
     }
+    #res_PSC_LCC_df = pd.DataFrame(res_PSC_LCC, index=[0])
 
-    con = sqlite3.connect("./results.db")
-    res_PSC_LCC_df.to_sql("res_PSC_LCC", con, if_exists="replace")
-    df_PV_cf.to_sql("df_PV_cf", con, if_exists="replace")
-    PSC_LCC_VFM_df.to_sql("PSC_LCC_VFM_df", con, if_exists="replace")
-    con.close()
+    #results = {
+    #    "res_PSC_LCC": res_PSC_LCC_df,
+    #    "df_PV_cf": df_PV_cf,
+    #    "PSC_LCC_VFM_df": PSC_LCC_VFM_df,
+    #}
 
-    save_results.save_ddb(results)    #joblib.dump(results, "results.joblib")
+    #if os.path.exists("res_PSC_LCC_db.json"):
+    #    os.remove("res_PSC_LCC_db.json")
+    #res_PSC_LCC_db = TinyDB('res_PSC_LCC_db.json')
+    #res_PSC_LCC_db.insert(res_PSC_LCC_df.to_json())#if os.path.exists("final_inputs.db"):
+
+    #if os.path.exists("df_PV_cf_db.json"):
+    #    os.remove("df_PV_cf_db.json")
+    #df_PV_cf = TinyDB('df_PV_cf_db.json')
+    #df_PV_cf.insert(df_PV_cf.to_json())#if os.path.exists("final_inputs.db"):
+    
+    #if os.path.exists("PLV_db.json"):
+    #    os.remove("PLV_db.json")
+    #res_PLV_db = TinyDB('PLV_db.json')
+    #res_PLV_db.insert(PSC_LCC_VFM_df.to_json())#if os.path.exists("final_inputs.db"):
+
+    #if os.path.exists("./results.db"):
+    #    os.remove("./results.db")
+    #con = sqlite3.connect("./results.db")
+    #con = duckdb.connect("./results.db")
+    #con.sql('create tabel res_PSC_LCC as select * from res_PSC_LCC_df')
+    #con.sql('create tabel df_PV_cf as select * from df_PV_cf')
+    #con.sql('create tabel PSC_LCC_VFM_df as select * from PSC_LCC_VFM_df')
+    #con.close()
+
+    sr.save_ddb(results)    #joblib.dump(results, "results.joblib")

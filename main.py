@@ -1,5 +1,4 @@
 import sys
-
 sys.dont_write_bytecode = True
 import flet as ft
 from Initial_Inputs import Initial_Inputs
@@ -36,7 +35,7 @@ def main(page: ft.Page):
                     [
                         ft.AppBar(title=ft.Text("入力確認")),
                         Final_Inputs(),
-                        ft.ElevatedButton("計算", on_click=open_results_summary),
+                        ft.ElevatedButton("計算", on_click=open_saved_list),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
@@ -54,13 +53,13 @@ def main(page: ft.Page):
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
             )
-        elif page.route == "":
+        elif page.route == "/results_detail":
             # page.views.clear()
             page.views.append(
                 ft.View(
-                    "",
+                    "/results_detail",
                     [
-                        ft.AppBar(title=ft.Text("結果詳細")),
+                        ft.AppBar(title=ft.Text("結果詳細/修正")),
                         Results_detail(),
                         ft.ElevatedButton("保存結果", on_click=open_saved_list),
                     ],
@@ -73,9 +72,9 @@ def main(page: ft.Page):
                 ft.View(
                     "/view_saved",
                     [
-                        ft.AppBar(title=ft.Text("保存結果")),
+                        ft.AppBar(title=ft.Text("結果一覧")),
                         View_saved(),
-                        ft.ElevatedButton("終了", on_click=open_initial_inputs),
+                        ft.ElevatedButton("詳細・修正", on_click=open_results_detail),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
@@ -94,9 +93,9 @@ def main(page: ft.Page):
     def open_results_summary(e):
         page.go("/results_summary")
 
-    def open_save_results(e):
-        save_results.save_ddb()        
-        page.go("/save_results")
+    def open_results_detail(e):
+        Results_detail()        
+        page.go("/results_detail")
 
     def open_saved_list(e):
         page.go("/view_saved")
