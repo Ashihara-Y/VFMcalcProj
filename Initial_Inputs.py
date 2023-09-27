@@ -175,13 +175,7 @@ class Initial_Inputs(ft.UserControl):
             "hojo": float(hojo),
         }
 
-        #initial_inputs_sr = pd.DataFrame.from_dict(initial_inputs, orient="index")
-        #initial_inputs_df = pd.DataFrame(initial_inputs_sr, columns=['items'])
-        #initial_inputs_df = initial_inputs_df.transpose()
         if os.path.exists("ii_db.json"):
             os.remove("ii_db.json")
         db = TinyDB('ii_db.json')
         db.insert(initial_inputs)
-        #joblib.dump(initial_inputs, "initial_inputs.joblib")
-        # s_storage = SessionStorage
-        # ft.page.SessionStorage.set(key="initial_inputs", value=initial_inputs)

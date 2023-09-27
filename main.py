@@ -94,7 +94,7 @@ def main(page: ft.Page):
         page.go("/results_summary")
 
     def open_results_detail(e):
-        Results_detail()        
+        Results()        
         page.go("/results_detail")
 
     def open_saved_list(e):

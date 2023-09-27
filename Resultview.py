@@ -7,7 +7,9 @@ from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
 import sqlite3
-#import glob
+import tinydb
+from tinydb import TinyDB, Query
+import glob
 
 
 # savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
@@ -19,13 +21,17 @@ class Results(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-        con = sqlite3.connect("results.db")
-        self.res_PSC_LCC = pd.read_sql_query("SELECT * FROM res_PSC_LCC", con)
-        self.final_inputs = pd.read_sql_query("SELECT * FROM final_inputs", con)
+        con = TinyDB("selected_res.json")
+        self.dtime = con.all()[0]
+        con2 = TinyDB("res_02_db.json")
+        items = Query()
+        self.selected_results = con2.search(items('datetime') == self.dtime)
+        #self.res_PSC_LCC = pd.read_sql_query("SELECT * FROM res_PSC_LCC", con)
+        #self.final_inputs = pd.read_sql_query("SELECT * FROM final_inputs", con)
 
 
     def build(self):
-        df_PV_cf = self.results["df_PV_cf"].round(3)
+        df_PV_cf = self.selected_results["df_PV_cf"]
         self.fig = px.bar(
             df_PV_cf,
             x=df_PV_cf.index,
@@ -104,9 +110,11 @@ class Results_detail(ft.UserControl):
         self.height = 800
         self.resizable = True
 
-        self.final_inputs = joblib.load('final_inputs.joblib')
-        self.res_PSC_LCC = joblib.load('res_PSC_LCC.joblib')
-        self.results = joblib.load("results.joblib")
+        con = TinyDB('res_detail.json')
+        self.res_detail = con.all()
+        #self.final_inputs = joblib.load('final_inputs.joblib')　除書でｎ以下に渡して処理
+        #self.res_PSC_LCC = joblib.load('res_PSC_LCC.joblib')　ｄ以下ｄ使っていない
+        #self.results = joblib.load("results.joblib") DFでｎ以下に渡して処理
 
     def build(self):
         df_PV_cf = self.results["df_PV_cf"].round(3)

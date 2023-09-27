@@ -236,6 +236,7 @@ def calc_VFM(res_PSC_LCC):
     df_PV_cf['LCC_discount_factor'] = LCC_discount_factor
     PSC_discount_factor = PSC_const_discount_factor + PSC_iji_discount_factor
     df_PV_cf['PSC_discount_factor'] = PSC_discount_factor
+    dic_PV_cf = df_PV_cf.to_dict()
 
     res_PSC_LCC_df = pd.DataFrame(res_PSC_LCC, index=[0])
     res_PSC_LCC_df = res_PSC_LCC_df.reindex(columns=[
@@ -269,45 +270,12 @@ def calc_VFM(res_PSC_LCC):
         "ijikanri_years": res_PSC_LCC['ijikanri_years'],
         "discount_rate": format(res_PSC_LCC['discount_rate'], '.3f'),
         "rakusatsu_ritsu": res_PSC_LCC['rakusatsu_ritsu'],
-    #    "df_PV_cf": df_PV_cf, #DataFrame to SQLite
-    #    "LCC_discount_factor": LCC_discount_factor, #List to DataFrame to SQLite
-    #    "PSC_const_discount_factor": PSC_const_discount_factor, #List to DataFrame to SQLite
-    #    "PSC_iji_discount_factor": PSC_iji_discount_factor, #List to DataFrame to SQLite
         "PSC": format(PSC, '.3f'), #Float to DataFrame to SQLite
         "LCC": format(LCC, '.3f'), #Float to DataFrame to SQLite
         "VFM": format(VFM, '.3f'), #Float to DataFrame to SQLite
         "VFM_percent": format(VFM_percent, '.3f'), #Float to DataFrame to SQLite
     }
-    #res_PSC_LCC_df = pd.DataFrame(res_PSC_LCC, index=[0])
 
-    #results = {
-    #    "res_PSC_LCC": res_PSC_LCC_df,
-    #    "df_PV_cf": df_PV_cf,
-    #    "PSC_LCC_VFM_df": PSC_LCC_VFM_df,
-    #}
+    results_2 =  dic_PV_cf
 
-    #if os.path.exists("res_PSC_LCC_db.json"):
-    #    os.remove("res_PSC_LCC_db.json")
-    #res_PSC_LCC_db = TinyDB('res_PSC_LCC_db.json')
-    #res_PSC_LCC_db.insert(res_PSC_LCC_df.to_json())#if os.path.exists("final_inputs.db"):
-
-    #if os.path.exists("df_PV_cf_db.json"):
-    #    os.remove("df_PV_cf_db.json")
-    #df_PV_cf = TinyDB('df_PV_cf_db.json')
-    #df_PV_cf.insert(df_PV_cf.to_json())#if os.path.exists("final_inputs.db"):
-    
-    #if os.path.exists("PLV_db.json"):
-    #    os.remove("PLV_db.json")
-    #res_PLV_db = TinyDB('PLV_db.json')
-    #res_PLV_db.insert(PSC_LCC_VFM_df.to_json())#if os.path.exists("final_inputs.db"):
-
-    #if os.path.exists("./results.db"):
-    #    os.remove("./results.db")
-    #con = sqlite3.connect("./results.db")
-    #con = duckdb.connect("./results.db")
-    #con.sql('create tabel res_PSC_LCC as select * from res_PSC_LCC_df')
-    #con.sql('create tabel df_PV_cf as select * from df_PV_cf')
-    #con.sql('create tabel PSC_LCC_VFM_df as select * from PSC_LCC_VFM_df')
-    #con.close()
-
-    sr.save_ddb(results)    #joblib.dump(results, "results.joblib")
+    sr.save_ddb(results, results_2)    #joblib.dump(results, "results.joblib")
