@@ -64,8 +64,11 @@ class View_saved(ft.UserControl):
             )
             self.res_summ_list.append(res_summary)
 
-    def button_clicked(self):
+    def button_clicked(self, e):
+        if os.path.exists("selected_res.json"):
+            os.remove("selected_res.json")
         con = TinyDB('selected_res.json')
+        con.truncate()
         dtime = {'selected_datetime': self.dtime}
         con.insert(dtime)
         Resultview.Results()

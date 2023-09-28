@@ -18,7 +18,7 @@ class Final_Inputs(ft.UserControl):
         super().__init__()
         self.title = "最終入力"
         self.width = 500
-        self.height = 800
+        self.height = 1000
         self.resizable = True
 
         db = TinyDB("ii_db.json")

@@ -22,83 +22,86 @@ class Results(ft.UserControl):
         self.resizable = True
 
         con = TinyDB("selected_res.json")
-        self.dtime = con.all()[0]
+        self.dtime = con.all()[0]['selected_datetime']
         con2 = TinyDB("res_02_db.json")
         items = Query()
-        self.selected_results = con2.search(items('datetime') == self.dtime)
+        self.selected_results_dict = con2.search(items.datetime == self.dtime)[0]
         #self.res_PSC_LCC = pd.read_sql_query("SELECT * FROM res_PSC_LCC", con)
         #self.final_inputs = pd.read_sql_query("SELECT * FROM final_inputs", con)
 
 
     def build(self):
-        df_PV_cf = self.selected_results["df_PV_cf"]
+        PSC_PV_dict = self.selected_results_dict['PSC_present_value']
+        LCC_PV_dict = self.selected_results_dict['LCC_present_value']
+        PSC_LCC_PV_df = pd.DataFrame([PSC_PV_dict, LCC_PV_dict], index=['PSC現在価値','LCC現在価値'])
+        #df_PV_cf = self.selected_results["df_PV_cf"]
         self.fig = px.bar(
-            df_PV_cf,
-            x=df_PV_cf.index,
-            y=["PSC_present_value", "LCC_present_value"],
+            PSC_LCC_PV_df.T,
+            x=PSC_LCC_PV_df.index,
+            y=PSC_LCC_PV_df.columns,
             barmode="group",
         )
         self.graph = PlotlyChart(self.fig, expand=True)
 
         # to ft.datatable
-        simpledt_df = DataFrame(df_PV_cf.transpose())
+        simpledt_df = DataFrame(PSC_LCC_PV_df)
         simpledt_dt = simpledt_df.datatable
         self.table = simpledt_dt
 
         lv = ft.ListView(
-            expand=1, spacing=10, padding=20, auto_scroll=True, horizontal=True
+            expand=1, spacing=10, padding=10, auto_scroll=True, horizontal=False
         )
         lv.controls.append(self.table)
 
-        PSC = round(float(self.results["PSC"]), 3)
-        LCC = round(float(self.results["LCC"]), 3)
-        VFM = round(float(self.results["VFM"]), 3)
-        VFM_percent = self.results["VFM_percent"]
-        self.tx_PSC = ft.Text("PSC(百万円): ", style=ft.TextThemeStyle.HEADLINE_SMALL)
-        self.v_PSC = ft.Text(PSC, style=ft.TextThemeStyle.HEADLINE_SMALL)
-        self.tx_LCC = ft.Text("LCC(百万円): ", style=ft.TextThemeStyle.HEADLINE_SMALL)
-        self.v_LCC = ft.Text(LCC, style=ft.TextThemeStyle.HEADLINE_SMALL)
-        self.tx_VFM = ft.Text("VFM(百万円): ", style=ft.TextThemeStyle.HEADLINE_SMALL)
-        self.v_VFM = ft.Text(VFM, style=ft.TextThemeStyle.HEADLINE_SMALL)
-        self.tx_VFM_percent = ft.Text(
-            "VFM(%): ", style=ft.TextThemeStyle.HEADLINE_SMALL
-        )
-        self.v_VFM_percent = ft.Text(
-            VFM_percent, style=ft.TextThemeStyle.HEADLINE_SMALL
-        )
+        #PSC = round(float(self.results["PSC"]), 3)
+        #LCC = round(float(self.results["LCC"]), 3)
+        #VFM = round(float(self.results["VFM"]), 3)
+        #VFM_percent = self.results["VFM_percent"]
+        #self.tx_PSC = ft.Text("PSC(百万円): ", style=ft.TextThemeStyle.HEADLINE_SMALL)
+        #self.v_PSC = ft.Text(PSC, style=ft.TextThemeStyle.HEADLINE_SMALL)
+        #self.tx_LCC = ft.Text("LCC(百万円): ", style=ft.TextThemeStyle.HEADLINE_SMALL)
+        #self.v_LCC = ft.Text(LCC, style=ft.TextThemeStyle.HEADLINE_SMALL)
+        #self.tx_VFM = ft.Text("VFM(百万円): ", style=ft.TextThemeStyle.HEADLINE_SMALL)
+        #self.v_VFM = ft.Text(VFM, style=ft.TextThemeStyle.HEADLINE_SMALL)
+        #self.tx_VFM_percent = ft.Text(
+        #    "VFM(%): ", style=ft.TextThemeStyle.HEADLINE_SMALL
+        #)
+        #self.v_VFM_percent = ft.Text(
+        #    VFM_percent, style=ft.TextThemeStyle.HEADLINE_SMALL
+        #)
 
         return ft.Card(
             content=ft.Container(
                 content=ft.Column(
                     controls=[
-                        ft.Column(
-                            [
-                                ft.Row(
-                                    [self.tx_PSC, self.v_PSC],
-                                    alignment=ft.MainAxisAlignment.START,
-                                ),
-                                ft.Row(
-                                    [self.tx_LCC, self.v_LCC],
-                                    alignment=ft.MainAxisAlignment.START,
-                                ),
-                                ft.Row(
-                                    [self.tx_VFM, self.v_VFM],
-                                    alignment=ft.MainAxisAlignment.START,
-                                ),
-                                ft.Row(
-                                    [self.tx_VFM_percent, self.v_VFM_percent],
-                                    alignment=ft.MainAxisAlignment.START,
-                                ),
-                            ]
-                        ),
+                        #ft.Column(
+                        #    [
+                        #        ft.Row(
+                        #            [self.tx_PSC, self.v_PSC],
+                        #            alignment=ft.MainAxisAlignment.START,
+                        #        ),
+                        #        ft.Row(
+                        #            [self.tx_LCC, self.v_LCC],
+                        #            alignment=ft.MainAxisAlignment.START,
+                        #        ),
+                        #        ft.Row(
+                        #            [self.tx_VFM, self.v_VFM],
+                        #            alignment=ft.MainAxisAlignment.START,
+                        #        ),
+                        #        ft.Row(
+                        #            [self.tx_VFM_percent, self.v_VFM_percent],
+                        #            alignment=ft.MainAxisAlignment.START,
+                        #        ),
+                        #    ]
+                        #),
                         self.graph,
                         lv,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                 ),
                 # content=lv,
-                width=1000,
-                padding=16,
+                width=1800,
+                padding=10,
             )
         )
 
