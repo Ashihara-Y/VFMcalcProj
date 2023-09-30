@@ -17,15 +17,17 @@ class Results(ft.UserControl):
     def __init__(self):
         super().__init__()
         self.title = "結果 要約"
-        self.width = 1000
-        self.height = 800
+        self.width = 1800
+        self.height = 1000
         self.resizable = True
 
         con = TinyDB("selected_res.json")
         self.dtime = con.all()[0]['selected_datetime']
+        con.close()
         con2 = TinyDB("res_02_db.json")
         items = Query()
         self.selected_results_dict = con2.search(items.datetime == self.dtime)[0]
+        con2.close()
         #self.res_PSC_LCC = pd.read_sql_query("SELECT * FROM res_PSC_LCC", con)
         #self.final_inputs = pd.read_sql_query("SELECT * FROM final_inputs", con)
 
@@ -36,7 +38,7 @@ class Results(ft.UserControl):
         PSC_LCC_PV_df = pd.DataFrame([PSC_PV_dict, LCC_PV_dict], index=['PSC現在価値','LCC現在価値'])
         #df_PV_cf = self.selected_results["df_PV_cf"]
         self.fig = px.bar(
-            PSC_LCC_PV_df.T,
+            PSC_LCC_PV_df,
             x=PSC_LCC_PV_df.index,
             y=PSC_LCC_PV_df.columns,
             barmode="group",
@@ -49,7 +51,7 @@ class Results(ft.UserControl):
         self.table = simpledt_dt
 
         lv = ft.ListView(
-            expand=1, spacing=10, padding=10, auto_scroll=True, horizontal=False
+            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=True
         )
         lv.controls.append(self.table)
 

@@ -60,7 +60,7 @@ def main(page: ft.Page):
                     "/results_detail",
                     [
                         ft.AppBar(title=ft.Text("結果詳細/修正")),
-                        Results_detail(),
+                        Results(),
                         ft.ElevatedButton("保存結果", on_click=open_saved_list),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
@@ -94,7 +94,7 @@ def main(page: ft.Page):
         page.go("/results_summary")
 
     def open_results_detail(e):
-        Results()        
+        #Results()        
         page.go("/results_detail")
 
     def open_saved_list(e):

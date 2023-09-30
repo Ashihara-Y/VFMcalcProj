@@ -31,6 +31,7 @@ class View_saved(ft.UserControl):
         for file in save_res_01_list:        
             con = TinyDB(file)
             res_detail = con.all()[0]
+            con.close()
             res_detail_df = pd.DataFrame(data=res_detail, index=[0])
             
             res_summary = res_detail_df.reindex(
@@ -71,7 +72,8 @@ class View_saved(ft.UserControl):
         con.truncate()
         dtime = {'selected_datetime': self.dtime}
         con.insert(dtime)
-        Resultview.Results()
+        con.close()
+        self.page.go("/results_detail")
 
     def build(self):
         summ_lv = ft.ListView(
