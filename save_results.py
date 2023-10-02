@@ -42,4 +42,6 @@ def save_ddb(results, results_2):
     df_PV_cf_db = TinyDB('res_02_db.json')
     df_PV_cf_db.insert(results_2)
     df_PV_cf_db.close()
+
+    #ft.Page.go(self, route="/view_saved")
         

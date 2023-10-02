@@ -35,24 +35,24 @@ def main(page: ft.Page):
                     [
                         ft.AppBar(title=ft.Text("入力確認")),
                         Final_Inputs(),
-                        ft.ElevatedButton("計算", on_click=open_saved_list),
+                        #ft.ElevatedButton("計算", on_click=open_saved_list),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
             )
-        elif page.route == "/results_summary":
-            # page.views.clear()
-            page.views.append(
-                ft.View(
-                    "/results_summary",
-                    [
-                        ft.AppBar(title=ft.Text("結果要約")),
-                        Results(),
-                        ft.ElevatedButton("結果一覧", on_click=open_saved_list),
-                    ],
-                    scroll=ft.ScrollMode.ALWAYS,
-                ),
-            )
+        #elif page.route == "/results_summary":
+        #    # page.views.clear()
+        #    page.views.append(
+        #        ft.View(
+        #            "/results_summary",
+        #            [
+        #                ft.AppBar(title=ft.Text("結果要約")),
+        #                Results(),
+        #                ft.ElevatedButton("結果一覧", on_click=open_saved_list),
+        #            ],
+        #            scroll=ft.ScrollMode.ALWAYS,
+        #        ),
+        #    )
         elif page.route == "/results_detail":
             # page.views.clear()
             page.views.append(

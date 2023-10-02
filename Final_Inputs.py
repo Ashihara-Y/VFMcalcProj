@@ -2,13 +2,14 @@ import sys
 sys.dont_write_bytecode = True
 import os
 import flet as ft
-import joblib
+#import joblib
 import pandas as pd
-import duckdb
+#import duckdb
 import tinydb
 from tinydb import TinyDB, Query
 import VFM_calc as vc
-import sqlite3
+import save_results as sr
+#import sqlite3
 # savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
 # filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
 
@@ -165,4 +166,6 @@ class Final_Inputs(ft.UserControl):
         #joblib.dump(final_inputs, "final_inputs.joblib")
         
         res_PSC_LCC = vc.calc_PSC_LCC(final_inputs)
-        vc.calc_VFM(res_PSC_LCC)
+        results, results_2 = vc.calc_VFM(res_PSC_LCC)
+        sr.save_ddb(results, results_2)
+        self.page.go("/view_saved")

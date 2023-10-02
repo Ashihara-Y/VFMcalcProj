@@ -279,4 +279,5 @@ def calc_VFM(res_PSC_LCC):
 
     results_2 =  dic_PV_cf
 
-    sr.save_ddb(results, results_2)    #joblib.dump(results, "results.joblib")
+    return results, results_2
+    #sr.save_ddb(results, results_2)    #joblib.dump(results, "results.joblib")
