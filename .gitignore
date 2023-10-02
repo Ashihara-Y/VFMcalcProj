@@ -12,6 +12,9 @@ __pycache__/
 #duckdb file
 *.db
 
+# TinyDB
+*.json
+
 # Distribution / packaging
 .Python
 build/

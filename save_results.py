@@ -17,6 +17,7 @@ def save_ddb(results, results_2):
     #fi_db = sqlite3.connect("final_inputs.db")
     fi_db = TinyDB('fi_db.json')
     fi_dic = fi_db.all()[0]
+    fi_db.close()
 
     results_dic = {**results, **fi_dic}
     
@@ -36,7 +37,9 @@ def save_ddb(results, results_2):
 
     res_df_db = TinyDB("res_01_db_" + str(calc_id) + ".json")
     res_df_db.insert(results_dic)
+    res_df_db.close()
 
     df_PV_cf_db = TinyDB('res_02_db.json')
     df_PV_cf_db.insert(results_2)
+    df_PV_cf_db.close()
         

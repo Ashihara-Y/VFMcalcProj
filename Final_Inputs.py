@@ -153,7 +153,9 @@ class Final_Inputs(ft.UserControl):
         if os.path.exists("fi_db.json"):
             os.remove("fi_db.json")
         db = TinyDB('fi_db.json')
-        db.insert(final_inputs)#if os.path.exists("final_inputs.db"):
+        db.insert(final_inputs)
+        db.close()
+        #if os.path.exists("final_inputs.db"):
         #    os.remove("final_inputs.db")
         #con = sqlite3.connect('final_inputs.db')
         #con = duckdb.connect('final_inputs.db')

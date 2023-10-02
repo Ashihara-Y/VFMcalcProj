@@ -179,3 +179,5 @@ class Initial_Inputs(ft.UserControl):
             os.remove("ii_db.json")
         db = TinyDB('ii_db.json')
         db.insert(initial_inputs)
+        db.close()
+        self.page.go("/final_inputs")

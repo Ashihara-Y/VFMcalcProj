@@ -204,6 +204,7 @@ def calc_VFM(res_PSC_LCC):
     df_LCC["LCC_present_value"] = (
         df_LCC["LCC_net_expense"] * df_LCC["LCC_discount_factor"]
     )
+    # 成長率、NWC, CAPEXは、現時点で省略、今後のバージョンで追加予定
 
     # PSC
     PSC_const_discount_factor = [
