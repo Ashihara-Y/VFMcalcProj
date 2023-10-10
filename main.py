@@ -6,6 +6,8 @@ from Final_Inputs import Final_Inputs
 from Resultview import Results
 from view_saved import View_saved
 import save_results
+#import logging
+
 # from save_results import saveToDB
 
 
@@ -73,7 +75,7 @@ def main(page: ft.Page):
                     "/view_saved",
                     [
                         ft.AppBar(title=ft.Text("結果一覧")),
-                        View_saved(),
+                        View_saved(e),
                         ft.ElevatedButton("詳細・修正", on_click=open_results_detail),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,

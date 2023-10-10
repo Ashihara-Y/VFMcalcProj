@@ -13,10 +13,12 @@ import glob
 import Resultview
 import tinydb
 from tinydb import TinyDB, Query
+import logging
+
 
 
 class View_saved(ft.UserControl):
-    def __init__(self):
+    def __init__(self,e):
         super().__init__()
         self.title = "結果リスト"
         self.width = 1800
@@ -65,17 +67,20 @@ class View_saved(ft.UserControl):
             )
             self.res_summ_list.append(res_summary)
 
-    def button_clicked(self, e):
+    def button_clicked(message: Message):
+        ft.Page.pubsub.subscribe()
         if os.path.exists("selected_res.json"):
             os.remove("selected_res.json")
         con = TinyDB('selected_res.json')
         con.truncate()
-        dtime = {'selected_datetime': self.dtime}
-        con.insert(dtime)
+        dtime = e.control.cells[0].content.value
+        print(dtime)
+        dtime_dic = {'selected_datetime': dtime}
+        con.insert(dtime_dic)
         con.close()
         self.page.go("/results_detail")
 
-    def build(self):
+    def build(self, e):
         summ_lv = ft.ListView(
             expand=True,
             spacing=10,
@@ -87,15 +92,16 @@ class View_saved(ft.UserControl):
         )
 
         for df in self.res_summ_list:
-            self.dtime = str(df['作成日時'].iloc[0])
+            #self.dtime = str(df['作成日時'].iloc[0])
             df = DataFrame(df)
             dr = df.datarows
             for i in dr:
-                #self.dtime = i[0].cells[0].content.value
+                dtime = i[0].cells[0].content.value
                 i.color=ft.colors.AMBER_50
-                i.on_long_press=self.button_clicked
                 i.selected=False
-                i.on_selectd_changed=self.button_clicked
+                message = {'selected_datetime': dtime}
+                i.on_long_press=self.button_clicked(message)
+                i.on_selectd_changed=self.button_clicked()
             table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
             table.width=1500

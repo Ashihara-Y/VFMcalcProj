@@ -96,7 +96,7 @@ class Final_Inputs(ft.UserControl):
             divisions=15,
             label="{value}百万円",
         )
-        self.b = ft.ElevatedButton(text="確認", on_click=self.button_clicked)
+        self.b = ft.ElevatedButton(text="確認・計算", on_click=self.button_clicked)
         return ft.Column(
             [
                 self.tx1,
