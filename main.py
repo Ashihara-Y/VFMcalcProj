@@ -75,7 +75,7 @@ def main(page: ft.Page):
                     "/view_saved",
                     [
                         ft.AppBar(title=ft.Text("結果一覧")),
-                        View_saved(e),
+                        View_saved(),
                         ft.ElevatedButton("詳細・修正", on_click=open_results_detail),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,

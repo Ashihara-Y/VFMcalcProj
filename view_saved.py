@@ -18,13 +18,14 @@ import logging
 
 
 class View_saved(ft.UserControl):
-    def __init__(self,e):
+    def __init__(self):
         super().__init__()
         self.title = "結果リスト"
         self.width = 1800
         self.height = 1800
         self.resizable = True
 
+        #page.pubsub.subscribe()
         save_res_01_list = glob.glob("res_01_db_*.json")
         save_res_01_list.sort(reverse=True)
         
@@ -67,20 +68,21 @@ class View_saved(ft.UserControl):
             )
             self.res_summ_list.append(res_summary)
 
-    def button_clicked(message: Message):
-        ft.Page.pubsub.subscribe()
+    def send_mess(self, e):
+        #ft.Page.pubsub.send_all(Message)
         if os.path.exists("selected_res.json"):
             os.remove("selected_res.json")
         con = TinyDB('selected_res.json')
         con.truncate()
-        dtime = e.control.cells[0].content.value
+        #dtime = e.control.cells[0].content.value
+        dtime = e.control.data
         print(dtime)
-        dtime_dic = {'selected_datetime': dtime}
+        dtime_dic = {'selected_datetime': str(dtime)}
         con.insert(dtime_dic)
         con.close()
         self.page.go("/results_detail")
 
-    def build(self, e):
+    def build(self):
         summ_lv = ft.ListView(
             expand=True,
             spacing=10,
@@ -96,17 +98,18 @@ class View_saved(ft.UserControl):
             df = DataFrame(df)
             dr = df.datarows
             for i in dr:
-                dtime = i[0].cells[0].content.value
+                dtime = i.cells[0].content.value
+                i.data = dtime
                 i.color=ft.colors.AMBER_50
                 i.selected=False
-                message = {'selected_datetime': dtime}
-                i.on_long_press=self.button_clicked(message)
-                i.on_selectd_changed=self.button_clicked()
+                #message = {'selected_datetime': dtime}
+                i.on_long_press=self.send_mess
+                i.on_selectd_changed=self.send_mess
             table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
             table.width=1500
             table.bg_color=ft.colors.AMBER_50
-            table.show_checkbox_column=True
+            table.show_checkbox_column=False
             table.on_select_all=True
             
             summ_lv.controls.append(table)
