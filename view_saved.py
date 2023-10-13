@@ -76,7 +76,7 @@ class View_saved(ft.UserControl):
         con.truncate()
         #dtime = e.control.cells[0].content.value
         dtime = e.control.data
-        print(dtime)
+        #print(dtime)
         dtime_dic = {'selected_datetime': str(dtime)}
         con.insert(dtime_dic)
         con.close()

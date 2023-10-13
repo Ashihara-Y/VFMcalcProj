@@ -36,11 +36,14 @@ class Results(ft.UserControl):
         PSC_PV_dict = self.selected_results_dict['PSC_present_value']
         LCC_PV_dict = self.selected_results_dict['LCC_present_value']
         PSC_LCC_PV_df = pd.DataFrame([PSC_PV_dict, LCC_PV_dict], index=['PSC現在価値','LCC現在価値'])
-        #df_PV_cf = self.selected_results["df_PV_cf"]
+        PSC_LCC_PV_df_t = PSC_LCC_PV_df.transpose()
+        df_col = PSC_LCC_PV_df.columns.to_list()
+        #period = [int(f)+1 for f in df_col]
         self.fig = px.bar(
-            PSC_LCC_PV_df,
-            x=PSC_LCC_PV_df.index,
-            y=PSC_LCC_PV_df.columns,
+            PSC_LCC_PV_df_t,
+            x=PSC_LCC_PV_df.columns,
+            y=PSC_LCC_PV_df.index,
+            #color=PSC_LCC_PV_df.columns,
             barmode="group",
         )
         self.graph = PlotlyChart(self.fig, expand=True)
