@@ -108,8 +108,10 @@ class View_saved(ft.UserControl):
             table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
             table.width=1500
-            table.bg_color=ft.colors.AMBER_50
-            table.show_checkbox_column=False
+            #table.bg_color=ft.colors.AMBER_50
+            table.show_checkbox_column=True
+            table.checkbox_column_width=100
+            table.checkbox_horizontal_margin=10
             table.on_select_all=True
             
             summ_lv.controls.append(table)

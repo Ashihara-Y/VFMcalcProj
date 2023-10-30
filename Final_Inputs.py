@@ -9,11 +9,12 @@ import tinydb
 from tinydb import TinyDB, Query
 import VFM_calc as vc
 import save_results as sr
+from reactive_text import ReactiveText
+from state import State, ReactiveState
 #import sqlite3
 # savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
 # filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
-
-
+text = State("")
 class Final_Inputs(ft.UserControl):
     def __init__(self):
         super().__init__()
@@ -24,6 +25,8 @@ class Final_Inputs(ft.UserControl):
 
         db = TinyDB("ii_db.json")
         self.initial_inputs = db.all()[0]
+
+        self.tx1 = ReactiveText(self.initial_inputs["mgmt_type"])
 
     def build(self):
         self.tx1 = ft.Text(str(self.initial_inputs["mgmt_type"]))
