@@ -43,6 +43,7 @@ class ReactiveState(Generic[T]):
     
 # なぜ、ここでグローバルな定義や関数が入るのか？インスタンス属性・メソッドではなく、クラス属性・メソッドか？
 # そうはいっても、このモジュールにはクラスが２つ定義されている。いずれのクラスにも反映される属性・メソッドなのか？
+# 以下の属性と関数は、Reactive_textでインポートされて使われている。ここに実装するのはなぜか？
 StateProperty = Union[T, State[T], ReactiveState[T]]
 
 def bind_props(props: list[StateProperty], bind_func: Callable[[], None]):
