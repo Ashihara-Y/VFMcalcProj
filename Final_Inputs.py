@@ -9,12 +9,14 @@ import tinydb
 from tinydb import TinyDB, Query
 import VFM_calc as vc
 import save_results as sr
-from reactive_text import ReactiveText
-from state import State, ReactiveState
+#from reactive_text import ReactiveText
+#from state import State, ReactiveState
+#from slider_change import slider_changed
+#import event_array
 #import sqlite3
 # savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
 # filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
-text = State("")
+
 class Final_Inputs(ft.UserControl):
     def __init__(self):
         super().__init__()
@@ -25,16 +27,40 @@ class Final_Inputs(ft.UserControl):
 
         db = TinyDB("ii_db.json")
         self.initial_inputs = db.all()[0]
+        
+        #t = ft.Text(      
+        #    size=50,
+        #    color=ft.colors.BLUE,
+        #    weight=ft.FontWeight.NORMAL,
+        #    font=ft.FontFamily.MONOSPACE,
+        #    )
+        
+        #self.sig_array = event_array.e_data_array
 
-        self.tx1 = ReactiveText(self.initial_inputs["mgmt_type"])
+    #def on_message(msg):
+                #self.tx1 = ReactiveText(self.initial_inputs["mgmt_type"])
+
+    #ft.page.pubsub.subscribe(on_message)#def slider_changed_sl3(e, t):
+    #    t_sl3 = t
+    #    t_sl3.value = str(e.control.value) 
+    #    ft.page.update()
+    #    return t_sl3
 
     def build(self):
+
+        #def slider_changed_sl3(e, t):
+        #    t_sl3 = t
+        #    t_sl3.value = str(e.control.value) 
+        #    ft.page.update()
+        #    return t_sl3
+               
         self.tx1 = ft.Text(str(self.initial_inputs["mgmt_type"]))
         self.tx2 = ft.Text(str(self.initial_inputs["proj_ctgry"]))
         self.tx3 = ft.Text(str(self.initial_inputs["proj_type"]))
         self.tx4 = ft.Text(str(self.initial_inputs["proj_years"]))
         self.tx5 = ft.Text(str(self.initial_inputs["const_years"]))
 
+        #self.tx6 = ft.Row(ft.Text("施設整備費："), t_sl)
         self.tx6 = ft.Text("施設整備費")
         self.sl3 = ft.Slider(
             value=float(self.initial_inputs["shisetsu_seibi"]),
@@ -42,7 +68,9 @@ class Final_Inputs(ft.UserControl):
             max=100000,
             divisions=10000,
             label="{value}百万円",
+            #on_change=slider_changed,
         )
+
         self.tx7 = ft.Text("維持管理運営費")
         self.sl4 = ft.Slider(
             value=float(self.initial_inputs["ijikanri_unnei"]),
