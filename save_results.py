@@ -8,8 +8,6 @@ import flet as ft
 from ulid import ULID
 import timeflake
 import datetime
-import duckdb
-import sqlite3
 import tinydb
 from tinydb import TinyDB, Query
 

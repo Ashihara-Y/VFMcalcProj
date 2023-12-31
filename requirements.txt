@@ -6,10 +6,10 @@ flet
 simpledatatable
 kaleido
 plotly
-duckdb
-joblib
 jupyter
 playwright
 python-ulid
 timeflake
 pymupdf
+tinydb
+glob

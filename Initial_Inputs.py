@@ -2,8 +2,6 @@ import sys
 sys.dont_write_bytecode = True
 import os
 import flet as ft
-import joblib
-import duckdb
 # from flet_core.session_storage import SessionStorage
 import pandas as pd
 import pyarrow as pa
