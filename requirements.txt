@@ -12,4 +12,3 @@ python-ulid
 timeflake
 pymupdf
 tinydb
-glob
