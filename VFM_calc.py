@@ -3,9 +3,6 @@ sys.dont_write_bytecode = True
 import os
 import pandas as pd
 import flet as ft
-import joblib
-import sqlite3
-import duckdb
 import tinydb
 from tinydb import TinyDB
 from ulid import ULID

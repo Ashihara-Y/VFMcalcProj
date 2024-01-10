@@ -2,11 +2,9 @@ import sys
 sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
-import joblib
 from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
-import sqlite3
 import tinydb
 from tinydb import TinyDB, Query
 import glob
