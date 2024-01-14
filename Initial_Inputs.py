@@ -44,17 +44,27 @@ class Initial_Inputs(ft.UserControl):
             hint_text="事業の類型を選択してください",
             width=400,
             options=[
-                ft.dropdown.Option("BTO"),
+                ft.dropdown.Option("BTO/DBO/RO"),
                 # ft.dropdown.Option("BOT"),
-                # ft.dropdown.Option("BT"),
+                ft.dropdown.Option("BT/DB"),
+                ft.dropdown.Option("O"),
             ],
         )
         self.dd4 = ft.Dropdown(
             label="事業期間",
-            hint_text="事業期間を選択してください",
+            hint_text="事業期間を選択してください(施設整備期間以上)",
             width=400,
             value="20",
             options=[
+                ft.dropdown.Option("1"),
+                ft.dropdown.Option("2"),
+                ft.dropdown.Option("3"),
+                ft.dropdown.Option("4"),
+                ft.dropdown.Option("5"),
+                ft.dropdown.Option("6"),
+                ft.dropdown.Option("7"),
+                ft.dropdown.Option("8"),
+                ft.dropdown.Option("9"),
                 ft.dropdown.Option("10"),
                 ft.dropdown.Option("11"),
                 ft.dropdown.Option("12"),
@@ -80,13 +90,15 @@ class Initial_Inputs(ft.UserControl):
         )
         self.dd5 = ft.Dropdown(
             label="施設整備期間",
-            hint_text="施設整備期間を選択してください",
+            hint_text="施設整備期間（Oの場合のみゼロ）を選択してください",
             width=400,
             value="1",
             options=[
+                ft.dropdown.Option("0"),
                 ft.dropdown.Option("1"),
                 ft.dropdown.Option("2"),
                 ft.dropdown.Option("3"),
+                ft.dropdown.Option("4"),
             ],
         )
         self.b = ft.ElevatedButton(text="選択", on_click=self.button_clicked)
@@ -97,6 +109,19 @@ class Initial_Inputs(ft.UserControl):
 
     def button_clicked(self, e):
         # jgb_rates.JGB_rates_conv()
+        if self.dd3.value == "BT/DB":
+            self.dd4.value = self.dd5.value
+        
+        if self.dd3.value == "O":
+            self.dd5.value = "0"
+
+        proj_years = int(self.dd4.value)
+        const_years = int(self.dd5.value)
+
+        if proj_years < const_years:
+            ft.page.go("/")
+
+
         JGB_rates_df = pd.read_csv(
             "JGB_rates.csv",
             sep="\t",
@@ -104,12 +129,13 @@ class Initial_Inputs(ft.UserControl):
             header=None,
             names=["year", "rate"],
         ).set_index("year")
+
         JRB_rates_df = pd.read_csv(
             "JRB_rates.csv",
             encoding="utf-8",
-            header=None,
-            names=["year", "rate"],
-        ).set_index("year")
+            sep='\t', 
+            names=[0,1,2,3,4,5], 
+            index_col=0)
 
         y, d = divmod(int(self.dd4.value), 5)
 
@@ -119,7 +145,8 @@ class Initial_Inputs(ft.UserControl):
             r_idx = str(y * 5) + "年"
 
         r1 = JGB_rates_df.loc[r_idx].iloc[0]
-        r2 = JRB_rates_df.loc[r_idx].iloc[0]
+
+        r2 = JRB_rates_df.loc[const_years][proj_years].iloc[0]
 
         kitai_bukka_j = (
             pd.read_csv("BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
