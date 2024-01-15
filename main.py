@@ -61,9 +61,10 @@ def main(page: ft.Page):
                 ft.View(
                     "/results_detail",
                     [
-                        ft.AppBar(title=ft.Text("結果詳細/修正")),
+                        ft.AppBar(title=ft.Text("結果詳細")),
                         Results(),
-                        ft.ElevatedButton("保存結果", on_click=open_saved_list),
+                        ft.ElevatedButton("結果リストへ戻る", on_click=open_saved_list),
+                        ft.ElevatedButton("この結果をExcelに書き出す", on_click=result_to_excel),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
@@ -76,7 +77,7 @@ def main(page: ft.Page):
                     [
                         ft.AppBar(title=ft.Text("結果一覧")),
                         View_saved(),
-                        ft.ElevatedButton("詳細・修正", on_click=open_results_detail),
+                        ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
@@ -104,6 +105,9 @@ def main(page: ft.Page):
 
     def open_initial_inputs(e):
         page.go("/")
+    
+    def result_to_excel(e):
+        Results.export_to_excel()
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop

@@ -43,7 +43,7 @@ class Results(ft.UserControl):
             y=PSC_LCC_PV_df.index,
             #color=PSC_LCC_PV_df.columns,
             barmode="group",
-        )
+        )    
         self.graph = PlotlyChart(self.fig, expand=True)
 
         # to ft.datatable
@@ -107,7 +107,8 @@ class Results(ft.UserControl):
                 padding=10,
             )
         )
-
+    def export_to_excel():
+        
 class Results_detail(ft.UserControl):
     def __init__(self):
         super().__init__()

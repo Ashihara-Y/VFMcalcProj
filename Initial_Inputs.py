@@ -146,7 +146,7 @@ class Initial_Inputs(ft.UserControl):
 
         r1 = JGB_rates_df.loc[r_idx].iloc[0]
 
-        r2 = JRB_rates_df.loc[const_years][proj_years].iloc[0]
+        r2 = JRB_rates_df.loc[proj_years][const_years]
 
         kitai_bukka_j = (
             pd.read_csv("BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
