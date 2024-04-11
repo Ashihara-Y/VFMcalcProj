@@ -9,10 +9,6 @@ import tinydb
 from tinydb import TinyDB, Query
 import VFM_calc as vc
 import save_results as sr
-#from reactive_text import ReactiveText
-#from state import State, ReactiveState
-#from slider_change import slider_changed
-#import event_array
 #import sqlite3
 # savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
 # filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
