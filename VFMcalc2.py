@@ -140,7 +140,7 @@ def inputs():
         "shisetsu_seibi_rakusatsu": float(shisetsu_seibi_rakusatsu),
         "ijikanri_unnei": float(initial_inputs["ijikanri_unnei"]),
         "ijikanri_unnei_yosantanka": float(ijikanri_unnei_yosantanka),
-        "": float(),
+        "ijikanri_unnei_rakusatsu": float(ijikanri_unnei_rakusatsu),
         "reduc_shisetsu": float(initial_inputs["reduc_shisetsu"]),
         "reduc_ijikanri": float(initial_inputs["reduc_ijikanri"]),
         "pre_kyoukouka": bool(initial_inputs["pre_kyoukouka"]),
