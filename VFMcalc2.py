@@ -112,7 +112,8 @@ def inputs():
 
     kappu_kinri_spread = 1.0
 
-    pre_kyoukouka_yosantanka = 1.0
+    pre_kyoukouka_yosantanka = 1.0 # 施設整備費全額が予算単価からの積み上げと設定。進めるための仮の設定
+
     if initial_inputs["pre_kyoukouka"] == True:
         shisetsu_seibi_yosantanka = initial_inputs["shisetsu_seibi"] * pre_kyoukouka_yosantanka
         shisetsu_seibi_rakusatsu = initial_inputs["shisetsu_seibi"] - shisetsu_seibi_yosantanka
@@ -121,6 +122,11 @@ def inputs():
 
     if initial_inputs["proj_ctgry"] == "サービス購入型": 
         riyouryoukin_shunyu = 0
+
+    shisetsu_seibi_ikkatsu = 0.5
+    shisetsu_seibi_kappu = 0.5
+
+    SPC_keihi_etc_atsukai = 1 # 1: サービス購入費として支払い　0:割賦金利に含めて支払い
 
     inputs = {
         "mgmt_type": initial_inputs["mgmt_type"],
@@ -149,7 +155,11 @@ def inputs():
         "zeimae_rieki": float(initial_inputs["zeimae_rieki"]),
         "SPC_keihi": float(initial_inputs["SPC_keihi"]),
         "riyouryoukin_shunyu": float(riyouryoukin_shunyu),
+        "kappu_kinri_spread": float(kappu_kinri_spread),
         "hojo": float(initial_inputs["hojo"]),
+        "shisetsu_seibi_ikkatsu": float(shisetsu_seibi_ikkatsu),
+        "shisetsu_seibi_kappu": float(shisetsu_seibi_kappu),
+        "SPC_keihi_etc_atsukai": int(SPC_keihi_etc_atsukai),
     }
 
     #db = TinyDB("ii_db.json")
@@ -166,6 +176,56 @@ def VFM_calc():
 
     db = TinyDB("inputs_db.json")
     inputs = db.all()[0]
+
+    schedule = [] # 各年度の末日
+    keika_nensuu = [] # 1〜40の整数定数 range(1, 41)で内包表記？
+    jigyou_kikan = [] # 施設整備期間、維持管理運営期間の２択
+    discount_factor = []
+
+    # PSC shuushi
+    hojokin = []
+    kouhukin = []
+    kisai_gaku = []
+    riyou_ryoukin = []
+    shiseki_seibihi = []
+    ijikannri_unneihi = []
+    monitoring_costs = []
+    kisai_shoukan_gaku = []
+    kisai_risoku_gaku = []
+
+    kanmin_ribarai_sa = []
+    risk_chousa_hi = []
+
+    # LCC shuushi
+    hojokin = []
+    kouhukin = []
+    kisai_gaku = []
+    zeishu = []
+    shiseki_seibihi_servicetaika_ikkatsu = []
+    shiseki_seibihi_servicetaika_kappuganpon = [] 
+    shiseki_seibihi_servicetaika_kappukinri = []
+    ijikannri_unneihi_servicetaika = []
+    monitoring_costs = []
+    SPC_hiyou = []
+    kisai_shoukan_gaku = []
+    kisai_risoku_gaku = []
+
+    # SPC shuushi
+    shiseki_seibihi_servicetaika_ikkatsu = []
+    shiseki_seibihi_servicetaika_kappuganpon = [] 
+    shiseki_seibihi_servicetaika_kappukinri = []
+    ijikannri_unneihi_servicetaika = []
+    SPC_hiyou_servicetaika = []
+    riyou_ryoukin = []
+    shisetsu_seibihi = []
+    ijikannri_unneihii = []
+    shiharai_risoku = []
+    SPC_setsuritsuhi = []
+    houjinzei_etc = []
+    kariire_ganpon_hensai = []
+
+
+
 
     PSC_const = []
     PSC_ijikanri = []
