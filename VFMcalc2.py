@@ -148,6 +148,7 @@ def inputs():
         "kisai_koufu": float(initial_inputs["kisai_koufu"]),
         "zeimae_rieki": float(initial_inputs["zeimae_rieki"]),
         "SPC_keihi": float(initial_inputs["SPC_keihi"]),
+        "riyouryoukin_shunyu": float(riyouryoukin_shunyu),
         "hojo": float(initial_inputs["hojo"]),
     }
 
