@@ -205,20 +205,19 @@ def VFM_calc(inputs):
     riyou_ryoukin = [0 for i in range(proj_years)]
     shiseki_seibihi = [0 for i in range(proj_years)]
 
+    shisetsu_seibi_kyoukoukasumi = inputs["shisetsu_seibi_rakusatsu"] + (inputs["shisetsu_seibi_yosantanka "] * inputs["rakusaturitsu"])
+
     for i in range(1,proj_years+1):
     if i == const_years:
         hojokin[i] = 
-        inputs["hojo"] * 
-        (inputs["shisetsu_seibi_rakusatsu"] + 
-         inputs["shisetsu_seibi_yosantanka "] * 
-         inputs["rakusaturitsu"]) # 施設整備費の扱い　PSC:競争の効果を反映, LCC:効率性を反映
+        inputs["hojo"] * shisetsu_seibi_kyoukoukasumi
 
         kouhukin[i] =
         inputs["kisai_kouhu"] *
         (inputs["shisetsu_seibi"] * 
          inputs["kisai_jutou"])        
 
-        kisai_gaku[i] = 
+        kisai_gaku[i] = inputs["kisai_jutou"] * inputs["shisetsu_seibi"] # 設備投入額
     else:
         pass
 
