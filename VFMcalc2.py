@@ -134,6 +134,7 @@ def inputs():
         "proj_type": initial_inputs["proj_type"],
         "proj_years": int(initial_inputs["proj_years"]),
         "const_years": int(initial_inputs["const_years"]),
+        "const_start_date": const_start_date,
         "kijun_kinri": float(initial_inputs["kijun_kinri"]),
         "chisai_kinri": float(initial_inputs["chisai_kinri"]),
         "zei_modori": float(initial_inputs["zei_modori"]),
@@ -171,11 +172,12 @@ def inputs():
     db.insert(inputs)
     db.close()
     #self.page.go("/final_inputs")
+    return inputs
 
-def VFM_calc():
+def VFM_calc(inputs):
 
-    db = TinyDB("inputs_db.json")
-    inputs = db.all()[0]
+    #db = TinyDB("inputs_db.json")
+    #inputs = db.all()[0]
 
     schedule = [] # 各年度の末日
     keika_nensuu = [] # 1〜40の整数定数 range(1, 41)で内包表記？
