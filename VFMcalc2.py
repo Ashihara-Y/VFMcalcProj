@@ -107,6 +107,8 @@ def inputs():
         "kisai_koufu": float(kisai_koufu),
         "zeimae_rieki": 8.5,
         "SPC_keihi": 15.0,
+        "SPC_Capital": 100.0,
+        "SPC_yobi": 100.0,
         "hojo": float(hojo),
     }
 
@@ -179,65 +181,95 @@ def VFM_calc(inputs):
     #db = TinyDB("inputs_db.json")
     #inputs = db.all()[0]
 
-    schedule = [] # 各年度の末日
-    keika_nensuu = [] # 1〜40の整数定数 range(1, 41)で内包表記？
-    jigyou_kikan = [] # 施設整備期間、維持管理運営期間の２択
-    discount_factor = []
-
-    # PSC shuushi
-    hojokin = []
-    kouhukin = []
-    kisai_gaku = []
-    riyou_ryoukin = []
-    shiseki_seibihi = []
-    ijikannri_unneihi = []
-    monitoring_costs = []
-    kisai_shoukan_gaku = []
-    kisai_risoku_gaku = []
-
-    kanmin_ribarai_sa = []
-    risk_chousa_hi = []
-
-    # LCC shuushi
-    hojokin = []
-    kouhukin = []
-    kisai_gaku = []
-    zeishu = []
-    shiseki_seibihi_servicetaika_ikkatsu = []
-    shiseki_seibihi_servicetaika_kappuganpon = [] 
-    shiseki_seibihi_servicetaika_kappukinri = []
-    ijikannri_unneihi_servicetaika = []
-    monitoring_costs = []
-    SPC_hiyou = []
-    kisai_shoukan_gaku = []
-    kisai_risoku_gaku = []
-
-    # SPC shuushi
-    shiseki_seibihi_servicetaika_ikkatsu = []
-    shiseki_seibihi_servicetaika_kappuganpon = [] 
-    shiseki_seibihi_servicetaika_kappukinri = []
-    ijikannri_unneihi_servicetaika = []
-    SPC_hiyou_servicetaika = []
-    riyou_ryoukin = []
-    shisetsu_seibihi = []
-    ijikannri_unneihii = []
-    shiharai_risoku = []
-    SPC_setsuritsuhi = []
-    houjinzei_etc = []
-    kariire_ganpon_hensai = []
-
-
-
-
-    PSC_const = []
-    PSC_ijikanri = []
-    LCC = []
-
+    start_year = inputs["const_start_date"].year
+    start_month = inputs["const_start_date"].month
+    if start_month < 4:
+        first_end_fy = datetime.date(start_year, 3, 31)
+    else:
+        first_end_fy = datetime.date(start_year + 1, 3, 31)
+    
+    discount_rate = inputs["kijun_kinri"] + inputs["kitai_bukka"]
     proj_years = inputs["proj_years"]
     const_years = inputs["const_years"]
-    ijikanri_years = proj_years - const_years 
+    ijikanri_years = proj_years - const_years
 
-    discount_rate = inputs["kijun_kinri"] + inputs["kitai_bukka"]
+    schedule = [first_end_fy.replace(year=first_end_fy.year+i) for i in range(0, proj_years)] # 各年度の末日
+    keika_nensuu = [int(x) for x in range(1, proj_years+1)] # 1〜40の整数定数 range(1, 41)で内包表記？
+    #jigyou_kikan = [] # 施設整備期間、維持管理運営期間の２択
+    discount_factor = [1/(1+discount_rate) ** i for i in range(0, proj_years)] # 割引係数
+
+    # PSC shuushi
+    hojokin = [0 for i in range(proj_years)]
+    kouhukin = [0 for i in range(proj_years)]
+    kisai_gaku = [0 for i in range(proj_years)]
+    riyou_ryoukin = [0 for i in range(proj_years)]
+    shiseki_seibihi = [0 for i in range(proj_years)]
+
+    for i in range(1,proj_years+1):
+    if i == const_years:
+        hojokin[i] = 
+        inputs["hojo"] * 
+        (inputs["shisetsu_seibi_rakusatsu"] + 
+         inputs["shisetsu_seibi_yosantanka "] * 
+         inputs["rakusaturitsu"]) # 施設整備費の扱い　PSC:競争の効果を反映, LCC:効率性を反映
+
+        kouhukin[i] =
+        inputs["kisai_kouhu"] *
+        (inputs["shisetsu_seibi"] * 
+         inputs["kisai_jutou"])        
+
+        kisai_gaku[i] =
+    else:
+        pass
+
+    ijikannri_unneihi = [0 for i in range(proj_years)]
+    monitoring_costs = [0 for i in range(proj_years)]
+    kisai_shoukan_gaku = [0 for i in range(proj_years)]
+    kisai_risoku_gaku = [0 for i in range(proj_years)]
+
+    kanmin_ribarai_sa = [0 for i in range(proj_years)]
+    risk_chousei_hi = [0 for i in range(proj_years)]
+
+    # LCC shuushi
+    hojokin = [0 for i in range(proj_years)]
+    kouhukin = [0 for i in range(proj_years)]
+    kisai_gaku = [0 for i in range(proj_years)]
+    zeishu = [0 for i in range(proj_years)]
+    shiseki_seibihi_servicetaika_ikkatsu = [0 for i in range(proj_years)]
+    shiseki_seibihi_servicetaika_kappuganpon = [0 for i in range(proj_years)] 
+    shiseki_seibihi_servicetaika_kappukinri = [0 for i in range(proj_years)]
+    ijikannri_unneihi_servicetaika = [0 for i in range(proj_years)]
+    monitoring_costs = [0 for i in range(proj_years)]
+    SPC_hiyou = [0 for i in range(proj_years)]
+    kisai_shoukan_gaku = [0 for i in range(proj_years)]
+    kisai_risoku_gaku = [0 for i in range(proj_years)]
+
+    # SPC shuushi
+    shiseki_seibihi_servicetaika_ikkatsu = [0 for i in range(proj_years)]
+    shiseki_seibihi_servicetaika_kappuganpon = [0 for i in range(proj_years)] 
+    shiseki_seibihi_servicetaika_kappukinri = [0 for i in range(proj_years)]
+    ijikannri_unneihi_servicetaika = [0 for i in range(proj_years)]
+    SPC_hiyou_servicetaika = [0 for i in range(proj_years)]
+    riyou_ryoukin = [0 for i in range(proj_years)]
+    shisetsu_seibihi = [0 for i in range(proj_years)]
+    ijikannri_unneihii = [0 for i in range(proj_years)]
+    shiharai_risoku = [0 for i in range(proj_years)]
+    SPC_setsuritsuhi = [0 for i in range(proj_years)]
+    houjinzei_etc = [0 for i in range(proj_years)]
+    kariire_ganpon_hensai = [0 for i in range(proj_years)]
+
+
+
+
+    #PSC_const = []
+    #PSC_ijikanri = []
+    #LCC = []
+
+    #proj_years = inputs["proj_years"]
+    #const_years = inputs["const_years"]
+    #ijikanri_years = proj_years - const_years 
+
+    #discount_rate = inputs["kijun_kinri"] + inputs["kitai_bukka"]
 
     for i in range(proj_years):
         LCC.append(LCC_net_expense / proj_years)
