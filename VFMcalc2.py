@@ -218,7 +218,7 @@ def VFM_calc(inputs):
         (inputs["shisetsu_seibi"] * 
          inputs["kisai_jutou"])        
 
-        kisai_gaku[i] =
+        kisai_gaku[i] = 
     else:
         pass
 
