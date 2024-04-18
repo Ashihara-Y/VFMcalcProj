@@ -203,21 +203,15 @@ def VFM_calc(inputs):
     kouhukin = [0 for i in range(proj_years)]
     kisai_gaku = [0 for i in range(proj_years)]
     riyou_ryoukin = [0 for i in range(proj_years)]
-    shiseki_seibihi = [0 for i in range(proj_years)]
+    shisetsu_seibihi = [0 for i in range(proj_years)]
 
-    shisetsu_seibi_kyoukoukasumi = inputs["shisetsu_seibi_rakusatsu"] + (inputs["shisetsu_seibi_yosantanka "] * inputs["rakusaturitsu"])
+    shisetsu_seibi_kyoukouka_sumi = inputs["shisetsu_seibi_rakusatsu"] + (inputs["shisetsu_seibi_yosantanka "] * inputs["rakusaturitsu"])
 
     for i in range(1,proj_years+1):
-    if i == const_years:
-        hojokin[i] = 
-        inputs["hojo"] * shisetsu_seibi_kyoukoukasumi
-
-        kouhukin[i] =
-        inputs["kisai_kouhu"] *
-        (inputs["shisetsu_seibi"] * 
-         inputs["kisai_jutou"])        
-
-        kisai_gaku[i] = inputs["kisai_jutou"] * inputs["shisetsu_seibi"] # 設備投入額
+        if i == const_years:
+            hojokin[i] = inputs["hojo"] * shisetsu_seibi_kyoukouka_sumi
+            kisai_gaku[i] = inputs["kisai_jutou"] * inputs["shisetsu_seibi"] # 設備投入額
+            kouhukin[i] = kisai_gaku[i] * inputs["kisai_kouhu"]        
     else:
         pass
 
