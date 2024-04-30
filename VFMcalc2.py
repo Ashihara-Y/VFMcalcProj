@@ -64,7 +64,7 @@ def inputs():
     # 地方債の償還期限が、事業期間と同じにしてあるが、別途設定する必要がある。
     # 返済繰り延べ年数についても、変数として、Final_inputsに入れておいた方が良い。
     sueoki_years = const_years
-    chihosai_shokankikan = proj_years
+    chisai_shokan_kikan = proj_years
 
     kitai_bukka_j = (
         pd.read_csv("BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
@@ -75,8 +75,8 @@ def inputs():
     # gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
     kitai_bukka = kitai_bukka_j - gonensai_rimawari
 
-    payment_schedule_ikkatsu = 0.5
-    payment_schedule_kappu = 0.5
+    shisetsu_seibi_paymentschedule_ikkatsu = 0.5
+    shisetsu_seibi_paymentschedule_kappu = 0.5
 
     rakusatsu_ritsu = 0.95
 
@@ -114,19 +114,19 @@ def inputs():
 
     kappu_kinri_spread = 1.0
 
-    pre_kyoukouka_yosantanka = 1.0 # 施設整備費全額が予算単価からの積み上げと設定。進めるための仮の設定
+    kyoukouka_yosantanka_hiritsu = 1.0 # 施設整備費全額が予算単価からの積み上げと設定。進めるための仮の設定
 
     if initial_inputs["pre_kyoukouka"] == True:
-        shisetsu_seibi_yosantanka = initial_inputs["shisetsu_seibi"] * pre_kyoukouka_yosantanka
+        shisetsu_seibi_yosantanka = initial_inputs["shisetsu_seibi"] * kyoukouka_yosantanka_hiritsu
         shisetsu_seibi_rakusatsu = initial_inputs["shisetsu_seibi"] - shisetsu_seibi_yosantanka
-        ijikanri_unnei_yosantanka = initial_inputs["ijikanri_unnei"] * pre_kyoukouka_yosantanka
+        ijikanri_unnei_yosantanka = initial_inputs["ijikanri_unnei"] * kyoukouka_yosantanka_hiritsu
         ijikanri_unnei_rakusatsu = initial_inputs["ijikanri_unnei"] - ijikanri_unnei_yosantanka
 
     if initial_inputs["proj_ctgry"] == "サービス購入型": 
         riyouryoukin_shunyu = 0
 
-    shisetsu_seibi_ikkatsu = 0.5
-    shisetsu_seibi_kappu = 0.5
+    #shisetsu_seibi_ikkatsu = 0.5
+    #shisetsu_seibi_kappu = 0.5
 
     SPC_keihi_etc_atsukai = 1 # 1: サービス購入費として支払い　0:割賦金利に含めて支払い
 
@@ -136,9 +136,11 @@ def inputs():
         "proj_type": initial_inputs["proj_type"],
         "proj_years": int(initial_inputs["proj_years"]),
         "const_years": int(initial_inputs["const_years"]),
+        "sueoki_years": int(sueoki_years),
         "const_start_date": const_start_date,
         "kijun_kinri": float(initial_inputs["kijun_kinri"]),
         "chisai_kinri": float(initial_inputs["chisai_kinri"]),
+        "chisai_shokan_kikan": int(chisai_shokankikan),
         "zei_modori": float(initial_inputs["zei_modori"]),
         "lg_spread": float(initial_inputs["lg_spread"]),
         "zei_total": float(initial_inputs["zei_total"]),
@@ -160,9 +162,11 @@ def inputs():
         "riyouryoukin_shunyu": float(riyouryoukin_shunyu),
         "kappu_kinri_spread": float(kappu_kinri_spread),
         "hojo": float(initial_inputs["hojo"]),
-        "shisetsu_seibi_ikkatsu": float(shisetsu_seibi_ikkatsu),
-        "shisetsu_seibi_kappu": float(shisetsu_seibi_kappu),
+        "shisetsu_seibi_paymentschedule_ikkatsu": float(shisetsu_seibi_ikkatsu),
+        "shisetsu_seibi_paymentschedule_kappu": float(shisetsu_seibi_kappu),
         "SPC_keihi_etc_atsukai": int(SPC_keihi_etc_atsukai),
+        "monitoring_costs_PSC": float(monitoring_costs_PSC),
+        "monitoring_costs_LCC": float(monitoring_costs_LCC),
     }
 
     #db = TinyDB("ii_db.json")
@@ -197,28 +201,48 @@ def VFM_calc(inputs):
     keika_nensuu = [int(x) for x in range(1, proj_years+1)] # 1〜40の整数定数 range(1, 41)で内包表記？
     #jigyou_kikan = [] # 施設整備期間、維持管理運営期間の２択
     discount_factor = [1/(1+discount_rate) ** i for i in range(0, proj_years)] # 割引係数
+    shokan_kaishi_jiki = const_years + inputs["sueoki_years"] + 1
 
-    # PSC shuushi
+    # PSC shuushi income
     hojokin = [0 for i in range(proj_years)]
     kouhukin = [0 for i in range(proj_years)]
     kisai_gaku = [0 for i in range(proj_years)]
     riyou_ryoukin = [0 for i in range(proj_years)]
-    shisetsu_seibihi = [0 for i in range(proj_years)]
 
     shisetsu_seibi_kyoukouka_sumi = inputs["shisetsu_seibi_rakusatsu"] + (inputs["shisetsu_seibi_yosantanka "] * inputs["rakusaturitsu"])
+    ijikanri_unnei_kyoukouka_sumi = inputs["ijikanri_unnei_rakusatsu"] + (inputs["ijikanri_unnei_yosantanka "] * inputs["rakusaturitsu"])
 
     for i in range(1,proj_years+1):
         if i == const_years:
             hojokin[i] = inputs["hojo"] * shisetsu_seibi_kyoukouka_sumi
             kisai_gaku[i] = inputs["kisai_jutou"] * inputs["shisetsu_seibi"] # 設備投入額
             kouhukin[i] = kisai_gaku[i] * inputs["kisai_kouhu"]        
-    else:
-        pass
+        else:
+            pass
 
+    # PSC shuushi payments
+    shisetsu_seibihi = [0 for i in range(proj_years)]
     ijikannri_unneihi = [0 for i in range(proj_years)]
-    monitoring_costs = [0 for i in range(proj_years)]
-    kisai_shoukan_gaku = [0 for i in range(proj_years)]
+    monitoring_costs = [inputs["monitoring_consts_psc"] for i in range(proj_years)]
+    kisai_shokan_gaku = [0 for i in range(proj_years)]
     kisai_risoku_gaku = [0 for i in range(proj_years)]
+
+    kisai_gaku = inputs["kisai_jutou"] * inputs["shisetsu_seibi"]
+    ganpon_shokan_gaku = kisai_gaku / inputs["chisai_shokan_kikan"]
+    zansai = kisai_gaku
+ 
+    for i in range(1,proj_years+1):
+        if i == const_years:
+            shisetsu_seibihi[i] = shisetsu_seibi_kyoukouka_sumi
+        elif const_years < i:
+            ijikannri_unneihi[i] = ijikanri_unnei_kyoukouka_sumi
+            kouhukin[i] = kisai_gaku[i] * inputs["kisai_kouhu"]
+            if shokan_kaishi_jiki =< i and kisai_gaku > 0 and zansai > 0:
+                kisai_shokan_gaku[i] = ganpon_shokan_gaku
+                zansai -= ganpon_shokan_gaku
+                    
+        else:
+            pass
 
     kanmin_ribarai_sa = [0 for i in range(proj_years)]
     risk_chousei_hi = [0 for i in range(proj_years)]
