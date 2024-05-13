@@ -207,9 +207,6 @@ def VFM_calc(inputs):
     kisai_gaku = [0 for i in range(proj_years)]
     riyou_ryoukin = [0 for i in range(proj_years)]
 
-    #shisetsu_seibi_kyoukouka_sumi = inputs["shisetsu_seibi_rakusatsu"] + (inputs["shisetsu_seibi_yosantanka "] * inputs["rakusaturitsu"])
-    #ijikanri_unnei_kyoukouka_sumi = inputs["ijikanri_unnei_rakusatsu"] + (inputs["ijikanri_unnei_yosantanka "] * inputs["rakusaturitsu"])
-
     for i in range(1,proj_years+1):
         if i == const_years:
             hojokin[i] = inputs["hojo"] * inputs["shisetsu_seibi"] # 投資への補助金
@@ -234,7 +231,6 @@ def VFM_calc(inputs):
         elif const_years < i:
             chisai_ganpon_shokansumi_gaku = chisai_ganpon_shokan_gaku * (i - const_years)
             ijikannri_unneihi[i] = inputs["ijikanri_unnei"]
-            kouhukin[i] = kisai_gaku * inputs["kisai_kouhu"]
             chisai_zansai = kisai_gaku - chisai_ganpon_shokansumi_gaku
             if shokan_kaishi_jiki =< i and kisai_gaku > 0 and chisa-_zansai > 0:
                 kisai_shokan_gaku[i] = chisai_ganpon_shokan_gaku
@@ -242,8 +238,37 @@ def VFM_calc(inputs):
         else:
             pass
 
+    # PSC income, paymentsそれぞれをDFにして、横にマージして、収支を出す。
+    df_hojokin = pd.DataFrame(hojokin, columns=["hojokin"])
+    df_kouhukin = pd.DataFrame(kouhukin, columns=["kouhukin"])
+    df_kisai_gaku = pd.DataFrame(kisai_gaku, columns=["kisai_gaku"])
+    df_riyou_ryoukin = pd.DataFrame(riyou_ryoukin, columns=["riyou_ryoukin"])
+    PSC_income = pd.concat([df_hojokin, df_kouhukin, df_kisai_gaku, df_riyou_ryoukin], axis=1)
+
+    df_shisetsu_seibihi = pd.DataFrame(shisetsu_seibihi, columns=["shisetsu_seibihi"])
+    df_ijikannri_unneihi = pd.DataFrame(ijikannri_unneihi, columns=["ijikannri_unneihi"])
+    df_monitoring_costs = pd.DataFrame(monitoring_costs, columns=["monitoring_costs"])
+    df_kisai_shokan_gaku = pd.DataFrame(kisai_shokan_gaku, columns=["kisai_shokan_gaku"])
+    df_kisai_risoku_gaku = pd.DataFrame(kisai_risoku_gaku, columns=["kisai_risoku_gaku"])
+    PSC_payments = pd.concat([df_shisetsu_seibihi, df_ijikannri_unneihi, df_monitoring_costs, df_kisai_shokan_gaku, df_kisai_risoku_gaku], axis=1)
+
+    PSC_balance = PSC_income - PSC_payments
+    Schedule = pd.DataFrame(schedule, columns=["schedule"])
+    PSC = pd.concat([Shcedule, PSC_income, PSC_payments, PSC_balance], axis=1)
+
     kanmin_ribarai_sa = [0 for i in range(proj_years)]
-    risk_chousei_hi = [0 for i in range(proj_years)]
+    risk_chousei_gaku = [0 for i in range(proj_years)]
+
+    if inputs["pre_kyoukouka"] == True and inputs["kyoukouka_yosantanka_hiritsu"] == 0:
+        kyoukouka_hannei_hiritsu = 1.0
+    elif inputs["pre_kyoukouka"] == True and inputs["kyoukouka_yosantanka_hiritsu"] > 0:
+        kyoukouka_hannei_hiritsu = 1 - (1- inputs["rakusatsu_ritsu"]) * ((inputs["shisetsu_seibi_yosantanka"]+inputs["ijikanri_unnei_yosantanka"]) / (inputs["shisetsu_seibi"]+inputs["ijikanri_unnei"]) )
+    else:
+        pass
+
+    # 官民利払い費用の差とSPC経費の合計を「リスク調整額」とし、それをPSC_balanceに加える。
+    # その後、PSC_balanceをdiscount_factorで現在価値化して、総額を出し、それにkyoukouka_hannei_hiritsuをかける。
+    # その結果を競争の効果反映済のPSCとする。
 
     # LCC shuushi
     hojokin = [0 for i in range(proj_years)]
