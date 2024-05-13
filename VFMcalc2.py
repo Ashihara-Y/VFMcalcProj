@@ -9,14 +9,32 @@ from ulid import ULID
 import timeflake
 import save_results as sr
 import datetime
+import dateutils
+import scipy
+from scipy import scipy.optimize
 
 def inputs():
 
     proj_years = 23
     const_years = 3
     mgmt_type = "国"
+    proj_type = "BTO/DBO/RO"
 
     const_start_date = datetime.date.today()
+
+    shisetsu_seibi = 3000.0
+    ijikanri_unnei = 50.0
+
+    reduc_shisetsu = 5.0
+    reduc_ijikanri = 5.0
+
+    zei_total = 41.98
+    lg_spread = 1.5
+    growth = 0.0
+    zeimae_rieki = 8.5
+    SPC_keihi = 15.0
+    SPC_capital = 100.0
+    SPC_yobi = 100.0    
 
     if mgmt_type == "国":
         zei_modori = 27.8
@@ -59,8 +77,10 @@ def inputs():
         r_idx = str(y * 5) + "年"
 
     r1 = JGB_rates_df.loc[r_idx].iloc[0]
-
     r2 = JRB_rates_df.loc[proj_years][const_years]
+    kijun_kinri = r1
+    chisai_kinri = r2
+
     # 地方債の償還期限が、事業期間と同じにしてあるが、別途設定する必要がある。
     # 返済繰り延べ年数についても、変数として、Final_inputsに入れておいた方が良い。
     sueoki_years = const_years
@@ -85,88 +105,66 @@ def inputs():
 
     SPC_hiyou_atsukai = 1 # 1: サービス購入費として支払い　0:割賦金利に含めて支払い 
 
-    initial_inputs = {
-        "mgmt_type": mgmt_type,
-        "proj_ctgry": "サービス購入型",
-        "proj_type": "BTO/DBO/RO",
-        "proj_years": proj_years,
-        "const_years": const_years,
-        "kijun_kinri": r1,
-        "chisai_kinri": r2,
-        "zei_modori": float(zei_modori),
-        "lg_spread": 1.5,
-        "zei_total": 41.98,
-        "growth": 0.0,
-        "kitai_bukka": float(kitai_bukka),
-        "shisetsu_seibi": 3000.0,
-        "ijikanri_unnei": 50.0,
-        "reduc_shisetsu": 10.0,
-        "reduc_ijikanri": 10.0,
-        "pre_kyoukouka": True,
-        "kisai_jutou": float(kisai_jutou),
-        "kisai_koufu": float(kisai_koufu),
-        "zeimae_rieki": 8.5,
-        "SPC_keihi": 15.0,
-        "SPC_Capital": 100.0,
-        "SPC_yobi": 100.0,
-        "hojo": float(hojo),
-    }
-
     kappu_kinri_spread = 1.0
 
     kyoukouka_yosantanka_hiritsu = 1.0 # 施設整備費全額が予算単価からの積み上げと設定。進めるための仮の設定
 
-    if initial_inputs["pre_kyoukouka"] == True:
-        shisetsu_seibi_yosantanka = initial_inputs["shisetsu_seibi"] * kyoukouka_yosantanka_hiritsu
-        shisetsu_seibi_rakusatsu = initial_inputs["shisetsu_seibi"] - shisetsu_seibi_yosantanka
-        ijikanri_unnei_yosantanka = initial_inputs["ijikanri_unnei"] * kyoukouka_yosantanka_hiritsu
-        ijikanri_unnei_rakusatsu = initial_inputs["ijikanri_unnei"] - ijikanri_unnei_yosantanka
+    pre_kyoukouka = True
+    proj_ctgry = "サービス購入型"
 
-    if initial_inputs["proj_ctgry"] == "サービス購入型": 
+    if pre_kyoukouka == True:
+        shisetsu_seibi_yosantanka = shisetsu_seibi * kyoukouka_yosantanka_hiritsu
+        shisetsu_seibi_rakusatsu = shisetsu_seibi - shisetsu_seibi_yosantanka
+        ijikanri_unnei_yosantanka = ijikanri_unnei * kyoukouka_yosantanka_hiritsu
+        ijikanri_unnei_rakusatsu = ijikanri_unnei - ijikanri_unnei_yosantanka
+
+    if proj_ctgry == "サービス購入型": 
         riyouryoukin_shunyu = 0
-
-    #shisetsu_seibi_ikkatsu = 0.5
-    #shisetsu_seibi_kappu = 0.5
 
     SPC_keihi_etc_atsukai = 1 # 1: サービス購入費として支払い　0:割賦金利に含めて支払い
 
     inputs = {
-        "mgmt_type": initial_inputs["mgmt_type"],
-        "proj_ctgry": initial_inputs["proj_ctgry"],
-        "proj_type": initial_inputs["proj_type"],
-        "proj_years": int(initial_inputs["proj_years"]),
-        "const_years": int(initial_inputs["const_years"]),
-        "sueoki_years": int(sueoki_years),
+        "chisai_kinri": float(chisai_kinri),
+        "chisai_shokan_kikan": int(chisai_shokan_kikan),
+        "const_years": int(const_years),
         "const_start_date": const_start_date,
-        "kijun_kinri": float(initial_inputs["kijun_kinri"]),
-        "chisai_kinri": float(initial_inputs["chisai_kinri"]),
-        "chisai_shokan_kikan": int(chisai_shokankikan),
-        "zei_modori": float(initial_inputs["zei_modori"]),
-        "lg_spread": float(initial_inputs["lg_spread"]),
-        "zei_total": float(initial_inputs["zei_total"]),
-        "growth": float(initial_inputs["growth"]),
-        "kitai_bukka": float(initial_inputs["kitai_bukka"]),
-        "shisetsu_seibi": float(initial_inputs["shisetsu_seibi"]),
-        "shisetsu_seibi_yosantanka": float(shisetsu_seibi_yosantanka),
-        "shisetsu_seibi_rakusatsu": float(shisetsu_seibi_rakusatsu),
-        "ijikanri_unnei": float(initial_inputs["ijikanri_unnei"]),
+        "growth": float(growth"),
+        "hojo": float(hojo),
+        "ijikanri_unnei": float(ijikanri_unnei),
         "ijikanri_unnei_yosantanka": float(ijikanri_unnei_yosantanka),
         "ijikanri_unnei_rakusatsu": float(ijikanri_unnei_rakusatsu),
-        "reduc_shisetsu": float(initial_inputs["reduc_shisetsu"]),
-        "reduc_ijikanri": float(initial_inputs["reduc_ijikanri"]),
-        "pre_kyoukouka": bool(initial_inputs["pre_kyoukouka"]),
-        "kisai_jutou": float(initial_inputs["kisai_jutou"]),
-        "kisai_koufu": float(initial_inputs["kisai_koufu"]),
-        "zeimae_rieki": float(initial_inputs["zeimae_rieki"]),
-        "SPC_keihi": float(initial_inputs["SPC_keihi"]),
-        "riyouryoukin_shunyu": float(riyouryoukin_shunyu),
         "kappu_kinri_spread": float(kappu_kinri_spread),
-        "hojo": float(initial_inputs["hojo"]),
+        "kijun_kinri": float(kijun_kinri),
+        "kisai_jutou": float(kisai_jutou),
+        "kisai_koufu": float(kisai_koufu),
+        "kitai_bukka": float(kitai_bukka),
+        "kyoukouka_yosantanka_hiritsu": float(kyoukouka_yosantanka_hiritsu),
+        "lg_spread": float(lg_spread),
+        "mgmt_type": mgmt_type,
+        "monitoring_costs_LCC": float(monitoring_costs_LCC),
+        "monitoring_costs_PSC": float(monitoring_costs_PSC),
+        "payment_schedule_ikkatsu": float(payment_schedule_ikkatsu),
+        "payment_schedule_kappu": float(payment_schedule_kappu),
+        "pre_kyoukouka": bool(pre_kyoukouka),
+        "proj_ctgry": str(proj_ctgry),
+        "proj_type": str(proj_type),
+        "proj_years": int(proj_years),
+        "rakusatsu_ritsu": float(rakusatsu_ritsu),
+        "reduc_shisetsu": float(reduc_shisetsu),
+        "reduc_ijikanri": float(reduc_ijikanri),
+        "riyouryoukin_shunyu": float(riyouryoukin_shunyu),
+        "shisetsu_seibi": float(shisetsu_seibi),
+        "shisetsu_seibi_yosantanka": float(shisetsu_seibi_yosantanka),
+        "shisetsu_seibi_rakusatsu": float(shisetsu_seibi_rakusatsu),
         "shisetsu_seibi_paymentschedule_ikkatsu": float(shisetsu_seibi_ikkatsu),
         "shisetsu_seibi_paymentschedule_kappu": float(shisetsu_seibi_kappu),
+        "SPC_hiyou_atsukai": int(SPC_hiyou_atsukai),
+        "SPC_keihi": float(SPC_keihi),
         "SPC_keihi_etc_atsukai": int(SPC_keihi_etc_atsukai),
-        "monitoring_costs_PSC": float(monitoring_costs_PSC),
-        "monitoring_costs_LCC": float(monitoring_costs_LCC),
+        "sueoki_years": int(sueoki_years),
+        "zei_modori": float(zei_modori),
+        "zei_total": float(zei_total),
+        "zeimae_rieki": float(zeimae_rieki),
     }
 
     #db = TinyDB("ii_db.json")
@@ -209,14 +207,14 @@ def VFM_calc(inputs):
     kisai_gaku = [0 for i in range(proj_years)]
     riyou_ryoukin = [0 for i in range(proj_years)]
 
-    shisetsu_seibi_kyoukouka_sumi = inputs["shisetsu_seibi_rakusatsu"] + (inputs["shisetsu_seibi_yosantanka "] * inputs["rakusaturitsu"])
-    ijikanri_unnei_kyoukouka_sumi = inputs["ijikanri_unnei_rakusatsu"] + (inputs["ijikanri_unnei_yosantanka "] * inputs["rakusaturitsu"])
+    #shisetsu_seibi_kyoukouka_sumi = inputs["shisetsu_seibi_rakusatsu"] + (inputs["shisetsu_seibi_yosantanka "] * inputs["rakusaturitsu"])
+    #ijikanri_unnei_kyoukouka_sumi = inputs["ijikanri_unnei_rakusatsu"] + (inputs["ijikanri_unnei_yosantanka "] * inputs["rakusaturitsu"])
 
     for i in range(1,proj_years+1):
         if i == const_years:
-            hojokin[i] = inputs["hojo"] * shisetsu_seibi_kyoukouka_sumi
-            kisai_gaku[i] = inputs["kisai_jutou"] * inputs["shisetsu_seibi"] # 設備投入額
-            kouhukin[i] = kisai_gaku[i] * inputs["kisai_kouhu"]        
+            hojokin[i] = inputs["hojo"] * inputs["shisetsu_seibi"] # 投資への補助金
+            kisai_gaku[i] = inputs["kisai_jutou"] * inputs["shisetsu_seibi"] # 地方債起債額
+            kouhukin[i] = kisai_gaku[i] * inputs["kisai_kouhu"] #  起債への交付金額    
         else:
             pass
 
@@ -228,19 +226,19 @@ def VFM_calc(inputs):
     kisai_risoku_gaku = [0 for i in range(proj_years)]
 
     kisai_gaku = inputs["kisai_jutou"] * inputs["shisetsu_seibi"]
-    ganpon_shokan_gaku = kisai_gaku / inputs["chisai_shokan_kikan"]
-    zansai = kisai_gaku
+    chisai_ganpon_shokan_gaku = kisai_gaku / inputs["chisai_shokan_kikan"]
  
     for i in range(1,proj_years+1):
         if i == const_years:
-            shisetsu_seibihi[i] = shisetsu_seibi_kyoukouka_sumi
+            shisetsu_seibihi[i] = inputs["shisetsu_seibi"]
         elif const_years < i:
-            ijikannri_unneihi[i] = ijikanri_unnei_kyoukouka_sumi
-            kouhukin[i] = kisai_gaku[i] * inputs["kisai_kouhu"]
-            if shokan_kaishi_jiki =< i and kisai_gaku > 0 and zansai > 0:
-                kisai_shokan_gaku[i] = ganpon_shokan_gaku
-                zansai -= ganpon_shokan_gaku
-                    
+            chisai_ganpon_shokansumi_gaku = chisai_ganpon_shokan_gaku * (i - const_years)
+            ijikannri_unneihi[i] = inputs["ijikanri_unnei"]
+            kouhukin[i] = kisai_gaku * inputs["kisai_kouhu"]
+            chisai_zansai = kisai_gaku - chisai_ganpon_shokansumi_gaku
+            if shokan_kaishi_jiki =< i and kisai_gaku > 0 and chisa-_zansai > 0:
+                kisai_shokan_gaku[i] = chisai_ganpon_shokan_gaku
+                kisai_risoku_gaku[i] = chisai_zansai * inputs["chisai_kinri"]
         else:
             pass
 
