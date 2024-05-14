@@ -11,7 +11,7 @@ import save_results as sr
 import datetime
 import dateutils
 import scipy
-from scipy import scipy.optimize
+from scipy import optimize
 
 def inputs():
 
@@ -128,7 +128,7 @@ def inputs():
         "chisai_shokan_kikan": int(chisai_shokan_kikan),
         "const_years": int(const_years),
         "const_start_date": const_start_date,
-        "growth": float(growth"),
+        "growth": float(growth),
         "hojo": float(hojo),
         "ijikanri_unnei": float(ijikanri_unnei),
         "ijikanri_unnei_yosantanka": float(ijikanri_unnei_yosantanka),
@@ -143,8 +143,6 @@ def inputs():
         "mgmt_type": mgmt_type,
         "monitoring_costs_LCC": float(monitoring_costs_LCC),
         "monitoring_costs_PSC": float(monitoring_costs_PSC),
-        "payment_schedule_ikkatsu": float(payment_schedule_ikkatsu),
-        "payment_schedule_kappu": float(payment_schedule_kappu),
         "pre_kyoukouka": bool(pre_kyoukouka),
         "proj_ctgry": str(proj_ctgry),
         "proj_type": str(proj_type),
@@ -156,8 +154,8 @@ def inputs():
         "shisetsu_seibi": float(shisetsu_seibi),
         "shisetsu_seibi_yosantanka": float(shisetsu_seibi_yosantanka),
         "shisetsu_seibi_rakusatsu": float(shisetsu_seibi_rakusatsu),
-        "shisetsu_seibi_paymentschedule_ikkatsu": float(shisetsu_seibi_ikkatsu),
-        "shisetsu_seibi_paymentschedule_kappu": float(shisetsu_seibi_kappu),
+        "shisetsu_seibi_paymentschedule_ikkatsu": float(shisetsu_seibi_paymentschedule_ikkatsu),
+        "shisetsu_seibi_paymentschedule_kappu": float(shisetsu_seibi_paymentschedule_kappu),
         "SPC_hiyou_atsukai": int(SPC_hiyou_atsukai),
         "SPC_keihi": float(SPC_keihi),
         "SPC_keihi_etc_atsukai": int(SPC_keihi_etc_atsukai),
@@ -232,7 +230,7 @@ def VFM_calc(inputs):
             chisai_ganpon_shokansumi_gaku = chisai_ganpon_shokan_gaku * (i - const_years)
             ijikannri_unneihi[i] = inputs["ijikanri_unnei"]
             chisai_zansai = kisai_gaku - chisai_ganpon_shokansumi_gaku
-            if shokan_kaishi_jiki =< i and kisai_gaku > 0 and chisa-_zansai > 0:
+            if shokan_kaishi_jiki <= i and kisai_gaku > 0 and chisai_zansai > 0:
                 kisai_shokan_gaku[i] = chisai_ganpon_shokan_gaku
                 kisai_risoku_gaku[i] = chisai_zansai * inputs["chisai_kinri"]
         else:
@@ -254,7 +252,7 @@ def VFM_calc(inputs):
 
     PSC_balance = PSC_income - PSC_payments
     Schedule = pd.DataFrame(schedule, columns=["schedule"])
-    PSC = pd.concat([Shcedule, PSC_income, PSC_payments, PSC_balance], axis=1)
+    PSC = pd.concat([Schedule, PSC_income, PSC_payments, PSC_balance], axis=1)
 
     kanmin_ribarai_sa = [0 for i in range(proj_years)]
     risk_chousei_gaku = [0 for i in range(proj_years)]
@@ -311,102 +309,33 @@ def VFM_calc(inputs):
 
     #discount_rate = inputs["kijun_kinri"] + inputs["kitai_bukka"]
 
-    for i in range(proj_years):
-        LCC.append(LCC_net_expense / proj_years)
+#    PSC = df_PV_cf["PSC_present_value"].sum()
+#    LCC = df_PV_cf["LCC_present_value"].sum()
+#    VFM = PSC - LCC
+#    VFM_percent = VFM / PSC * 100
+#    PSC_LCC_VFM_df = pd.DataFrame(
+#        {
+#            "PSC": PSC,
+#            "LCC": LCC,
+#            "VFM": VFM,
+#            "VFM_percent": VFM_percent,
+#        },
+#        index=[0],
+#    )
 
-    for i in range(const_years):
-        PSC_const.append(PSC_net_expense_const_kk / const_years)
+#    results = {
+#        "LCC_net_expense": format(res_PSC_LCC['LCC_net_expense'], '.3f'),
+#        "PSC_net_expense_const_kk": format(res_PSC_LCC['PSC_net_expense_const_kk'], '.3f'),
+#        "PSC_net_expense_ijikanri_kk": format(res_PSC_LCC['PSC_net_expense_ijikanri_kk'], '.3f'),
+#        "ijikanri_years": res_PSC_LCC['ijikanri_years'],
+#        "discount_rate": format(res_PSC_LCC['discount_rate'], '.3f'),
+#        "rakusatsu_ritsu": res_PSC_LCC['rakusatsu_ritsu'],
+#        "PSC": format(PSC, '.3f'), #Float to DataFrame to SQLite
+#        "LCC": format(LCC, '.3f'), #Float to DataFrame to SQLite
+#        "VFM": format(VFM, '.3f'), #Float to DataFrame to SQLite
+#        "VFM_percent": format(VFM_percent, '.3f'), #Float to DataFrame to SQLite
+#    }
 
-    for i in range(ijikanri_years):
-        PSC_ijikanri.append(PSC_net_expense_ijikanri_kk / ijikanri_years)
+#    results_2 =  dic_PV_cf
 
-    df_LCC = pd.DataFrame(LCC, columns=["LCC_net_expense"])
-
-    df_PSC_const = pd.DataFrame(PSC_const, columns=["PSC_net_expense_const"])
-    df_PSC_ijikanri = pd.DataFrame(PSC_ijikanri, columns=["PSC_net_expense_iji"])
-
-    # LCC
-    LCC_discount_factor = [
-        (1 / (1 + discount_rate)) ** i for i in range(1, proj_years + 1)
-    ]
-    df_LCC["LCC_discount_factor"] = LCC_discount_factor
-    # calculate the present value of each cash flow
-    df_LCC["LCC_present_value"] = (
-        df_LCC["LCC_net_expense"] * df_LCC["LCC_discount_factor"]
-    )
-    # 成長率、NWC, CAPEXは、現時点で省略、今後のバージョンで追加予定
-
-    # PSC
-    PSC_const_discount_factor = [
-        (1 / (1 - discount_rate)) ** i for i in reversed(range(const_years))
-    ]
-    PSC_iji_discount_factor = [
-        (1 / (1 + discount_rate)) ** i for i in range(1, ijikanri_years + 1)
-    ]
-    df_PSC_const["PSC_const_discount_factor"] = PSC_const_discount_factor
-    df_PSC_ijikanri["PSC_iji_discount_factor"] = PSC_iji_discount_factor
-    df_PSC_const["PSC_const_present_value"] = (
-        df_PSC_const["PSC_net_expense_const"]
-        * df_PSC_const["PSC_const_discount_factor"]
-    )
-    df_PSC_ijikanri["PSC_iji_present_value"] = (
-        df_PSC_ijikanri["PSC_net_expense_iji"]
-        * df_PSC_ijikanri["PSC_iji_discount_factor"]
-    )
-
-    df_PSC = pd.concat(
-        [
-            df_PSC_const["PSC_const_present_value"],
-            df_PSC_ijikanri["PSC_iji_present_value"],
-        ]
-    ).reset_index(drop=True)
-    df_PSC.columns = ["PSC_present_value"]
-
-    df_PV_cf = pd.concat([df_PSC, df_LCC["LCC_present_value"]], axis=1)
-    df_PV_cf = df_PV_cf.set_axis(["PSC_present_value", "LCC_present_value"], axis=1)
-    df_PV_cf['LCC_discount_factor'] = LCC_discount_factor
-    PSC_discount_factor = PSC_const_discount_factor + PSC_iji_discount_factor
-    df_PV_cf['PSC_discount_factor'] = PSC_discount_factor
-    dic_PV_cf = df_PV_cf.to_dict()
-
-    res_PSC_LCC_df = pd.DataFrame(res_PSC_LCC, index=[0])
-    res_PSC_LCC_df = res_PSC_LCC_df.reindex(columns=[
-        "LCC_net_expense",
-        "PSC_net_expense_const_kk",
-        "PSC_net_expense_ijikanri_kk",
-        "ijikanri_years",
-        "discount_rate",
-        "rakusatsu_ritsu",
-        ]
-    )
-
-    PSC = df_PV_cf["PSC_present_value"].sum()
-    LCC = df_PV_cf["LCC_present_value"].sum()
-    VFM = PSC - LCC
-    VFM_percent = VFM / PSC * 100
-    PSC_LCC_VFM_df = pd.DataFrame(
-        {
-            "PSC": PSC,
-            "LCC": LCC,
-            "VFM": VFM,
-            "VFM_percent": VFM_percent,
-        },
-        index=[0],
-    )
-
-    results = {
-        "LCC_net_expense": format(res_PSC_LCC['LCC_net_expense'], '.3f'),
-        "PSC_net_expense_const_kk": format(res_PSC_LCC['PSC_net_expense_const_kk'], '.3f'),
-        "PSC_net_expense_ijikanri_kk": format(res_PSC_LCC['PSC_net_expense_ijikanri_kk'], '.3f'),
-        "ijikanri_years": res_PSC_LCC['ijikanri_years'],
-        "discount_rate": format(res_PSC_LCC['discount_rate'], '.3f'),
-        "rakusatsu_ritsu": res_PSC_LCC['rakusatsu_ritsu'],
-        "PSC": format(PSC, '.3f'), #Float to DataFrame to SQLite
-        "LCC": format(LCC, '.3f'), #Float to DataFrame to SQLite
-        "VFM": format(VFM, '.3f'), #Float to DataFrame to SQLite
-        "VFM_percent": format(VFM_percent, '.3f'), #Float to DataFrame to SQLite
-    }
-
-    results_2 =  dic_PV_cf
-
-    return results, results_2
+#    return results, results_2
