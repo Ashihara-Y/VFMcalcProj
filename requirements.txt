@@ -12,3 +12,8 @@ python-ulid
 timeflake
 pymupdf
 tinydb
+dateutils
+pyfinmod
+numpy
+numpy-financial
+scipy
