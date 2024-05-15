@@ -36,7 +36,7 @@ def inputs():
     zeimae_rieki = 8.5
     SPC_keihi = 15.0
     SPC_shihon = 100.0
-    SPC_yobihi = 100.0    
+    SPC_yobihi = 100.0
 
     if mgmt_type == "国":
         zei_modori = 27.8
@@ -67,9 +67,10 @@ def inputs():
     JRB_rates_df = pd.read_csv(
         "JRB_rates.csv",
         encoding="utf-8",
-        sep='\t', 
-        names=[0,1,2,3,4,5], 
-        index_col=0)
+        sep="\t",
+        names=[0, 1, 2, 3, 4, 5],
+        index_col=0,
+    )
 
     y, d = divmod(int(proj_years), 5)
 
@@ -104,11 +105,13 @@ def inputs():
     monitoring_costs_PSC = 10.0
     monitoring_costs_LCC = 6.0
 
-    SPC_hiyou_atsukai = 1 # 1: サービス購入費として支払い　0:割賦金利に含めて支払い 
+    SPC_hiyou_atsukai = 1  # 1: サービス購入費として支払い　0:割賦金利に含めて支払い
 
     kappu_kinri_spread = 1.0
 
-    kyoukouka_yosantanka_hiritsu = 1.0 # 施設整備費全額が予算単価からの積み上げと設定。進めるための仮の設定
+    kyoukouka_yosantanka_hiritsu = (
+        1.0  # 施設整備費全額が予算単価からの積み上げと設定。進めるための仮の設定
+    )
 
     pre_kyoukouka = True
     proj_ctgry = "サービス購入型"
@@ -119,16 +122,20 @@ def inputs():
     if pre_kyoukouka == True:
         shisetsu_seibi_yosantanka = shisetsu_seibi * kyoukouka_yosantanka_hiritsu
         shisetsu_seibi_rakusatsu = shisetsu_seibi - shisetsu_seibi_yosantanka
-        shisetsu_seibi = shisetsu_seibi_yosantanka * rakusatsu_ritsu + shisetsu_seibi_rakusatsu
+        shisetsu_seibi = (
+            shisetsu_seibi_yosantanka * rakusatsu_ritsu + shisetsu_seibi_rakusatsu
+        )
 
         ijikanri_unnei_yosantanka = ijikanri_unnei * kyoukouka_yosantanka_hiritsu
         ijikanri_unnei_rakusatsu = ijikanri_unnei - ijikanri_unnei_yosantanka
-        ijikanri_unnei = ijikanri_unnei_yosantanka * rakusatsu_ritsu + ijikanri_unnei_rakusatsu
+        ijikanri_unnei = (
+            ijikanri_unnei_yosantanka * rakusatsu_ritsu + ijikanri_unnei_rakusatsu
+        )
 
-    if proj_ctgry == "サービス購入型": 
+    if proj_ctgry == "サービス購入型":
         riyouryoukin_shunyu = 0
 
-    #SPC_keihi_etc_atsukai = 1 # 1: サービス購入費として支払い　0:割賦金利に含めて支払い
+    # SPC_keihi_etc_atsukai = 1 # 1: サービス購入費として支払い　0:割賦金利に含めて支払い
 
     inputs_dict = {
         "chisai_kinri": float(chisai_kinri),
@@ -140,8 +147,8 @@ def inputs():
         "hojo": float(hojo),
         "ijikanri_unnei": float(ijikanri_unnei),
         "ijikanri_unnei_org": float(ijikanri_unnei_org),
-        #"ijikanri_unnei_yosantanka": float(ijikanri_unnei_yosantanka),
-        #"ijikanri_unnei_rakusatsu": float(ijikanri_unnei_rakusatsu),
+        # "ijikanri_unnei_yosantanka": float(ijikanri_unnei_yosantanka),
+        # "ijikanri_unnei_rakusatsu": float(ijikanri_unnei_rakusatsu),
         "kappu_kinri_spread": float(kappu_kinri_spread),
         "kijun_kinri": float(kijun_kinri),
         "kisai_jutou": float(kisai_jutou),
@@ -162,10 +169,14 @@ def inputs():
         "riyouryoukin_shunyu": float(riyouryoukin_shunyu),
         "shisetsu_seibi": float(shisetsu_seibi),
         "shisetsu_seibi_org": float(shisetsu_seibi_org),
-        #"shisetsu_seibi_yosantanka": float(shisetsu_seibi_yosantanka),
-        #"shisetsu_seibi_rakusatsu": float(shisetsu_seibi_rakusatsu),
-        "shisetsu_seibi_paymentschedule_ikkatsu": float(shisetsu_seibi_paymentschedule_ikkatsu),
-        "shisetsu_seibi_paymentschedule_kappu": float(shisetsu_seibi_paymentschedule_kappu),
+        # "shisetsu_seibi_yosantanka": float(shisetsu_seibi_yosantanka),
+        # "shisetsu_seibi_rakusatsu": float(shisetsu_seibi_rakusatsu),
+        "shisetsu_seibi_paymentschedule_ikkatsu": float(
+            shisetsu_seibi_paymentschedule_ikkatsu
+        ),
+        "shisetsu_seibi_paymentschedule_kappu": float(
+            shisetsu_seibi_paymentschedule_kappu
+        ),
         "SPC_hiyou_atsukai": int(SPC_hiyou_atsukai),
         "SPC_keihi": float(SPC_keihi),
         "SPC_shihon": float(SPC_shihon),
@@ -177,33 +188,40 @@ def inputs():
 
     if os.path.exists("inputs_db.json"):
         os.remove("inputs_db.json")
-    db = TinyDB('inputs_db.json')
+    db = TinyDB("inputs_db.json")
     db.insert(inputs_dict)
     db.close()
-    #self.page.go("/final_inputs")
+    # self.page.go("/final_inputs")
     return inputs_dict
+
 
 def VFM_calc():
 
     db = TinyDB("inputs_db.json")
     inputs = db.all()[0]
 
-    start_year = datetime.datetime.strptime(inputs["const_start_date"], '%Y-%m-%d').year
-    start_month = datetime.datetime.strptime(inputs["const_start_date"], '%Y-%m-%d').month
+    start_year = datetime.datetime.strptime(inputs["const_start_date"], "%Y-%m-%d").year
+    start_month = datetime.datetime.strptime(
+        inputs["const_start_date"], "%Y-%m-%d"
+    ).month
     if start_month < 4:
         first_end_fy = datetime.date(start_year, 3, 31)
     else:
         first_end_fy = datetime.date(start_year + 1, 3, 31)
-    
+
     discount_rate = inputs["kijun_kinri"] + inputs["kitai_bukka"]
     proj_years = inputs["proj_years"]
     const_years = inputs["const_years"]
     ijikanri_years = proj_years - const_years
 
-    schedule = [first_end_fy.replace(year=first_end_fy.year+i) for i in range(0, proj_years)] # 各年度の末日
-    #keika_nensuu = [int(x) for x in range(1, proj_years+1)] # 1〜40の整数定数 range(1, 41)で内包表記？
-    #jigyou_kikan = [] # 施設整備期間、維持管理運営期間の２択
-    discount_factor = [1/(1+discount_rate) ** i for i in range(0, proj_years)] # 割引係数
+    schedule = [
+        first_end_fy.replace(year=first_end_fy.year + i) for i in range(0, proj_years)
+    ]  # 各年度の末日
+    # keika_nensuu = [int(x) for x in range(1, proj_years+1)] # 1〜40の整数定数 range(1, 41)で内包表記？
+    # jigyou_kikan = [] # 施設整備期間、維持管理運営期間の２択
+    discount_factor = [
+        1 / (1 + discount_rate) ** i for i in range(0, proj_years)
+    ]  # 割引係数
     shokan_kaishi_jiki = const_years + inputs["chisai_sueoki_years"] + 1
 
     def PSC():
@@ -213,12 +231,18 @@ def VFM_calc():
         kisai_gaku = [0 for i in range(proj_years)]
         riyou_ryoukin = [0 for i in range(proj_years)]
 
-        for i in range(1,proj_years+1):
+        for i in range(1, proj_years + 1):
             if i == const_years:
                 j = i - 1
-                hojokin[j] = (inputs["hojo"]/100) * inputs["shisetsu_seibi"] # 投資への補助金
-                kisai_gaku[j] = (inputs["kisai_jutou"]/100) * (inputs["shisetsu_seibi"] - hojokin[j]) # 地方債起債額
-                kouhukin[j] = kisai_gaku[j] * (inputs["kisai_koufu"]/100) #  起債への交付金額
+                hojokin[j] = (inputs["hojo"] / 100) * inputs[
+                    "shisetsu_seibi"
+                ]  # 投資への補助金
+                kisai_gaku[j] = (inputs["kisai_jutou"] / 100) * (
+                    inputs["shisetsu_seibi"] - hojokin[j]
+                )  # 地方債起債額
+                kouhukin[j] = kisai_gaku[j] * (
+                    inputs["kisai_koufu"] / 100
+                )  #  起債への交付金額
             else:
                 pass
 
@@ -230,10 +254,10 @@ def VFM_calc():
         kisai_risoku_gaku = [0 for i in range(proj_years)]
         kisai_zansai = [0 for i in range(proj_years)]
 
-        kisai_gaku_sclr = (inputs["kisai_jutou"]/100) * inputs["shisetsu_seibi"]
+        kisai_gaku_sclr = (inputs["kisai_jutou"] / 100) * inputs["shisetsu_seibi"]
         chisai_ganpon_shokan_gaku = kisai_gaku_sclr / inputs["chisai_shokan_kikan"]
- 
-        for i in range(1,proj_years+1):
+
+        for i in range(1, proj_years + 1):
             if i < const_years:
                 pass
             elif i == const_years:
@@ -243,35 +267,73 @@ def VFM_calc():
                 j = i - 1
                 chisai_ganpon_shokansumi_gaku = 0
                 ijikanri_unneihi[j] = inputs["ijikanri_unnei"]
-                #kisai_zansai_sclr = kisai_gaku_sclr - chisai_ganpon_shokansumi_gaku
-                if shokan_kaishi_jiki > i and kisai_gaku_sclr > 0 and kisai_zansai_sclr > 0:
+                # kisai_zansai_sclr = kisai_gaku_sclr - chisai_ganpon_shokansumi_gaku
+                if (
+                    shokan_kaishi_jiki > i
+                    and kisai_gaku_sclr > 0
+                    and kisai_zansai_sclr > 0
+                ):
                     chisai_ganpon_shokansumi_gaku += 0
                     kisai_zansai_sclr = kisai_gaku_sclr - chisai_ganpon_shokansumi_gaku
-                    kisai_risoku_gaku[j] = kisai_zansai_sclr * (inputs["chisai_kinri"]/100)
-                elif shokan_kaishi_jiki <= i and kisai_gaku_sclr > 0 and kisai_zansai_sclr > 0:
+                    kisai_risoku_gaku[j] = kisai_zansai_sclr * (
+                        inputs["chisai_kinri"] / 100
+                    )
+                elif (
+                    shokan_kaishi_jiki <= i
+                    and kisai_gaku_sclr > 0
+                    and kisai_zansai_sclr > 0
+                ):
                     kisai_shokan_gaku[j] = chisai_ganpon_shokan_gaku
-                    chisai_ganpon_shokansumi_gaku = chisai_ganpon_shokan_gaku * (i - (shokan_kaishi_jiki - 1))
-                    kisai_zansai_sclr = kisai_gaku_sclr - chisai_ganpon_shokansumi_gaku            
+                    chisai_ganpon_shokansumi_gaku = chisai_ganpon_shokan_gaku * (
+                        i - (shokan_kaishi_jiki - 1)
+                    )
+                    kisai_zansai_sclr = kisai_gaku_sclr - chisai_ganpon_shokansumi_gaku
                     kisai_zansai[j] = kisai_zansai_sclr
-                    kisai_risoku_gaku[j] = kisai_zansai_sclr * (inputs["chisai_kinri"]/100)
+                    kisai_risoku_gaku[j] = kisai_zansai_sclr * (
+                        inputs["chisai_kinri"] / 100
+                    )
                 else:
                     pass
             else:
                 pass
 
         # PSC incomes, paymentsそれぞれをDFにして、横にマージして、収支を出す。
-        PSC_incomes = {"hojokin":hojokin, "kouhukin":kouhukin, "kisai_gaku":kisai_gaku, "riyou_ryoukin":riyou_ryoukin}
+        PSC_incomes = {
+            "hojokin": hojokin,
+            "kouhukin": kouhukin,
+            "kisai_gaku": kisai_gaku,
+            "riyou_ryoukin": riyou_ryoukin,
+        }
         PSC_incomes_df = pd.DataFrame(PSC_incomes)
-        PSC_incomes_df["incomes_total"] = PSC_incomes_df["hojokin"] + PSC_incomes_df["kouhukin"] + PSC_incomes_df["kisai_gaku"] + PSC_incomes_df["riyou_ryoukin"]
+        PSC_incomes_df["incomes_total"] = (
+            PSC_incomes_df["hojokin"]
+            + PSC_incomes_df["kouhukin"]
+            + PSC_incomes_df["kisai_gaku"]
+            + PSC_incomes_df["riyou_ryoukin"]
+        )
 
-        PSC_payments = {"shisetsu_seibihi":shisetsu_seibihi, "ijikanri_unneihi":ijikanri_unneihi, "monitoring_costs":monitoring_costs, "kisai_shokan_gaku":kisai_shokan_gaku, "kisai_risoku_gaku":kisai_risoku_gaku}
+        PSC_payments = {
+            "shisetsu_seibihi": shisetsu_seibihi,
+            "ijikanri_unneihi": ijikanri_unneihi,
+            "monitoring_costs": monitoring_costs,
+            "kisai_shokan_gaku": kisai_shokan_gaku,
+            "kisai_risoku_gaku": kisai_risoku_gaku,
+        }
         PSC_payments_df = pd.DataFrame(PSC_payments)
-        PSC_payments_df["payments_total"] = PSC_payments_df["shisetsu_seibihi"] + PSC_payments_df["ijikanri_unneihi"] + PSC_payments_df["monitoring_costs"] + PSC_payments_df["kisai_shokan_gaku"] + PSC_payments_df["kisai_risoku_gaku"]
+        PSC_payments_df["payments_total"] = (
+            PSC_payments_df["shisetsu_seibihi"]
+            + PSC_payments_df["ijikanri_unneihi"]
+            + PSC_payments_df["monitoring_costs"]
+            + PSC_payments_df["kisai_shokan_gaku"]
+            + PSC_payments_df["kisai_risoku_gaku"]
+        )
 
         Schedule = pd.DataFrame(schedule, columns=["schedule"])
         PSC = pd.concat([Schedule, PSC_incomes_df, PSC_payments_df], axis=1)
         PSC["kisai_zansai"] = pd.DataFrame(kisai_zansai)
-        PSC["net_payments"] = PSC_incomes_df["payments_total"] - PSC_payments_df["incomes_total"]
+        PSC["net_payments"] = (
+            PSC_incomes_df["payments_total"] - PSC_payments_df["incomes_total"]
+        )
 
         # 官民利払い費用の差とSPC経費の合計を「リスク調整額」とし、それをPSC_balanceに加える。
         # ただし、官民利払い費用の差は、金利差に「サービス対価の割賦元本分」をかけることで算出する。このため、LCCの計算が先に必要。
@@ -301,7 +363,7 @@ def VFM_calc():
         kisai_risoku_gaku = [0 for i in range(proj_years)]
 
         return LCC
-    
+
     def SPC():
         # SPC shuushi incomes
         shiseki_seibihi_servicetaika_ikkatsu = [0 for i in range(proj_years)]
@@ -320,7 +382,8 @@ def VFM_calc():
         kariire_ganpon_hensai = [0 for i in range(proj_years)]
 
         return SPC
-    
+
+
 #    PSC = df_PV_cf["PSC_present_value"].sum()
 #    LCC = df_PV_cf["LCC_present_value"].sum()
 #    VFM = PSC - LCC
