@@ -19,6 +19,8 @@ def inputs():
 
     proj_years = 23
     const_years = 3
+    ijikanri_unnei_years = proj_years - const_years
+
     mgmt_type = "市町村"
     proj_type = "BTO/DBO/RO"
 
@@ -27,32 +29,32 @@ def inputs():
     shisetsu_seibi = 3000.0
     ijikanri_unnei = 50.0
 
-    reduc_shisetsu = 5.0
-    reduc_ijikanri = 5.0
+    reduc_shisetsu = 5.0/100
+    reduc_ijikanri = 5.0/100
 
-    zei_total = 41.98
-    lg_spread = 1.5
+    zei_total = 41.98/100
+    lg_spread = 1.5/100
     growth = 0.0
-    zeimae_rieki = 8.5
+    zeimae_rieki = 8.5/100
     SPC_keihi = 15.0
     SPC_shihon = 100.0
     SPC_yobihi = 100.0
 
     if mgmt_type == "国":
-        zei_modori = 27.8
+        zei_modori = 27.8/100
         hojo = 0.0
         kisai_jutou = 0.0
         kisai_koufu = 0.0
     elif mgmt_type == "都道府県":
-        zei_modori = 5.78
-        hojo = 50.0
-        kisai_jutou = 75.0
-        kisai_koufu = 30.0
+        zei_modori = 5.78/100
+        hojo = 50.0/100
+        kisai_jutou = 75.0/100
+        kisai_koufu = 30.0/100
     elif mgmt_type == "市町村":
-        zei_modori = 8.4
-        hojo = 30.0
-        kisai_jutou = 75.0
-        kisai_koufu = 30.0
+        zei_modori = 8.4/100
+        hojo = 30.0/100
+        kisai_jutou = 75.0/100
+        kisai_koufu = 30.0/100
     else:
         pass
 
@@ -81,8 +83,8 @@ def inputs():
 
     r1 = JGB_rates_df.loc[r_idx].iloc[0]
     r2 = JRB_rates_df.loc[proj_years][const_years]
-    kijun_kinri = r1
-    chisai_kinri = r2
+    kijun_kinri = r1 / 100
+    chisai_kinri = r2 / 100
 
     # 地方債の償還期限を、事業期間と同じにしてあるが、別途設定する必要がある。
     chisai_sueoki_years = const_years
@@ -95,7 +97,7 @@ def inputs():
     )
     gonensai_rimawari = JGB_rates_df.loc["5年"].iloc[0]
     # gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
-    kitai_bukka = kitai_bukka_j - gonensai_rimawari
+    kitai_bukka = (kitai_bukka_j - gonensai_rimawari) / 100
 
     shisetsu_seibi_paymentschedule_ikkatsu = 0.5
     shisetsu_seibi_paymentschedule_kappu = 1- shisetsu_seibi_paymentschedule_ikkatsu
@@ -105,12 +107,13 @@ def inputs():
     kouritsusei_shisetsu_seibi = 0.05
     kouritsusei_ijikanri_unnei = 0.05
 
+    advisory_fee = 25.0
     monitoring_costs_PSC = 10.0
     monitoring_costs_LCC = 6.0
 
     SPC_hiyou_atsukai = 1  # 1: サービス購入費として支払い　0:割賦金利に含めて支払い
 
-    kappu_kinri_spread = 1.0
+    kappu_kinri_spread = 1.0 / 100
 
     kyoukouka_yosantanka_hiritsu = (
         1.0  # 施設整備費全額が予算単価からの積み上げと設定。進めるための仮の設定
@@ -149,6 +152,7 @@ def inputs():
     # SPC_keihi_etc_atsukai = 1 # 1: サービス購入費として支払い　0:割賦金利に含めて支払い
 
     inputs_dict = {
+        "advisory_fee": float(advisory_fee),
         "chisai_kinri": float(chisai_kinri),
         "chisai_shoukan_kikan": int(chisai_shoukan_kikan),
         "chisai_sueoki_years": int(chisai_sueoki_years),
@@ -160,6 +164,7 @@ def inputs():
        "ijikanri_unnei_LCC": float(ijikanri_unnei_LCC), 
         "ijikanri_unnei_org": float(ijikanri_unnei_org),
         "ijikanri_unnei_org_LCC": float(ijikanri_unnei_org_LCC),
+        "ijikanri_unnei_years": int(ijikanri_unnei_years),
         "kappu_kinri_spread": float(kappu_kinri_spread),
         "kijun_kinri": float(kijun_kinri),
         "kisai_jutou": float(kisai_jutou),
@@ -246,13 +251,16 @@ def VFM_calc():
             if i == const_years:
                 j = i - 1
                 hojokin[j] = (inputs["hojo"] / 100) * inputs[
+                # hojokin[j] = (inputs["hojo"]) * inputs[
                     "shisetsu_seibi"
                 ]  # 投資への補助金
                 kisai_gaku[j] = (inputs["kisai_jutou"] / 100) * (
+                # kisai_gaku[j] = (inputs["kisai_jutou"]) * (
                     inputs["shisetsu_seibi"] - hojokin[j]
                 )  # 地方債起債額
                 kouhukin[j] = kisai_gaku[j] * (
                     inputs["kisai_koufu"] / 100
+                    # inputs["kisai_koufu"]
                 )  #  起債への交付金額
             else:
                 pass
@@ -266,6 +274,7 @@ def VFM_calc():
         kisai_zansai = [0 for i in range(proj_years)]
 
         kisai_gaku_sclr = (inputs["kisai_jutou"] / 100) * inputs["shisetsu_seibi"]
+        # kisai_gaku_sclr = (inputs["kisai_jutou"]) * inputs["shisetsu_seibi"]
         chisai_ganpon_shokan_gaku = kisai_gaku_sclr / inputs["chisai_shokan_kikan"]
 
         for i in range(1, proj_years + 1):
@@ -288,6 +297,7 @@ def VFM_calc():
                     kisai_zansai_sclr = kisai_gaku_sclr - chisai_ganpon_shokansumi_gaku
                     kisai_risoku_gaku[j] = kisai_zansai_sclr * (
                         inputs["chisai_kinri"] / 100
+                        # inputs["chisai_kinri"]
                     )
                 elif (
                     shokan_kaishi_jiki <= i
@@ -302,6 +312,7 @@ def VFM_calc():
                     kisai_zansai[j] = kisai_zansai_sclr
                     kisai_risoku_gaku[j] = kisai_zansai_sclr * (
                         inputs["chisai_kinri"] / 100
+                        # inputs["chisai_kinri"]
                     )
                 else:
                     pass
