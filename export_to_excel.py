@@ -10,7 +10,7 @@ import shutil
 
 # mock data
 
-def export_to_excel(jigyouhiyou_sekisan):
+def export_to_excel():
 
     jigyouhiyou_sekisan = {
         'shisetsu_seibi_kouritsusei_DBDBO': 0.05,
