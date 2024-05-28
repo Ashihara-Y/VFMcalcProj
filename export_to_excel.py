@@ -9,39 +9,41 @@ import os
 import shutil
 
 # mock data
-jigyouhiyou_sekisan = {
-    'shisetsu_seibi_kouritsusei_DBDBO': 0.05,
-    'shisetsu_seibi_kouritsusei_BTBTO': 0.05,
-    'shisetsu_seibi_PSC_rakusatsu': 0.0,
-    'shisetsu_seibi_PSC_yosantanka': 3000.0,
-    'ijikanri_jinkenhi_kouritsusei_DBDBO': 0.05,
-    'ijikanri_jinkenhi_kouritsusei_BTBTO': 0.05,
-    'ijikanri_jinkenhi_bukkajousyou': 0.02,
-    'ijikanri_jinkenhi_PSC_rakusatsu': 0.0,
-    'ijikanri_jinkenhi_PSC_yosantanka': 30.0,
-    'ijikanri_shuzenhi_kouritsusei_DBDBO': 0.05,
-    'ijikanri_shuzenhi_kouritsusei_BTBTO': 0.05,
-    'ijikanri_shuzenhi_bukkajousyou': 0.02, 
-    'ijikanri_shuzenhi_PSC_rakusatsu': 0.0,
-    'ijikanri_shuzenhi_PSC_yosantanka': 15.0,
-    'ijikanri_douryokuhi_kouritsusei_DBDBO': 0.05,
-    'ijikanri_douryokuhi_kouritsusei_BTBTO': 0.05,
-    'ijikanri_douryokuhi_bukkajousyou': 0.02,
-    'ijikanri_douryokuhi_PSC_rakusatsu': 0.0,
-    'ijikanri_douryokuhi_PSC_yosantanka': 5.0,
-    'ijikanri_option01_kouritsusei_DBDBO': 0.05,
-    'ijikanri_option01_kouritsusei_BTBTO': 0.05,
-    'ijikanri_option01_bukkajousyou': 0.02,
-    'ijikanri_option01_PSC_rakusatsu': 0.0,
-    'ijikanri_option01_PSC_yosantanka': 0.0,
-    'ijikanri_option02_kouritsusei_DBDBO': 0.05,
-    'ijikanri_option02_kouritsusei_BTBTO': 0.05,
-    'ijikanri_option02_bukkajousyou': 0.02,
-    'ijikanri_option02_PSC_rakusatsu': 0.0,
-    'ijikanri_option02_PSC_yosantanka': 0.0,
-}
 
 def export_to_excel(jigyouhiyou_sekisan):
+
+    jigyouhiyou_sekisan = {
+        'shisetsu_seibi_kouritsusei_DBDBO': 0.05,
+        'shisetsu_seibi_kouritsusei_BTBTO': 0.05,
+        'shisetsu_seibi_PSC_rakusatsu': 0.0,
+        'shisetsu_seibi_PSC_yosantanka': 3000.0,
+        'ijikanri_jinkenhi_kouritsusei_DBDBO': 0.05,
+        'ijikanri_jinkenhi_kouritsusei_BTBTO': 0.05,
+        'ijikanri_jinkenhi_bukkajousyou': 0.02,
+        'ijikanri_jinkenhi_PSC_rakusatsu': 0.0,
+        'ijikanri_jinkenhi_PSC_yosantanka': 30.0,
+        'ijikanri_shuzenhi_kouritsusei_DBDBO': 0.05,
+        'ijikanri_shuzenhi_kouritsusei_BTBTO': 0.05,
+        'ijikanri_shuzenhi_bukkajousyou': 0.02, 
+        'ijikanri_shuzenhi_PSC_rakusatsu': 0.0,
+        'ijikanri_shuzenhi_PSC_yosantanka': 15.0,
+        'ijikanri_douryokuhi_kouritsusei_DBDBO': 0.05,
+        'ijikanri_douryokuhi_kouritsusei_BTBTO': 0.05,
+        'ijikanri_douryokuhi_bukkajousyou': 0.02,
+        'ijikanri_douryokuhi_PSC_rakusatsu': 0.0,
+        'ijikanri_douryokuhi_PSC_yosantanka': 5.0,
+        'ijikanri_option01_kouritsusei_DBDBO': 0.05,
+        'ijikanri_option01_kouritsusei_BTBTO': 0.05,
+        'ijikanri_option01_bukkajousyou': 0.02,
+        'ijikanri_option01_PSC_rakusatsu': 0.0,
+        'ijikanri_option01_PSC_yosantanka': 0.0,
+        'ijikanri_option02_kouritsusei_DBDBO': 0.05,
+        'ijikanri_option02_kouritsusei_BTBTO': 0.05,
+        'ijikanri_option02_bukkajousyou': 0.02,
+        'ijikanri_option02_PSC_rakusatsu': 0.0,
+        'ijikanri_option02_PSC_yosantanka': 0.0,
+    }
+
     db = TinyDB("inputs_db.json")
     inputs = db.all()[0]
 
@@ -82,7 +84,8 @@ def export_to_excel(jigyouhiyou_sekisan):
     for r in res_01["cell-position_value"]:
         cell = list(r.keys())[0]
         val = list(r.values())[0]
-        sheet_01[cell] = jigyouhiyou_sekisan[val]
+        print(cell, val)
+        #sheet_01[cell] = jigyouhiyou_sekisan[val]
     book.save(file_copy_outpath)
 
 # 次に、保存したブックの該当事業形式シートを開いて、初期入力値のうち、Part2を書き込む
@@ -92,7 +95,10 @@ def export_to_excel(jigyouhiyou_sekisan):
     for r in res_02["cell-position_value"]:
         cell = list(r.keys())[0]
         val = list(r.values())[0]
-        sheet_02[cell] = inputs[val]
+        print(cell, val)
+        #sheet_02[cell] = inputs[val]
     book.save(file_copy_outpath)
 
 # 上記を動かすには、事業費概算シートへの入力値用の入力画面が必要
+if __name__ == '__main__':
+    export_to_excel()
