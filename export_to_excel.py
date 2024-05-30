@@ -84,8 +84,8 @@ def export_to_excel():
     for r in res_01["cell-position_value"]:
         cell = list(r.keys())[0]
         val = list(r.values())[0]
-        print(cell, val)
-        #sheet_01[cell] = jigyouhiyou_sekisan[val]
+        #print(cell, val)
+        sheet_01[cell] = jigyouhiyou_sekisan[val]
     book.save(file_copy_outpath)
 
 # 次に、保存したブックの該当事業形式シートを開いて、初期入力値のうち、Part2を書き込む
@@ -95,8 +95,8 @@ def export_to_excel():
     for r in res_02["cell-position_value"]:
         cell = list(r.keys())[0]
         val = list(r.values())[0]
-        print(cell, val)
-        #sheet_02[cell] = inputs[val]
+        #print(cell, val)
+        sheet_02[cell] = inputs[val]
     book.save(file_copy_outpath)
 
 # 上記を動かすには、事業費概算シートへの入力値用の入力画面が必要
