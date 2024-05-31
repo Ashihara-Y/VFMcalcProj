@@ -446,3 +446,7 @@ def VFM_calc():
 #    results_2 =  dic_PV_cf
 
 #    return results, results_2
+
+if __name__ == "__main__":
+    inputs()
+    VFM_calc()

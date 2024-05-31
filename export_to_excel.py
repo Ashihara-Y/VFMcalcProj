@@ -8,10 +8,10 @@ import yaml
 import os
 import shutil
 
-# mock data
+
 
 def export_to_excel():
-
+    # mock data
     jigyouhiyou_sekisan = {
         'shisetsu_seibi_kouritsusei_DBDBO': 0.05,
         'shisetsu_seibi_kouritsusei_BTBTO': 0.05,
@@ -60,23 +60,18 @@ def export_to_excel():
     res_02 = yaml.load(fin, Loader=yaml.FullLoader)
     fin.close()
 
-    # まず、標準算定フォーマットのExcelブックを開いて、別名でOutputディレクトリに保存する
+    # 標準算定フォーマットのExcelブックを開いて、別名でOutputディレクトリに保存する
     file = res_list0[0]
+    file = str(Path('VFM標準算定シート.xlsx')) 
     file_els = file.split('.',2)
     file_copy = file_els[0] + '_copy.' + file_els[1]
 
-    file_copy_outpath = 'vfm_output/' + file_copy
+    file_copy_outpath = Path('vfm_output')
+    file_copy_outpath.mkdir(parents=True, exist_ok=True)
+    file_copy_outpath_file = file_copy_outpath / file_copy
+    shutil.copy(file, file_copy_outpath_file)
 
-    if os.path.exists(file) :
-        if os.path.exists("vfm_output"):
-            pass
-        else:
-            os.mkdir("vfm_output")
-        shutil.copy(file, file_copy_outpath)
-    else:
-        pass
-
-    # 保存したブックの「事業費用概算」シートを開いて、初期入力値のうち、Part1を書き込む処理を書く
+    # 保存したブックの「事業費用概算」シートを開いて、初期入力値のうち、Part1を書き込む
     # テスト用のモックとして、上記のjigyouhiyou_sekisanを書き込む
     book = openpyxl.load_workbook(file_copy_outpath)
     sheet_01 = book['事業費用概算']
@@ -88,8 +83,7 @@ def export_to_excel():
         sheet_01[cell] = jigyouhiyou_sekisan[val]
     book.save(file_copy_outpath)
 
-# 次に、保存したブックの該当事業形式シートを開いて、初期入力値のうち、Part2を書き込む
-    #book = openpyxl.load_workbook(file_copy_outpath)
+    # 次に、保存したブックの該当事業形式シートを開いて、初期入力値のうち、Part2を書き込む
     sheet_02 = book[inputs['proj_type']]
 
     for r in res_02["cell-position_value"]:
@@ -99,6 +93,6 @@ def export_to_excel():
         sheet_02[cell] = inputs[val]
     book.save(file_copy_outpath)
 
-# 上記を動かすには、事業費概算シートへの入力値用の入力画面が必要
+# 上記をmok dataなしで動かすには、事業費用概算シートへの入力値用の入力画面とDB入力への統合が必要
 if __name__ == '__main__':
     export_to_excel()
