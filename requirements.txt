@@ -8,3 +8,5 @@ pyyaml
 simpledatatable
 timeflake
 tinydb
+openpyxl
+lxml
