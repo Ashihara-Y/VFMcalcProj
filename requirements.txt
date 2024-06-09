@@ -1,16 +1,16 @@
 dateutils
-fastapi
+# fastapi
 flet
-jupyter
+# jupyter
 kaleido
-numpy
-numpy-financial
+# numpy
+# numpy-financial
 pandas
 playwright
 plotly
 prefect
 pyarrow
-pyfinmod
+# pyfinmod
 pymupdf
 python-ulid
 pyyaml
