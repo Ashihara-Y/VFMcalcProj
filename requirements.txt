@@ -6,12 +6,12 @@ kaleido
 # numpy
 # numpy-financial
 pandas
-playwright
+# playwright
 plotly
 # prefect
 # pyarrow
 # pyfinmod
-pymupdf
+# pymupdf
 python-ulid
 pyyaml
 # scipy
