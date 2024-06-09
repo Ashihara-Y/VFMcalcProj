@@ -8,13 +8,13 @@ kaleido
 pandas
 playwright
 plotly
-prefect
-pyarrow
+# prefect
+# pyarrow
 # pyfinmod
 pymupdf
 python-ulid
 pyyaml
-scipy
+# scipy
 simpledatatable
 timeflake
 tinydb
