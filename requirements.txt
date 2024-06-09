@@ -1,20 +1,10 @@
 dateutils
-# fastapi
 flet
-# jupyter
 kaleido
-# numpy
-# numpy-financial
 pandas
-# playwright
 plotly
-# prefect
-# pyarrow
-# pyfinmod
-# pymupdf
 python-ulid
 pyyaml
-# scipy
 simpledatatable
 timeflake
 tinydb
