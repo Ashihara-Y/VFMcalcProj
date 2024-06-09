@@ -8,4 +8,3 @@ pyyaml
 simpledatatable
 timeflake
 tinydb
-
