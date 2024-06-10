@@ -1,6 +1,5 @@
 dateutils
 flet
-kaleido
 pandas
 plotly
 python-ulid

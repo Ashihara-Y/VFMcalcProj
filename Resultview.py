@@ -1,5 +1,6 @@
 import sys
 sys.dont_write_bytecode = True
+import kaleido
 import pandas as pd
 import flet as ft
 from simpledt import DataFrame
