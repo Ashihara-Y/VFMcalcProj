@@ -1,5 +1,5 @@
 flet
-pandas==2.2.2
+pandas==2.x.x
 plotly
 python-ulid
 pyyaml
