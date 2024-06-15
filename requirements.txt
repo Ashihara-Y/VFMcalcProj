@@ -1,6 +1,5 @@
-dateutils
 flet
-pandas
+pandas==2.2.2
 plotly
 python-ulid
 pyyaml
@@ -9,4 +8,4 @@ timeflake
 tinydb
 openpyxl
 lxml
-numpy>=2.0.0rc1
+numpy==1.26.4
