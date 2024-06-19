@@ -5,7 +5,7 @@ import flet as ft
 # from flet_core.session_storage import SessionStorage
 import pandas as pd
 # import pyarrow as pa
-import jgb_rates
+# import jgb_rates
 import tinydb
 from tinydb import TinyDB, Query
 
