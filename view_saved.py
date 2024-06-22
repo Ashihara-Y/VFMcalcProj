@@ -97,7 +97,7 @@ class View_saved(ft.UserControl):
             for i in dr:
                 dtime = i.cells[0].content.value
                 i.data = dtime
-                i.color=ft.colors.AMBER_50
+                i.color=ft.colors.BROWN_300
                 i.selected=False
                 #message = {'selected_datetime': dtime}
                 i.on_long_press=self.send_mess

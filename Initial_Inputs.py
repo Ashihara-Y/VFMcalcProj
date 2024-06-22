@@ -44,10 +44,11 @@ class Initial_Inputs(ft.UserControl):
             hint_text="事業の類型を選択してください",
             width=400,
             options=[
-                ft.dropdown.Option("BTO/DBO/RO"),
-                # ft.dropdown.Option("BOT"),
-                ft.dropdown.Option("BT/DB"),
-                ft.dropdown.Option("O"),
+                #ft.dropdown.Option("DB"),
+                #ft.dropdown.Option("BT"),
+                #ft.dropdown.Option("DBO"),
+                ft.dropdown.Option("BTO"),
+                #ft.dropdown.Option("BOT/BOO"),
             ],
         )
         self.dd4 = ft.Dropdown(
@@ -109,11 +110,11 @@ class Initial_Inputs(ft.UserControl):
 
     def button_clicked(self, e):
         # jgb_rates.JGB_rates_conv()
-        if self.dd3.value == "BT/DB":
+        if self.dd3.value == "DB" or self.dd3.value == "BT":
             self.dd4.value = self.dd5.value
         
-        if self.dd3.value == "O":
-            self.dd5.value = "0"
+        #if self.dd3.value == "O":
+        #    self.dd5.value = "0"
 
         proj_years = int(self.dd4.value)
         const_years = int(self.dd5.value)
