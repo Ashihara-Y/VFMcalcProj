@@ -8,3 +8,4 @@ timeflake
 tinydb
 openpyxl
 lxml
+daphne
