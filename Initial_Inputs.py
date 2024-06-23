@@ -102,6 +102,9 @@ class Initial_Inputs(ft.UserControl):
                 ft.dropdown.Option("4"),
             ],
         )
+       # self.sl1 = ft.Slider(
+       #     label="施設整備費", 
+       # ) 
         self.b = ft.ElevatedButton(text="選択", on_click=self.button_clicked)
         return ft.Column(
             [self.dd1, self.dd2, self.dd3, self.dd4, self.dd5, self.b],
