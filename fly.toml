@@ -1,4 +1,4 @@
-app = "VFMcalc"
+app = "vfmcalc"
 
 primary_region = "nrt"
 
@@ -16,6 +16,6 @@ kill_timeout = 5
 	min_machines_running = 0
 
 [http_service.concurrency]
-	type = "connections"
+	type = "requests"
 	soft_limit = 200
 	hard_limit = 250
