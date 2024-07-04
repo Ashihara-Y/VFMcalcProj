@@ -24,32 +24,8 @@ class Final_Inputs(ft.UserControl):
         db = TinyDB("ii_db.json")
         self.initial_inputs = db.all()[0]
         
-        #t = ft.Text(      
-        #    size=50,
-        #    color=ft.colors.BLUE,
-        #    weight=ft.FontWeight.NORMAL,
-        #    font=ft.FontFamily.MONOSPACE,
-        #    )
-        
-        #self.sig_array = event_array.e_data_array
-
-    #def on_message(msg):
-                #self.tx1 = ReactiveText(self.initial_inputs["mgmt_type"])
-
-    #ft.page.pubsub.subscribe(on_message)#def slider_changed_sl3(e, t):
-    #    t_sl3 = t
-    #    t_sl3.value = str(e.control.value) 
-    #    ft.page.update()
-    #    return t_sl3
-
     def build(self):
 
-        #def slider_changed_sl3(e, t):
-        #    t_sl3 = t
-        #    t_sl3.value = str(e.control.value) 
-        #    ft.page.update()
-        #    return t_sl3
-               
         self.tx1 = ft.Text(str(self.initial_inputs["mgmt_type"]))
         self.tx2 = ft.Text(str(self.initial_inputs["proj_ctgry"]))
         self.tx3 = ft.Text(str(self.initial_inputs["proj_type"]))
@@ -190,7 +166,6 @@ class Final_Inputs(ft.UserControl):
         #df_fi = pd.DataFrame(data=final_inputs, index=[1])
         #con.sql('create table final_inputs as select * from df_fi')
         #con.close()
-        #joblib.dump(final_inputs, "final_inputs.joblib")
         
         res_PSC_LCC = vc.calc_PSC_LCC(final_inputs)
         results, results_2 = vc.calc_VFM(res_PSC_LCC)
