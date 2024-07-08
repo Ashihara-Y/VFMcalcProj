@@ -1,0 +1,13 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'asia-northeast-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/my-image:latest', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'asia-northeast-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/my-image:latest']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['run', 'deploy', 'my-image', '--image', 'asia-northeast-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/my-image:latest', '--platform', 'managed', '--region', 'asia-northeast1', '--allow-unauthenticated']
+  
+logsBucket: 'gs://vfmcalc_cloudbuild'
+options:
+  logging: CLOUD_LOGGING_ONLY
