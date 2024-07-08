@@ -3,14 +3,14 @@ steps:
     args: [
       'build', 
       '-t', 
-      'asia-northeast-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/my-image', 
+      'asia-northeast-docker.pkg.dev/${PROJECT_ID}/vfmcalcrepotokyo/my-image', 
       '.'
     ]
 
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push', 
-      'asia-northeast-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/my-image'
+      'asia-northeast-docker.pkg.dev/${PROJECT_ID}/vfmcalcrepotokyo/my-image'
     ]
 
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -19,7 +19,7 @@ steps:
       'deploy', 
       'my-image', 
       '--image', 
-      'asia-northeast-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/my-image',
+      'asia-northeast-docker.pkg.dev/${PROJECT_ID}/vfmcalcrepotokyo/my-image',
       '--platform', 
        'managed', 
        '--region', 
