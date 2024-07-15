@@ -3,30 +3,30 @@ steps:
     args: [
       'build', 
       '-t', 
-      'asia-northeast-docker.pkg.dev/${PROJECT_ID}/vfmcalcrepotokyo/my-image:latest', 
+      'gcr.io/${PROJECT_ID}/vfmcalcproj/$COMMIT_SHA', 
       '.'
     ]
 
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push', 
-      'asia-northeast-docker.pkg.dev/${PROJECT_ID}/vfmcalcrepotokyo/my-image:latest'
+      'gcr.io/${PROJECT_ID}/vfmcalcproj/$COMMIT_SHA'
     ]
 
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
     args: [
       'run', 
       'deploy', 
-      'my-image', 
+      'vfmcalcproj', 
       '--image', 
-      'asia-northeast-docker.pkg.dev/${PROJECT_ID}/vfmcalcrepotokyo/my-image:latest',
-      '--platform', 
-       'managed', 
-       '--region', 
-       'asia-northeast1', 
-       '--allow-unauthenticated'
+      'gcr.io/${PROJECT_ID}/vfmcalcproj/$COMMIT_SHA',
+      '--region', 
+      'asia-northeast1', 
+      '--allow-unauthenticated'
      ]
-  
+images:
+  - 'gcr.io/${PROJECT_ID}/vfmcalcproj/$COMMIT_SHA'  
 #logsBucket: 'gs://vfmcalc_cloudbuild'
 options:
   logging: CLOUD_LOGGING_ONLY
