@@ -13,7 +13,7 @@ import save_results as sr
 # savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
 # filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
 
-class Final_Inputs(ft.UserControl):
+class Final_Inputs(ft.Column):
     def __init__(self):
         super().__init__()
         self.title = "最終入力"
