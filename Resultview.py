@@ -12,7 +12,7 @@ import openpyxl
 
 
 # savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
-class Results(ft.UserControl):
+class Results(ft.Stack):
     def __init__(self):
         super().__init__()
         self.title = "結果 要約"
