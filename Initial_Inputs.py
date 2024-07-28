@@ -10,7 +10,7 @@ import tinydb
 from tinydb import TinyDB, Query
 
 
-class Initial_Inputs(ft.UserControl):
+class Initial_Inputs(ft.Column):
     def __init__(self):
         super().__init__()
         self.title = "初期入力"

@@ -14,7 +14,7 @@ from tinydb import TinyDB, Query
 
 
 
-class View_saved(ft.UserControl):
+class View_saved(ft.Column):
     def __init__(self):
         super().__init__()
         self.title = "結果リスト"
