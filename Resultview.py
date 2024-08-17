@@ -1,6 +1,6 @@
 import sys
 sys.dont_write_bytecode = True
-import kaleido
+#import kaleido
 import pandas as pd
 import flet as ft
 from simpledt import DataFrame
@@ -8,7 +8,7 @@ import plotly.express as px
 from flet.plotly_chart import PlotlyChart
 import tinydb
 from tinydb import TinyDB, Query
-import glob
+#import glob
 import openpyxl
 
 

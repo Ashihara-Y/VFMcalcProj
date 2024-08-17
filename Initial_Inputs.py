@@ -5,7 +5,7 @@ import flet as ft
 # from flet_core.session_storage import SessionStorage
 import pandas as pd
 # import pyarrow as pa
-import jgb_rates
+# import jgb_rates
 import tinydb
 from tinydb import TinyDB, Query
 
@@ -44,10 +44,11 @@ class Initial_Inputs(ft.Column):
             hint_text="事業の類型を選択してください",
             width=400,
             options=[
-                ft.dropdown.Option("BTO/DBO/RO"),
-                # ft.dropdown.Option("BOT"),
-                ft.dropdown.Option("BT/DB"),
-                ft.dropdown.Option("O"),
+                #ft.dropdown.Option("DB"),
+                #ft.dropdown.Option("BT"),
+                #ft.dropdown.Option("DBO"),
+                ft.dropdown.Option("BTO"),
+                #ft.dropdown.Option("BOT/BOO"),
             ],
         )
         self.dd4 = ft.Dropdown(
@@ -101,6 +102,9 @@ class Initial_Inputs(ft.Column):
                 ft.dropdown.Option("4"),
             ],
         )
+       # self.sl1 = ft.Slider(
+       #     label="施設整備費", 
+       # ) 
         self.b = ft.ElevatedButton(text="選択", on_click=self.button_clicked)
         return ft.Column(
             [self.dd1, self.dd2, self.dd3, self.dd4, self.dd5, self.b],
@@ -109,11 +113,11 @@ class Initial_Inputs(ft.Column):
 
     def button_clicked(self, e):
         # jgb_rates.JGB_rates_conv()
-        if self.dd3.value == "BT/DB":
+        if self.dd3.value == "DB" or self.dd3.value == "BT":
             self.dd4.value = self.dd5.value
         
-        if self.dd3.value == "O":
-            self.dd5.value = "0"
+        #if self.dd3.value == "O":
+        #    self.dd5.value = "0"
 
         proj_years = int(self.dd4.value)
         const_years = int(self.dd5.value)
