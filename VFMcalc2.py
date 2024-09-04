@@ -10,9 +10,10 @@ from ulid import ULID
 import timeflake
 import save_results as sr
 import datetime
-import dateutils
+#import dateutils
 import scipy
 from scipy import optimize
+import pyxirr
 
 
 def inputs():
