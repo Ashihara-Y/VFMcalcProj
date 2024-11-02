@@ -17,9 +17,7 @@ from pandera import Column, DataFrameSchema
 db = TinyDB("test_inputs_db.json")
 inputs = db.all()[0]
 
-# 以下は、一応、Pydanticを併用したDataclassのテスト。
-# 次は、DataFrameにDecimalを代入するテスト
-
+# schema for validation
 @dataclass
 class Inputs(BaseModel):
     advisory_fee: Decimal = 25.0
@@ -79,9 +77,10 @@ class Inputs(BaseModel):
     option_01: Decimal = 0.0
     option_02: Decimal = 0.0
 
+# validate inputs
 inputs_pdt = Inputs.model_validate(inputs)
-#inputs_pdt = Inputs(inputs)
 
+# making inputs supplementary
 start_year = datetime.datetime.strptime(str(inputs_pdt.const_start_date), '%Y-%m-%d %H:%M:%S').year
 start_month = datetime.datetime.strptime(str(inputs_pdt.const_start_date), '%Y-%m-%d %H:%M:%S').month
 
@@ -117,19 +116,22 @@ inputs_supl = {
     'SPC_hiyou_nen': SPC_hiyou_nen,    
 }
 
+# to DataFrame
 inputs_supl_df = pd.DataFrame(inputs_supl, index=['val'])
 
+# schema for validation
 schema_test = DataFrameSchema({
     'first_end_fy': Column(datetime.date),
     'discount_rate': Column(Decimal, coerce=True),
-    'ijikanri_years': Column(Decimal, coerce=True),
-    'shoukan_kaishi_jiki': Column(Decimal, coerce=True),
-    'target_years': Column(Decimal, coerce=True),
+    'ijikanri_years': Column(int, coerce=True),
+    'shoukan_kaishi_jiki': Column(int, coerce=True),
+    'target_years': Column(int, coerce=True),
     'Kappu_kinri': Column(Decimal, coerce=True),
     'SPC_hiyou': Column(Decimal, coerce=True),
     'SPC_hiyou_nen': Column(Decimal, coerce=True),
 })
 
+# validate inputs supplementary
 inputs_supl_pdt = schema_test.validate(inputs_supl_df)
 
 def io():

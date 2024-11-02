@@ -18,11 +18,16 @@ inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 
 cols_waku = ['year','periods']
 
-waku = make_pl_waku.make_waku_df(inputs_supl_pdt.first_end_fy, inputs_pdt.target_years, cols_waku)
+target_years = inputs_supl_pdt.target_years.iloc[0]
+first_end_fy = inputs_supl_pdt.first_end_fy.iloc[0]
 
-cols_PSC = ['year','periods', 'hojokin','kouhukin','kisai_gaku','riyou_ryoukin']
-added_cols = make_pl_waku.add_cols_df(inputs_supl_pdt.first_end_fy, inputs_pdt.target_years, waku, cols_PSC)
+waku = make_pl_waku.make_waku_df(first_end_fy, target_years, cols_waku)
+print(waku.info())
 
-empty_pl_PSC = make_pl_waku.join_cols2waku(added_cols, waku)
+cols_PSC_income = ['periods','hojokin','kouhukin','kisai_gaku','riyou_ryoukin']
+added_cols = make_pl_waku.add_cols_df(target_years, waku, cols_PSC_income)
+print(added_cols.info())
 
-print(empty_pl_PSC)
+empty_pl_PSC_income = make_pl_waku.join_cols2waku(added_cols, waku)
+
+print(empty_pl_PSC_income.info())
