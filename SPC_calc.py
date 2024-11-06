@@ -15,7 +15,7 @@ import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero, inputs_
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
-LCC_df = c.sql('SELECT * FROM LCC_table').df()
+LCC_df = c.sql("SELECT * FROM LCC_table").df()
 LCC_pdr_df = inputs_pandera_validate.validate_LCC(LCC_df)
 LCC = LCC_pdr_df
 #print(LCC.info())
