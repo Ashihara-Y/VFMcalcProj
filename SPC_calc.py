@@ -15,8 +15,10 @@ import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero, inputs_
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
-c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC')
-
+LCC_df = c.sql('SELECT * FROM LCC_table').df()
+LCC_pdr_df = inputs_pandera_validate.validate(LCC_df)
+LCC = LCC_pdr_df
+print(LCC)
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
