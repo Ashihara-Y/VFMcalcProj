@@ -64,6 +64,92 @@ inputs_schema = DataFrameSchema({
     'option_01': Column(Decimal, coerce=True),
 })
 
-def validate(df):
+inputs_supl_schema_ = DataFrameSchema({
+    'first_end_fy': Column(datetime.date),
+    'discount_rate': Column(Decimal, coerce=True),
+    'ijikanri_years': Column(int, coerce=True),
+    'shoukan_kaishi_jiki': Column(int, coerce=True),
+    'target_years': Column(int, coerce=True),
+    'Kappu_kinri': Column(Decimal, coerce=True),
+    'SPC_hiyou_total': Column(Decimal, coerce=True),
+    'SPC_hiyou_nen': Column(Decimal, coerce=True),
+    'SPC_keihi_LCC': Column(Decimal, coerce=True),
+})
+
+PSC_schema = DataFrameSchema({
+    'year': Column(datetime.datetime, coerce=True),
+    'hojokin': Column(Decimal, coerce=True),
+    'kouhukin': Column(Decimal, coerce=True),
+    'kisai_gaku': Column(Decimal, coerce=True),
+    'riyou_ryoukin': Column(Decimal, coerce=True),
+    'income_total': Column(Decimal, coerce=True),
+    'shisetsu_seibihi': Column(Decimal, coerce=True),
+    'ijikanri_unneihi': Column(Decimal, coerce=True),
+    'monitoring_costs': Column(Decimal, coerce=True),
+    'chisai_zansai': Column(Decimal, coerce=True),
+    'kisai_shoukan_gaku': Column(Decimal, coerce=True),
+    'kisai_shoukansumi_gaku': Column(Decimal, coerce=True),
+    'kisai_risoku_gaku': Column(Decimal, coerce=True),
+    'lpayments_total': Column(Decimal, coerce=True),
+    'net_payments': Column(Decimal, coerce=True),
+})
+LCC_schema = DataFrameSchema({
+    'year': Column(datetime.datetime, coerce=True),
+    'hojokin': Column(Decimal, coerce=True),
+    'kouhukin': Column(Decimal, coerce=True),
+    'kisai_gaku': Column(Decimal, coerce=True),
+    'zeishu': Column(Decimal, coerce=True),
+    'income_total': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_ikkatsu': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_kappuganpon': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_kappukinri': Column(Decimal, coerce=True),
+    'ijikanri_unneihi': Column(Decimal, coerce=True),
+    'monitoring_costs': Column(Decimal, coerce=True),
+    'SPC_keihi': Column(Decimal, coerce=True),
+    'chisai_zansai': Column(Decimal, coerce=True),
+    'kisai_shoukan_gaku': Column(Decimal, coerce=True),
+    'kisai_shoukansumi_gaku': Column(Decimal, coerce=True),
+    'kisai_risoku_gaku': Column(Decimal, coerce=True),
+    'payments_total': Column(Decimal, coerce=True),
+    'net_payments': Column(Decimal, coerce=True),
+})
+
+SPC_schema = DataFrameSchema({
+    'year': Column(datetime.datetime, coerce=True),
+    'shisetsu_seibihi_taika_ikkatsu': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_taika_kappuganpon': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_taika_kappukinri': Column(Decimal, coerce=True),
+    'ijikanri_unneihi_taika': Column(Decimal, coerce=True),
+    'SPC_hiyou_taika': Column(Decimal, coerce=True),
+    'riyou_ryoukin': Column(Decimal, coerce=True),
+    'income_total': Column(Decimal, coerce=True),
+    'shisetsu_seibihi': Column(Decimal, coerce=True),
+    'ijikanri_unneihi': Column(Decimal, coerce=True),
+    'kariire_ganpon_hensai': Column(Decimal, coerce=True),
+    'shiharai_risoku': Column(Decimal, coerce=True),
+    'SPC_keihi': Column(Decimal, coerce=True),
+    'SPC_setsuritsuhi': Column(Decimal, coerce=True),
+    'houjinzei_etc': Column(Decimal, coerce=True),
+    'payments_total': Column(Decimal, coerce=True),
+    'net_income': Column(Decimal, coerce=True),
+})
+
+def validate_inputs(df):
     pdr_df = inputs_schema.validate(df)
+    return pdr_df
+
+def validate_inputs_supl(df):
+    pdr_df = inputs_supl_schema.validate(df)
+    return pdr_df
+
+def validate_PSC(df):
+    pdr_df = PSC_schema.validate(df)
+    return pdr_df
+
+def validate_LCC(df):
+    pdr_df = LCC_schema.validate(df)
+    return pdr_df
+
+def validate_SPC(df):
+    pdr_df = SPC_schema.validate(df)
     return pdr_df
