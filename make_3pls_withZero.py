@@ -2,9 +2,6 @@ import os
 import pandas as pd
 import tinydb
 from tinydb import TinyDB, Query
-
-from dataclasses import asdict, dataclass
-from decimal import *
 from pydantic import BaseModel
 import pandera as pa
 from pandera.typing import Series, DataFrame

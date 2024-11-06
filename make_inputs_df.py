@@ -58,9 +58,10 @@ class Inputs(BaseModel):
     shisetsu_seibi_paymentschedule_ikkatsu: Decimal = 0.5
     shisetsu_seibi_paymentschedule_kappu: Decimal = 0.5
     SPC_hiyou_atsukai: int = 1
-    SPC_keihi: Decimal = 15.0
+    SPC_keihi: Decimal = 20.0
+    SPC_fee: Decimal = 20.0
     SPC_shihon: Decimal = 100.0
-    SPC_yobihi: Decimal = 100.0
+    SPC_yobihi: Decimal = 456.0
     zei_modori: Decimal = 0.084
     zei_total: Decimal = 0.4197
     zeimae_rieki: Decimal = 0.05
@@ -102,8 +103,9 @@ Kappu_kinri = inputs_pdt.kijun_kinri + inputs_pdt.lg_spread + inputs_pdt.kappu_k
 
 first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
-SPC_hiyou = inputs_pdt.SPC_keihi * inputs_pdt.ijikanri_unnei_years + inputs_pdt.SPC_shihon
-SPC_hiyou_nen = SPC_hiyou / proj_years
+SPC_hiyou_total = inputs_pdt.SPC_keihi * inputs_pdt.ijikanri_unnei_years + inputs_pdt.SPC_shihon
+SPC_hiyou_nen = SPC_hiyou_total / proj_years
+SPC_keihi_LCC = inputs_pdt.SPC_keihi + Decimal(str(inputs_pdt.SPC_fee)) + inputs_pdt.houjinjuminzei_kintou
 
 inputs_supl = {
     'first_end_fy': first_end_fy,
@@ -112,8 +114,9 @@ inputs_supl = {
     'shoukan_kaishi_jiki': shoukan_kaishi_jiki,
     'target_years': target_years,
     'Kappu_kinri': Kappu_kinri,
-    'SPC_hiyou': SPC_hiyou,
+    'SPC_hiyou_total': SPC_hiyou_total,
     'SPC_hiyou_nen': SPC_hiyou_nen,    
+    'SPC_keihi_LCC': SPC_keihi_LCC,    
 }
 
 # to DataFrame
@@ -127,8 +130,9 @@ schema_test = DataFrameSchema({
     'shoukan_kaishi_jiki': Column(int, coerce=True),
     'target_years': Column(int, coerce=True),
     'Kappu_kinri': Column(Decimal, coerce=True),
-    'SPC_hiyou': Column(Decimal, coerce=True),
+    'SPC_hiyou_total': Column(Decimal, coerce=True),
     'SPC_hiyou_nen': Column(Decimal, coerce=True),
+    'SPC_keihi_LCC': Column(Decimal, coerce=True),
 })
 
 # validate inputs supplementary
