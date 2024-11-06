@@ -101,6 +101,7 @@ LCC_schema = DataFrameSchema({
     'zeishu': Column(Decimal, coerce=True),
     'income_total': Column(Decimal, coerce=True),
     'shisetsu_seibihi_ikkatsu': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_kappugoukei': Column(Decimal, coerce=True),
     'shisetsu_seibihi_kappuganpon': Column(Decimal, coerce=True),
     'shisetsu_seibihi_kappukinri': Column(Decimal, coerce=True),
     'ijikanri_unneihi': Column(Decimal, coerce=True),
