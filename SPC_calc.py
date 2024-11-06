@@ -9,7 +9,7 @@ from decimal import *
 from pydantic import BaseModel
 import pandera as pa
 from pandera.typing import Series, DataFrame
-import adbc_driver_sqlite.dbapi
+#import adbc_driver_sqlite.dbapi
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero, inputs_pandera_validate
 
 conn = duckdb.connect('VFM.duckdb')
