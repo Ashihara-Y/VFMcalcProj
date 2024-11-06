@@ -64,7 +64,7 @@ inputs_schema = DataFrameSchema({
     'option_01': Column(Decimal, coerce=True),
 })
 
-inputs_supl_schema_ = DataFrameSchema({
+inputs_supl_schema = DataFrameSchema({
     'first_end_fy': Column(datetime.date),
     'discount_rate': Column(Decimal, coerce=True),
     'ijikanri_years': Column(int, coerce=True),
