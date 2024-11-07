@@ -23,9 +23,9 @@ LCC = LCC_pdr_df
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 
-periods= [i+1 for i in range(inputs_supl_pdt.target_years.iloc[0])]
-LCC.set_index(periods, inplace=True)
-print(LCC)
+#periods= [i+1 for i in range(inputs_supl_pdt.target_years.iloc[0])]
+#LCC.set_index(periods, inplace=True)
+#print(LCC)
 
 SPC_shuushi_income = zero_pl_SPC_income
 SPC_shuushi_payments = zero_pl_SPC_payments
@@ -142,5 +142,5 @@ print(SPC)
 
 c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC')
 
-with pd.ExcelWriter('VFN_test.xlsx', engine='openpyxl', mode='a') as writer:
+with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
    SPC.to_excel(writer, sheet_name='SPC_sheet20241107_001')
