@@ -93,7 +93,47 @@ PSC_schema = DataFrameSchema({
     'lpayments_total': Column(Decimal, coerce=True),
     'net_payments': Column(Decimal, coerce=True),
 })
+PSC_r_schema = DataFrameSchema({
+    'periods': Column(int, coerce=True), 
+    'year': Column(datetime.datetime, coerce=True),
+    'hojokin': Column(Decimal, coerce=True),
+    'kouhukin': Column(Decimal, coerce=True),
+    'kisai_gaku': Column(Decimal, coerce=True),
+    'riyou_ryoukin': Column(Decimal, coerce=True),
+    'income_total': Column(Decimal, coerce=True),
+    'shisetsu_seibihi': Column(Decimal, coerce=True),
+    'ijikanri_unneihi': Column(Decimal, coerce=True),
+    'monitoring_costs': Column(Decimal, coerce=True),
+    'chisai_zansai': Column(Decimal, coerce=True),
+    'kisai_shoukan_gaku': Column(Decimal, coerce=True),
+    'kisai_shoukansumi_gaku': Column(Decimal, coerce=True),
+    'kisai_risoku_gaku': Column(Decimal, coerce=True),
+    'lpayments_total': Column(Decimal, coerce=True),
+    'net_payments': Column(Decimal, coerce=True),
+})
 LCC_schema = DataFrameSchema({
+    'year': Column(datetime.datetime, coerce=True),
+    'hojokin': Column(Decimal, coerce=True),
+    'kouhukin': Column(Decimal, coerce=True),
+    'kisai_gaku': Column(Decimal, coerce=True),
+    'zeishu': Column(Decimal, coerce=True),
+    'income_total': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_ikkatsu': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_kappugoukei': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_kappuganpon': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_kappukinri': Column(Decimal, coerce=True),
+    'ijikanri_unneihi': Column(Decimal, coerce=True),
+    'monitoring_costs': Column(Decimal, coerce=True),
+    'SPC_keihi': Column(Decimal, coerce=True),
+    'chisai_zansai': Column(Decimal, coerce=True),
+    'kisai_shoukan_gaku': Column(Decimal, coerce=True),
+    'kisai_shoukansumi_gaku': Column(Decimal, coerce=True),
+    'kisai_risoku_gaku': Column(Decimal, coerce=True),
+    'payments_total': Column(Decimal, coerce=True),
+    'net_payments': Column(Decimal, coerce=True),
+})
+LCC_r_schema = DataFrameSchema({
+    'periods': Column(int, coerce=True), 
     'year': Column(datetime.datetime, coerce=True),
     'hojokin': Column(Decimal, coerce=True),
     'kouhukin': Column(Decimal, coerce=True),
@@ -134,6 +174,26 @@ SPC_schema = DataFrameSchema({
     'payments_total': Column(Decimal, coerce=True),
     'net_income': Column(Decimal, coerce=True),
 })
+SPC_r_schema = DataFrameSchema({
+    'periods': Column(int, coerce=True), 
+    'year': Column(datetime.datetime, coerce=True),
+    'shisetsu_seibihi_taika_ikkatsu': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_taika_kappuganpon': Column(Decimal, coerce=True),
+    'shisetsu_seibihi_taika_kappukinri': Column(Decimal, coerce=True),
+    'ijikanri_unneihi_taika': Column(Decimal, coerce=True),
+    'SPC_hiyou_taika': Column(Decimal, coerce=True),
+    'riyou_ryoukin': Column(Decimal, coerce=True),
+    'income_total': Column(Decimal, coerce=True),
+    'shisetsu_seibihi': Column(Decimal, coerce=True),
+    'ijikanri_unneihi': Column(Decimal, coerce=True),
+    'kariire_ganpon_hensai': Column(Decimal, coerce=True),
+    'shiharai_risoku': Column(Decimal, coerce=True),
+    'SPC_keihi': Column(Decimal, coerce=True),
+    'SPC_setsuritsuhi': Column(Decimal, coerce=True),
+    'houjinzei_etc': Column(Decimal, coerce=True),
+    'payments_total': Column(Decimal, coerce=True),
+    'net_income': Column(Decimal, coerce=True),
+})
 
 def validate_inputs(df):
     pdr_df = inputs_schema.validate(df)
@@ -147,10 +207,22 @@ def validate_PSC(df):
     pdr_df = PSC_schema.validate(df)
     return pdr_df
 
+def validate_PSC_r(df):
+    pdr_df = PSC_r_schema.validate(df)
+    return pdr_df
+
 def validate_LCC(df):
     pdr_df = LCC_schema.validate(df)
     return pdr_df
 
+def validate_LCC_r(df):
+    pdr_df = LCC_r_schema.validate(df)
+    return pdr_df
+
 def validate_SPC(df):
     pdr_df = SPC_schema.validate(df)
+    return pdr_df
+
+def validate_SPC_r(df):
+    pdr_df = SPC_r_schema.validate(df)
     return pdr_df

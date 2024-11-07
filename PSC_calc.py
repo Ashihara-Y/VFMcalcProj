@@ -81,6 +81,7 @@ print(PSC)
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
-c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC')
+PSC_r = PSC.reset_index(drop=False)
+c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
 
 

@@ -16,9 +16,10 @@ conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
 LCC_df = c.sql("SELECT * FROM LCC_table").df()
-LCC_pdr_df = inputs_pandera_validate.validate_LCC(LCC_df)
-LCC = LCC_pdr_df
-#print(LCC.info())
+LCC_pdr_df = inputs_pandera_validate.validate_LCC_r(LCC_df)
+LCC = LCC_pdr_df.set_index('periods')
+
+print(LCC.info())
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
@@ -136,5 +137,6 @@ SPC = SPC_shuushi_income.join(SPC_shuushi_payments.drop('year', axis=1))
 SPC["net_income"] = SPC_shuushi_income["income_total"] - SPC_shuushi_payments["payments_total"]
 print(SPC)
 
-c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC')
+SPC_r = SPC.reset_index(drop=False)
+c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
 

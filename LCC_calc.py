@@ -170,5 +170,6 @@ print(LCC)
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
-c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC')
+LCC_r = LCC.reset_index(drop=False)
+c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC_r')
 
