@@ -9,7 +9,7 @@ from decimal import *
 from pydantic import BaseModel
 import pandera as pa
 from pandera.typing import Series, DataFrame
-import adbc_driver_sqlite.dbapi
+import openpyxl
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero, inputs_pandera_validate
 
 conn = duckdb.connect('VFM.duckdb')
@@ -23,6 +23,10 @@ print(LCC.info())
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+
+#periods= [i+1 for i in range(inputs_supl_pdt.target_years.iloc[0])]
+#LCC.set_index(periods, inplace=True)
+#print(LCC)
 
 SPC_shuushi_income = zero_pl_SPC_income
 SPC_shuushi_payments = zero_pl_SPC_payments
@@ -140,3 +144,5 @@ print(SPC)
 SPC_r = SPC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
 
+with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
+   SPC.to_excel(writer, sheet_name='SPC_sheet20241107_001')

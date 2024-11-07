@@ -9,7 +9,6 @@ from decimal import *
 from pydantic import BaseModel
 import pandera as pa
 from pandera.typing import Series, DataFrame
-import adbc_driver_sqlite.dbapi
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
@@ -173,3 +172,5 @@ c = conn.cursor()
 LCC_r = LCC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC_r')
 
+with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
+   LCC.to_excel(writer, sheet_name='LCC_sheet20241107_001')
