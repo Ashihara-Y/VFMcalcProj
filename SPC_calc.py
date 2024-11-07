@@ -9,7 +9,7 @@ from decimal import *
 from pydantic import BaseModel
 import pandera as pa
 from pandera.typing import Series, DataFrame
-#import adbc_driver_sqlite.dbapi
+import openpyxl
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero, inputs_pandera_validate
 
 conn = duckdb.connect('VFM.duckdb')
@@ -142,3 +142,5 @@ print(SPC)
 
 c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC')
 
+with pd.ExcelWriter('VFN_test.xlsx', engine='openpyxl', mode='a') as writer:
+   SPC.to_excel(writer, sheet_name='SPC_sheet20241107_001')
