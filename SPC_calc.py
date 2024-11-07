@@ -18,10 +18,14 @@ c = conn.cursor()
 LCC_df = c.sql("SELECT * FROM LCC_table").df()
 LCC_pdr_df = inputs_pandera_validate.validate_LCC(LCC_df)
 LCC = LCC_pdr_df
-#print(LCC.info())
+
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+
+periods= [i+1 for i in range(inputs_supl_pdt.target_years.iloc[0])]
+LCC.set_index(periods, inplace=True)
+print(LCC)
 
 SPC_shuushi_income = zero_pl_SPC_income
 SPC_shuushi_payments = zero_pl_SPC_payments
