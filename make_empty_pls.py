@@ -15,8 +15,8 @@ inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 
 cols_waku = ['year','periods']
 
-target_years = inputs_supl_pdt.target_years.iloc[0]
-first_end_fy = inputs_supl_pdt.first_end_fy.iloc[0]
+target_years = inputs_supl_pdt.target_years
+first_end_fy = inputs_supl_pdt.first_end_fy
 
 waku = make_pl_waku.make_waku_df(first_end_fy, target_years, cols_waku)
 #print(waku.info())

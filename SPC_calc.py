@@ -10,14 +10,32 @@ from pydantic import BaseModel
 import pandera as pa
 from pandera.typing import Series, DataFrame
 import openpyxl
-import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero, inputs_pandera_validate
+import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
 LCC_df = c.sql("SELECT * FROM LCC_table").df()
-LCC_pdr_df = inputs_pandera_validate.validate_LCC_r(LCC_df)
-LCC = LCC_pdr_df.set_index('periods')
+LCC_df['hojokin'] = LCC_df['hojokin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['kouhukin'] = LCC_df['kouhukin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['kisai_gaku'] = LCC_df['kisai_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['zeishu'] = LCC_df['zeishu'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['income_total'] = LCC_df['income_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['shisetsu_seibihi_ikkatsu'] = LCC_df['shisetsu_seibihi_ikkatsu'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['shisetsu_seibihi_kappugoukei'] = LCC_df['shisetsu_seibihi_kappugoukei'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['shisetsu_seibihi_kappuganpon'] = LCC_df['shisetsu_seibihi_kappuganpon'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['shisetsu_seibihi_kappukinri'] = LCC_df['shisetsu_seibihi_kappukinri'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['ijikanri_unneihi'] = LCC_df['ijikanri_unneihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['monitoring_costs'] = LCC_df['monitoring_costs'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['SPC_keihi'] = LCC_df['SPC_keihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['chisai_zansai'] = LCC_df['chisai_zansai'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['kisai_shoukan_gaku'] = LCC_df['kisai_shoukan_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['kisai_shoukansumi_gaku'] = LCC_df['kisai_shoukansumi_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['kisai_risoku_gaku'] = LCC_df['kisai_risoku_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['payments_total'] = LCC_df['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC_df['net_payments'] = LCC_df['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+
+LCC = LCC_df.set_index('periods')
 
 print(LCC.info())
 
@@ -31,11 +49,11 @@ inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 SPC_shuushi_income = zero_pl_SPC_income
 SPC_shuushi_payments = zero_pl_SPC_payments
 
-shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki.iloc[0]
-target_years = inputs_supl_pdt.target_years.iloc[0]
-Kappu_kinri = inputs_supl_pdt.Kappu_kinri.iloc[0]
+shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki
+target_years = inputs_supl_pdt.target_years
+Kappu_kinri = inputs_supl_pdt.Kappu_kinri
 const_years = inputs_pdt.const_years
-ijikanri_years = inputs_supl_pdt.ijikanri_years.iloc[0]
+ijikanri_years = inputs_supl_pdt.ijikanri_years
 proj_years = inputs_pdt.proj_years
 
 ## SPC_income
@@ -139,10 +157,24 @@ SPC_shuushi_payments['payments_total'] = (
 
 SPC = SPC_shuushi_income.join(SPC_shuushi_payments.drop('year', axis=1))
 SPC["net_income"] = SPC_shuushi_income["income_total"] - SPC_shuushi_payments["payments_total"]
+SPC['shisetsu_seibihi_taika_ikkatsu'] = SPC['shisetsu_seibihi_taika_ikkatsu'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['shisetsu_seibihi_taika_kappuganpon'] = SPC['shisetsu_seibihi_taika_kappuganpon'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['shisetsu_seibihi_taika_kappukinri'] = SPC['shisetsu_seibihi_taika_kappukinri'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['ijikanri_unneihi_taika'] = SPC['ijikanri_unneihi_taika'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['riyou_ryoukin'] = SPC['riyou_ryoukin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['SPC_hiyou_taika'] = SPC['SPC_hiyou_taika'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['income_total'] = SPC['income_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['kariire_ganpon_hensai'] = SPC['kariire_ganpon_hensai'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['shiharai_risoku'] = SPC['shiharai_risoku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['SPC_keihi'] = SPC['SPC_keihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['SPC_setsuritsuhi'] = SPC['SPC_setsuritsuhi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['houjinzei_etc'] = SPC['houjinzei_etc'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['payments_total'] = SPC['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['net_income'] = SPC['net_income'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 print(SPC)
 
 SPC_r = SPC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
 
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   SPC.to_excel(writer, sheet_name='SPC_sheet20241107_001')
+   SPC.to_excel(writer, sheet_name='SPC_sheet20241108_001')

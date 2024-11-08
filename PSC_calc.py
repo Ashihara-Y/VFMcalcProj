@@ -18,8 +18,8 @@ inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 PSC_shuushi_income = zero_pl_PSC_income
 PSC_shuushi_payments = zero_pl_PSC_payments
 
-shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki.iloc[0]
-target_years = inputs_supl_pdt.target_years.iloc[0]
+shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki
+target_years = inputs_supl_pdt.target_years
 
 ## PSC_income
 Hojokin = (inputs_pdt.hojo) * (inputs_pdt.shisetsu_seibi)
@@ -76,12 +76,28 @@ PSC_shuushi_payments['payments_total'] = (
 
 PSC = PSC_shuushi_income.join(PSC_shuushi_payments.drop('year', axis=1))
 PSC["net_payments"] = PSC_shuushi_income["income_total"] - PSC_shuushi_payments["payments_total"]
+PSC['hojokin'] = PSC['hojokin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['kouhukin'] = PSC['kouhukin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['kisai_gaku'] = PSC['kisai_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['riyou_ryoukin'] = PSC['riyou_ryoukin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['income_total'] = PSC['income_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['shisetsu_seibihi'] = PSC['shisetsu_seibihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['ijikanri_unneihi'] = PSC['ijikanri_unneihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['monitoring_costs'] = PSC['monitoring_costs'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['chisai_zansai'] = PSC['chisai_zansai'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['kisai_shoukan_gaku'] = PSC['kisai_shoukan_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['kisai_shoukansumi_gaku'] = PSC['kisai_shoukansumi_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['kisai_risoku_gaku'] = PSC['kisai_risoku_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['payments_total'] = PSC['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+PSC['net_payments'] = PSC['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 print(PSC)
+
 conn = duckdb.connect('VFM.duckdb')
+
 c = conn.cursor()
 
 PSC_r = PSC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
 
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   PSC.to_excel(writer, sheet_name='PSC_sheet20241107_001')
+   PSC.to_excel(writer, sheet_name='PSC_sheet20241108_002')

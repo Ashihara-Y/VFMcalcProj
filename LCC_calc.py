@@ -17,11 +17,11 @@ inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 LCC_shuushi_income = zero_pl_LCC_income
 LCC_shuushi_payments = zero_pl_LCC_payments
 
-shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki.iloc[0]
-target_years = inputs_supl_pdt.target_years.iloc[0]
-Kappu_kinri = inputs_supl_pdt.Kappu_kinri.iloc[0]
+shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki
+target_years = inputs_supl_pdt.target_years
+Kappu_kinri = inputs_supl_pdt.Kappu_kinri
 const_years = inputs_pdt.const_years
-ijikanri_years = inputs_supl_pdt.ijikanri_years.iloc[0]
+ijikanri_years = inputs_supl_pdt.ijikanri_years
 proj_years = inputs_pdt.proj_years
 
 
@@ -82,6 +82,18 @@ kappugoukei = pyxirr.pmt(
             pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon,
             pmt_at_beginning=False
 )
+#print(Shisetsu_seibihi_kappu)
+#print(inputs_pdt.SPC_shihon)
+#print(Shisetsu_seibihi_kappuganpon)
+#print(Shisetsu_seibihi_kappukinri)
+#print(kappugoukei)
+print(Kappu_kinri)
+print(inputs_supl_pdt.Kappu_kinri)
+print(inputs_supl_pdt)
+print(inputs_pdt.kijun_kinri)
+print(inputs_pdt.lg_spread)
+print(inputs_pdt.kappu_kinri_spread)
+
 
 # ここでマイナス値が入ったリストを、Series化を通じて、プラス値のDecimalに変換することができるかを確認
 periods= [i+1 for i in range(target_years)]
@@ -106,7 +118,7 @@ LCC_shuushi_payments.loc[2:, 'shisetsu_seibihi_kappukinri'] = Shisetsu_seibihi_k
 Monitoring_costs_shoki = inputs_pdt.monitoring_costs_LCC + inputs_pdt.advisory_fee
 Ijikanri_unnei_LCC = inputs_pdt.ijikanri_unnei_org_LCC
 
-SPC_keihi_LCC = inputs_supl_pdt.SPC_keihi_LCC.iloc[0]
+SPC_keihi_LCC = inputs_supl_pdt.SPC_keihi_LCC
 LCC_shuushi_payments.loc[const_years+1:proj_years, 'ijikanri_unneihi'] = Ijikanri_unnei_LCC
 LCC_shuushi_payments.loc[1, 'monitoring_costs'] = Monitoring_costs_shoki
 LCC_shuushi_payments.loc[2:proj_years, 'monitoring_costs'] = inputs_pdt.monitoring_costs_LCC
@@ -152,6 +164,24 @@ LCC_shuushi_payments['payments_total'] = (
 #LCC_shuushi_income, LCC_shuushi_payments
 LCC = LCC_shuushi_income.join(LCC_shuushi_payments.drop('year', axis=1))
 LCC["net_payments"] = LCC_shuushi_income["income_total"] - LCC_shuushi_payments["payments_total"]
+LCC['hojokin'] = LCC['hojokin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['kouhukin'] = LCC['kouhukin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['kisai_gaku'] = LCC['kisai_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['zeishu'] = LCC['zeishu'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['income_total'] = LCC['income_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['shisetsu_seibihi_ikkatsu'] = LCC['shisetsu_seibihi_ikkatsu'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['shisetsu_seibihi_kappugoukei'] = LCC['shisetsu_seibihi_kappugoukei'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['shisetsu_seibihi_kappuganpon'] = LCC['shisetsu_seibihi_kappuganpon'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['shisetsu_seibihi_kappukinri'] = LCC['shisetsu_seibihi_kappukinri'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['ijikanri_unneihi'] = LCC['ijikanri_unneihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['monitoring_costs'] = LCC['monitoring_costs'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['SPC_keihi'] = LCC['SPC_keihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['chisai_zansai'] = LCC['chisai_zansai'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['kisai_shoukan_gaku'] = LCC['kisai_shoukan_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['kisai_shoukansumi_gaku'] = LCC['kisai_shoukansumi_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['kisai_risoku_gaku'] = LCC['kisai_risoku_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['payments_total'] = LCC['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+LCC['net_payments'] = LCC['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 print(LCC)
 
 # リスク調整
@@ -173,4 +203,4 @@ LCC_r = LCC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC_r')
 
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   LCC.to_excel(writer, sheet_name='LCC_sheet20241107_001')
+   LCC.to_excel(writer, sheet_name='LCC_sheet20241108_005')

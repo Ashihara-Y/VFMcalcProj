@@ -120,23 +120,23 @@ inputs_supl = {
 }
 
 # to DataFrame
-inputs_supl_df = pd.DataFrame(inputs_supl, index=['val'])
+#inputs_supl_df = pd.DataFrame(inputs_supl, index=['val'])
 
 # schema for validation
-schema_test = DataFrameSchema({
-    'first_end_fy': Column(datetime.date),
-    'discount_rate': Column(Decimal, coerce=True),
-    'ijikanri_years': Column(int, coerce=True),
-    'shoukan_kaishi_jiki': Column(int, coerce=True),
-    'target_years': Column(int, coerce=True),
-    'Kappu_kinri': Column(Decimal, coerce=True),
-    'SPC_hiyou_total': Column(Decimal, coerce=True),
-    'SPC_hiyou_nen': Column(Decimal, coerce=True),
-    'SPC_keihi_LCC': Column(Decimal, coerce=True),
-})
+@dataclass
+class Inputs_supl(BaseModel):
+    first_end_fy: datetime.date
+    discount_rate: Decimal
+    ijikanri_years: int
+    shoukan_kaishi_jiki: int
+    target_years: int
+    Kappu_kinri: Decimal
+    SPC_hiyou_total: Decimal
+    SPC_hiyou_nen: Decimal
+    SPC_keihi_LCC: Decimal
 
 # validate inputs supplementary
-inputs_supl_pdt = schema_test.validate(inputs_supl_df)
+inputs_supl_pdt = Inputs_supl.model_validate(inputs_supl)
 
 def io():
     return inputs_pdt, inputs_supl_pdt
