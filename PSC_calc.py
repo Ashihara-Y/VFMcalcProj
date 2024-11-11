@@ -21,6 +21,8 @@ PSC_shuushi_payments = zero_pl_PSC_payments
 shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki
 target_years = inputs_supl_pdt.target_years
 
+print(inputs_pdt.shisetsu_seibi)
+print(inputs_pdt.hojo)
 ## PSC_income
 Hojokin = (inputs_pdt.hojo) * (inputs_pdt.shisetsu_seibi)
 PSC_shuushi_income.loc[inputs_pdt.const_years, 'hojokin'] = Hojokin
@@ -100,4 +102,4 @@ PSC_r = PSC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
 
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   PSC.to_excel(writer, sheet_name='PSC_sheet20241108_002')
+   PSC.to_excel(writer, sheet_name='PSC_sheet20241111_002')

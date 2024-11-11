@@ -27,7 +27,7 @@ class Inputs(BaseModel):
     const_years: int = 3
     const_start_date: datetime.datetime = '2024-11-01'
     growth: Decimal = 0.0
-    hojo: Decimal = 0.3
+    hojo: Decimal = 0.4
     ijikanri_unnei: Decimal = 47.5
     ijikanri_unnei_LCC: Decimal = 45.125
     ijikanri_unnei_org: Decimal = 50.0
