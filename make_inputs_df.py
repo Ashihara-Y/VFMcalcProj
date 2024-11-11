@@ -21,11 +21,11 @@ inputs = db.all()[0]
 @dataclass
 class Inputs(BaseModel):
     advisory_fee: Decimal = 25.0
-    chisai_kinri: Decimal = 0.0165
+    chisai_kinri: Decimal = 0.0175
     chisai_shoukan_kikan: int = 23
     chisai_sueoki_years: int = 3
     const_years: int = 3
-    const_start_date: datetime.datetime = '2024-10-24'
+    const_start_date: datetime.datetime = '2024-11-01'
     growth: Decimal = 0.0
     hojo: Decimal = 0.3
     ijikanri_unnei: Decimal = 47.5
@@ -34,12 +34,12 @@ class Inputs(BaseModel):
     ijikanri_unnei_org_LCC: Decimal = 47.5
     ijikanri_unnei_years: int = 20
     kappu_kinri_spread: Decimal = 0.01
-    kijun_kinri: Decimal = 0.0171
+    kijun_kinri: Decimal = 0.0163
     kisai_jutou: Decimal = 0.75
-    kisai_koufu: Decimal = 0.75
-    kitai_bukka: Decimal = 0.3
-    kyoukouka_yosantanka_hiritsu: Decimal = 0.018
-    lg_spread: Decimal = 0.015
+    kisai_koufu: Decimal = 0.30
+    kitai_bukka: Decimal = 0.2
+    kyoukouka_yosantanka_hiritsu: Decimal = 0.010
+    lg_spread: Decimal = 0.010
     mgmt_type: str = '市区町村'
     monitoring_costs_LCC: Decimal = 6.0
     monitoring_costs_PSC: Decimal = 10.0
