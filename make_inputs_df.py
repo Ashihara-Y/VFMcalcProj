@@ -104,7 +104,7 @@ Kappu_kinri = inputs_pdt.kijun_kinri + inputs_pdt.lg_spread + inputs_pdt.kappu_k
 first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
 SPC_hiyou_total = inputs_pdt.SPC_keihi * inputs_pdt.ijikanri_unnei_years + inputs_pdt.SPC_shihon
-SPC_hiyou_nen = SPC_hiyou_total / proj_years
+SPC_hiyou_nen = inputs_pdt.SPC_fee + inputs_pdt.SPC_keihi
 SPC_keihi_LCC = inputs_pdt.SPC_keihi + Decimal(str(inputs_pdt.SPC_fee)) + inputs_pdt.houjinjuminzei_kintou
 
 inputs_supl = {

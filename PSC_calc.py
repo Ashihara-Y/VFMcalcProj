@@ -9,6 +9,7 @@ from decimal import *
 from pydantic import BaseModel
 import pandera as pa
 from pandera.typing import Series, DataFrame
+from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
@@ -21,8 +22,8 @@ PSC_shuushi_payments = zero_pl_PSC_payments
 shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki
 target_years = inputs_supl_pdt.target_years
 
-print(inputs_pdt.shisetsu_seibi)
-print(inputs_pdt.hojo)
+#print(inputs_pdt.shisetsu_seibi)
+#print(inputs_pdt.hojo)
 ## PSC_income
 Hojokin = (inputs_pdt.hojo) * (inputs_pdt.shisetsu_seibi)
 PSC_shuushi_income.loc[inputs_pdt.const_years, 'hojokin'] = Hojokin
@@ -54,17 +55,23 @@ PSC_shuushi_payments.loc[shoukan_kaishi_jiki+inputs_pdt.chisai_shoukan_kikan:tar
 
 PSC_shuushi_payments['kisai_shoukansumi_gaku'] = PSC_shuushi_payments['kisai_shoukan_gaku'].cumsum()
 PSC_shuushi_payments.loc[
-    inputs_pdt.const_years+1:target_years,
+    inputs_pdt.const_years:target_years,
     'chisai_zansai'
 ] = Kisai_gaku - PSC_shuushi_payments.loc[
-    inputs_pdt.const_years+1:target_years, 
+    inputs_pdt.const_years:target_years, 
     'kisai_shoukansumi_gaku'
 ]
-PSC_shuushi_payments.loc[
-    inputs_pdt.const_years+1:target_years, 
-    'kisai_risoku_gaku'] = PSC_shuushi_payments.loc[
-    inputs_pdt.const_years+1:target_years, 
-    'chisai_zansai'] * (inputs_pdt.chisai_kinri)
+
+Chisai_zansai = PSC_shuushi_payments['chisai_zansai'].to_list()
+#print(Chisai_zansai[7]*inputs_pdt.chisai_kinri)
+Risoku_gaku = [Chisai_zansai[i]*inputs_pdt.chisai_kinri for i in range(target_years)]
+#print(Chisai_zansai)
+#print(Risoku_gaku)
+R = deque(Risoku_gaku)
+R.rotate(1)
+Risoku_gaku = list(R)
+
+PSC_shuushi_payments['kisai_risoku_gaku'] = Risoku_gaku
 
 PSC_shuushi_payments['payments_total'] = (
     PSC_shuushi_payments['shisetsu_seibihi'] + 
@@ -102,4 +109,4 @@ PSC_r = PSC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
 
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   PSC.to_excel(writer, sheet_name='PSC_sheet20241111_002')
+   PSC.to_excel(writer, sheet_name='PSC_sheet20241111_007')

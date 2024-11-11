@@ -9,6 +9,7 @@ from decimal import *
 from pydantic import BaseModel
 import pandera as pa
 from pandera.typing import Series, DataFrame
+from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
@@ -24,11 +25,15 @@ const_years = inputs_pdt.const_years
 ijikanri_years = inputs_supl_pdt.ijikanri_years
 proj_years = inputs_pdt.proj_years
 
+# LCC_shuushi_payments 1
+Shisetsu_seibihi_ikkatsu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu_seibi_paymentschedule_ikkatsu
+LCC_shuushi_payments.loc[inputs_pdt.const_years, 'shisetsu_seibihi_ikkatsu'] = Shisetsu_seibihi_ikkatsu
+Shisetsu_seibihi_kappu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu_seibi_paymentschedule_kappu
 
 ## LCC_income
 Hojokin_LCC = (inputs_pdt.hojo) * (inputs_pdt.shisetsu_seibi_org_LCC)
 LCC_shuushi_income.loc[inputs_pdt.const_years, 'hojokin'] = Hojokin_LCC
-Kisai_gaku_LCC =  (inputs_pdt.kisai_jutou) * (inputs_pdt.shisetsu_seibi_org_LCC - Hojokin_LCC) 
+Kisai_gaku_LCC =  (inputs_pdt.kisai_jutou) * (Shisetsu_seibihi_ikkatsu - Hojokin_LCC) 
 LCC_shuushi_income.loc[inputs_pdt.const_years, 'kisai_gaku'] = Kisai_gaku_LCC
 Kouhukin_LCC = Kisai_gaku_LCC * (inputs_pdt.kisai_koufu)
 LCC_shuushi_income.loc[inputs_pdt.const_years, 'kouhukin'] = Kouhukin_LCC
@@ -39,12 +44,7 @@ LCC_shuushi_income['income_total'] = (
     LCC_shuushi_income['zeishu']
 )
 
-
-# LCC_shuushi_payments
-Shisetsu_seibihi_ikkatsu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu_seibi_paymentschedule_ikkatsu
-LCC_shuushi_payments.loc[inputs_pdt.const_years, 'shisetsu_seibihi_ikkatsu'] = Shisetsu_seibihi_ikkatsu
-Shisetsu_seibihi_kappu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu_seibi_paymentschedule_kappu
-
+# LCC_shuushi_payments 2
 # Pyxirrの仕様として、支払いは「マイナス値」で算出される（Excelと同じはず）
 Shisetsu_seibihi_kappuganpon = [
     (
@@ -52,7 +52,7 @@ Shisetsu_seibihi_kappuganpon = [
             rate=Kappu_kinri, 
             per=i, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon,
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
         )
     ) for i in range(
@@ -67,7 +67,7 @@ Shisetsu_seibihi_kappukinri = [
             rate=Kappu_kinri, 
             per=i, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon,
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
         )
     ) for i in range(
@@ -79,7 +79,7 @@ Shisetsu_seibihi_kappukinri = [
 kappugoukei = pyxirr.pmt(
             rate=Kappu_kinri, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon,
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
 )
 #print(Shisetsu_seibihi_kappu)
@@ -87,12 +87,12 @@ kappugoukei = pyxirr.pmt(
 #print(Shisetsu_seibihi_kappuganpon)
 #print(Shisetsu_seibihi_kappukinri)
 #print(kappugoukei)
-print(Kappu_kinri)
-print(inputs_supl_pdt.Kappu_kinri)
-print(inputs_supl_pdt)
-print(inputs_pdt.kijun_kinri)
-print(inputs_pdt.lg_spread)
-print(inputs_pdt.kappu_kinri_spread)
+#print(Kappu_kinri)
+#print(inputs_supl_pdt.Kappu_kinri)
+#print(inputs_supl_pdt)
+#print(inputs_pdt.kijun_kinri)
+#print(inputs_pdt.lg_spread)
+#print(inputs_pdt.kappu_kinri_spread)
 
 
 # ここでマイナス値が入ったリストを、Series化を通じて、プラス値のDecimalに変換することができるかを確認
@@ -131,24 +131,31 @@ Kisai_ganpon_shoukan_gaku_LCC = Kisai_gaku_LCC / inputs_pdt.chisai_shoukan_kikan
 # kisai_shoukan_kikan以降は、償還額をゼロにする！
 LCC_shuushi_payments.loc[shoukan_kaishi_jiki:shoukan_kaishi_jiki+inputs_pdt.chisai_shoukan_kikan-1, 'kisai_shoukan_gaku'] = Kisai_ganpon_shoukan_gaku_LCC
 LCC_shuushi_payments.loc[shoukan_kaishi_jiki+inputs_pdt.chisai_shoukan_kikan:target_years, 'kisai_shoukan_gaku'] = Decimal('0.000000')
-
 LCC_shuushi_payments.fillna({'kisai_shoukan_gaku':Decimal(0.0000)}, inplace=True)
-
 LCC_shuushi_payments['kisai_shoukansumi_gaku'] = LCC_shuushi_payments['kisai_shoukan_gaku'].cumsum()
 
 LCC_shuushi_payments.loc[
-    const_years+1:target_years, 
+    const_years:target_years, 
     'chisai_zansai'
 ] = Kisai_gaku_LCC - LCC_shuushi_payments.loc[
-    const_years+1:target_years, 
+    const_years:target_years, 
     'kisai_shoukansumi_gaku'
 ]
-LCC_shuushi_payments.loc[
-    const_years+1:target_years, 
-    'kisai_risoku_gaku'
-] = LCC_shuushi_payments.loc[
-    const_years+1:target_years, 
-    'chisai_zansai'] * (inputs_pdt.chisai_kinri)
+
+Chisai_zansai = LCC_shuushi_payments['chisai_zansai'].to_list()
+Risoku_gaku = [Chisai_zansai[i]*inputs_pdt.chisai_kinri for i in range(target_years)]
+R = deque(Risoku_gaku)
+R.rotate(1)
+Risoku_gaku = list(R)
+LCC_shuushi_payments['kisai_risoku_gaku'] = Risoku_gaku
+print(Chisai_zansai)
+print(Risoku_gaku)
+#LCC_shuushi_payments.loc[
+#    const_years+1:target_years, 
+#    'kisai_risoku_gaku'
+#] = LCC_shuushi_payments.loc[
+#    const_years+1:target_years, 
+#    'chisai_zansai'] * (inputs_pdt.chisai_kinri)
 
 LCC_shuushi_payments['payments_total'] = (
     LCC_shuushi_payments['shisetsu_seibihi_ikkatsu'] + 
@@ -203,4 +210,4 @@ LCC_r = LCC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC_r')
 
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   LCC.to_excel(writer, sheet_name='LCC_sheet20241111_001')
+   LCC.to_excel(writer, sheet_name='LCC_sheet20241111_008')
