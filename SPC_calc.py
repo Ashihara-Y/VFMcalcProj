@@ -121,7 +121,7 @@ Kariire_hensai_ganpon_str = Kariire_hensai_ganpon_sr.astype('str')
 Kariire_hensai_ganpon_dc_sr = Kariire_hensai_ganpon_str.apply(Decimal)
 Kariire_hensai_ganpon_deci = Kariire_hensai_ganpon_dc_sr * (-1)
 
-print(inputs_pdt.SPC_fee)
+#print(inputs_pdt.SPC_fee)
 Kariire_hensai_kinri_sr = pd.Series(Kariire_hensai_kinri,index=periods).fillna(0)
 Kariire_hensai_kinri_str = Kariire_hensai_kinri_sr.astype('str')
 Kariire_hensai_kinri_dc_sr = Kariire_hensai_kinri_str.apply(Decimal)
@@ -164,6 +164,8 @@ SPC['ijikanri_unneihi_taika'] = SPC['ijikanri_unneihi_taika'].map(lambda i: Deci
 SPC['riyou_ryoukin'] = SPC['riyou_ryoukin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['SPC_hiyou_taika'] = SPC['SPC_hiyou_taika'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['income_total'] = SPC['income_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['shisetsu_seibihi'] = SPC['shisetsu_seibihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['ijikanri_unneihi'] = SPC['ijikanri_unneihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['kariire_ganpon_hensai'] = SPC['kariire_ganpon_hensai'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['shiharai_risoku'] = SPC['shiharai_risoku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['SPC_keihi'] = SPC['SPC_keihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
@@ -177,4 +179,4 @@ SPC_r = SPC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
 
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   SPC.to_excel(writer, sheet_name='SPC_sheet20241111_001')
+   SPC.to_excel(writer, sheet_name='SPC_sheet20241111_003')
