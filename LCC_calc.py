@@ -82,18 +82,6 @@ kappugoukei = pyxirr.pmt(
             pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
 )
-#print(Shisetsu_seibihi_kappu)
-#print(inputs_pdt.SPC_shihon)
-#print(Shisetsu_seibihi_kappuganpon)
-#print(Shisetsu_seibihi_kappukinri)
-#print(kappugoukei)
-#print(Kappu_kinri)
-#print(inputs_supl_pdt.Kappu_kinri)
-#print(inputs_supl_pdt)
-#print(inputs_pdt.kijun_kinri)
-#print(inputs_pdt.lg_spread)
-#print(inputs_pdt.kappu_kinri_spread)
-
 
 # ここでマイナス値が入ったリストを、Series化を通じて、プラス値のDecimalに変換することができるかを確認
 periods= [i+1 for i in range(target_years)]

@@ -90,7 +90,7 @@ Kariire_hensai_ganpon = [
             rate=inputs_pdt.kijun_kinri + inputs_pdt.lg_spread, 
             per=i, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon,
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
         )
     ) for i in range(
@@ -105,7 +105,7 @@ Kariire_hensai_kinri = [
             rate=inputs_pdt.kijun_kinri + inputs_pdt.lg_spread, 
             per=i, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon,
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
         )
     ) for i in range(
@@ -179,4 +179,4 @@ SPC_r = SPC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
 
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   SPC.to_excel(writer, sheet_name='SPC_sheet20241111_003')
+   SPC.to_excel(writer, sheet_name='SPC_sheet20241111_004')
