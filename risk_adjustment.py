@@ -38,7 +38,7 @@ Shisetsu_seibihi_kappu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu
 PSC_kappu_etc = Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years)
 
 kanmin_kinrisa = (inputs_pdt.kijun_kinri + inputs_pdt.lg_spread) - inputs_pdt.chisai_kinri
-
+print(kanmin_kinrisa)
 LCC_kappuganpon_cumsum_ls = LCC_kappuganpon_cumsum['shisetsu_seibihi_kappuganpon'].to_list()
 R = deque(LCC_kappuganpon_cumsum_ls)
 R.rotate(1)
@@ -50,7 +50,9 @@ kanmin_ribaraihiyou_sa['LCC_kappuganpon_cumsum'] = LCC_kappuganpon_cumsum_ls
 #print(kanmin_ribaraihiyou_sa)
 
 Kappuganpon_cumsum = kanmin_ribaraihiyou_sa['LCC_kappuganpon_cumsum']
-Ribaraihiyou_sa = [(Shisetsu_seibihi_kappu + SPC_relates - Kappuganpon_cumsum[i]) * kanmin_kinrisa for i in range(4,inputs_supl_pdt.target_years)]
-#printo(Ribaraihiyou_sa)
-kanmin_ribaraihiyou_sa.loc[4:inputs_supl_pdt.target_years,'ribaraihiyou_sa'] = pd.Series(Ribaraihiyou_sa)
+#print(Kappuganpon_cumsum.loc[1:])
+Shisetsu_seibihi_kappu_goukei = Shisetsu_seibihi_kappu + SPC_relates
+
+Ribaraihiyou_sa = [(Shisetsu_seibihi_kappu + SPC_relates - Kappuganpon_cumsum[i]) * kanmin_kinrisa for i in range(inputs_supl_pdt.target_years)]
+kanmin_ribaraihiyou_sa.loc[1:inputs_supl_pdt.target_years,'ribaraihiyou_sa'] = pd.Series(Ribaraihiyou_sa)
 print(kanmin_ribaraihiyou_sa)
