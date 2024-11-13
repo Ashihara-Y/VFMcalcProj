@@ -137,17 +137,24 @@ SPC_shuushi_payments.loc[1:inputs_pdt.proj_years, 'SPC_keihi'] = SPC_keihi
 SPC_setsuritsuhi = inputs_pdt.SPC_shihon + inputs_pdt.SPC_yobihi
 SPC_shuushi_payments.loc[1, 'SPC_setsuritsuhi'] = SPC_setsuritsuhi
 Houjinzei_etc = inputs_pdt.houjinjuminzei_kintou
-SPC_shuushi_payments.loc[inputs_pdt.const_years+1:inputs_pdt.proj_years, 'houjinzei_etc'] = Houjinzei_etc
+SPC_shuushi_payments.loc[1:inputs_pdt.proj_years, 'houjinzei_etc'] = Houjinzei_etc
 
 #SPC_shuushi_payments.loc[const_years+1:proj_years, 'kariire_hensai_goukei'] = Kariire_hensai_goukei_deci
 SPC_shuushi_payments.loc[2:, 'kariire_ganpon_hensai'] = Kariire_hensai_ganpon_deci
 SPC_shuushi_payments.loc[2:, 'shiharai_risoku'] = Kariire_hensai_kinri_deci
 
-SPC_shuushi_payments['payments_total'] = (
+SPC_shuushi_payments['payments_total_full'] = (
     SPC_shuushi_payments['shisetsu_seibihi'] + 
     SPC_shuushi_payments['ijikanri_unneihi'] +
     SPC_shuushi_payments['kariire_ganpon_hensai'] +   
     SPC_shuushi_payments['shiharai_risoku'] + 
+    SPC_shuushi_payments['SPC_keihi'] + 
+    SPC_shuushi_payments['SPC_setsuritsuhi'] + 
+    SPC_shuushi_payments['houjinzei_etc']
+)
+SPC_shuushi_payments['payments_total'] = (
+    SPC_shuushi_payments['shisetsu_seibihi'] + 
+    SPC_shuushi_payments['ijikanri_unneihi'] +
     SPC_shuushi_payments['SPC_keihi'] + 
     SPC_shuushi_payments['SPC_setsuritsuhi'] + 
     SPC_shuushi_payments['houjinzei_etc']
@@ -172,6 +179,7 @@ SPC['SPC_keihi'] = SPC['SPC_keihi'].map(lambda i: Decimal(i).quantize(Decimal('0
 SPC['SPC_setsuritsuhi'] = SPC['SPC_setsuritsuhi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['houjinzei_etc'] = SPC['houjinzei_etc'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['payments_total'] = SPC['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC['payments_total_full'] = SPC['payments_total_full'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['net_income'] = SPC['net_income'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 print(SPC)
 
@@ -179,4 +187,4 @@ SPC_r = SPC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
 
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   SPC.to_excel(writer, sheet_name='SPC_sheet20241111_004')
+   SPC.to_excel(writer, sheet_name='SPC_sheet20241111_005')
