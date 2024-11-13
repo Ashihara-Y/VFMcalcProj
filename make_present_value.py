@@ -44,8 +44,8 @@ PSC_netpayments_df['present_value'] = PSC_netpayments_df['net_payments'] * PSC_n
 LCC_netpayments_df['present_value'] = LCC_netpayments_df['net_payments'] * LCC_netpayments_df['discount_factor']
 PSC_netpayments_df['present_value'] = PSC_netpayments_df['present_value'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 LCC_netpayments_df['present_value'] = LCC_netpayments_df['present_value'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
-print(PSC_netpayments_df)
-print(LCC_netpayments_df)
+#print(PSC_netpayments_df)
+#print(LCC_netpayments_df)
 
 PSC_present_value = PSC_netpayments_df['present_value'].sum()
 LCC_present_value = LCC_netpayments_df['present_value'].sum()
@@ -57,4 +57,3 @@ VFM_df = pd.DataFrame({'VFM': [VFM], 'VFM_percent': [VFM_percent]})
 c.execute('CREATE OR REPLACE TABLE VFM_table AS SELECT * from VFM_df')
 c.execute('CREATE OR REPLACE TABLE PSC_pv_table AS SELECT * from PSC_netpayments_df')
 c.execute('CREATE OR REPLACE TABLE LCC_pv_table AS SELECT * from LCC_netpayments_df')
-#c.execute('CREATE OR REPLACE TABLE Risk_table AS SELECT * from Risk_adjust_gaku_df')
