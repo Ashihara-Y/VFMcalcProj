@@ -8,10 +8,7 @@ from dataclasses import asdict, dataclass
 import datetime
 from decimal import *
 from pydantic import BaseModel
-import pandera as pa
-from pandera.typing import Series, DataFrame
 import dateutil
-from pandera import Column, DataFrameSchema
 
 
 db = TinyDB("test_inputs_db.json")

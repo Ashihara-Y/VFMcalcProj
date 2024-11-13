@@ -31,6 +31,7 @@ SPC_SPCkeihi_SPCsetsuritduhi_df = SPC_SPCkeihi_SPCsetsuritsuhi_df.set_index('per
 
 SPC_keihi_sum = SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_keihi'].sum()
 SPC_seturitsuhi_sum = SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_setsuritsuhi'].sum()
+SPC_relates = SPC_keihi_sum + SPC_seturitsuhi_sum
 
 Shisetsu_seibihi_kappu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu_seibi_paymentschedule_kappu
 
@@ -46,10 +47,10 @@ LCC_kappuganpon_cumsum_ls = list(R)
 #print(len(LCC_kappuganpon_cumsum_ls))
 kanmin_ribaraihiyou_sa = pd.DataFrame(index=periods,columns=['LCC_kappuganpon_cumsum', 'ribaraihiyou_sa']).fillna(Decimal('0.000001'))
 kanmin_ribaraihiyou_sa['LCC_kappuganpon_cumsum'] = LCC_kappuganpon_cumsum_ls
-print(kanmin_ribaraihiyou_sa)
+#print(kanmin_ribaraihiyou_sa)
 
-Chisai_zansai = LCC_shuushi_payments['chisai_zansai'].to_list()
-Risoku_gaku = [Chisai_zansai[i]*inputs_pdt.chisai_kinri for i in range(3,target_years)]
-R = deque(Risoku_gaku)
-R.rotate(1)
-Risoku_gaku = list(R)
+Kappuganpon_cumsum = kanmin_ribaraihiyou_sa['LCC_kappuganpon_cumsum']
+Ribaraihiyou_sa = [(Shisetsu_seibihi_kappu + SPC_relates - Kappuganpon_cumsum[i]) * kanmin_kinrisa for i in range(4,inputs_supl_pdt.target_years)]
+#printo(Ribaraihiyou_sa)
+kanmin_ribaraihiyou_sa.loc[4:inputs_supl_pdt.target_years,'ribaraihiyou_sa'] = pd.Series(Ribaraihiyou_sa)
+print(kanmin_ribaraihiyou_sa)

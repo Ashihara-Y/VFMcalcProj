@@ -7,8 +7,6 @@ from tinydb import TinyDB, Query
 from dataclasses import asdict, dataclass
 from decimal import *
 from pydantic import BaseModel
-import pandera as pa
-from pandera.typing import Series, DataFrame
 import make_inputs_df, make_pl_waku
 
 inputs_pdt, inputs_supl_pdt = make_inputs_df.io()

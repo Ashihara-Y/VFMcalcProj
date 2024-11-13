@@ -3,8 +3,6 @@ import pandas as pd
 import tinydb
 from tinydb import TinyDB, Query
 from pydantic import BaseModel
-import pandera as pa
-from pandera.typing import Series, DataFrame
 import make_inputs_df, make_pl_waku, make_empty_pls
 
 
