@@ -18,11 +18,14 @@ inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
-SPC_df = c.sql("SELECT  periods, year, income_total, kariire_ganpon_hensai, payments_total, net_income FROM SPC_table").df()
+SPC_df = c.sql("SELECT  periods, year, income_total, kariire_ganpon_hensai, payments_total, payments_total_full, net_income FROM SPC_table").df()
 SPC_df['income_total'] = SPC_df['income_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC_df['kariire_ganpon_hensai'] = SPC_df['kariire_ganpon_hensai'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC_df['payments_total'] = SPC_df['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC_df['payments_total_full'] = SPC_df['payments_total_full'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC_df['net_income'] = SPC_df['net_income'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
+SPC_df['net_income_full'] = SPC_df['income_total'] - SPC_df['payments_total_full']
+
 SPC_df = SPC_df.set_index('periods')
 
 SPC_df['Cash_for_P_payment'] = SPC_df['income_total'] - (SPC_df['kariire_ganpon_hensai'] + SPC_df['payments_total'])
@@ -37,6 +40,19 @@ value = SPC_df['net_income'].tolist()
 PIRR = xirr(year, value)
 PIRR_percent = PIRR * 100
 print(PIRR, PIRR_percent)
+
+print(SPC_df[['income_total','payments_total_full','net_income_full']])
+
+net_total_income_sum = float(SPC_df['net_income_full'].sum())
+SPC_shihon = float(inputs_pdt.SPC_shihon)
+year_factor = float(1 / inputs_pdt.proj_years)
+print(net_total_income_sum, SPC_shihon, year_factor)
+
+
+value_EIRR = SPC_df['net_income_full'].to_list()
+EIRR = xirr(year, value_EIRR)
+EIRR_percent = EIRR * 100
+print(EIRR, EIRR_percent)
 
 PIRR_df = pd.DataFrame({'PIRR': [PIRR], 'PIRR_percent': [PIRR_percent]})
 c.execute('CREATE OR REPLACE TABLE PIRR_table AS SELECT * from PIRR_df')
