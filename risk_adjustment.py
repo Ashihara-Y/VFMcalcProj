@@ -44,5 +44,6 @@ risk_adjust_gaku = ribaraihiyou_sa_sum + SPC_keihi_sum + SPC_seturitsuhi_sum + i
 print(risk_adjust_gaku)
 Risk_adjust_gaku_df = pd.DataFrame({'risk_adjust_gaku': [risk_adjust_gaku]})
 c.execute('CREATE OR REPLACE TABLE Risk_table AS SELECT * from Risk_adjust_gaku_df')
+c.close()
 #Risk_df = c.sql("SELECT * FROM Risk_table").df()
 #print(Risk_df['risk_adjust_gaku'].loc[0])

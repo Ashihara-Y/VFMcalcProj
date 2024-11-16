@@ -196,6 +196,6 @@ c = conn.cursor()
 
 LCC_r = LCC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC_r')
-
+c.close()
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
    LCC.to_excel(writer, sheet_name='LCC_sheet20241111_008')

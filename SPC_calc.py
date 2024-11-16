@@ -185,6 +185,6 @@ print(SPC)
 
 SPC_r = SPC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
-
+c.close()
 with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
    SPC.to_excel(writer, sheet_name='SPC_sheet20241111_005')
