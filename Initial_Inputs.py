@@ -5,7 +5,6 @@ import flet as ft
 # from flet_core.session_storage import SessionStorage
 import pandas as pd
 import pyarrow as pa
-import jgb_rates
 import datetime
 import tinydb
 from tinydb import TinyDB, Query
@@ -201,6 +200,7 @@ class Initial_Inputs(ft.Column):
         if proj_years < const_years:
             ft.page.go("/")
 
+        const_start_date = datetime.date.today()
 
         JGB_rates_df = pd.read_csv(
             "JGB_rates.csv",
