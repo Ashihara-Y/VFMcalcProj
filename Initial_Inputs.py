@@ -6,6 +6,7 @@ import flet as ft
 import pandas as pd
 import pyarrow as pa
 import jgb_rates
+import datetime
 import tinydb
 from tinydb import TinyDB, Query
 
@@ -90,7 +91,7 @@ class Initial_Inputs(ft.Column):
         )
         self.dd5 = ft.Dropdown(
             label="施設整備期間",
-            hint_text="施設整備期間（Oの場合のみゼロ）を選択してください",
+            hint_text="施設整備期間（O方式の場合のみゼロ）を選択してください",
             width=400,
             value="1",
             options=[
@@ -99,11 +100,89 @@ class Initial_Inputs(ft.Column):
                 ft.dropdown.Option("2"),
                 ft.dropdown.Option("3"),
                 ft.dropdown.Option("4"),
+                ft.dropdown.Option("5"),
             ],
         )
-        self.b = ft.ElevatedButton(text="選択", on_click=self.button_clicked)
+        self.tx1 = ft.Text("施設整備費")
+        self.sl1 = ft.Slider(
+            value=float(self.initial_inputs["shisetsu_seibi"]),
+            min=100,
+            max=100000,
+            divisions=10000,
+            label="{value}百万円",
+            #on_change=slider_changed,
+        )
+
+        self.tx2 = ft.Text("維持管理運営費(年額)")
+        self.sl2 = ft.Slider(
+            value=float(self.initial_inputs["ijikanri_unnei"]),
+            min=0,
+            max=1000,
+            divisions=1000,
+            label="{value}百万円",
+        )
+        self.tx3 = ft.Text("施設整備費の効率性")
+        self.sl3 = ft.Slider(
+            value=float(self.initial_inputs["reduc_shisetsu"]),
+            min=0.0,
+            max=0.20,
+            divisions=200,
+            label="{value}%",
+        )
+        self.tx4 = ft.Text("維持管理運営費の効率性")
+        self.sl4 = ft.Slider(
+            value=float(self.initial_inputs["reduc_ijikanri_1"]),
+            min=0.0,
+            max=0.20,
+            divisions=200,
+            label="{value}%",
+        )
+        self.tx5 = ft.Text("維持管理運営費の効率性2")
+        self.sl5 = ft.Slider(
+            value=float(self.initial_inputs["reduc_ijikanri_2"]),
+            min=0.0,
+            max=0.20,
+            divisions=200,
+            label="{value}%",
+        )
+        self.tx6 = ft.Text("維持管理運営費の効率性3")
+        self.sl6 = ft.Slider(
+            value=float(self.initial_inputs["reduc_ijikanri_3"]),
+            min=0.0,
+            max=0.20,
+            divisions=20,
+            label="{value}%",
+        )
+        self.tx7 = ft.Text("落札率(競争の効果反映)")
+        self.sl7 = ft.Slider(
+            value=float(self.initial_inputs["rakusatsu_ritsu"]),
+            min=0.8,
+            max=1.0,
+            divisions=100,
+            label="{value}%",
+        )
+        self.b = ft.ElevatedButton(text="初期値の入力", on_click=self.button_clicked)
         return ft.Column(
-            [self.dd1, self.dd2, self.dd3, self.dd4, self.dd5, self.b],
+            [self.dd1, 
+             self.dd2, 
+             self.dd3, 
+             self.dd4, 
+             self.dd5, 
+             self.tx1,
+             self.sl1,
+             self.tx2,
+             self.sl2,
+             self.tx3,
+             self.sl3,
+             self.tx4,
+             self.sl4,
+             self.tx5,
+             self.sl5,
+             self.tx6,
+             self.sl6,
+             self.tx7,
+             self.sl7,
+             self.b],
             scroll=ft.ScrollMode.ALWAYS,
         )
 
@@ -117,6 +196,7 @@ class Initial_Inputs(ft.Column):
 
         proj_years = int(self.dd4.value)
         const_years = int(self.dd5.value)
+        ijikanri_unnei_years = proj_years - const_years
 
         if proj_years < const_years:
             ft.page.go("/")
@@ -156,6 +236,18 @@ class Initial_Inputs(ft.Column):
         gonensai_rimawari = JGB_rates_df.loc["5年"].iloc[0]
         # gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
         kitai_bukka = kitai_bukka_j - gonensai_rimawari
+
+        if self.dd2.value == "サービス購入型":
+            houjinzei_ritsu = 0.0
+            houjinjuminzei_kintou = 0.18
+            fudousanshutokuzei_hyoujun = 0.0
+            fudousanshutokuzei_ritsu = 0.0
+            koteishisanzei_hyoujun = 0.0
+            koteishisanzei_ritsu = 0.0
+            tourokumenkyozei_hyoujun = 0.0
+            tourokumenkyozei_ritsu = 0.0
+            houjinjuminzei_ritsu_todouhuken = 0.0
+            houjinjuminzei_ritsu_shikuchoson = 0.0
 
         if self.dd1.value == "国":
             zei_modori = 27.8

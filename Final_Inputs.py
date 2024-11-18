@@ -33,40 +33,6 @@ class Final_Inputs(ft.Column):
         self.tx5 = ft.Text(str(self.initial_inputs["const_years"]))
 
         #self.tx6 = ft.Row(ft.Text("施設整備費："), t_sl)
-        self.tx6 = ft.Text("施設整備費")
-        self.sl3 = ft.Slider(
-            value=float(self.initial_inputs["shisetsu_seibi"]),
-            min=100,
-            max=100000,
-            divisions=10000,
-            label="{value}百万円",
-            #on_change=slider_changed,
-        )
-
-        self.tx7 = ft.Text("維持管理運営費")
-        self.sl4 = ft.Slider(
-            value=float(self.initial_inputs["ijikanri_unnei"]),
-            min=0,
-            max=1000,
-            divisions=1000,
-            label="{value}百万円",
-        )
-        self.tx8 = ft.Text("施設整備費の削減率")
-        self.sl5 = ft.Slider(
-            value=float(self.initial_inputs["reduc_shisetsu"]),
-            min=0,
-            max=20,
-            divisions=20,
-            label="{value}%",
-        )
-        self.tx9 = ft.Text("維持管理運営費の削減率")
-        self.sl6 = ft.Slider(
-            value=float(self.initial_inputs["reduc_ijikanri"]),
-            min=0,
-            max=20,
-            divisions=20,
-            label="{value}%",
-        )
         self.tx10 = ft.Text("起債充当率")
         self.sl7 = ft.Slider(
             value=float(self.initial_inputs["kisai_jutou"]),
