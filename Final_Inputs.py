@@ -26,25 +26,103 @@ class Final_Inputs(ft.Column):
         
     def build(self):
 
-        self.tx1 = ft.Text(str("管理者種別： " + self.initial_inputs["mgmt_type"]))
-        self.tx2 = ft.Text(str(self.initial_inputs["proj_ctgry"]))
-        self.tx3 = ft.Text(str(self.initial_inputs["proj_type"]))
-        self.tx4 = ft.Text(str(self.initial_inputs["proj_years"]))
-        self.tx5 = ft.Text(str(self.initial_inputs["const_years"]))
-        self.tx6 = ft.Text(str(self.initial_inputs["chisai_sueoki_years"]))
-        self.tx7 = ft.Text(str(self.initial_inputs["houjinzei_ritsu"]))
-        self.tx8 = ft.Text(str(self.initial_inputs["houjinjuminzei_kintou"]))
-        self.tx8 = ft.Text(str(self.initial_inputs["hudousanshutokuzei_hyoujun"]))
-        self.tx9 = ft.Text(str(self.initial_inputs["hudousanshutokuzei_ritsu"]))
-        self.tx10 = ft.Text(str(self.initial_inputs["koteishisanzei_hyoujun"]))
-        self.tx11 = ft.Text(str(self.initial_inputs["koteishisanzei_ritsu"]))
-        self.tx12 = ft.Text(str(self.initial_inputs["tourokumenkyozei_hyoujun"]))
-        self.tx13 = ft.Text(str(self.initial_inputs["tourokumenkyozei_ritsu"]))
-        self.tx14 = ft.Text(str(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"]))
-        self.tx15 = ft.Text(str(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"]))
+        self.tx0 = ft.Text(str("＜＜初期データ＞＞"))
+        self.tx1 = ft.Text(str("発注者区分： " + self.initial_inputs["mgmt_type"]))
+        self.tx2 = ft.Text(str("事業タイプ： " + self.initial_inputs["proj_ctgry"]))
+        self.tx3 = ft.Text(str("事業方式： " + self.initial_inputs["proj_type"]))
+        self.tx4 = ft.Text(str("事業期間： " + self.initial_inputs["proj_years"] + "年"))
+        self.tx5 = ft.Text(str("施設整備期間： " + self.initial_inputs["const_years"] + "年"))
+        self.tx6 = ft.Text(str("地方債償還据置期間： " + self.initial_inputs["chisai_sueoki_years" + "年"]))
+    
+        self.dt1 = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("事業費項目")),
+                ft.DataColumn(ft.Text("入力値"), numeic=True),
+                ft.DataColumn(ft.Text("競争の効果反映(PSC)"), numeic=True),
+                ft.DataColumn(ft.Text("効率性反映(PFI-LCC)"), numeic=True), 
+            ],         
+            rows=[
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("施設整備費")),
+                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org_LCC"])),                
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("維持管理運営費(人件費)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org_LCC"])),                
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("維持管理運営費(修繕費)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org_LCC"])),                
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("維持管理運営費(動力費)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org_LCC"])),                
+                        ],
+                ),
+            ],
+        ),
+        self.dt2 = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("税目")),
+                ft.DataColumn(ft.Text("標準／均等"), numeic=True),
+                ft.DataColumn(ft.Text("税率"), numeic=True),
+            ],         
+            rows=[
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("法人税")),
+                        ft.DataCell(ft.Text("-")),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinzei_ritsu"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("法人住民税(都道府県、市区町村)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"], self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("不動産取得税")),
+                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_hyoujun"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_ritsu"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("固定資産税")),
+                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_hyoujun"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_ritsu"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("登録免許税")),
+                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_hyoujun"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_ritsu"])),
+                        ],
+                ),
+            ],
+        ),
 
         #self.tx6 = ft.Row(ft.Text("施設整備費："), t_sl)
-        self.tx16 = ft.Text("地方債償還期間")
+        self.tx7 = ft.Text("地方債償還期間")
         self.sl1 = ft.Slider(
             value=int(self.initial_inputs["chisai_shoukan_kikan"]),
             min=0,
@@ -52,7 +130,7 @@ class Final_Inputs(ft.Column):
             divisions=30,
             label="{value}%",
         )
-        self.tx17 = ft.Text("施設整備費支払 一括払の比率")
+        self.tx8 = ft.Text("施設整備費支払 一括払の比率")
         self.sl2 = ft.Slider(
             value=Decimal(self.initial_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]),
             min=0.0,
@@ -60,7 +138,7 @@ class Final_Inputs(ft.Column):
             divisions=100,
             label="{value}%",
         )
-        self.tx18 = ft.Text("モニタリング等費用(PSC)")
+        self.tx9 = ft.Text("モニタリング等費用(PSC)")
         self.sl3 = ft.Slider(
             value=Decimal(self.initial_inputs["monitoring_costs_PSC"]),
             min=0,
@@ -68,7 +146,7 @@ class Final_Inputs(ft.Column):
             divisions=100,
             label="{value}%",
         )
-        self.tx19 = ft.Text("モニタリング等費用(PFI-LCC)")
+        self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)")
         self.sl4 = ft.Slider(
             value=Decimal(self.initial_inputs["monitoring_costs_LCC"]),
             min=0,
@@ -76,7 +154,7 @@ class Final_Inputs(ft.Column):
             divisions=100,
             label="{value}%",
         )
-        self.tx20 = ft.Text("起債充当率")
+        self.tx11 = ft.Text("起債充当率")
         self.sl5 = ft.Slider(
             value=Decimal(self.initial_inputs["kisai_jutou"]),
             min=0.0,
@@ -84,7 +162,7 @@ class Final_Inputs(ft.Column):
             divisions=100,
             label="{value}%",
         )
-        self.tx21 = ft.Text("起債への交付金カバー率")
+        self.tx12 = ft.Text("起債への交付金カバー率")
         self.sl6 = ft.Slider(
             value=Decimal(self.initial_inputs["kisai_koufu"]),
             min=0.0,
@@ -92,7 +170,7 @@ class Final_Inputs(ft.Column):
             divisions=50,
             label="{value}%",
         )
-        self.tx22 = ft.Text("補助率")
+        self.tx13 = ft.Text("補助率")
         self.sl7 = ft.Slider(
             value=Decimal(self.initial_inputs["hojo_ritsu"]),
             min=0.0,
@@ -100,7 +178,7 @@ class Final_Inputs(ft.Column):
             divisions=60,
             label="{value}%",
         )
-        self.tx23 = ft.Text("SPC経費年額")
+        self.tx14 = ft.Text("SPC経費年額")
         self.sl8 = ft.Slider(
             value=Decimal(self.initial_inputs["SPC_keihi"]),
             min=0,
@@ -108,7 +186,7 @@ class Final_Inputs(ft.Column):
             divisions=50,
             label="{value}百万円",
         )
-        self.tx24 = ft.Text("SPCへの手数料")
+        self.tx15 = ft.Text("SPCへの手数料")
         self.sl9 = ft.Slider(
             value=Decimal(self.initial_inputs["SPC_fee"]),
             min=0,
@@ -116,7 +194,7 @@ class Final_Inputs(ft.Column):
             divisions=50,
             label="{value}百万円",
         )
-        self.tx25 = ft.Text("SPC資本金")
+        self.tx16 = ft.Text("SPC資本金")
         self.sl10 = ft.Slider(
             value=Decimal(self.initial_inputs["SPC_shihon"]),
             min=0,
@@ -124,7 +202,7 @@ class Final_Inputs(ft.Column):
             divisions=100,
             label="{value}百万円",
         )
-        self.tx26 = ft.Text("SPC予備費")
+        self.tx17 = ft.Text("SPC予備費")
         self.sl11 = ft.Slider(
             value=Decimal(self.initial_inputs["SPC_yobihi"]),
             min=0,
@@ -132,7 +210,7 @@ class Final_Inputs(ft.Column):
             divisions=1000,
             label="{value}百万円",
         )
-        self.tx27 = ft.Text("SPC経費の扱い（デフォルト：割賦に含める）")
+        self.tx18 = ft.Text("SPC経費の扱い（デフォルト：割賦に含める）")
         self.sl12 = ft.Slider(
             value=self.initial_inputs["SPC_hiyou_atsukai"],
             min=0,
@@ -140,7 +218,7 @@ class Final_Inputs(ft.Column):
             divisions=1,
             label="{value}",
         )
-        self.tx28 = ft.Text("アドバイザリー等経費")
+        self.tx19 = ft.Text("アドバイザリー等経費")
         self.sl13 = ft.Slider(
             value=Decimal(self.initial_inputs["adovisory_fee"]),
             min=0,
@@ -148,7 +226,7 @@ class Final_Inputs(ft.Column):
             divisions=50,
             label="{value}百万円",
         )
-        self.tx29 = ft.Text("利用料金収入")
+        self.tx20 = ft.Text("利用料金収入")
         self.sl14 = ft.Slider(
             value=Decimal(self.initial_inputs["riyou_ryoukin"]),
             min=0,
@@ -156,7 +234,7 @@ class Final_Inputs(ft.Column):
             divisions=100,
             label="{value}百万円",
         )
-        self.tx30 = ft.Text("割賦金利へのスプレッド")
+        self.tx21 = ft.Text("割賦金利へのスプレッド")
         self.sl15 = ft.Slider(
             value=Decimal(self.initial_inputs["kappu_kinri_spread"]),
             min=0.0,
@@ -164,7 +242,7 @@ class Final_Inputs(ft.Column):
             divisions=20,
             label="{value*100}%",
         )
-        self.tx31 = ft.Text("施設整備開始年月日")
+        self.tx22 = ft.Text("施設整備開始年月日")
         self.sl16 = ft.Slider(
             value=self.initial_inputs["const_start_date"],
             min=0,
