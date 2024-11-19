@@ -3,15 +3,13 @@ sys.dont_write_bytecode = True
 import os
 import flet as ft
 import pandas as pd
-#import duckdb
+import datetime
 import tinydb
 from tinydb import TinyDB, Query
 import VFMcalc2 as vc
 import save_results as sr
 from decimal import *
 import sqlite3
-# savedir = pathlib.Path(tempfile.mkdtemp(dir='.')) # 一時ディレクトリを作成
-# filename = savedir / 'final_inputs.joblib' # 一時ディレクトリにファイルを作成
 
 class Final_Inputs(ft.Column):
     def __init__(self):
@@ -121,7 +119,6 @@ class Final_Inputs(ft.Column):
             ],
         ),
 
-        #self.tx6 = ft.Row(ft.Text("施設整備費："), t_sl)
         self.tx7 = ft.Text("地方債償還期間")
         self.sl1 = ft.Slider(
             value=int(self.initial_inputs["chisai_shoukan_kikan"]),
@@ -250,102 +247,59 @@ class Final_Inputs(ft.Column):
             divisions=15,
             label="{value}",
         )
-        self.tx32 = ft.Text("SPC経費年額")
-        self.sl17 = ft.Slider(
-            value=float(self.initial_inputs["SPC_keihi"]),
-            min=0,
-            max=15,
-            divisions=15,
-            label="{value}百万円",
-        )
-        self.tx33 = ft.Text("SPC経費年額")
-        self.sl18 = ft.Slider(
-            value=float(self.initial_inputs["SPC_keihi"]),
-            min=0,
-            max=15,
-            divisions=15,
-            label="{value}百万円",
-        )
-        self.tx34 = ft.Text("SPC経費年額")
-        self.sl19 = ft.Slider(
-            value=float(self.initial_inputs["SPC_keihi"]),
-            min=0,
-            max=15,
-            divisions=15,
-            label="{value}百万円",
-        )
-        self.tx35 = ft.Text("SPC経費年額")
-        self.sl20 = ft.Slider(
-            value=float(self.initial_inputs["SPC_keihi"]),
-            min=0,
-            max=15,
-            divisions=15,
-            label="{value}百万円",
-        )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
         return ft.Column(
             [
+                self.tx0,
                 self.tx1,
                 self.tx2,
                 self.tx3,
                 self.tx4,
                 self.tx5,
                 self.tx6,
+                self.dt1,
+                self.dt2,
                 self.tx7,
-                self.tx8,
-                self.tx9,
-                self.tx10,
-                self.tx11,
-                self.tx12,
-                self.tx13,
-                self.tx14,
-                self.tx15,
-                self.tx16,
                 self.sl1,
-                self.tx17,
+                self.tx8,
                 self.sl2,
-                self.tx18,
+                self.tx9,
                 self.sl3,
-                self.tx19,
+                self.tx10,
                 self.sl4,
-                self.tx20,
+                self.tx11,
                 self.sl5,
-                self.tx21,
+                self.tx12,
                 self.sl6,
-                self.tx22,
+                self.tx13,
                 self.sl7,
-                self.tx23,
+                self.tx14,
                 self.sl8,
-                self.tx24,
+                self.tx15,
                 self.sl9,
-                self.tx25,
+                self.tx16,
                 self.sl10,
-                self.tx26,
+                self.tx17,
                 self.sl11,
-                self.tx27,
+                self.tx18,
                 self.sl12,
-                self.tx28,
+                self.tx19,
                 self.sl13,
-                self.tx29,
+                self.tx20,
                 self.sl14,
-                self.tx30,
+                self.tx21,
                 self.sl15,
-                self.tx31,
+                self.tx22,
                 self.sl16,
-                self.tx32,
-                self.sl17,
-                self.tx33,
-                self.sl18,
-                self.tx34,
-                self.sl19,
-                self.tx35,
-                self.sl20,
                 self.b,
             ],
             scroll=ft.ScrollMode.ALWAYS,
         )
 
     def button_clicked(self, e):
+
+        shisetsu_seibi_paymentschedule_kappu = 1 - self.initial_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]
+
         final_inputs = {
             "mgmt_type": self.initial_inputs["mgmt_type"],
             "proj_ctgry": self.initial_inputs["proj_ctgry"],
@@ -369,6 +323,62 @@ class Final_Inputs(ft.Column):
             "zeimae_rieki": float(self.initial_inputs["zeimae_rieki"]),
             "SPC_keihi": float(self.sl10.value),
             "hojo": float(self.sl9.value),
+            "advisory_fee": Decimal,
+            "chisai_kinri": Decimal,
+            "chisai_shoukan_kikan": int,
+            "chisai_sueoki_years": int,
+            "const_years": int,
+            "const_start_date": datetime.datetime,
+            "growth": Decimal,
+            "hojo_ritsu": Decimal,
+            "ijikanri_unnei": Decimal,
+            "ijikanri_unnei_LCC": Decimal,
+            "ijikanri_unnei_org": Decimal,
+            "ijikanri_unnei_org_LCC": Decimal,
+            "ijikanri_unnei_years": int,
+            "kappu_kinri_spread": Decimal,
+            "kijun_kinri": Decimal,
+            "kisai_jutou": Decimal,
+            "kisai_koufu": Decimal,
+            "kitai_bukka": Decimal,
+            "kyoukouka_yosantanka_hiritsu": Decimal,
+            "lg_spread": Decimal,
+            "mgmt_type": str,
+            "monitoring_costs_LCC": Decimal,
+            "monitoring_costs_PSC": Decimal,
+            "pre_kyoukouka": bool,
+            "proj_ctgry": str,
+            "proj_type": str,
+            "rakusatsu_ritsu": Decimal,
+            "reduc_shisetsu": Decimal,
+            "reduc_ijikanri": Decimal,
+            "riyouryoukin_shunyu": Decimal,
+            "shisetsu_seibi": Decimal,
+            "shisetsu_seibi_LCC": Decimal,
+            "shisetsu_seibi_org": Decimal,
+            "shisetsu_seibi_org_LCC": Decimal,
+            "shisetsu_seibi_paymentschedule_ikkatsu": Decimal,
+            "shisetsu_seibi_paymentschedule_kappu": Decimal,
+            "SPC_hiyou_atsukai": int,
+            "SPC_keihi": Decimal,
+            "SPC_fee": Decimal,
+            "SPC_shihon": Decimal,
+            "SPC_yobihi": Decimal,
+            "zei_modori": Decimal,
+            "zei_total": Decimal,
+            "zeimae_rieki": Decimal,
+            "houjinzei_ritsu": Decimal,
+            "houjinjuminzei_kintou": Decimal,
+            "fudousanshutokuzei_hyoujun": Decimal,
+            "fudousanshutokuzei_ritsu": Decimal,
+            "koteishisanzei_hyoujun": Decimal,
+            "koteishisanzei_ritsu": Decimal,
+            "tourokumenkyozei_hyoujun": Decimal,
+            "tourokumenkyozei_ritsu": Decimal,
+            "houjinjuminzei_ritsu_todouhuken": Decimal,
+            "houjinjuminzei_ritsu_shikuchoson": Decimal,
+            "option_01": Decimal,
+            "option_02": Decimal,
         }
 
         if os.path.exists("fi_db.json"):
@@ -379,9 +389,6 @@ class Final_Inputs(ft.Column):
         #if os.path.exists("final_inputs.db"):
         #    os.remove("final_inputs.db")
         #con = sqlite3.connect('final_inputs.db')
-        #con = duckdb.connect('final_inputs.db')
-        #df_fi = pd.DataFrame(data=final_inputs, index=[1])
-        #con.sql('create table final_inputs as select * from df_fi')
         #con.close()
         
         res_PSC_LCC = vc.calc_PSC_LCC(final_inputs)
