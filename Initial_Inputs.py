@@ -8,7 +8,7 @@ import pyarrow as pa
 import datetime
 import tinydb
 from tinydb import TinyDB, Query
-
+from decimal import *
 
 class Initial_Inputs(ft.Column):
     def __init__(self):
@@ -104,57 +104,72 @@ class Initial_Inputs(ft.Column):
         )
         self.tx1 = ft.Text("施設整備費")
         self.sl1 = ft.Slider(
-            value=float(self.initial_inputs["shisetsu_seibi"]),
+            value=Decimal(3000),
             min=100,
             max=100000,
             divisions=10000,
             label="{value}百万円",
             #on_change=slider_changed,
         )
-
-        self.tx2 = ft.Text("維持管理運営費(年額)")
+        self.tx2 = ft.Text("維持管理運営費(年額)人件費")
         self.sl2 = ft.Slider(
-            value=float(self.initial_inputs["ijikanri_unnei"]),
+            value=Decimal(30),
             min=0,
             max=1000,
             divisions=1000,
             label="{value}百万円",
         )
-        self.tx3 = ft.Text("施設整備費の効率性")
+        self.tx3 = ft.Text("維持管理運営費(年額)修繕費")
         self.sl3 = ft.Slider(
-            value=float(self.initial_inputs["reduc_shisetsu"]),
-            min=0.0,
-            max=0.20,
-            divisions=200,
-            label="{value}%",
+            value=Decimal(15),
+            min=0,
+            max=1000,
+            divisions=1000,
+            label="{value}百万円",
         )
-        self.tx4 = ft.Text("維持管理運営費の効率性")
+        self.tx4 = ft.Text("維持管理運営費(年額)動力費")
         self.sl4 = ft.Slider(
-            value=float(self.initial_inputs["reduc_ijikanri_1"]),
-            min=0.0,
-            max=0.20,
-            divisions=200,
-            label="{value}%",
+            value=Decimal(5),
+            min=0,
+            max=1000,
+            divisions=1000,
+            label="{value}百万円",
         )
-        self.tx5 = ft.Text("維持管理運営費の効率性2")
+        self.tx5 = ft.Text("施設整備費の効率性")
         self.sl5 = ft.Slider(
-            value=float(self.initial_inputs["reduc_ijikanri_2"]),
+            value=Decimal(0.05),
             min=0.0,
             max=0.20,
             divisions=200,
             label="{value}%",
         )
-        self.tx6 = ft.Text("維持管理運営費の効率性3")
+        self.tx6 = ft.Text("維持管理運営費の効率性(人件費)")
         self.sl6 = ft.Slider(
-            value=float(self.initial_inputs["reduc_ijikanri_3"]),
+            value=Decimal(0.05),
+            min=0.0,
+            max=0.20,
+            divisions=200,
+            label="{value}%",
+        )
+        self.tx7 = ft.Text("維持管理運営費の効率性(修繕費)")
+        self.sl7 = ft.Slider(
+            value=Decimal(0.05),
+            min=0.0,
+            max=0.20,
+            divisions=200,
+            label="{value}%",
+        )
+        self.tx8 = ft.Text("維持管理運営費の効率性(動力費)")
+        self.sl8 = ft.Slider(
+            value=Decimal(0.05),
             min=0.0,
             max=0.20,
             divisions=20,
             label="{value}%",
         )
-        self.tx7 = ft.Text("落札率(競争の効果反映)")
-        self.sl7 = ft.Slider(
-            value=float(self.initial_inputs["rakusatsu_ritsu"]),
+        self.tx9 = ft.Text("落札率(競争の効果反映)")
+        self.sl9 = ft.Slider(
+            value=Decimal(0.95),
             min=0.8,
             max=1.0,
             divisions=100,
@@ -201,6 +216,29 @@ class Initial_Inputs(ft.Column):
             ft.page.go("/")
 
         const_start_date = datetime.date.today()
+        
+        shisetsu_seibi_org = Decimal(self.sl1.value)
+        ijikanri_unnei_1_org = Decimal(self.sl2.value)
+        ijikanri_unnei_2_org = Decimal(self.sl3.value)
+        ijikanri_unnei_3_org = Decimal(self.sl4.value)
+        reduc_shisetsu = Decimal(self.sl4.value)
+        reduc_ijikanri_1 = Decimal(self.sl6.value)
+        reduc_ijikanri_2 = Decimal(self.sl7.value)
+        reduc_ijikanri_3 = Decimal(self.sl8.value)
+        rakusatsu_ritsu = Decimal(self.sl9.value)
+
+        shisetsu_seibi_org_LCC = shisetsu_seibi_org * reduc_shisetsu
+        shisetsu_seibi = shisetsu_seibi_org * rakusatsu_ritsu
+        shisetsu_seibi_LCC = shisetsu_seibi * reduc_shisetsu
+        ijikanri_unnei_1_org_LCC = ijikanri_unnei_1_org * reduc_ijikanri_1
+        ijikanri_unnei_1 = ijikanri_unnei_1_org * rakusatsu_ritsu
+        ijikanri_unnei_1_LCC = ijikanri_unnei_1 * reduc_ijikanri_1
+        ijikanri_unnei_2_org_LCC = ijikanri_unnei_2_org * reduc_ijikanri_2
+        ijikanri_unnei_2 = ijikanri_unnei_2_org * rakusatsu_ritsu
+        ijikanri_unnei_2_LCC = ijikanri_unnei_2 * reduc_ijikanri_2
+        ijikanri_unnei_3_org_LCC = ijikanri_unnei_3_org * reduc_ijikanri_3
+        ijikanri_unnei_3 = ijikanri_unnei_3_org * rakusatsu_ritsu
+        ijikanri_unnei_3_LCC = ijikanri_unnei_3 * reduc_ijikanri_3
 
         JGB_rates_df = pd.read_csv(
             "JGB_rates.csv",
@@ -248,24 +286,30 @@ class Initial_Inputs(ft.Column):
             tourokumenkyozei_ritsu = 0.0
             houjinjuminzei_ritsu_todouhuken = 0.0
             houjinjuminzei_ritsu_shikuchoson = 0.0
+            riyou_ryoukin = 0.0
 
         if self.dd1.value == "国":
-            zei_modori = 27.8
+            zei_modori = 0.278
             hojo = 0.0
             kisai_jutou = 0.0
             kisai_koufu = 0.0
         elif self.dd1.value == "都道府県":
-            zei_modori = 5.78
-            hojo = 50.0
-            kisai_jutou = 75.0
-            kisai_koufu = 30.0
+            zei_modori = 0.0578
+            hojo = 0.5
+            kisai_jutou = 0.75
+            kisai_koufu = 0.30
         elif self.dd1.value == "市町村":
-            zei_modori = 8.4
-            hojo = 30.0
-            kisai_jutou = 75.0
-            kisai_koufu = 30.0
+            zei_modori = 0.084
+            hojo = 0.300
+            kisai_jutou = 0.750
+            kisai_koufu = 0.300
         else:
             pass
+
+        SPC_fee = Decimal(20)
+        SPC_shihon = Decimal(100)
+        SPC_yobihi = Decimal(456)
+        SPC_hiyou_atsukai = int(1)
 
         initial_inputs = {
             "mgmt_type": self.dd1.value,
@@ -273,23 +317,56 @@ class Initial_Inputs(ft.Column):
             "proj_type": self.dd3.value,
             "proj_years": self.dd4.value,
             "const_years": self.dd5.value,
-            "kijun_kinri": r1,
-            "chisai_kinri": r2,
-            "zei_modori": float(zei_modori),
-            "lg_spread": 1.5,
-            "zei_total": 41.98,
-            "growth": 0.0,
-            "kitai_bukka": float(kitai_bukka),
-            "shisetsu_seibi": 2000.0,
-            "ijikanri_unnei": 50.0,
-            "reduc_shisetsu": 10.0,
-            "reduc_ijikanri": 10.0,
-            "pre_kyoukouka": False,
-            "kisai_jutou": float(kisai_jutou),
-            "kisai_koufu": float(kisai_koufu),
-            "zeimae_rieki": 8.5,
-            "SPC_keihi": 15.0,
-            "hojo": float(hojo),
+            "ijikanri_unnei_years": int(ijikanri_unnei_years),
+            "const_start_date": const_start_date,
+            "kijun_kinri": Decimal(r1),
+            "chisai_kinri": Decimal(r2),
+            "zei_modori": Decimal(zei_modori),
+            "lg_spread": Decimal(0.01),
+            "zei_total": Decimal(0.18),
+            "riyou_ryoukin": riyou_ryoukin,
+            "growth": Decimal(0.0),
+            "kitai_bukka": Decimal(kitai_bukka),
+            "shisetsu_seibi": shisetsu_seibi,
+            "shisetsu_seibi_org": shisetsu_seibi_org,
+            "shisetsu_seibi_org_LCC": shisetsu_seibi_org_LCC,
+            "shisetsu_seibi_LCC": shisetsu_seibi_LCC,
+            "ijikanri_unnei_1": ijikanri_unnei_1,
+            "ijikanri_unnei_1_org": ijikanri_unnei_1_org,
+            "ijikanri_unnei_1_org_LCC": ijikanri_unnei_1_org_LCC,
+            "ijikanri_unnei_1_LCC": ijikanri_unnei_1_LCC,
+            "ijikanri_unnei_2": ijikanri_unnei_2,
+            "ijikanri_unnei_2_org": ijikanri_unnei_2_org,
+            "ijikanri_unnei_2_org_LCC": ijikanri_unnei_2_org_LCC,
+            "ijikanri_unnei_2_LCC": ijikanri_unnei_2_LCC,
+            "ijikanri_unnei_3": ijikanri_unnei_3,
+            "ijikanri_unnei_3_org": ijikanri_unnei_3_org,
+            "ijikanri_unnei_3_org_LCC": ijikanri_unnei_3_org_LCC,
+            "ijikanri_unnei_3_LCC": ijikanri_unnei_3_LCC,
+            "reduc_shisetsu": reduc_shisetsu,
+            "reduc_ijikanri_1": reduc_ijikanri_1,
+            "reduc_ijikanri_2": reduc_ijikanri_2,
+            "reduc_ijikanri_3": reduc_ijikanri_3,
+            "pre_kyoukouka": True,
+            "kisai_jutou": Decimal(kisai_jutou),
+            "kisai_koufu": Decimal(kisai_koufu),
+            "hojo_ritsu": Decimal(hojo),
+            "zeimae_rieki": Decimal(0.0),
+            "SPC_keihi": Decimal(20.0),
+            "SPC_fee": SPC_fee,
+            "SPC_shihon": SPC_shihon,
+            "SPC_yobihi": SPC_yobihi,
+            "SPC_hiyou_atsukai": SPC_hiyou_atsukai,
+            "houjinzei_ritsu": houjinzei_ritsu,
+            "houjinjuminzei_kintou": houjinjuminzei_kintou,
+            "fudousanshutokuzei_hyoujun": fudousanshutokuzei_hyoujun,
+            "fudousanshutokuzei_ritsu": fudousanshutokuzei_ritsu,
+            "koteishisanzei_hyoujun": koteishisanzei_hyoujun,
+            "koteishisanzei_ritsu": koteishisanzei_ritsu,
+            "tourokumenkyozei_hyoujun": tourokumenkyozei_hyoujun,
+            "tourokumenkyozei_ritsu": tourokumenkyozei_ritsu,
+            "houjinjuminzei_ritsu_todouhuken": houjinjuminzei_ritsu_todouhuken,
+            "houjinjuminzei_ritsu_shikuchoson": houjinjuminzei_ritsu_shikuchoson,
         }
 
         if os.path.exists("ii_db.json"):
