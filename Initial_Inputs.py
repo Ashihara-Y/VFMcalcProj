@@ -299,7 +299,7 @@ class Initial_Inputs(ft.Column):
         if proj_years < const_years:
             ft.page.go("/")
 
-        const_start_date = datetime.date.today()
+        const_start_date = datetime.date.today().strftime('%Y-%m-%d')
         
 
         shisetsu_seibi_org_R = Decimal(self.sl0.value)
@@ -420,7 +420,7 @@ class Initial_Inputs(ft.Column):
             "proj_years": self.dd4.value,
             "const_years": self.dd5.value,
             "ijikanri_unnei_years": int(ijikanri_unnei_years),
-            "const_start_date": str(const_start_date),
+            "const_start_date": const_start_date,
             "kijun_kinri": str(Decimal(r1)),
             "chisai_kinri": str(Decimal(r2)),
             "chisai_sueoki_kikan": int(chisai_sueoki_kikan),
