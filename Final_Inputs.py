@@ -25,19 +25,19 @@ class Final_Inputs(ft.Column):
     def build(self):
 
         self.tx0 = ft.Text(str("＜＜初期データ＞＞"))
-        self.tx1 = ft.Text(str("発注者区分： " + self.initial_inputs["mgmt_type"]))
-        self.tx2 = ft.Text(str("事業タイプ： " + self.initial_inputs["proj_ctgry"]))
-        self.tx3 = ft.Text(str("事業方式： " + self.initial_inputs["proj_type"]))
-        self.tx4 = ft.Text(str("事業期間： " + self.initial_inputs["proj_years"] + "年"))
-        self.tx5 = ft.Text(str("施設整備期間： " + self.initial_inputs["const_years"] + "年"))
-        self.tx6 = ft.Text(str("地方債償還据置期間： " + self.initial_inputs["chisai_sueoki_kikan" + "年"]))
+        self.tx1 = ft.Text(str("発注者区分： " + str(self.initial_inputs["mgmt_type"])))
+        self.tx2 = ft.Text(str("事業タイプ： " + str(self.initial_inputs["proj_ctgry"])))
+        self.tx3 = ft.Text(str("事業方式： " + str(self.initial_inputs["proj_type"])))
+        self.tx4 = ft.Text(str("事業期間： " + str(self.initial_inputs["proj_years"]) + "年"))
+        self.tx5 = ft.Text(str("施設整備期間： " + str(self.initial_inputs["const_years"]) + "年"))
+        self.tx6 = ft.Text(str("地方債償還据置期間： " + str(self.initial_inputs["chisai_sueoki_kikan"]) + "年"))
     
         self.dt1 = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("事業費項目")),
-                ft.DataColumn(ft.Text("入力値"), numeic=True),
-                ft.DataColumn(ft.Text("競争の効果反映(PSC)"), numeic=True),
-                ft.DataColumn(ft.Text("効率性反映(PFI-LCC)"), numeic=True), 
+                ft.DataColumn(ft.Text("入力値"), numeric=True),
+                ft.DataColumn(ft.Text("競争の効果反映(PSC)"), numeric=True),
+                ft.DataColumn(ft.Text("効率性反映(PFI-LCC)"), numeric=True), 
             ],         
             rows=[
                 ft.DataRow(
@@ -77,8 +77,8 @@ class Final_Inputs(ft.Column):
         self.dt2 = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("税目")),
-                ft.DataColumn(ft.Text("標準／均等"), numeic=True),
-                ft.DataColumn(ft.Text("税率"), numeic=True),
+                ft.DataColumn(ft.Text("標準／均等"), numeric=True),
+                ft.DataColumn(ft.Text("税率"), numeric=True),
             ],         
             rows=[
                 ft.DataRow(
@@ -129,7 +129,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx8 = ft.Text("施設整備費支払 一括払の比率")
         self.sl2 = ft.Slider(
-            value=Decimal(self.initial_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]),
+            value=0.5,
             min=0.0,
             max=1.00,
             divisions=100,
@@ -137,7 +137,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx9 = ft.Text("モニタリング等費用(PSC)")
         self.sl3 = ft.Slider(
-            value=Decimal(self.initial_inputs["monitoring_costs_PSC"]),
+            value=10,
             min=0,
             max=100,
             divisions=100,
@@ -145,7 +145,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)")
         self.sl4 = ft.Slider(
-            value=Decimal(self.initial_inputs["monitoring_costs_LCC"]),
+            value=6,
             min=0,
             max=100,
             divisions=100,
@@ -217,7 +217,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx19 = ft.Text("アドバイザリー等経費")
         self.sl13 = ft.Slider(
-            value=Decimal(self.initial_inputs["adovisory_fee"]),
+            value=25,
             min=0,
             max=50,
             divisions=50,
@@ -225,7 +225,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx20 = ft.Text("利用料金収入")
         self.sl14 = ft.Slider(
-            value=Decimal(self.initial_inputs["riyou_ryoukin"]),
+            value=0,
             min=0,
             max=100,
             divisions=100,
@@ -233,7 +233,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx21 = ft.Text("割賦金利へのスプレッド")
         self.sl15 = ft.Slider(
-            value=Decimal(self.initial_inputs["kappu_kinri_spread"]),
+            value=2.0,
             min=0.0,
             max=2.0,
             divisions=20,
@@ -242,9 +242,7 @@ class Final_Inputs(ft.Column):
         self.tx22 = ft.Text("施設整備開始年月日")
         self.sl16 = ft.Slider(
             value=self.initial_inputs["const_start_date"],
-            min=0,
-            max=15,
-            divisions=15,
+            divisions=365,
             label="{value}",
         )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
