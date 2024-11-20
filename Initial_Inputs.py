@@ -266,6 +266,8 @@ class Initial_Inputs(ft.Column):
 
         r2 = JRB_rates_df.loc[proj_years][const_years]
 
+        chisai_sueoki_kikan = const_years
+
         kitai_bukka_j = (
             pd.read_csv("BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
             .dropna()
@@ -321,6 +323,7 @@ class Initial_Inputs(ft.Column):
             "const_start_date": const_start_date,
             "kijun_kinri": Decimal(r1),
             "chisai_kinri": Decimal(r2),
+            "chisai_sueoki_kikan": int(chisai_sueoki_kikan),
             "zei_modori": Decimal(zei_modori),
             "lg_spread": Decimal(0.01),
             "zei_total": Decimal(0.18),
