@@ -24,6 +24,12 @@ class Final_Inputs(ft.Column):
         
     def build(self):
 
+        date_format = '%Y-%m-%d'
+        date_dt = datetime.datetime.strptime(self.initial_inputs["const_start_date"], date_format)
+        const_start_year = date_dt.year
+        const_start_month = date_dt.month
+        const_start_day = date_dt.day
+
         self.tx0 = ft.Text(str("＜＜初期データ＞＞"))
         self.tx1 = ft.Text(str("発注者区分： " + str(self.initial_inputs["mgmt_type"])))
         self.tx2 = ft.Text(str("事業タイプ： " + str(self.initial_inputs["proj_ctgry"])))
@@ -77,7 +83,7 @@ class Final_Inputs(ft.Column):
         self.dt2 = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("税目")),
-                ft.DataColumn(ft.Text("標準／均等"), numeric=True),
+                ft.DataColumn(ft.Text("標準／均等割"), numeric=True),
                 ft.DataColumn(ft.Text("税率"), numeric=True),
             ],         
             rows=[
@@ -90,9 +96,16 @@ class Final_Inputs(ft.Column):
                 ),
                 ft.DataRow(
                     cells=[
-                        ft.DataCell(ft.Text("法人住民税(都道府県、市区町村)")),
+                        ft.DataCell(ft.Text("法人住民税(都道府県)")),
                         ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"], self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("法人住民税(市区町村)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"])),
                         ],
                 ),
                 ft.DataRow(
@@ -237,12 +250,30 @@ class Final_Inputs(ft.Column):
             min=0.0,
             max=2.0,
             divisions=20,
-            label="{value*100}%",
+            label="{value*100}",
         )
-        self.tx22 = ft.Text("施設整備開始年月日")
+        self.tx22 = ft.Text("施設整備開始年")
         self.sl16 = ft.Slider(
-            value=self.initial_inputs["const_start_date"],
-            divisions=365,
+            value=const_start_year,
+            min=const_start_year,
+            max=(const_start_year + 10),
+            divisions=10,
+            label="{value}",
+        )
+        self.tx23 = ft.Text("施設整備開始月")
+        self.sl17 = ft.Slider(
+            value=const_start_month,
+            min=1,
+            max=12,
+            divisions=12,
+            label="{value}",
+        )
+        self.tx24 = ft.Text("施設整備開始日")
+        self.sl18 = ft.Slider(
+            value=const_start_day,
+            min=1,
+            max=31,
+            divisions=31,
             label="{value}",
         )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
@@ -289,6 +320,10 @@ class Final_Inputs(ft.Column):
                 self.sl15,
                 self.tx22,
                 self.sl16,
+                self.tx23,
+                self.sl17,
+                self.tx24,
+                self.sl18,
                 self.b,
             ],
             scroll=ft.ScrollMode.ALWAYS,
