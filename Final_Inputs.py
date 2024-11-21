@@ -412,7 +412,5 @@ class Final_Inputs(ft.Column):
         #con = sqlite3.connect('final_inputs.db')
         #con.close()
         
-        res_PSC_LCC = vc.calc_PSC_LCC(final_inputs)
-        results, results_2 = vc.calc_VFM(res_PSC_LCC)
-        sr.save_ddb(results, results_2)
-        self.page.go("/view_saved")
+        #vc.calc_VFM()
+        #self.page.go("/view_saved")
