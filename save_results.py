@@ -35,7 +35,7 @@ dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
 df_list = [PSC_df,PSC_pv_df,LCC_df,LCC_pv_df,SPC_df,SPC_check_df,Risk_df,VFM_df,PIRR_df]
 df_name_list = ['PSC_df','PSC_pv_df','LCC_df','LCC_pv_df','SPC_df','SPC_check_df','Risk_df','VFM_df','PIRR_df']
 
-def addID_save_ddb(x_df):
+def addID(x_df):
     x_df['datetime'] = str(dtime)
     x_df['user_id'] = str(user_id)
     x_df['calc_id'] = str(calc_id)
@@ -43,7 +43,7 @@ def addID_save_ddb(x_df):
     return x_df
 
 for i in df_list:
-    addID_save_ddb(i)
+    addID(i)
 
 def save_ddb(x_df, name_x_df):
     c.sql('CREATE TABLE IF NOT EXISTS ' + name_x_df + '_results_table AS SELECT * FROM ' + name_x_df)

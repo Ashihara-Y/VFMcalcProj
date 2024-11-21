@@ -26,7 +26,7 @@ LCC_netpayments_df = LCC_netpayments_df.set_index('periods')
 PSC_netpayments_org = PSC_netpayments_df.reset_index(drop=False)
 LCC_netpayments_org = LCC_netpayments_df.reset_index(drop=False)
 
-# year列を入れるとすれば、「最初から1年前」の値を作って入れておく必要あり！
+# year列を入れるとすれば、「最初から1年前」の値を作って入れておくか、「ゼロ？」を入れておく必要あり！
 PSC_netpayments_top = pd.DataFrame({'periods': [0], 'net_payments': [Risk_adjust_gaku * -1]})
 LCC_netpayments_top = pd.DataFrame({'periods': [0], 'net_payments': [Decimal('0.000000')]})
 
