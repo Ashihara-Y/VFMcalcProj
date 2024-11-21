@@ -14,9 +14,9 @@ import sqlite3
 class Final_Inputs(ft.Column):
     def __init__(self):
         super().__init__()
-        self.title = "最終入力"
+        self.title = "最終入力・確認"
         self.width = 500
-        self.height = 1000
+        self.height = 2500
         self.resizable = True
 
         db = TinyDB("ii_db.json")
@@ -79,7 +79,7 @@ class Final_Inputs(ft.Column):
                         ],
                 ),
             ],
-        ),
+        )
         self.dt2 = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("税目")),
@@ -130,7 +130,7 @@ class Final_Inputs(ft.Column):
                         ],
                 ),
             ],
-        ),
+        )
 
         self.tx7 = ft.Text("地方債償還期間")
         self.sl1 = ft.Slider(
