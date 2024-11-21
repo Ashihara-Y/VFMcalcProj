@@ -7,7 +7,7 @@ import openpyxl
 from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
-zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
+#zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 
 conn = duckdb.connect('VFM.duckdb')
@@ -41,7 +41,7 @@ kanmin_ribaraihiyou_sa.loc[inputs_pdt.const_years+1:inputs_pdt.proj_years+1,'sei
 kanmin_ribaraihiyou_sa['ribaraihiyou_sa'] = (kanmin_ribaraihiyou_sa['seibihi_kappu_goukei'] - kanmin_ribaraihiyou_sa['LCC_kappuganpon_cumsum']) * kanmin_kinrisa#Ribaraihiyou_sa = [(Shisetsu_seibihi_kappu + SPC_relates - Kappuganpon_cumsum[i]) * kanmin_kinrisa for i in range(inputs_supl_pdt.target_years)]
 ribaraihiyou_sa_sum = kanmin_ribaraihiyou_sa['ribaraihiyou_sa'].sum()
 risk_adjust_gaku = ribaraihiyou_sa_sum + SPC_keihi_sum + SPC_seturitsuhi_sum + inputs_pdt.SPC_yobihi
-print(risk_adjust_gaku)
+#print(risk_adjust_gaku)
 Risk_adjust_gaku_df = pd.DataFrame({'risk_adjust_gaku': [risk_adjust_gaku]})
 c.execute('CREATE OR REPLACE TABLE Risk_table AS SELECT * from Risk_adjust_gaku_df')
 c.close()

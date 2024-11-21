@@ -99,14 +99,13 @@ PSC['kisai_shoukansumi_gaku'] = PSC['kisai_shoukansumi_gaku'].map(lambda i: Deci
 PSC['kisai_risoku_gaku'] = PSC['kisai_risoku_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 PSC['payments_total'] = PSC['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 PSC['net_payments'] = PSC['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
-print(PSC)
+#print(PSC)
 
 conn = duckdb.connect('VFM.duckdb')
-
 c = conn.cursor()
 
 PSC_r = PSC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
 c.close()
-with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   PSC.to_excel(writer, sheet_name='PSC_sheet20241111_007')
+#with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
+#   PSC.to_excel(writer, sheet_name='PSC_sheet20241111_007')

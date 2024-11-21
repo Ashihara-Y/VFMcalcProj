@@ -37,7 +37,7 @@ LCC_df['net_payments'] = LCC_df['net_payments'].map(lambda i: Decimal(i).quantiz
 
 LCC = LCC_df.set_index('periods')
 
-print(LCC.info())
+#print(LCC.info())
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
@@ -181,10 +181,10 @@ SPC['houjinzei_etc'] = SPC['houjinzei_etc'].map(lambda i: Decimal(i).quantize(De
 SPC['payments_total'] = SPC['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['payments_total_full'] = SPC['payments_total_full'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC['net_income'] = SPC['net_income'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
-print(SPC)
+#print(SPC)
 
 SPC_r = SPC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
 c.close()
-with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   SPC.to_excel(writer, sheet_name='SPC_sheet20241111_005')
+#with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
+#   SPC.to_excel(writer, sheet_name='SPC_sheet20241111_005')

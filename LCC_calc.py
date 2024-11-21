@@ -136,8 +136,8 @@ R = deque(Risoku_gaku)
 R.rotate(1)
 Risoku_gaku = list(R)
 LCC_shuushi_payments['kisai_risoku_gaku'] = Risoku_gaku
-print(Chisai_zansai)
-print(Risoku_gaku)
+#print(Chisai_zansai)
+#print(Risoku_gaku)
 #LCC_shuushi_payments.loc[
 #    const_years+1:target_years, 
 #    'kisai_risoku_gaku'
@@ -177,19 +177,7 @@ LCC['kisai_shoukansumi_gaku'] = LCC['kisai_shoukansumi_gaku'].map(lambda i: Deci
 LCC['kisai_risoku_gaku'] = LCC['kisai_risoku_gaku'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 LCC['payments_total'] = LCC['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 LCC['net_payments'] = LCC['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
-print(LCC)
-
-# リスク調整
-#    １）　施設整備費の割賦払い分総額　＋　サービス対価に含めるSPC経費（開業前分も含める）
-#    2）　LCC収支表支出に計上している「施設整備費割賦元本」の累積和（リストkかSeries）
-#    3）　官民利払い費用の差：　（　1）ー2）　）　＊　（（基準金利＋lg_spread）ー地方債）　の総和
-#    ４） SPC関連のリスク対応費用：　SPC収支表のSPC設立費用　＋　SPC収支表のSPC経費総和　＋　SPC予備費
-#  ⇒つまり、SPC収支表を先に作っておいた方が良さそうだ！    
-#    shisetsu_seibihi_servicetaika_kappuganpon = [0 for i in range(proj_years)] 
-#
-#    SPC_hiyou = [0 for i in range(proj_years)]
-#    SPC_yobihi = 
-#    Kanmin_kinrisa = 
+#print(LCC)
 
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
@@ -197,5 +185,5 @@ c = conn.cursor()
 LCC_r = LCC.reset_index(drop=False)
 c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC_r')
 c.close()
-with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-   LCC.to_excel(writer, sheet_name='LCC_sheet20241111_008')
+#with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
+#   LCC.to_excel(writer, sheet_name='LCC_sheet20241111_008')
