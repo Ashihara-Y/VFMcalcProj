@@ -25,7 +25,7 @@ target_years = inputs_supl_pdt.target_years
 #print(inputs_pdt.shisetsu_seibi)
 #print(inputs_pdt.hojo)
 ## PSC_income
-Hojokin = (inputs_pdt.hojo) * (inputs_pdt.shisetsu_seibi)
+Hojokin = Decimal(inputs_pdt.hojo_ritsu) * Decimal(inputs_pdt.shisetsu_seibi)
 PSC_shuushi_income.loc[inputs_pdt.const_years, 'hojokin'] = Hojokin
 Kisai_gaku =  (inputs_pdt.kisai_jutou) * (inputs_pdt.shisetsu_seibi - Hojokin) 
 PSC_shuushi_income.loc[inputs_pdt.const_years, 'kisai_gaku'] = Kisai_gaku

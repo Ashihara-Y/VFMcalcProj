@@ -31,7 +31,7 @@ LCC_shuushi_payments.loc[inputs_pdt.const_years, 'shisetsu_seibihi_ikkatsu'] = S
 Shisetsu_seibihi_kappu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu_seibi_paymentschedule_kappu
 
 ## LCC_income
-Hojokin_LCC = (inputs_pdt.hojo) * (inputs_pdt.shisetsu_seibi_org_LCC)
+Hojokin_LCC = Decimal(inputs_pdt.hojo_ritsu) * Decimal(inputs_pdt.shisetsu_seibi_org_LCC)
 LCC_shuushi_income.loc[inputs_pdt.const_years, 'hojokin'] = Hojokin_LCC
 Kisai_gaku_LCC =  (inputs_pdt.kisai_jutou) * (Shisetsu_seibihi_ikkatsu - Hojokin_LCC) 
 LCC_shuushi_income.loc[inputs_pdt.const_years, 'kisai_gaku'] = Kisai_gaku_LCC

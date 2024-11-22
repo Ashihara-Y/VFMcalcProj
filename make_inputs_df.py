@@ -22,7 +22,9 @@ class Inputs(BaseModel):
     chisai_shoukan_kikan: int = 23
     chisai_sueoki_years: int = 3
     const_years: int = 3
-    const_start_date: datetime.datetime = '2024-11-01'
+    const_start_date_year: int = 2024
+    const_start_date_month: int = 11
+    const_start_date_day: int = 21
     growth: Decimal = 0.0
     hojo_ritsu: Decimal = 0.4
     ijikanri_unnei: Decimal = 47.5
@@ -79,8 +81,12 @@ class Inputs(BaseModel):
 inputs_pdt = Inputs.model_validate(inputs)
 
 # making inputs supplementary
-start_year = datetime.datetime.strptime(str(inputs_pdt.const_start_date), '%Y-%m-%d %H:%M:%S').year
-start_month = datetime.datetime.strptime(str(inputs_pdt.const_start_date), '%Y-%m-%d %H:%M:%S').month
+const_start_date_year = inputs_pdt.const_start_date_year
+const_start_date_month = inputs_pdt.const_start_date_month
+const_start_date_day = inputs_pdt.const_start_date_day
+const_start_date = datetime.date(const_start_date_year, const_start_date_month, const_start_date_day)
+start_year = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').year
+start_month = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').month
 
 if start_month < 4:
     first_end_fy = datetime.date(start_year, 3, 31)
@@ -103,6 +109,7 @@ first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 SPC_hiyou_total = inputs_pdt.SPC_keihi * inputs_pdt.ijikanri_unnei_years + inputs_pdt.SPC_shihon
 SPC_hiyou_nen = inputs_pdt.SPC_fee + inputs_pdt.SPC_keihi
 SPC_keihi_LCC = inputs_pdt.SPC_keihi + Decimal(str(inputs_pdt.SPC_fee)) + inputs_pdt.houjinjuminzei_kintou
+d_format = '%Y-%m-%d'
 
 inputs_supl = {
     'first_end_fy': first_end_fy,
@@ -113,7 +120,8 @@ inputs_supl = {
     'Kappu_kinri': Kappu_kinri,
     'SPC_hiyou_total': SPC_hiyou_total,
     'SPC_hiyou_nen': SPC_hiyou_nen,    
-    'SPC_keihi_LCC': SPC_keihi_LCC,    
+    'SPC_keihi_LCC': SPC_keihi_LCC,   
+    'const_start_date': const_start_date 
 }
 
 # to DataFrame
@@ -131,6 +139,7 @@ class Inputs_supl(BaseModel):
     SPC_hiyou_total: Decimal
     SPC_hiyou_nen: Decimal
     SPC_keihi_LCC: Decimal
+    const_start_date: datetime.date
 
 # validate inputs supplementary
 inputs_supl_pdt = Inputs_supl.model_validate(inputs_supl)

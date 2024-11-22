@@ -451,6 +451,7 @@ class Initial_Inputs(ft.Column):
             "yosantanka_hiritsu_ijikanri_1": str(yosantanka_hiritsu_ijikanri_1),
             "yosantanka_hiritsu_ijikanri_2": str(yosantanka_hiritsu_ijikanri_2),
             "yosantanka_hiritsu_ijikanri_3": str(yosantanka_hiritsu_ijikanri_3),
+            "rakusatsu_ritsu": str(rakusatsu_ritsu),
             "reduc_shisetsu": str(reduc_shisetsu),
             "reduc_ijikanri_1": str(reduc_ijikanri_1),
             "reduc_ijikanri_2": str(reduc_ijikanri_2),
