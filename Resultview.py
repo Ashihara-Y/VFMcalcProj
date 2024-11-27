@@ -5,9 +5,10 @@ import flet as ft
 from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
+import duckdb
 import tinydb
 from tinydb import TinyDB, Query
-import glob
+#import glob
 import openpyxl
 
 
@@ -20,13 +21,16 @@ class Results(ft.Stack):
         self.height = 1000
         self.resizable = True
 
+        conn = duckdb.connect('VFM.duckdb')
+        c = conn.cursor()
+        #self.dtime = c.slq()
         con = TinyDB("selected_res.json")
         self.dtime = con.all()[0]['selected_datetime']
-        con.close()
-        con2 = TinyDB("res_02_db.json")
-        items = Query()
-        self.selected_results_dict = con2.search(items.datetime == self.dtime)[0]
-        con2.close()
+        #con.close()
+        #con2 = TinyDB("res_02_db.json")
+        #items = Query()
+        #self.selected_results_dict = con2.search(items.datetime == self.dtime)[0]
+        #con2.close()
         #self.res_PSC_LCC = pd.read_sql_query("SELECT * FROM res_PSC_LCC", con)
         #self.final_inputs = pd.read_sql_query("SELECT * FROM final_inputs", con)
 
