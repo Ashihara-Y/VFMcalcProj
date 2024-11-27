@@ -62,7 +62,7 @@ class View_saved(ft.Column):
                     "VFM_percent": "VFM(%)",
                     "PSC_pv": "PSC現在価値総額",
                     "LCC_pv": "LCC現在価値総額",
-                    "P-IRR": "プロジェクトの内部収益率"
+                    "P-IRR": "プロジェクトの内部収益率",
                     "mgmt_type": "施設管理者種別",
                     "proj_ctgry": "事業類型",
                     "proj_type": "事業方式",
