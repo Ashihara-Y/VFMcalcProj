@@ -9,13 +9,14 @@ import datetime
 import tinydb
 from tinydb import TinyDB, Query
 import make_inputs_df
+import decimal
+from decimal import Decimal
 
 
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
-# 各計算結果に、その計算の入力データを一緒に格納しておくか？
-# inputs_pdt, inputs_supl_pdtを、DFに変換して、それぞれの計算結果のDFに追加するか？
+
 inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 
 
@@ -28,29 +29,57 @@ SPC_check_df = c.sql('SELECT * FROM SPC_check_table').df()
 Risk_df = c.sql('SELECT * FROM Risk_table').df()
 VFM_df = c.sql('SELECT * FROM VFM_table').df()
 PIRR_df = c.sql('SELECT * FROM PIRR_table').df()
-# ここで、算定結果要約のDFを作成する
-# 算定結果の要約は、それぞれの計算結果のDFから、必要な列を抽出して、新しいDFを作成する
-# 必要な列として、PSCのキャッシュフロー現在価値合計額、LCCのキャッシュフロー現在価値合計額、SPCの融資返済チェック結果、リスクの調整額、VFM（金額と対PSC比率）、PIRRを抽出する
-# それぞれのDFから、必要な列を抽出して、新しいDFを作成する
-# それぞれのDFの列名は、それぞれの計算結果のDFの列名と同じにする
 
-PSC_summary_df = PSC_df[['PSC_CashFlow_PV_total']]
-LCC_summary_df = LCC_df[['LCC_CashFlow_PV_total']]
-SPC_summary_df = SPC_check_df[['SPC_check']]
-Risk_summary_df = Risk_df[['Risk_adjustment']]
-VFM_summary_df = VFM_df[['VFM_amount','VFM_ratio']]
-PIRR_summary_df = PIRR_df[['PIRR']]
+# make summary
+PSC_pv_summary_org = PSC_pv_df[['present_value']].sum()
+LCC_pv_summary_org = LCC_pv_df[['present_value']].sum()
+SPC_check_summary_org = SPC_check_df.loc[inputs_pdt.const_years+1:inputs_pdt.proj_years, 'P_payment_check'].to_list()
+VFM_summary_df = VFM_df[['VFM','VFM_percent']]
+PIRR_summary_df = PIRR_df[['PIRR_percent']]
+
+def payment_check(bool):
+    if bool == 'True':
+        return "返済資金は十分"
+    elif bool == 'False':
+        return "返済資金が不足"
+
+SPC_check_mod = str('False' not in SPC_check_summary_org)
+SPC_check_res = payment_check(SPC_check_mod)
+
+VFM_calc_summary_df = pd.DataFrame(columns=['VFM_percent','PSC_present_value','LCC_present_value','PIRR','SPC_payment_cash'], index=['0'])
+
+#VFM_calc_summary_df['VFM'] = VFM_summary_df['VFM'].iloc[0]
+VFM_calc_summary_df['VFM_percent'] = VFM_summary_df['VFM_percent'].iloc[0]
+VFM_calc_summary_df['PSC_present_value'] = PSC_pv_summary_org.iloc[0]
+VFM_calc_summary_df['LCC_present_value'] = LCC_pv_summary_org.iloc[0]
+VFM_calc_summary_df['PIRR'] = PIRR_summary_df['PIRR_percent'].iloc[0]
+VFM_calc_summary_df['SPC_payment_cash'] = SPC_check_res
 
 
-# 算定結果要約も含めた、それぞれのDFに、user_id, calc_id, datetimeを追加する
+discount_rate = Decimal((inputs_pdt.kijun_kinri + inputs_pdt.kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+kariire_kinri = Decimal((inputs_pdt.kijun_kinri + inputs_pdt.lg_spread)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+
+final_inputs_dic = {
+    'mgmt_type': inputs_pdt.mgmt_type,
+    'proj_ctgry': inputs_pdt.proj_ctgry,
+    'proj_type': inputs_pdt.proj_type,
+    'const_years': inputs_pdt.const_years,
+    'proj_years': inputs_pdt.proj_years,
+    'discount_rate': discount_rate,
+    'kariire_kinri': kariire_kinri,
+}
+
+final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])
+#print(inputs_pdt.kijun_kinri, inputs_pdt.lg_spread)
+result_summary_df = VFM_calc_summary_df.join(final_inputs_df)
 
 
 user_id = ULID.from_datetime(datetime.datetime.now())
 calc_id = timeflake.random()
 dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
 
-df_list = [PSC_df,PSC_pv_df,LCC_df,LCC_pv_df,SPC_df,SPC_check_df,Risk_df,VFM_df,PIRR_df]
-df_name_list = ['PSC_df','PSC_pv_df','LCC_df','LCC_pv_df','SPC_df','SPC_check_df','Risk_df','VFM_df','PIRR_df']
+df_list = [PSC_df,PSC_pv_df,LCC_df,LCC_pv_df,SPC_df,SPC_check_df,Risk_df,VFM_df,PIRR_df, result_summary_df]
+df_name_list = ['PSC_df','PSC_pv_df','LCC_df','LCC_pv_df','SPC_df','SPC_check_df','Risk_df','VFM_df','PIRR_df','result_summary_df']
 
 def addID(x_df):
     x_df['datetime'] = str(dtime)
