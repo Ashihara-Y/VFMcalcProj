@@ -17,29 +17,37 @@ from tinydb import TinyDB, Query
 class View_saved(ft.Column):
     def __init__(self):
         super().__init__()
-        self.title = "結果リスト"
+        self.title = "VFM算定結果リスト"
         self.width = 1800
         self.height = 1800
         self.resizable = True
 
-        #page.pubsub.subscribe()
+        # 以下を、DBからの読み込みに切り替えるとして、どのテーブルを読み込むか？
+        # ここでは、「全結果のリスト」を作成している。
         save_res_01_list = glob.glob("res_01_db_*.json")
         save_res_01_list.sort(reverse=True)
         
         self.res_summ_list = []
 
+        # 詳細結果は、ファイル読み込みではなく、DB各テーブルの内容そのものに切り替える必要。
+        # なので、Datetimeで必要なテーブルから各結果を抽出して、要約用のDFを作成する必要。
+        # それとも、「aave_results.py」の最後で、要約用DFを作成して、DuckDBに入れておいた
+        # 方が早いのでは？ 少なくともDatetime、UserID、CalcIDを挿入する段階なら、作成
+        # できるはず。
         for file in save_res_01_list:        
             con = TinyDB(file)
             res_detail = con.all()[0]
             con.close()
             res_detail_df = pd.DataFrame(data=res_detail, index=[0])
             
+            # DBの各テーブルからの読み込み結果から、以下のカラムのDFを作成する。
             res_summary = res_detail_df.reindex(
                 columns=[
                     "datetime",
                     "VFM_percent",
-                    "PSC",
-                    "LCC",
+                    "PSC_pv",
+                    "LCC_pv",
+                    "P-IRR",
                     "mgmt_type",
                     "proj_ctgry",
                     "proj_type",
@@ -52,8 +60,9 @@ class View_saved(ft.Column):
                 columns={
                     "datetime": "作成日時",
                     "VFM_percent": "VFM(%)",
-                    "PSC": "PSC現在価値総額",
-                    "LCC": "LCC現在価値総額",
+                    "PSC_pv": "PSC現在価値総額",
+                    "LCC_pv": "LCC現在価値総額",
+                    "P-IRR": "プロジェクトの内部収益率"
                     "mgmt_type": "施設管理者種別",
                     "proj_ctgry": "事業類型",
                     "proj_type": "事業方式",

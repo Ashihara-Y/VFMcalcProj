@@ -17,6 +17,7 @@ def VFM_calc():
     check_SPC_cashForPPayment()
     save_results.addID()
     save_results.save_ddb()
+    # ここで、DBからの計算結果概略読み込みモジュールを実行する。
 
 
 
