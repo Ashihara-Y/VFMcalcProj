@@ -8,14 +8,16 @@ import timeflake
 import datetime
 import tinydb
 from tinydb import TinyDB, Query
+import make_inputs_df
 
-# 各計算結果に、その計算の入力データを一緒に格納しておくか？
-# だとすれば、FIの内容（辞書）をDFにしてDuckDBに「finalinputs_table」として入れておくか。
 
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
-# TinyDBから、fi_db.jsonを読み込む。
+# 各計算結果に、その計算の入力データを一緒に格納しておくか？
+# inputs_pdt, inputs_supl_pdtを、DFに変換して、それぞれの計算結果のDFに追加するか？
+inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+
 
 PSC_df = c.sql('SELECT * FROM PSC_table').df()
 PSC_pv_df = c.sql('SELECT * FROM PSC_pv_table').df()
@@ -26,7 +28,22 @@ SPC_check_df = c.sql('SELECT * FROM SPC_check_table').df()
 Risk_df = c.sql('SELECT * FROM Risk_table').df()
 VFM_df = c.sql('SELECT * FROM VFM_table').df()
 PIRR_df = c.sql('SELECT * FROM PIRR_table').df()
-# ここで、FIのDFを作成しておく。
+# ここで、算定結果要約のDFを作成する
+# 算定結果の要約は、それぞれの計算結果のDFから、必要な列を抽出して、新しいDFを作成する
+# 必要な列として、PSCのキャッシュフロー現在価値合計額、LCCのキャッシュフロー現在価値合計額、SPCの融資返済チェック結果、リスクの調整額、VFM（金額と対PSC比率）、PIRRを抽出する
+# それぞれのDFから、必要な列を抽出して、新しいDFを作成する
+# それぞれのDFの列名は、それぞれの計算結果のDFの列名と同じにする
+
+PSC_summary_df = PSC_df[['PSC_CashFlow_PV_total']]
+LCC_summary_df = LCC_df[['LCC_CashFlow_PV_total']]
+SPC_summary_df = SPC_check_df[['SPC_check']]
+Risk_summary_df = Risk_df[['Risk_adjustment']]
+VFM_summary_df = VFM_df[['VFM_amount','VFM_ratio']]
+PIRR_summary_df = PIRR_df[['PIRR']]
+
+
+# 算定結果要約も含めた、それぞれのDFに、user_id, calc_id, datetimeを追加する
+
 
 user_id = ULID.from_datetime(datetime.datetime.now())
 calc_id = timeflake.random()

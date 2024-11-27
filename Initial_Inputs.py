@@ -90,7 +90,7 @@ class Initial_Inputs(ft.Column):
         )
         self.dd5 = ft.Dropdown(
             label="地方債償還期間",
-            hint_text="地方債償還期間を選択してください(施設整備期間以上)",
+            hint_text="地方債償還期間を選択してください",
             width=400,
             value="20",
             options=[
@@ -120,15 +120,11 @@ class Initial_Inputs(ft.Column):
                 ft.dropdown.Option("24"),
                 ft.dropdown.Option("25"),
                 ft.dropdown.Option("26"),
-                ft.dropdown.Option("27"),
-                ft.dropdown.Option("28"),
-                ft.dropdown.Option("29"),
-                ft.dropdown.Option("30"),
             ],
         )
         self.dd6 = ft.Dropdown(
             label="施設整備期間",
-            hint_text="施設整備期間（O方式はゼロ）を選択してください",
+            hint_text="施設整備期間（O方式ではゼロ）を選択してください",
             width=400,
             value="1",
             options=[
@@ -178,72 +174,72 @@ class Initial_Inputs(ft.Column):
         self.sl4 = ft.Slider(
             value=0,
             min=0,
-            max=1000,
-            divisions=1000,
+            max=100,
+            divisions=100,
             label="{value}百万円",
         )
         self.tx5 = ft.Text("維持管理運営費(年額)修繕費 予算単価ベース")
         self.sl5 = ft.Slider(
             value=15,
             min=0,
-            max=1000,
-            divisions=1000,
+            max=100,
+            divisions=100,
             label="{value}百万円",
         )
         self.tx6 = ft.Text("維持管理運営費(年額)動力費 落札価格ベース")
         self.sl6 = ft.Slider(
             value=0,
             min=0,
-            max=1000,
-            divisions=1000,
+            max=100,
+            divisions=100,
             label="{value}百万円",
         )
         self.tx7 = ft.Text("維持管理運営費(年額)動力費 予算単価ベース")
         self.sl7 = ft.Slider(
             value=5,
             min=0,
-            max=1000,
-            divisions=1000,
+            max=100,
+            divisions=100,
             label="{value}百万円",
         )
         self.tx8 = ft.Text("施設整備費の効率性")
         self.sl8 = ft.Slider(
-            value=Decimal(0.05),
+            value=Decimal(0.05*100),
             min=0.0,
-            max=0.20,
-            divisions=200,
+            max=20,
+            divisions=20,
             label="{value}%",
         )
         self.tx9 = ft.Text("維持管理運営費の効率性(人件費)")
         self.sl9 = ft.Slider(
-            value=Decimal(0.05),
+            value=Decimal(0.05*100),
             min=0.0,
-            max=0.20,
-            divisions=200,
+            max=20,
+            divisions=20,
             label="{value}%",
         )
         self.tx10 = ft.Text("維持管理運営費の効率性(修繕費)")
         self.sl10 = ft.Slider(
-            value=Decimal(0.05),
+            value=Decimal(0.05*100),
             min=0.0,
-            max=0.20,
-            divisions=200,
+            max=20,
+            divisions=20,
             label="{value}%",
         )
         self.tx11 = ft.Text("維持管理運営費の効率性(動力費)")
         self.sl11 = ft.Slider(
-            value=Decimal(0.05),
+            value=Decimal(0.05*100),
             min=0.0,
-            max=0.20,
+            max=20,
             divisions=20,
             label="{value}%",
         )
         self.tx12 = ft.Text("落札率(競争の効果反映)")
         self.sl12 = ft.Slider(
-            value=Decimal(0.95),
-            min=0.8,
-            max=1.0,
-            divisions=100,
+            value=Decimal(0.95*100),
+            min=80,
+            max=100,
+            divisions=20,
             label="{value}%",
         )
         self.b = ft.ElevatedButton(text="初期値の入力", on_click=self.button_clicked)
@@ -302,41 +298,41 @@ class Initial_Inputs(ft.Column):
         const_start_date = datetime.date.today().strftime('%Y-%m-%d')
         
 
-        shisetsu_seibi_org_R = Decimal(self.sl0.value)
-        shisetsu_seibi_org_Y = Decimal(self.sl1.value)
-        shisetsu_seibi_org = Decimal(shisetsu_seibi_org_R + shisetsu_seibi_org_Y)
-        ijikanri_unnei_1_org_R = Decimal(self.sl2.value)
-        ijikanri_unnei_1_org_Y = Decimal(self.sl3.value)
-        ijikanri_unnei_1_org = Decimal(ijikanri_unnei_1_org_R + ijikanri_unnei_1_org_Y)
-        ijikanri_unnei_2_org_R= Decimal(self.sl4.value)
-        ijikanri_unnei_2_org_Y = Decimal(self.sl5.value)
-        ijikanri_unnei_2_org = Decimal(ijikanri_unnei_2_org_R + ijikanri_unnei_2_org_Y)
-        ijikanri_unnei_3_org_R = Decimal(self.sl6.value)
-        ijikanri_unnei_3_org_Y = Decimal(self.sl7.value)
-        ijikanri_unnei_3_org = Decimal(ijikanri_unnei_3_org_R + ijikanri_unnei_3_org_Y)
-        reduc_shisetsu = Decimal(self.sl8.value)
-        reduc_ijikanri_1 = Decimal(self.sl9.value)
-        reduc_ijikanri_2 = Decimal(self.sl10.value)
-        reduc_ijikanri_3 = Decimal(self.sl11.value)
-        rakusatsu_ritsu = Decimal(self.sl12.value)
+        shisetsu_seibi_org_R = Decimal(self.sl0.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        shisetsu_seibi_org_Y = Decimal(self.sl1.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        shisetsu_seibi_org = Decimal(shisetsu_seibi_org_R + shisetsu_seibi_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_1_org_R = Decimal(self.sl2.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_1_org_Y = Decimal(self.sl3.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_1_org = Decimal(ijikanri_unnei_1_org_R + ijikanri_unnei_1_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_2_org_R= Decimal(self.sl4.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_2_org_Y = Decimal(self.sl5.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_2_org = Decimal(ijikanri_unnei_2_org_R + ijikanri_unnei_2_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_3_org_R = Decimal(self.sl6.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_3_org_Y = Decimal(self.sl7.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_3_org = Decimal(ijikanri_unnei_3_org_R + ijikanri_unnei_3_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        reduc_shisetsu = Decimal(self.sl8.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        reduc_ijikanri_1 = Decimal(self.sl9.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        reduc_ijikanri_2 = Decimal(self.sl10.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        reduc_ijikanri_3 = Decimal(self.sl11.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        rakusatsu_ritsu = Decimal(self.sl12.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
-        shisetsu_seibi_org_LCC = shisetsu_seibi_org * reduc_shisetsu
-        shisetsu_seibi = shisetsu_seibi_org_R + (shisetsu_seibi_org_Y * rakusatsu_ritsu)
-        shisetsu_seibi_LCC = shisetsu_seibi * reduc_shisetsu
-        ijikanri_unnei_1_org_LCC = ijikanri_unnei_1_org * reduc_ijikanri_1
-        ijikanri_unnei_1 = ijikanri_unnei_1_org_R + (ijikanri_unnei_1_org_Y * rakusatsu_ritsu)
-        ijikanri_unnei_1_LCC = ijikanri_unnei_1 * reduc_ijikanri_1
-        ijikanri_unnei_2_org_LCC = ijikanri_unnei_2_org * reduc_ijikanri_2
-        ijikanri_unnei_2 = ijikanri_unnei_2_org_R + (ijikanri_unnei_2_org_Y * rakusatsu_ritsu)
-        ijikanri_unnei_2_LCC = ijikanri_unnei_2 * reduc_ijikanri_2
-        ijikanri_unnei_3_org_LCC = ijikanri_unnei_3_org * reduc_ijikanri_3
-        ijikanri_unnei_3 = ijikanri_unnei_3_org_R + (ijikanri_unnei_3_org_Y * rakusatsu_ritsu)
-        ijikanri_unnei_3_LCC = ijikanri_unnei_3 * reduc_ijikanri_3
+        shisetsu_seibi_org_LCC = Decimal(shisetsu_seibi_org * reduc_shisetsu).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        shisetsu_seibi = Decimal(shisetsu_seibi_org_R + (shisetsu_seibi_org_Y * rakusatsu_ritsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        shisetsu_seibi_LCC = Decimal(shisetsu_seibi * reduc_shisetsu).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_1_org_LCC = Decimal(ijikanri_unnei_1_org * reduc_ijikanri_1).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_1 = Decimal(ijikanri_unnei_1_org_R + (ijikanri_unnei_1_org_Y * rakusatsu_ritsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_1_LCC = Decimal(ijikanri_unnei_1 * reduc_ijikanri_1).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_2_org_LCC = Decimal(ijikanri_unnei_2_org * reduc_ijikanri_2).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_2 = Decimal(ijikanri_unnei_2_org_R + (ijikanri_unnei_2_org_Y * rakusatsu_ritsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_2_LCC = Decimal(ijikanri_unnei_2 * reduc_ijikanri_2).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_3_org_LCC = Decimal(ijikanri_unnei_3_org * reduc_ijikanri_3).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_3 = Decimal(ijikanri_unnei_3_org_R + (ijikanri_unnei_3_org_Y * rakusatsu_ritsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        ijikanri_unnei_3_LCC = Decimal(ijikanri_unnei_3 * reduc_ijikanri_3).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
-        yosantanka_hiritsu_shisetsu = Decimal(shisetsu_seibi_org_Y/shisetsu_seibi_org)
-        yosantanka_hiritsu_ijikanri_1 = Decimal(ijikanri_unnei_1_org_Y/ijikanri_unnei_1_org)
-        yosantanka_hiritsu_ijikanri_2 = Decimal(ijikanri_unnei_2_org_Y/ijikanri_unnei_2_org)
-        yosantanka_hiritsu_ijikanri_3 = Decimal(ijikanri_unnei_3_org_Y/ijikanri_unnei_3_org)
+        yosantanka_hiritsu_shisetsu = Decimal(shisetsu_seibi_org_Y/shisetsu_seibi_org).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        yosantanka_hiritsu_ijikanri_1 = Decimal(ijikanri_unnei_1_org_Y/ijikanri_unnei_1_org).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        yosantanka_hiritsu_ijikanri_2 = Decimal(ijikanri_unnei_2_org_Y/ijikanri_unnei_2_org).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        yosantanka_hiritsu_ijikanri_3 = Decimal(ijikanri_unnei_3_org_Y/ijikanri_unnei_3_org).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         chisai_shoukan_kikan = int(self.dd5.value)
 
@@ -408,9 +404,9 @@ class Initial_Inputs(ft.Column):
         else:
             pass
 
-        SPC_fee = Decimal(20)
-        SPC_shihon = Decimal(100)
-        SPC_yobihi = Decimal(456)
+        SPC_fee = Decimal(20).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        SPC_shihon = Decimal(100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        SPC_yobihi = Decimal(456).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         SPC_hiyou_atsukai = int(1)
 
         initial_inputs = {
@@ -421,15 +417,15 @@ class Initial_Inputs(ft.Column):
             "const_years": self.dd5.value,
             "ijikanri_unnei_years": int(ijikanri_unnei_years),
             "const_start_date": const_start_date,
-            "kijun_kinri": str(Decimal(r1)),
-            "chisai_kinri": str(Decimal(r2)),
+            "kijun_kinri": str(Decimal(r1).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+            "chisai_kinri": str(Decimal(r2).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
             "chisai_sueoki_kikan": int(chisai_sueoki_kikan),
             "chisai_shoukan_kikan": int(chisai_shoukan_kikan),
-            "zei_modori": str(Decimal(0.0)),
-            "lg_spread": str(Decimal(0.01)),
-            "zei_total": str(Decimal(0.18)),
+            "zei_modori": str(Decimal(zei_modori)),
+            "lg_spread": str(Decimal(0.01).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+            "zei_total": str(Decimal(0.18).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
             "riyou_ryoukin": riyou_ryoukin,
-            "growth": str(Decimal(0.0)),
+            "growth": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
             "kitai_bukka": str(Decimal(kitai_bukka)),
             "shisetsu_seibi": str(shisetsu_seibi),
             "shisetsu_seibi_org": str(shisetsu_seibi_org),
@@ -460,8 +456,8 @@ class Initial_Inputs(ft.Column):
             "kisai_jutou": str(Decimal(kisai_jutou)),
             "kisai_koufu": str(Decimal(kisai_koufu)),
             "hojo_ritsu": str(Decimal(hojo)),
-            "zeimae_rieki": str(Decimal(0.0)),
-            "SPC_keihi": str(Decimal(20.0)),
+            "zeimae_rieki": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+            "SPC_keihi": str(Decimal(20.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
             "SPC_fee": str(SPC_fee),
             "SPC_shihon": str(SPC_shihon),
             "SPC_yobihi": str(SPC_yobihi),

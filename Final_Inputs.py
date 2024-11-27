@@ -138,7 +138,7 @@ class Final_Inputs(ft.Column):
             min=0,
             max=30,
             divisions=30,
-            label="{value}%",
+            label="{value}年",
         )
         self.tx8 = ft.Text("施設整備費支払 一括払の比率")
         self.sl2 = ft.Slider(
@@ -154,7 +154,7 @@ class Final_Inputs(ft.Column):
             min=0,
             max=100,
             divisions=100,
-            label="{value}%",
+            label="{value}百万円",
         )
         self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)")
         self.sl4 = ft.Slider(
@@ -162,7 +162,7 @@ class Final_Inputs(ft.Column):
             min=0,
             max=100,
             divisions=100,
-            label="{value}%",
+            label="{value}百万円",
         )
         self.tx11 = ft.Text("起債充当率")
         self.sl5 = ft.Slider(
@@ -238,7 +238,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx20 = ft.Text("利用料金収入")
         self.sl14 = ft.Slider(
-            value=0,
+            value=self.initial_inputs["riyou_ryoukin"],
             min=0,
             max=100,
             divisions=100,
@@ -250,7 +250,7 @@ class Final_Inputs(ft.Column):
             min=0.0,
             max=2.0,
             divisions=20,
-            label="{value*100}",
+            label="{value}％",
         )
         self.tx22 = ft.Text("施設整備開始年")
         self.sl16 = ft.Slider(
@@ -258,7 +258,7 @@ class Final_Inputs(ft.Column):
             min=const_start_year,
             max=(const_start_year + 10),
             divisions=10,
-            label="{value}",
+            label="{value}年",
         )
         self.tx23 = ft.Text("施設整備開始月")
         self.sl17 = ft.Slider(
@@ -266,7 +266,7 @@ class Final_Inputs(ft.Column):
             min=1,
             max=12,
             divisions=12,
-            label="{value}",
+            label="{value}月",
         )
         self.tx24 = ft.Text("施設整備開始日")
         self.sl18 = ft.Slider(
@@ -274,7 +274,7 @@ class Final_Inputs(ft.Column):
             min=1,
             max=31,
             divisions=31,
-            label="{value}",
+            label="{value}日",
         )
         self.tx25 = ft.Text("予備入力（１）")
         self.sl19 = ft.Slider(
