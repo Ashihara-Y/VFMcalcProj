@@ -6,10 +6,9 @@ from Final_Inputs import Final_Inputs
 from Resultview import Results
 from view_saved import View_saved
 import save_results
-#import logging
+import logging
 
-# from save_results import saveToDB
-
+logging.basicConfig(level=logging.DEBUG)
 
 def main(page: ft.Page):
     page.title = "VFM計算アプリ"
