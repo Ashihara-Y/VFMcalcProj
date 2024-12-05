@@ -142,9 +142,9 @@ class Final_Inputs(ft.Column):
         )
         self.tx8 = ft.Text("施設整備費支払 一括払の比率")
         self.sl2 = ft.Slider(
-            value=0.5,
+            value=50,
             min=0.0,
-            max=1.00,
+            max=100,
             divisions=100,
             label="{value}%",
         )
@@ -246,7 +246,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx21 = ft.Text("割賦金利へのスプレッド")
         self.sl15 = ft.Slider(
-            value=2.0,
+            value=1.0,
             min=0.0,
             max=2.0,
             divisions=20,
@@ -351,7 +351,7 @@ class Final_Inputs(ft.Column):
 
     def button_clicked(self, e):
 
-        shisetsu_seibi_paymentschedule_kappu = Decimal(1 - self.sl2.value)
+        shisetsu_seibi_paymentschedule_kappu = Decimal(1 - (self.sl2.value/100))
 
         final_inputs = {
             "mgmt_type": self.initial_inputs["mgmt_type"],
