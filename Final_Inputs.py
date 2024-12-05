@@ -443,5 +443,5 @@ class Final_Inputs(ft.Column):
         #con = sqlite3.connect('final_inputs.db')
         #con.close()
         
-        #vc.calc_VFM()
-        #self.page.go("/view_saved")
+        vc.VFM_calc()
+        self.page.go("/view_saved")

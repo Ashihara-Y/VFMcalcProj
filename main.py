@@ -79,8 +79,8 @@ def main(page: ft.Page):
     def open_final_inputs(e):
         page.go("/final_inputs")
 
-    def open_results_summary(e):
-        page.go("/results_summary")
+    #def open_results_summary(e):
+    #    page.go("/results_summary")
 
     def open_results_detail(e):
         #Results()        
