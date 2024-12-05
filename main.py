@@ -42,19 +42,6 @@ def main(page: ft.Page):
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
             )
-        #elif page.route == "/results_summary":
-        #    # page.views.clear()
-        #    page.views.append(
-        #        ft.View(
-        #            "/results_summary",
-        #            [
-        #                ft.AppBar(title=ft.Text("結果要約")),
-        #                Results(),
-        #                ft.ElevatedButton("結果一覧", on_click=open_saved_list),
-        #            ],
-        #            scroll=ft.ScrollMode.ALWAYS,
-        #        ),
-        #    )
         elif page.route == "/results_detail":
             # page.views.clear()
             page.views.append(

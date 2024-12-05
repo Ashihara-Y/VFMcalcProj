@@ -63,9 +63,9 @@ class View_saved(ft.Column):
             )
 
     # 以下のメソッドは、選択された日時を、次の画面に渡すためのメソッド。
-    # このメソッドは、ListViewのセルを選択したときに呼び出される。
-    # このメソッドは、選択された日時を、selected_res.jsonに書き込む。
-    # このメソッドは、選択された日時を、次の画面に渡す。
+    # ListViewのセルを選択したときに呼び出される。
+    # 選択された日時を、selected_res.jsonに書き込む。
+    # 選択された日時を、次の画面に渡す。
     # session storageni書き込む形も併設しておいた。
     def send_mess(self, e):
         #ft.Page.pubsub.send_all(Message)
