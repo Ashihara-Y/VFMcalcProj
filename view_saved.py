@@ -66,7 +66,7 @@ class View_saved(ft.Column):
     # このメソッドは、ListViewのセルを選択したときに呼び出される。
     # このメソッドは、選択された日時を、selected_res.jsonに書き込む。
     # このメソッドは、選択された日時を、次の画面に渡す。
-    # session storageni書き込む形に変更する。
+    # session storageni書き込む形も併設しておいた。
     def send_mess(self, e):
         #ft.Page.pubsub.send_all(Message)
         if os.path.exists("selected_res.json"):
@@ -77,7 +77,7 @@ class View_saved(ft.Column):
         dtime_dic = {'selected_datetime': str(dtime)}
         con.insert(dtime_dic)
         con.close()
-        self.page.session.set(dtime_dic)
+        self.page.session.set(list(dtime_dic)[0], dtime)
         self.page.go("/results_detail")
 
     def build(self):
@@ -116,7 +116,6 @@ class View_saved(ft.Column):
             summ_lv.controls.append(ft.Divider())
 
         return ft.Container(
-                #content=sum_col,
                 content=ft.Column(
                     controls=[
                         summ_lv,
