@@ -6,7 +6,8 @@ import pandas as pd
 import datetime
 import tinydb
 from tinydb import TinyDB, Query
-import VFMcalc2 as vc
+#import VFMcalc2 as vc
+from VFMcalc2 import VFM_calc
 import save_results as sr
 from decimal import *
 import sqlite3
@@ -443,5 +444,5 @@ class Final_Inputs(ft.Column):
         #con = sqlite3.connect('final_inputs.db')
         #con.close()
         
-        vc.VFM_calc()
+        VFM_calc()
         self.page.go("/view_saved")
