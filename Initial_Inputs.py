@@ -414,7 +414,7 @@ class Initial_Inputs(ft.Column):
             "proj_ctgry": self.dd2.value,
             "proj_type": self.dd3.value,
             "proj_years": self.dd4.value,
-            "const_years": self.dd5.value,
+            "const_years": self.dd6.value,
             "ijikanri_unnei_years": int(ijikanri_unnei_years),
             "const_start_date": const_start_date,
             "kijun_kinri": str(Decimal(r1).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
