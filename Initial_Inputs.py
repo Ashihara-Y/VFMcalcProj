@@ -204,7 +204,7 @@ class Initial_Inputs(ft.Column):
         )
         self.tx8 = ft.Text("施設整備費の効率性")
         self.sl8 = ft.Slider(
-            value=Decimal(0.05*100),
+            value=5,
             min=0.0,
             max=20,
             divisions=20,
@@ -212,7 +212,7 @@ class Initial_Inputs(ft.Column):
         )
         self.tx9 = ft.Text("維持管理運営費の効率性(人件費)")
         self.sl9 = ft.Slider(
-            value=Decimal(0.05*100),
+            value=5,
             min=0.0,
             max=20,
             divisions=20,
@@ -220,7 +220,7 @@ class Initial_Inputs(ft.Column):
         )
         self.tx10 = ft.Text("維持管理運営費の効率性(修繕費)")
         self.sl10 = ft.Slider(
-            value=Decimal(0.05*100),
+            value=5,
             min=0.0,
             max=20,
             divisions=20,
@@ -228,7 +228,7 @@ class Initial_Inputs(ft.Column):
         )
         self.tx11 = ft.Text("維持管理運営費の効率性(動力費)")
         self.sl11 = ft.Slider(
-            value=Decimal(0.05*100),
+            value=5,
             min=0.0,
             max=20,
             divisions=20,
@@ -236,7 +236,7 @@ class Initial_Inputs(ft.Column):
         )
         self.tx12 = ft.Text("落札率(競争の効果反映)")
         self.sl12 = ft.Slider(
-            value=Decimal(0.95*100),
+            value=95,
             min=80,
             max=100,
             divisions=20,
