@@ -43,7 +43,7 @@ class View_saved(ft.Column):
             'const_years'
             ]]
         
-        res_summ_list = grd_df_exp_ri2.rename(
+        self.res_summ_list = grd_df_exp_ri2.rename(
             columns={
             "datetime": "算定日時",
             "VFM_percent": "VFM(%)",
