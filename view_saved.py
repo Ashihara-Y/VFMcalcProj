@@ -91,7 +91,7 @@ class View_saved(ft.Column):
             horizontal=False,
         )
 
-        for row in self.res_summ_list.intertuples():
+        for row in self.res_summ_list.itertuples():
             row = pd.DataFrame(row).drop(0, axis=0)
             df = DataFrame(row)
             dr = df.datarows
