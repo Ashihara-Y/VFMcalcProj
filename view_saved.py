@@ -64,9 +64,8 @@ class View_saved(ft.Column):
 
     # 以下のメソッドは、選択された日時を、次の画面に渡すためのメソッド。
     # ListViewのセルを選択したときに呼び出される。
-    # 選択された日時を、selected_res.jsonに書き込む。
-    # 選択された日時を、次の画面に渡す。
-    # session storageni書き込む形も併設しておいた。
+    # 選択された日時を、selected_res.jsonに書き込む。次の画面に渡す。
+    # session storageに書き込む形も併設しておいた。
     def send_mess(self, e):
         #ft.Page.pubsub.send_all(Message)
         if os.path.exists("selected_res.json"):
@@ -102,7 +101,7 @@ class View_saved(ft.Column):
                 i.color=ft.Colors.AMBER_50
                 i.selected=False
                 i.on_long_press=self.send_mess
-                i.on_selectd_changed=self.send_mess
+                i.on_select_changed=self.send_mess
 
             table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
