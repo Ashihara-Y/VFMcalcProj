@@ -247,10 +247,10 @@ class Final_Inputs(ft.Column):
         )
         self.tx21 = ft.Text("割賦金利へのスプレッド")
         self.sl15 = ft.Slider(
-            value=1.0,
-            min=0.0,
-            max=2.0,
-            divisions=20,
+            value=1.00,
+            min=0.00,
+            max=2.00,
+            divisions=200,
             label="{value}％",
         )
         self.tx22 = ft.Text("施設整備開始年")
