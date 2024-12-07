@@ -169,7 +169,7 @@ class Final_Inputs(ft.Column):
         self.sl5 = ft.Slider(
             value=Decimal(self.initial_inputs["kisai_jutou"]),
             min=0.0,
-            max=1.00,
+            max=100.0,
             divisions=100,
             label="{value}%",
         )
@@ -177,7 +177,7 @@ class Final_Inputs(ft.Column):
         self.sl6 = ft.Slider(
             value=Decimal(self.initial_inputs["kisai_koufu"]),
             min=0.0,
-            max=0.50,
+            max=50.0,
             divisions=50,
             label="{value}%",
         )
@@ -185,8 +185,8 @@ class Final_Inputs(ft.Column):
         self.sl7 = ft.Slider(
             value=Decimal(self.initial_inputs["hojo_ritsu"]),
             min=0.0,
-            max=0.60,
-            divisions=60,
+            max=70.0,
+            divisions=70,
             label="{value}%",
         )
         self.tx14 = ft.Text("SPC経費年額")
@@ -353,6 +353,10 @@ class Final_Inputs(ft.Column):
     def button_clicked(self, e):
 
         shisetsu_seibi_paymentschedule_kappu = Decimal(1 - (self.sl2.value/100))
+        kisai_jutou = Decimal((self.sl5.value/100)).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+        kisai_koufu = Decimal(self.sl6.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+        hojo_ritsu = Decimal(self.sl7.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+        kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
 
         final_inputs = {
             "mgmt_type": self.initial_inputs["mgmt_type"],
@@ -416,9 +420,9 @@ class Final_Inputs(ft.Column):
             "shisetsu_seibi_paymentschedule_ikkatsu": str(self.sl2.value),
             "monitoring_costs_PSC": str(self.sl3.value),
             "monitoring_costs_LCC": str(self.sl4.value),
-            "kisai_jutou": str(self.sl5.value),
-            "kisai_koufu": str(self.sl6.value),
-            "hojo_ritsu": str(self.sl7.value),
+            "kisai_jutou": str(kisai_jutou),
+            "kisai_koufu": str(kisai_koufu),
+            "hojo_ritsu": str(hojo_ritsu),
             "SPC_keihi": str(self.sl8.value),
             "SPC_fee": str(self.sl9.value),
             "SPC_shihon": str(self.sl10.value),
@@ -426,7 +430,7 @@ class Final_Inputs(ft.Column):
             "SPC_hiyou_atsukai": int(self.sl12.value),
             "advisory_fee": str(self.sl13.value),
             "riyouryoukin_shunyu": str(self.sl14.value),
-            "kappu_kinri_spread": str(self.sl15.value),
+            "kappu_kinri_spread": str(kappu_kinri_spread),
             "const_start_date_year": int(self.sl16.value),
             "const_start_date_month": int(self.sl17.value),
             "const_start_date_day": int(self.sl18.value),
