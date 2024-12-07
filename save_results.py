@@ -78,8 +78,31 @@ user_id = ULID.from_datetime(datetime.datetime.now())
 calc_id = timeflake.random()
 dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
 
-df_list = [PSC_df,PSC_pv_df,LCC_df,LCC_pv_df,SPC_df,SPC_check_df,Risk_df,VFM_df,PIRR_df, result_summary_df]
-df_name_list = ['PSC_df','PSC_pv_df','LCC_df','LCC_pv_df','SPC_df','SPC_check_df','Risk_df','VFM_df','PIRR_df','result_summary_df']
+df_list = [
+    PSC_df,
+    PSC_pv_df,
+    LCC_df,
+    LCC_pv_df,
+    SPC_df,
+    SPC_check_df,
+    Risk_df,
+    VFM_df,
+    PIRR_df, 
+    result_summary_df
+    ]
+#df_name_list = ['PSC_df','PSC_pv_df','LCC_df','LCC_pv_df','SPC_df','SPC_check_df','Risk_df','VFM_df','PIRR_df','result_summary_df']
+df_name_list = [
+    (PSC_df,'PSC_df'),
+    (PSC_pv_df,'PSC_pv_df'),
+    (LCC_df,'LCC_df'),
+    (LCC_pv_df,'LCC_pv_df'),
+    (SPC_df,'SPC_df'),
+    (SPC_check_df,'SPC_check_df'),
+    (Risk_df,'Risk_df'),
+    (VFM_df,'VFM_df'),
+    (PIRR_df,'PIRR_df'),
+    (result_summary_df,'result_summary_df')
+    ]
 
 def addID(x_df):
     x_df['datetime'] = str(dtime)
@@ -91,17 +114,27 @@ def addID(x_df):
 for i in df_list:
     addID(i)
 
-def save_ddb(x_df, name_x_df):
-    c.sql('CREATE TABLE IF NOT EXISTS ' + name_x_df + '_results_table AS SELECT * FROM ' + name_x_df)
-    new_df_name = name_x_df + '_added'
-    new_df_name = c.sql("SELECT * FROM " + name_x_df + "_results_table").df()
-    if new_df_name['datetime'].iloc[0] != x_df['datetime'].iloc[0]: 
-        c.sql('INSERT INTO ' + name_x_df + '_results_table SELECT * FROM ' + name_x_df)   
+#def save_ddb(x_df, name_x_df):
+#    c.sql('CREATE TABLE IF NOT EXISTS ' + name_x_df + '_results_table AS SELECT * FROM ' + name_x_df)
+#    new_df_name = name_x_df + '_added'
+#    new_df_name = c.sql("SELECT * FROM " + name_x_df + "_results_table").df()
+#    if new_df_name['datetime'].iloc[0] != x_df['datetime'].iloc[0]: 
+#        c.sql('INSERT INTO ' + name_x_df + '_results_table SELECT * FROM ' + name_x_df)   
+#    else:
+#        pass
+
+def save_ddb(x_df):
+    c.sql('CREATE TABLE IF NOT EXISTS ' + x_df[1] + '_res_table AS SELECT * FROM ' + x_df[1])
+    new_df_name = x_df[1] + '_added'
+    new_df_name = c.sql("SELECT * FROM " + x_df[1] + "_res_table").df()
+    if new_df_name['datetime'].iloc[0] != x_df[0]['datetime'].iloc[0]: 
+        c.sql('INSERT INTO ' + x_df[1] + '_res_table SELECT * FROM ' + x_df[1])   
     else:
         pass
 
-for i in df_list:
-    for j in df_name_list:
-        save_ddb(i,j)    #ft.Page.go(self, route="/view_saved")
-    #fi_db = sqlite3.connect("final_inputs.db")
+#for i in df_list:
+#    for j in df_name_list:
+#        save_ddb(i,j)    #ft.Page.go(self, route="/view_saved")
+for j in df_name_list:
+    save_ddb(j)
         

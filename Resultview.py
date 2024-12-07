@@ -21,18 +21,20 @@ class Results(ft.Stack):
         self.height = 1000
         self.resizable = True
 
-        conn = duckdb.connect('VFM.duckdb')
-        c = conn.cursor()
-        #self.dtime = c.slq()
         con = TinyDB("selected_res.json")
         self.dtime = con.all()[0]['selected_datetime']
-        #con.close()
-        #con2 = TinyDB("res_02_db.json")
-        #items = Query()
-        #self.selected_results_dict = con2.search(items.datetime == self.dtime)[0]
-        #con2.close()
-        #self.res_PSC_LCC = pd.read_sql_query("SELECT * FROM res_PSC_LCC", con)
-        #self.final_inputs = pd.read_sql_query("SELECT * FROM final_inputs", con)
+        con.close()
+
+        conn = duckdb.connect('VFM.duckdb')
+        c = conn.cursor()
+        
+        # DuckDbの各「算定結果テーブル」から、上記のself.dtimeと同じdatetimeを持つレコードを抽出する。
+        # 
+        # 
+        # 
+        # 
+        # 
+        # 
 
 
     def build(self):
