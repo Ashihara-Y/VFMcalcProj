@@ -16,8 +16,9 @@ from decimal import Decimal
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
-
-inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+db = TinyDB("fi_db.json")
+final_inputs = db.all()[0]
+#inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 
 
 PSC_df = c.sql('SELECT * FROM PSC_table').df()
@@ -33,7 +34,7 @@ PIRR_df = c.sql('SELECT * FROM PIRR_table').df()
 # make summary
 PSC_pv_summary_org = PSC_pv_df[['present_value']].sum()
 LCC_pv_summary_org = LCC_pv_df[['present_value']].sum()
-SPC_check_summary_org = SPC_check_df.loc[inputs_pdt.const_years+1:inputs_pdt.proj_years, 'P_payment_check'].to_list()
+SPC_check_summary_org = SPC_check_df.loc[int(final_inputs.const_years)+1:int(final_inputs.proj_years), 'P_payment_check'].to_list()
 VFM_summary_df = VFM_df[['VFM','VFM_percent']]
 PIRR_summary_df = PIRR_df[['PIRR_percent']]
 
@@ -56,22 +57,22 @@ VFM_calc_summary_df['PIRR'] = PIRR_summary_df['PIRR_percent'].iloc[0]
 VFM_calc_summary_df['SPC_payment_cash'] = SPC_check_res
 
 
-discount_rate = Decimal((inputs_pdt.kijun_kinri + inputs_pdt.kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-kariire_kinri = Decimal((inputs_pdt.kijun_kinri + inputs_pdt.lg_spread)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+discount_rate = Decimal((final_inputs['kijun_kinri'] + final_inputs['kitai_bukka'])*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+kariire_kinri = Decimal((final_inputs['kijun_kinri'] + final_inputs['lg_spread'])*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
 
 final_inputs_dic = {
-    'mgmt_type': inputs_pdt.mgmt_type,
-    'proj_ctgry': inputs_pdt.proj_ctgry,
-    'proj_type': inputs_pdt.proj_type,
-    'const_years': inputs_pdt.const_years,
-    'proj_years': inputs_pdt.proj_years,
+    'mgmt_type': final_inputs['mgmt_type'],
+    'proj_ctgry': final_inputs['proj_ctgry'],
+    'proj_type': final_inputs['proj_type'],
+    'const_years': final_inputs['const_years'],
+    'proj_years': final_inputs['proj_years'],
     'discount_rate': discount_rate,
     'kariire_kinri': kariire_kinri,
 }
 
 final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])
 #print(inputs_pdt.kijun_kinri, inputs_pdt.lg_spread)
-result_summary_df = VFM_calc_summary_df.join(final_inputs_df)
+res_summ_df = VFM_calc_summary_df.join(final_inputs_df)
 
 
 user_id = ULID.from_datetime(datetime.datetime.now())
@@ -88,7 +89,7 @@ df_list = [
     Risk_df,
     VFM_df,
     PIRR_df, 
-    result_summary_df
+    res_summ_df
     ]
 #df_name_list = ['PSC_df','PSC_pv_df','LCC_df','LCC_pv_df','SPC_df','SPC_check_df','Risk_df','VFM_df','PIRR_df','result_summary_df']
 df_name_list = [
@@ -101,7 +102,7 @@ df_name_list = [
     (Risk_df,'Risk_df'),
     (VFM_df,'VFM_df'),
     (PIRR_df,'PIRR_df'),
-    (result_summary_df,'result_summary_df')
+    (res_summ_df,'res_summ_df')
     ]
 
 def addID(x_df):
