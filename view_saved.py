@@ -24,7 +24,7 @@ class View_saved(ft.Column):
         conn = duckdb.connect('VFM.duckdb')
         c = conn.cursor()
         
-        res_summ_df = c.sql('select * from result_summary_df_res_table').df()
+        res_summ_df = c.sql('select * from res_summ_df_res_table').df()
         grd_df_exp = res_summ_df.groupby('datetime').apply(lambda x: x.head(1), include_groups=False)
         grd_df_exp_ri = grd_df_exp.reset_index().drop('level_1', axis=1)
         grd_df_exp_ri_r = grd_df_exp_ri.sort_values('datetime', ascending=False)
