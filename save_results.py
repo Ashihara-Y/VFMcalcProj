@@ -34,7 +34,7 @@ PIRR_df = c.sql('SELECT * FROM PIRR_table').df()
 # make summary
 PSC_pv_summary_org = PSC_pv_df[['present_value']].sum()
 LCC_pv_summary_org = LCC_pv_df[['present_value']].sum()
-SPC_check_summary_org = SPC_check_df.loc[int(final_inputs.const_years)+1:int(final_inputs.proj_years), 'P_payment_check'].to_list()
+SPC_check_summary_org = SPC_check_df.loc[int(final_inputs['const_years'])+1:int(final_inputs['proj_years']), 'P_payment_check'].to_list()
 VFM_summary_df = VFM_df[['VFM','VFM_percent']]
 PIRR_summary_df = PIRR_df[['PIRR_percent']]
 
