@@ -24,6 +24,9 @@ class Results(ft.Stack):
         con = TinyDB("selected_res.json")
         self.dtime = con.all()[0]['selected_datetime']
         con.close()
+        con2 = TinyDB("fi_db.json")
+        self.final_inputs = con2.all()[0]
+        con2.close()
 
         conn = duckdb.connect('VFM.duckdb')
         c = conn.cursor()
@@ -38,12 +41,15 @@ class Results(ft.Stack):
 
 
     def build(self):
+        # ここで、各結果・IDを格納したテーブルから、該当Datetimeのものを抽出して、DFに格納する。
         PSC_PV_dict = self.selected_results_dict['PSC_present_value']
         LCC_PV_dict = self.selected_results_dict['LCC_present_value']
         PSC_LCC_PV_df = pd.DataFrame([PSC_PV_dict, LCC_PV_dict], index=['PSC現在価値','LCC現在価値'])
         PSC_LCC_PV_df_t = PSC_LCC_PV_df.transpose()
         df_col = PSC_LCC_PV_df.columns.to_list()
         #period = [int(f)+1 for f in df_col]
+
+        # 以下は、「総括表」にする。
         self.fig = px.bar(
             PSC_LCC_PV_df_t,
             x=PSC_LCC_PV_df.columns,
@@ -51,9 +57,11 @@ class Results(ft.Stack):
             #color=PSC_LCC_PV_df.columns,
             barmode="group",
         )    
+
+        # Plotlyを使わないグラフに切り替える。
         self.graph = PlotlyChart(self.fig, expand=True)
 
-        # to ft.datatable
+        # 総括表をここに追加する。PSC,LCC、SPCの表も作成して、別個定義しておく。
         simpledt_df = DataFrame(PSC_LCC_PV_df)
         simpledt_dt = simpledt_df.datatable
         self.table = simpledt_dt
@@ -63,22 +71,7 @@ class Results(ft.Stack):
         )
         lv.controls.append(self.table)
 
-        #PSC = round(float(self.results["PSC"]), 3)
-        #LCC = round(float(self.results["LCC"]), 3)
-        #VFM = round(float(self.results["VFM"]), 3)
-        #VFM_percent = self.results["VFM_percent"]
-        #self.tx_PSC = ft.Text("PSC(百万円): ", style=ft.TextThemeStyle.HEADLINE_SMALL)
-        #self.v_PSC = ft.Text(PSC, style=ft.TextThemeStyle.HEADLINE_SMALL)
-        #self.tx_LCC = ft.Text("LCC(百万円): ", style=ft.TextThemeStyle.HEADLINE_SMALL)
-        #self.v_LCC = ft.Text(LCC, style=ft.TextThemeStyle.HEADLINE_SMALL)
-        #self.tx_VFM = ft.Text("VFM(百万円): ", style=ft.TextThemeStyle.HEADLINE_SMALL)
-        #self.v_VFM = ft.Text(VFM, style=ft.TextThemeStyle.HEADLINE_SMALL)
-        #self.tx_VFM_percent = ft.Text(
-        #    "VFM(%): ", style=ft.TextThemeStyle.HEADLINE_SMALL
-        #)
-        #self.v_VFM_percent = ft.Text(
-        #    VFM_percent, style=ft.TextThemeStyle.HEADLINE_SMALL
-        #)
+        # ここでタブを定義できないか？各タブに、各Cardを配置する形で実装できないか？
 
         return ft.Card(
             content=ft.Container(

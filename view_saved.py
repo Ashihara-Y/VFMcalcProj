@@ -18,7 +18,7 @@ class View_saved(ft.Column):
         super().__init__()
         self.title = "VFM算定結果リスト"
         self.width = 1800
-        self.height = 1800
+        self.height = 3000
         self.resizable = True
 
         conn = duckdb.connect('VFM.duckdb')
@@ -124,7 +124,7 @@ class View_saved(ft.Column):
                     horizontal_alignment=ft.CrossAxisAlignment.END,
                 ),
                 width=1800,
-                height=1800,
+                height=3000,
                 padding=5,
         )
         
