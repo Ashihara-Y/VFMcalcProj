@@ -56,9 +56,12 @@ VFM_calc_summary_df['LCC_present_value'] = LCC_pv_summary_org.iloc[0]
 VFM_calc_summary_df['PIRR'] = PIRR_summary_df['PIRR_percent'].iloc[0]
 VFM_calc_summary_df['SPC_payment_cash'] = SPC_check_res
 
+kijun_kinri = Decimal(str(final_inputs['kijun_kinri'])).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+kitai_bukka = Decimal(str(final_inputs['kitai_bukka'])).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+lg_spread = Decimal(str(final_inputs['lg_spread'])).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
 
-discount_rate = Decimal((final_inputs['kijun_kinri'] + final_inputs['kitai_bukka'])*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-kariire_kinri = Decimal((final_inputs['kijun_kinri'] + final_inputs['lg_spread'])*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+discount_rate = Decimal((kijun_kinri + kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+kariire_kinri = Decimal((kijun_kinri + lg_spread)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
 
 final_inputs_dic = {
     'mgmt_type': final_inputs['mgmt_type'],
