@@ -140,7 +140,7 @@ class Final_Inputs(ft.Column):
             max=30,
             divisions=30,
             label="{value}年",
-            badge=self.sl1.value,
+#            badge=self.sl1.value,
         )
         self.tx8 = ft.Text("施設整備費支払 一括払の比率")
         self.sl2 = ft.Slider(
@@ -149,7 +149,7 @@ class Final_Inputs(ft.Column):
             max=100,
             divisions=100,
             label="{value}%",
-            badge=self.sl2.value,
+#            badge=self.sl2.value,
         )
         self.tx9 = ft.Text("モニタリング等費用(PSC)")
         self.sl3 = ft.Slider(
@@ -158,7 +158,7 @@ class Final_Inputs(ft.Column):
             max=100,
             divisions=100,
             label="{value}百万円",
-            badge=self.sl3.value,
+#            badge=self.sl3.value,
         )
         self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)")
         self.sl4 = ft.Slider(
@@ -167,7 +167,7 @@ class Final_Inputs(ft.Column):
             max=100,
             divisions=100,
             label="{value}百万円",
-            badge=self.sl4.value,
+#            badge=self.sl4.value,
         )
         self.tx11 = ft.Text("起債充当率")
         self.sl5 = ft.Slider(
@@ -176,7 +176,7 @@ class Final_Inputs(ft.Column):
             max=100.0,
             divisions=100,
             label="{value}%",
-            badge=self.sl5.value,
+#            badge=self.sl5.value,
         )
         self.tx12 = ft.Text("起債への交付金カバー率")
         self.sl6 = ft.Slider(
@@ -185,7 +185,7 @@ class Final_Inputs(ft.Column):
             max=50.0,
             divisions=50,
             label="{value}%",
-            badge=self.sl6.value,
+#            badge=self.sl6.value,
         )
         self.tx13 = ft.Text("補助率")
         self.sl7 = ft.Slider(
@@ -194,7 +194,7 @@ class Final_Inputs(ft.Column):
             max=70.0,
             divisions=70,
             label="{value}%",
-            badge=self.sl7.value,
+#            badge=self.sl7.value,
         )
         self.tx14 = ft.Text("SPC経費年額")
         self.sl8 = ft.Slider(
@@ -203,7 +203,7 @@ class Final_Inputs(ft.Column):
             max=50,
             divisions=50,
             label="{value}百万円",
-            badge=self.sl8.value,
+#            badge=self.sl8.value,
         )
         self.tx15 = ft.Text("SPCへの手数料")
         self.sl9 = ft.Slider(
@@ -212,7 +212,7 @@ class Final_Inputs(ft.Column):
             max=50,
             divisions=50,
             label="{value}百万円",
-            badge=self.sl9.value,
+#            badge=self.sl9.value,
         )
         self.tx16 = ft.Text("SPC資本金")
         self.sl10 = ft.Slider(
@@ -221,7 +221,7 @@ class Final_Inputs(ft.Column):
             max=100,
             divisions=100,
             label="{value}百万円",
-            badge=self.sl10.value,
+#            badge=self.sl10.value,
         )
         self.tx17 = ft.Text("SPC予備費")
         self.sl11 = ft.Slider(
@@ -230,7 +230,7 @@ class Final_Inputs(ft.Column):
             max=1000,
             divisions=1000,
             label="{value}百万円",
-            badge=self.sl11.value,
+#            badge=self.sl11.value,
         )
         self.tx18 = ft.Text("SPC経費の扱い（デフォルト：割賦に含める）")
         self.sl12 = ft.Slider(
@@ -239,7 +239,7 @@ class Final_Inputs(ft.Column):
             max=1,
             divisions=1,
             label="{value}",
-            badge=self.sl12.value,
+#            badge=self.sl12.value,
         )
         self.tx19 = ft.Text("アドバイザリー等経費")
         self.sl13 = ft.Slider(
@@ -248,7 +248,7 @@ class Final_Inputs(ft.Column):
             max=50,
             divisions=50,
             label="{value}百万円",
-            badge=self.sl13.value,
+#            badge=self.sl13.value,
         )
         self.tx20 = ft.Text("利用料金収入")
         self.sl14 = ft.Slider(
@@ -257,7 +257,7 @@ class Final_Inputs(ft.Column):
             max=100,
             divisions=100,
             label="{value}百万円",
-            badge=self.sl14.value,
+#            badge=self.sl14.value,
         )
         self.tx21 = ft.Text("割賦金利へのスプレッド")
         self.sl15 = ft.Slider(
@@ -266,7 +266,7 @@ class Final_Inputs(ft.Column):
             max=2.00,
             divisions=200,
             label="{value}％",
-            badge=self.sl15.value,
+#            badge=self.sl15.value,
         )
         self.tx22 = ft.Text("施設整備開始年")
         self.sl16 = ft.Slider(
@@ -275,7 +275,7 @@ class Final_Inputs(ft.Column):
             max=(const_start_year + 10),
             divisions=10,
             label="{value}年",
-            badge=self.sl16.value,
+#            badge=self.sl16.value,
         )
         self.tx23 = ft.Text("施設整備開始月")
         self.sl17 = ft.Slider(
@@ -284,7 +284,7 @@ class Final_Inputs(ft.Column):
             max=12,
             divisions=12,
             label="{value}月",
-            badge=self.sl17.value,
+#            badge=self.sl17.value,
         )
         self.tx24 = ft.Text("施設整備開始日")
         self.sl18 = ft.Slider(
@@ -293,7 +293,7 @@ class Final_Inputs(ft.Column):
             max=31,
             divisions=31,
             label="{value}日",
-            badge=self.sl18.value,
+#            badge=self.sl18.value,
         )
         self.tx25 = ft.Text("予備入力（１）")
         self.sl19 = ft.Slider(
