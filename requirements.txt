@@ -10,7 +10,6 @@ jupyter
 kaleido
 numpy
 pandas
-playwright
 plotly
 prefect
 pyarrow
