@@ -10,7 +10,8 @@ from decimal import *
 from pydantic import BaseModel
 import dateutil
 
-
+# ここでtest_inputs_db.jsonというテスト用のモックデータを読み込んでいるののは、「テスト環境のまま」
+# ⇒「本番環境のデータ」（FI）に切り替える！
 db = TinyDB("test_inputs_db.json")
 inputs = db.all()[0]
 
