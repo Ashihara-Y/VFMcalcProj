@@ -388,11 +388,16 @@ class Final_Inputs(ft.Column):
         SPC_hiyou_total = SPC_keihi * ijikanri_unnei_years + SPC_shihon
         SPC_hiyou_nen = SPC_fee + SPC_keihi
         SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou
-        #d_format = '%Y-%m-%d'
+        
+        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / 100 # CSVに％単位されているため、実数表記に切り替える。
+        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVに％単位されているため、実数表記に切り替える。
+        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVに％単位されているため、実数表記に切り替える。
+#d_format = '%Y-%m-%d'
 
+        # seelf.initial_inputsから引用している変数は、全て「最新値」になっているか、要確認！
         final_inputs = {
             "advisory_fee": str(self.sl13.value),
-            "chisai_kinri": str(Decimal(self.initial_inputs["chisai_kinri"]/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)),# CSVに％単位されているため、実数表記に切り替える。 
+            "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(self.sl1.value),
             "chisai_sueoki_kikan": int(self.initial_inputs["chisai_sueoki_kikan"]),
             "const_start_date_year": int(self.sl16.value),
@@ -427,10 +432,10 @@ class Final_Inputs(ft.Column):
             "ijikanri_years": ijikanri_years,
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
-            "kijun_kinri": str(Decimal(self.initial_inputs["kijun_kinri"]/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)),# CSVに％単位されているため、実数表記に切り替える。
+            "kijun_kinri": str(kijun_kinri),
             "kisai_jutou": str(kisai_jutou),
             "kisai_koufu": str(kisai_koufu),
-            "kitai_bukka": str(Decimal(self.initial_inputs["kitai_bukka"]/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)), # CSVに％単位されているため、実数表記に切り替える。
+            "kitai_bukka": str(kitai_bukka), 
             "koteishisanzei_hyoujun": str(self.initial_inputs["koteishisanzei_hyoujun"]),
             "koteishisanzei_ritsu": str(self.initial_inputs["koteishisanzei_ritsu"]),
 
