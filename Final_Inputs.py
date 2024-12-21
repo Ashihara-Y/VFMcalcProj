@@ -359,8 +359,8 @@ class Final_Inputs(ft.Column):
         else:
             first_end_fy = datetime.date(start_year + 1, 3, 31)
     
-        discount_rate = self.initial_inputs['kijun_kinri'] + self.initial_inputs['kitai_bukka']
-        discount_rate = Decimal(str(discount_rate)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        discount_rate = str(self.initial_inputs['kijun_kinri'] + self.initial_inputs['kitai_bukka'])
+        discount_rate = Decimal(discount_rate).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         target_years = 45
         proj_years = self.initial_inputs['proj_years']
