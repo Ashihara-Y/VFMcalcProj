@@ -350,7 +350,7 @@ class Final_Inputs(ft.Column):
         #const_start_date_year = self.initial_inputs['const_start_date_year']
         #const_start_date_month = self.initial_inputs['const_start_date_month']
         #const_start_date_day = self.initial_inputs['const_start_date_day']
-        const_start_date = datetime.date(const_start_date_year, const_start_date_month, const_start_date_day)
+        const_start_date = str(datetime.date(const_start_date_year, const_start_date_month, const_start_date_day))
         start_year = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').year
         start_month = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').month
 
@@ -403,7 +403,7 @@ class Final_Inputs(ft.Column):
             "const_start_date_year": int(self.sl16.value),
             "const_start_date_month": int(self.sl17.value),
             "const_start_date_day": int(self.sl18.value),
-            "const_start_date": str(const_start_date), 
+            "const_start_date": const_start_date, 
             "const_years": int(self.initial_inputs["const_years"]),
             "discount_rate": str(discount_rate),
 
