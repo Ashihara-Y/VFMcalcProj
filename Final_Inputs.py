@@ -392,7 +392,6 @@ class Final_Inputs(ft.Column):
         chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / 100 # CSVの％表記を採取しているため、実数表記に切り替える。
         kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
         kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
-#d_format = '%Y-%m-%d'
 
         # seelf.initial_inputsから引用している変数は、全て「最新値」になっているか、確認済み！
         final_inputs = {
