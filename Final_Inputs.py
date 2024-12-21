@@ -372,7 +372,7 @@ class Final_Inputs(ft.Column):
         shoukan_kaishi_jiki = const_years + self.initial_inputs['chisai_sueoki_kikan']  + 1
 
         kijun_kinri = Decimal(self.initial_inputs['kijun_kinri'])
-        kappu_kinri_spread = Decimal(self.initial_inputs['kappu_kinri_spread'])
+        kappu_kinri_spread = Decimal(self.sl15.value/100)
         lg_spread = Decimal(self.initial_inputs['lg_spread'])
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = Decimal(str(Kappu_kinri)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
