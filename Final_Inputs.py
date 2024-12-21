@@ -389,12 +389,12 @@ class Final_Inputs(ft.Column):
         SPC_hiyou_nen = SPC_fee + SPC_keihi
         SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou
         
-        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / 100 # CSVに％単位されているため、実数表記に切り替える。
-        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVに％単位されているため、実数表記に切り替える。
-        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVに％単位されているため、実数表記に切り替える。
+        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / 100 # CSVの％表記を採取しているため、実数表記に切り替える。
+        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
+        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
 #d_format = '%Y-%m-%d'
 
-        # seelf.initial_inputsから引用している変数は、全て「最新値」になっているか、要確認！
+        # seelf.initial_inputsから引用している変数は、全て「最新値」になっているか、確認済み！
         final_inputs = {
             "advisory_fee": str(self.sl13.value),
             "chisai_kinri": str(chisai_kinri), 
