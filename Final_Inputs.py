@@ -347,9 +347,9 @@ class Final_Inputs(ft.Column):
         const_start_date_year = int(self.sl16.value)
         const_start_date_month = int(self.sl17.value)
         const_start_date_day = int(self.sl18.value)
-        #const_start_date_year = self.inputs['const_start_date_year']
-        #const_start_date_month = self.inputs['const_start_date_month']
-        #const_start_date_day = self.inputs['const_start_date_day']
+        #const_start_date_year = self.initial_inputs['const_start_date_year']
+        #const_start_date_month = self.initial_inputs['const_start_date_month']
+        #const_start_date_day = self.initial_inputs['const_start_date_day']
         const_start_date = datetime.date(const_start_date_year, const_start_date_month, const_start_date_day)
         start_year = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').year
         start_month = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').month
@@ -359,23 +359,23 @@ class Final_Inputs(ft.Column):
         else:
             first_end_fy = datetime.date(start_year + 1, 3, 31)
     
-        discount_rate = self.inputs['kijun_kinri'] + self.inputs['kitai_bukka']
+        discount_rate = self.initial_inputs['kijun_kinri'] + self.initial_inputs['kitai_bukka']
         discount_rate = Decimal(str(discount_rate)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         target_years = 45
-        proj_years = self.inputs['proj_years']
-        const_years = self.inputs['const_years']
+        proj_years = self.initial_inputs['proj_years']
+        const_years = self.initial_inputs['const_years']
         ijikanri_years = proj_years - const_years
-        shoukan_kaishi_jiki = const_years + self.inputs['chisai_sueoki_kikan']  + 1
+        shoukan_kaishi_jiki = const_years + self.initial_inputs['chisai_sueoki_kikan']  + 1
 
-        Kappu_kinri = self.inputs['kijun_kinri'] + self.inputs['lg_spread'] + self.inputs['kappu_kinri_spread']
+        Kappu_kinri = self.initial_inputs['kijun_kinri'] + self.initial_inputs['lg_spread'] + self.initial_inputs['kappu_kinri_spread']
         Kappu_kinri = Decimal(str(Kappu_kinri)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
-        SPC_hiyou_total = self.inputs['SPC_keihi'] * self.inputs['ijikanri_unnei_years'] + self.inputs['SPC_shihon']
-        SPC_hiyou_nen = self.inputs['SPC_fee'] + self.inputs['SPC_keihi']
-        SPC_keihi_LCC = self.inputs['SPC_keihi'] + Decimal(str(self.inputs['SPC_fee'])) + self.inputs['houjinjuminzei_kintou']
+        SPC_hiyou_total = self.initial_inputs['SPC_keihi'] * self.initial_inputs['ijikanri_unnei_years'] + self.initial_inputs['SPC_shihon']
+        SPC_hiyou_nen = self.initial_inputs['SPC_fee'] + self.initial_inputs['SPC_keihi']
+        SPC_keihi_LCC = self.initial_inputs['SPC_keihi'] + Decimal(str(self.initial_inputs['SPC_fee'])) + self.initial_inputs['houjinjuminzei_kintou']
         #d_format = '%Y-%m-%d'
 
         final_inputs = {
