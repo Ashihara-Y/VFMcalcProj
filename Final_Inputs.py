@@ -407,7 +407,7 @@ class Final_Inputs(ft.Column):
             "const_years": int(self.initial_inputs["const_years"]),
             "discount_rate": str(discount_rate),
 
-            "first_end_fy": first_end_fy,
+            "first_end_fy": str(first_end_fy),
             "growth": str(self.initial_inputs["growth"]),
             "hojo_ritsu": str(hojo_ritsu),
             "houjinzei_ritsu": str(self.initial_inputs["houjinzei_ritsu"]),
