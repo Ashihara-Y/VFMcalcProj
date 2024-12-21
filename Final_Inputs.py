@@ -366,19 +366,28 @@ class Final_Inputs(ft.Column):
         discount_rate = Decimal(discount_rate).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         target_years = 45
-        proj_years = self.initial_inputs['proj_years']
-        const_years = self.initial_inputs['const_years']
+        proj_years = int(self.initial_inputs['proj_years'])
+        const_years = int(self.initial_inputs['const_years'])
         ijikanri_years = proj_years - const_years
         shoukan_kaishi_jiki = const_years + self.initial_inputs['chisai_sueoki_kikan']  + 1
 
-        Kappu_kinri = self.initial_inputs['kijun_kinri'] + self.initial_inputs['lg_spread'] + self.initial_inputs['kappu_kinri_spread']
+        kijun_kinri = Decimal(self.initial_inputs['kijun_kinri'])
+        kappu_kinri_spread = Decimal(self.initial_inputs['kappu_kinri_spread'])
+        lg_spread = Decimal(self.initial_inputs['lg_spread'])
+        Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = Decimal(str(Kappu_kinri)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
-        SPC_hiyou_total = self.initial_inputs['SPC_keihi'] * self.initial_inputs['ijikanri_unnei_years'] + self.initial_inputs['SPC_shihon']
-        SPC_hiyou_nen = self.initial_inputs['SPC_fee'] + self.initial_inputs['SPC_keihi']
-        SPC_keihi_LCC = self.initial_inputs['SPC_keihi'] + Decimal(str(self.initial_inputs['SPC_fee'])) + self.initial_inputs['houjinjuminzei_kintou']
+        SPC_keihi = Decimal(self.sl8.value)
+        SPC_fee = Decimal(self.sl9.value)
+        SPC_shihon = Decimal(self.sl10.value)
+
+        ijikanri_unnei_years = int(self.initial_inputs['ijikanri_unnei_years'])
+        houjinjuminzei_kintou = Decimal(self.initial_inputs['houjinjuminzei_kintou'])
+        SPC_hiyou_total = SPC_keihi * ijikanri_unnei_years + SPC_shihon
+        SPC_hiyou_nen = SPC_fee + SPC_keihi
+        SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou
         #d_format = '%Y-%m-%d'
 
         final_inputs = {
