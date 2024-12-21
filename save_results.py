@@ -12,6 +12,16 @@ import make_inputs_df
 import decimal
 from decimal import Decimal
 
+def init():
+    if not os.path.exists('fi_db.json'):
+        db = TinyDB("fi_db.json")
+        db.insert({'mgmt_type': '','proj_ctgry': '','proj_type': '','const_years': '','proj_years': '','kijun_kinri': '','kitai_bukka': '','lg_spread': ''})
+    elif os.path.exists('fi_db.json') and os.path.getsize('fi_db.json') == 0:
+        db = TinyDB("fi_db.json")
+        db.insert({'mgmt_type': '','proj_ctgry': '','proj_type': '','const_years': '','proj_years': '','kijun_kinri': '','kitai_bukka': '','lg_spread': ''})
+    else:
+        pass
+init()
 
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
