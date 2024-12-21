@@ -344,6 +344,9 @@ class Final_Inputs(ft.Column):
         # ここで、補足の入力値を算定して、辞書（final_inputs）に
         # 含めて、TinyDBに格納、それをMake_inputsで呼び出して、
         # pydanticで検証する。
+        const_start_date_year = int(self.sl16.value)
+        const_start_date_month = int(self.sl17.value)
+        const_start_date_day = int(self.sl18.value)
         #const_start_date_year = self.inputs['const_start_date_year']
         #const_start_date_month = self.inputs['const_start_date_month']
         #const_start_date_day = self.inputs['const_start_date_day']
