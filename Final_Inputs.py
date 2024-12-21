@@ -468,9 +468,9 @@ class Final_Inputs(ft.Column):
             "SPC_shihon": str(self.sl10.value),
             "SPC_yobihi": str(self.sl11.value),
             "SPC_hiyou_atsukai": int(self.sl12.value),
-            "SPC_hiyou_total": SPC_hiyou_total,
-            "SPC_hiyou_nen": SPC_hiyou_nen,
-            "SPC_keihi_LCC": SPC_keihi_LCC,
+            "SPC_hiyou_total": str(SPC_hiyou_total),
+            "SPC_hiyou_nen": str(SPC_hiyou_nen),
+            "SPC_keihi_LCC": str(SPC_keihi_LCC),
 
             "target_years": target_years,
             "tourokumenkyozei_hyoujun": str(self.initial_inputs["tourokumenkyozei_hyoujun"]),
