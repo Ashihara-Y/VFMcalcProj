@@ -81,6 +81,7 @@ class Inputs(BaseModel):
     shisetsu_seibi_org_LCC: Decimal = 2850.0
     shisetsu_seibi_paymentschedule_ikkatsu: Decimal = 0.5
     shisetsu_seibi_paymentschedule_kappu: Decimal = 0.5
+    shoukan_kaishi_jiki: int = 1
     SPC_hiyou_atsukai: int = 1
     SPC_keihi: Decimal = 20.0
     SPC_fee: Decimal = 20.0
