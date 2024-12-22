@@ -127,7 +127,7 @@ Kariire_hensai_kinri_deci = Kariire_hensai_kinri_dc_sr * (-1)
 
 Shisetsu_seibihi = inputs_pdt.shisetsu_seibi_org_LCC
 SPC_shuushi_payments.loc[inputs_pdt.const_years, 'shisetsu_seibihi'] = Shisetsu_seibihi
-Ijikanri_unnei_SPC = inputs_pdt.ijikanri_unnei_org_LCC
+Ijikanri_unnei_SPC = Decimal(str(inputs_pdt.ijikanri_unnei_org_LCC))
 SPC_shuushi_payments.loc[inputs_pdt.const_years+1:inputs_pdt.proj_years, 'ijikanri_unneihi'] = Ijikanri_unnei_SPC
 
 SPC_keihi = inputs_pdt.SPC_keihi
