@@ -81,7 +81,7 @@ final_inputs_dic = {
     'const_years': inputs_pdt.const_years,
     'proj_years': inputs_pdt.proj_years,
     'discount_rate': inputs_pdt.discount_rate,
-    'kariire_kinri': inputs_pdt.kariire_kinri,
+    'kariire_kinri': kariire_kinri,
 }
 
 final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])
