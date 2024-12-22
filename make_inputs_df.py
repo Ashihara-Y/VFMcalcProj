@@ -12,7 +12,7 @@ import dateutil
 
 # ここでtest_inputs_db.jsonというテスト用のモックデータを読み込んでおり、「テスト環境のまま」
 # ⇒「本番環境のデータ」（FI）に切り替える！
-db = TinyDB("test_inputs_db.json")
+db = TinyDB("fi_db.json")
 inputs = db.all()[0]
 
 # schema for validation
@@ -28,17 +28,28 @@ class Inputs(BaseModel):
     const_start_date_day: int = 21
     growth: Decimal = 0.0
     hojo_ritsu: Decimal = 0.4
-    ijikanri_unnei: Decimal = 47.5
-    ijikanri_unnei_LCC: Decimal = 45.125
-    ijikanri_unnei_org: Decimal = 50.0
-    ijikanri_unnei_org_LCC: Decimal = 47.5
+    ijikanri_unnei_1: Decimal = 47.5
+    ijikanri_unnei_1_LCC: Decimal = 45.125
+    ijikanri_unnei_1_org: Decimal = 50.0
+    ijikanri_unnei_1_org_LCC: Decimal = 47.5
+    ijikanri_unnei_2: Decimal = 47.5
+    ijikanri_unnei_2_LCC: Decimal = 45.125
+    ijikanri_unnei_2_org: Decimal = 50.0
+    ijikanri_unnei_2_org_LCC: Decimal = 47.5
+    ijikanri_unnei_3: Decimal = 47.5
+    ijikanri_unnei_3_LCC: Decimal = 45.125
+    ijikanri_unnei_3_org: Decimal = 50.0
+    ijikanri_unnei_3_org_LCC: Decimal = 47.5
     ijikanri_unnei_years: int = 20
     kappu_kinri_spread: Decimal = 0.01
     kijun_kinri: Decimal = 0.0163
     kisai_jutou: Decimal = 0.75
     kisai_koufu: Decimal = 0.30
     kitai_bukka: Decimal = 0.2
-    kyoukouka_yosantanka_hiritsu: Decimal = 0.010
+    yosantanka_hiritsu_shisetsu: Decimal = 0.010
+    yosantanka_hiritsu_ijikanri_1: Decimal = 0.010
+    yosantanka_hiritsu_ijikanri_2: Decimal = 0.010
+    yosantanka_hiritsu_ijikanri_3: Decimal = 0.010
     lg_spread: Decimal = 0.010
     mgmt_type: str = '市区町村'
     monitoring_costs_LCC: Decimal = 6.0
@@ -49,7 +60,9 @@ class Inputs(BaseModel):
     proj_years: int = 23
     rakusatsu_ritsu: Decimal = 0.95
     reduc_shisetsu: Decimal = 0.05
-    reduc_ijikanri: Decimal = 0.05
+    reduc_ijikanri_1: Decimal = 0.05
+    reduc_ijikanri_2: Decimal = 0.05
+    reduc_ijikanri_3: Decimal = 0.05
     riyouryoukin_shunyu: Decimal = 0.0
     shisetsu_seibi: Decimal = 2850.0
     shisetsu_seibi_LCC: Decimal = 2707.5
@@ -62,9 +75,7 @@ class Inputs(BaseModel):
     SPC_fee: Decimal = 20.0
     SPC_shihon: Decimal = 100.0
     SPC_yobihi: Decimal = 456.0
-    zei_modori: Decimal = 0.084
     zei_total: Decimal = 0.4197
-    zeimae_rieki: Decimal = 0.05
     houjinzei_ritsu: Decimal = 0.0
     houjinjuminzei_kintou: Decimal = 0.18
     fudousanshutokuzei_hyoujun: Decimal = 0.0
@@ -77,60 +88,6 @@ class Inputs(BaseModel):
     houjinjuminzei_ritsu_shikuchoson: Decimal = 0.0
     option_01: Decimal = 0.0
     option_02: Decimal = 0.0
-
-# validate inputs
-inputs_pdt = Inputs.model_validate(inputs)
-
-# making inputs supplementary
-const_start_date_year = inputs_pdt.const_start_date_year
-const_start_date_month = inputs_pdt.const_start_date_month
-const_start_date_day = inputs_pdt.const_start_date_day
-const_start_date = datetime.date(const_start_date_year, const_start_date_month, const_start_date_day)
-start_year = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').year
-start_month = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').month
-
-if start_month < 4:
-    first_end_fy = datetime.date(start_year, 3, 31)
-else:
-    first_end_fy = datetime.date(start_year + 1, 3, 31)
-    
-discount_rate = inputs_pdt.kijun_kinri + inputs_pdt.kitai_bukka
-discount_rate = Decimal(str(discount_rate))
-
-target_years = 45
-proj_years = inputs_pdt.proj_years
-const_years = inputs_pdt.const_years
-ijikanri_years = proj_years - const_years
-shoukan_kaishi_jiki = const_years + inputs_pdt.chisai_sueoki_years + 1
-
-Kappu_kinri = inputs_pdt.kijun_kinri + inputs_pdt.lg_spread + inputs_pdt.kappu_kinri_spread
-
-first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
-
-SPC_hiyou_total = inputs_pdt.SPC_keihi * inputs_pdt.ijikanri_unnei_years + inputs_pdt.SPC_shihon
-SPC_hiyou_nen = inputs_pdt.SPC_fee + inputs_pdt.SPC_keihi
-SPC_keihi_LCC = inputs_pdt.SPC_keihi + Decimal(str(inputs_pdt.SPC_fee)) + inputs_pdt.houjinjuminzei_kintou
-d_format = '%Y-%m-%d'
-
-inputs_supl = {
-    'first_end_fy': first_end_fy,
-    'discount_rate': discount_rate,
-    'ijikanri_years': ijikanri_years,
-    'shoukan_kaishi_jiki': shoukan_kaishi_jiki,
-    'target_years': target_years,
-    'Kappu_kinri': Kappu_kinri,
-    'SPC_hiyou_total': SPC_hiyou_total,
-    'SPC_hiyou_nen': SPC_hiyou_nen,    
-    'SPC_keihi_LCC': SPC_keihi_LCC,   
-    'const_start_date': const_start_date 
-}
-
-# to DataFrame
-#inputs_supl_df = pd.DataFrame(inputs_supl, index=['val'])
-
-# schema for validation
-@dataclass
-class Inputs_supl(BaseModel):
     first_end_fy: datetime.date
     discount_rate: Decimal
     ijikanri_years: int
@@ -142,8 +99,10 @@ class Inputs_supl(BaseModel):
     SPC_keihi_LCC: Decimal
     const_start_date: datetime.date
 
-# validate inputs supplementary
-inputs_supl_pdt = Inputs_supl.model_validate(inputs_supl)
+
+# validate inputs
+inputs_pdt = Inputs.model_validate(inputs)
+
 
 def io():
-    return inputs_pdt, inputs_supl_pdt
+    return inputs_pdt
