@@ -398,21 +398,21 @@ class Final_Inputs(ft.Column):
         kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
 
         ijikanri_unnei = (
-            self.initial_inputs["ijikanri_unnei_1"] + 
-            self.initial_inputs["ijikanri_unnei_2"] + 
-            self.initial_inputs["ijikanri_unnei_3"])
+            Decimal(self.initial_inputs["ijikanri_unnei_1"]) + 
+            Decimal(self.initial_inputs["ijikanri_unnei_2"]) + 
+            Decimal(self.initial_inputs["ijikanri_unnei_3"]))
         ijikanri_unnei_LCC = (
-            self.initial_inputs["ijikanri_unnei_1_LCC"] + 
-            self.initial_inputs["ijikanri_unnei_2_LCC"] + 
-            self.initial_inputs["ijikanri_unnei_3_LCC"])
+            Decimal(self.initial_inputs["ijikanri_unnei_1_LCC"]) + 
+            Decimal(self.initial_inputs["ijikanri_unnei_2_LCC"]) + 
+            Decimal(self.initial_inputs["ijikanri_unnei_3_LCC"]))
         ijikanri_unnei_org = (
-            self.initial_inputs["ijikanri_unnei_1_org"] + 
-            self.initial_inputs["ijikanri_unnei_2_org"] + 
-            self.initial_inputs["ijikanri_unnei_3_org"])
+            Decimal(self.initial_inputs["ijikanri_unnei_1_org"]) + 
+            Decimal(self.initial_inputs["ijikanri_unnei_2_org"]) + 
+            Decimal(self.initial_inputs["ijikanri_unnei_3_org"]))
         ijikanri_unnei_org_LCC = (
-            self.initial_inputs["ijikanri_unnei_1_org_LCC"] +
-            self.initial_inputs["ijikanri_unnei_2_org_LCC"] +
-            self.initial_inputs["ijikanri_unnei_3_org_LCC"])
+            Decimal(self.initial_inputs["ijikanri_unnei_1_org_LCC"]) +
+            Decimal(self.initial_inputs["ijikanri_unnei_2_org_LCC"]) +
+            Decimal(self.initial_inputs["ijikanri_unnei_3_org_LCC"]))
         
         final_inputs = {
             "advisory_fee": str(self.sl13.value),
