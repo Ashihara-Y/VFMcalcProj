@@ -341,6 +341,10 @@ class Final_Inputs(ft.Column):
         hojo_ritsu = Decimal(self.sl7.value).quantize(Decimal('0.000001'), ROUND_HALF_UP),
         #kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
 
+        kisai_jutou = str(kisai_jutou)
+        kisai_koufu = str(kisai_koufu)
+        hojo_ritsu = str(hojo_ritsu)
+
         # ここで、補足の入力値を算定して、辞書（final_inputs）に
         # 含めて、TinyDBに格納、それをMake_inputsで呼び出して、
         # pydanticで検証する。
@@ -372,8 +376,8 @@ class Final_Inputs(ft.Column):
         ijikanri_years = proj_years - const_years
         shoukan_kaishi_jiki = const_years + self.initial_inputs['chisai_sueoki_kikan']  + 1
 
-        kappu_kinri_spread = Decimal(self.sl15.value/100)
-        lg_spread = Decimal(self.initial_inputs['lg_spread'])
+        kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        lg_spread = Decimal(self.initial_inputs['lg_spread']).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = Decimal(str(Kappu_kinri)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
@@ -404,7 +408,7 @@ class Final_Inputs(ft.Column):
 
             "first_end_fy": str(first_end_fy),
             "growth": str(self.initial_inputs["growth"]),
-            "hojo_ritsu": str(hojo_ritsu),
+            "hojo_ritsu": hojo_ritsu,
             "houjinzei_ritsu": str(self.initial_inputs["houjinzei_ritsu"]),
             "houjinjuminzei_kintou": str(self.initial_inputs["houjinjuminzei_kintou"]),
             "houjinjuminzei_ritsu_todouhuken": str(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
@@ -428,8 +432,8 @@ class Final_Inputs(ft.Column):
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
             "kijun_kinri": str(kijun_kinri),
-            "kisai_jutou": str(kisai_jutou),
-            "kisai_koufu": str(kisai_koufu),
+            "kisai_jutou": kisai_jutou,
+            "kisai_koufu": kisai_koufu,
             "kitai_bukka": str(kitai_bukka), 
             "koteishisanzei_hyoujun": str(self.initial_inputs["koteishisanzei_hyoujun"]),
             "koteishisanzei_ritsu": str(self.initial_inputs["koteishisanzei_ritsu"]),
