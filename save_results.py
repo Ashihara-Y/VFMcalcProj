@@ -29,7 +29,7 @@ c = conn.cursor()
 db = TinyDB("fi_db.json")
 final_inputs = db.all()[0]
 # 将来的には、inputs_pdtの検証済の入力データを使うように修正する必要あり！
-# inputs_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.io()
 
 
 PSC_df = c.sql('SELECT * FROM PSC_table').df()
@@ -45,7 +45,7 @@ PIRR_df = c.sql('SELECT * FROM PIRR_table').df()
 # make summary
 PSC_pv_summary_org = PSC_pv_df[['present_value']].sum()
 LCC_pv_summary_org = LCC_pv_df[['present_value']].sum()
-SPC_check_summary_org = SPC_check_df.loc[int(final_inputs['const_years'])+1:int(final_inputs['proj_years']), 'P_payment_check'].to_list()
+SPC_check_summary_org = SPC_check_df.loc[int(inputs_pdt.const_years)+1:int(inputs_pdt.proj_years), 'P_payment_check'].to_list()
 VFM_summary_df = VFM_df[['VFM','VFM_percent']]
 PIRR_summary_df = PIRR_df[['PIRR_percent']]
 
@@ -67,21 +67,21 @@ VFM_calc_summary_df['LCC_present_value'] = LCC_pv_summary_org.iloc[0]
 VFM_calc_summary_df['PIRR'] = PIRR_summary_df['PIRR_percent'].iloc[0]
 VFM_calc_summary_df['SPC_payment_cash'] = SPC_check_res
 
-kijun_kinri = Decimal(str(final_inputs['kijun_kinri'])).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-kitai_bukka = Decimal(str(final_inputs['kitai_bukka'])).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-lg_spread = Decimal(str(final_inputs['lg_spread'])).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+kijun_kinri = Decimal(str(inputs_pdt.kijun_kinri)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+kitai_bukka = Decimal(str(inputs_pdt.kitai_bukka)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+lg_spread = Decimal(str(inputs_pdt.lg_spread)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
 
-discount_rate = Decimal((kijun_kinri + kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+#discount_rate = Decimal((kijun_kinri + kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
 kariire_kinri = Decimal((kijun_kinri + lg_spread)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
 
 final_inputs_dic = {
-    'mgmt_type': final_inputs['mgmt_type'],
-    'proj_ctgry': final_inputs['proj_ctgry'],
-    'proj_type': final_inputs['proj_type'],
-    'const_years': final_inputs['const_years'],
-    'proj_years': final_inputs['proj_years'],
-    'discount_rate': discount_rate,
-    'kariire_kinri': kariire_kinri,
+    'mgmt_type': inputs_pdt.mgmt_type,
+    'proj_ctgry': inputs_pdt.proj_ctgry,
+    'proj_type': inputs_pdt.proj_type,
+    'const_years': inputs_pdt.const_years,
+    'proj_years': inputs_pdt.proj_years,
+    'discount_rate': inputs_pdt.discount_rate,
+    'kariire_kinri': inputs_pdt.kariire_kinri,
 }
 
 final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])
