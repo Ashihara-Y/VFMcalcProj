@@ -7,7 +7,7 @@ import openpyxl
 from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
-inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.io()
 
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
@@ -35,7 +35,7 @@ LCC_netpayments_df = pd.concat([LCC_netpayments_top, LCC_netpayments_org], axis=
 PSC_netpayments_df = PSC_netpayments_df.set_index('periods').map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 LCC_netpayments_df = LCC_netpayments_df.set_index('periods').map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 
-discount_rate = inputs_supl_pdt.discount_rate
+discount_rate = inputs_pdt.discount_rate
 discount_factor = Decimal(1 / (1 + discount_rate)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 PSC_netpayments_df['discount_factor'] = discount_factor ** PSC_netpayments_df.index
 LCC_netpayments_df['discount_factor'] = discount_factor ** LCC_netpayments_df.index

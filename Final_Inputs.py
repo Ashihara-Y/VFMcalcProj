@@ -171,7 +171,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx11 = ft.Text("起債充当率")
         self.sl5 = ft.Slider(
-            value=Decimal(self.initial_inputs["kisai_jutou"]),
+            value=self.initial_inputs["kisai_jutou"],
             min=0.0,
             max=100.0,
             divisions=100,
@@ -180,7 +180,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx12 = ft.Text("起債への交付金カバー率")
         self.sl6 = ft.Slider(
-            value=Decimal(self.initial_inputs["kisai_koufu"]),
+            value=self.initial_inputs["kisai_koufu"],
             min=0.0,
             max=50.0,
             divisions=50,
@@ -189,7 +189,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx13 = ft.Text("補助率")
         self.sl7 = ft.Slider(
-            value=Decimal(self.initial_inputs["hojo_ritsu"]),
+            value=self.initial_inputs["hojo_ritsu"],
             min=0.0,
             max=70.0,
             divisions=70,
@@ -334,12 +334,16 @@ class Final_Inputs(ft.Column):
 
     def button_clicked(self, e):
 
-        shisetsu_seibi_paymentschedule_ikkatsu = Decimal(self.sl2.value/100)
+        shisetsu_seibi_paymentschedule_ikkatsu = Decimal(self.sl2.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         shisetsu_seibi_paymentschedule_kappu = Decimal(1 - shisetsu_seibi_paymentschedule_ikkatsu).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        kisai_jutou = Decimal((self.sl5.value/100)).quantize(Decimal('0.000001'), ROUND_HALF_UP),
-        kisai_koufu = Decimal(self.sl6.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
-        hojo_ritsu = Decimal(self.sl7.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
-        kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+        kisai_jutou = Decimal(self.sl5.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        kisai_koufu = Decimal(self.sl6.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        hojo_ritsu = Decimal(self.sl7.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        #kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+
+        kisai_jutou = str(kisai_jutou)
+        kisai_koufu = str(kisai_koufu)
+        hojo_ritsu = str(hojo_ritsu)
 
         # ここで、補足の入力値を算定して、辞書（final_inputs）に
         # 含めて、TinyDBに格納、それをMake_inputsで呼び出して、
@@ -358,25 +362,25 @@ class Final_Inputs(ft.Column):
             first_end_fy = datetime.date(start_year, 3, 31)
         else:
             first_end_fy = datetime.date(start_year + 1, 3, 31)
-    
-        kijun_kinri = Decimal(self.initial_inputs['kijun_kinri'])
-        kitai_bukka = Decimal(self.initial_inputs['kitai_bukka'])
+
+        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / 100 # CSVの％表記を採取しているため、実数表記に切り替える。
+        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
+        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
 
         discount_rate = kijun_kinri + kitai_bukka
         discount_rate = Decimal(discount_rate).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         target_years = 45
-        proj_years = int(self.initial_inputs['proj_years'])
+        #proj_years = int(self.initial_inputs['proj_years'])
         const_years = int(self.initial_inputs['const_years'])
-        #ijikanri_years = proj_years - const_years
         shoukan_kaishi_jiki = const_years + self.initial_inputs['chisai_sueoki_kikan']  + 1
 
-        kijun_kinri = Decimal(self.initial_inputs['kijun_kinri'])
-        kappu_kinri_spread = Decimal(self.sl15.value/100)
-        lg_spread = Decimal(self.initial_inputs['lg_spread'])
+        kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        lg_spread = Decimal(self.initial_inputs['lg_spread']).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = Decimal(str(Kappu_kinri)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
+        # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
         first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
         SPC_keihi = Decimal(self.sl8.value)
@@ -410,12 +414,11 @@ class Final_Inputs(ft.Column):
             self.initial_inputs["ijikanri_unnei_2_org_LCC"] +
             self.initial_inputs["ijikanri_unnei_3_org_LCC"])
         
-        # seelf.initial_inputsから引用している変数は、全て「最新値」になっているか、確認済み！
         final_inputs = {
             "advisory_fee": str(self.sl13.value),
             "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(self.sl1.value),
-            "chisai_sueoki_kikan": int(self.initial_inputs["chisai_sueoki_kikan"]),
+            "chisai_sueoki_years": int(self.initial_inputs["chisai_sueoki_kikan"]),
             "const_start_date_year": int(self.sl16.value),
             "const_start_date_month": int(self.sl17.value),
             "const_start_date_day": int(self.sl18.value),
@@ -424,14 +427,14 @@ class Final_Inputs(ft.Column):
             "discount_rate": str(discount_rate),
 
             "first_end_fy": str(first_end_fy),
+            "fudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
+            "fudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
             "growth": str(self.initial_inputs["growth"]),
-            "hojo_ritsu": str(hojo_ritsu),
+            "hojo_ritsu": hojo_ritsu,
             "houjinzei_ritsu": str(self.initial_inputs["houjinzei_ritsu"]),
             "houjinjuminzei_kintou": str(self.initial_inputs["houjinjuminzei_kintou"]),
             "houjinjuminzei_ritsu_todouhuken": str(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
             "houjinjuminzei_ritsu_shikuchoson": str(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
-            "hudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
-            "hudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
             "ijikanri_unnei": str(ijikanri_unnei),
             "ijikanri_unnei_LCC": str(ijikanri_unnei_LCC),
             "ijikanri_unnei_org": str(ijikanri_unnei_org),
@@ -448,12 +451,12 @@ class Final_Inputs(ft.Column):
             "ijikanri_unnei_3_LCC": str(self.initial_inputs["ijikanri_unnei_3_LCC"]),
             "ijikanri_unnei_3_org": str(self.initial_inputs["ijikanri_unnei_3_org"]),
             "ijikanri_unnei_3_org_LCC": str(self.initial_inputs["ijikanri_unnei_3_org_LCC"]),
-            "ijikanri_unnei_years": int(self.initial_inputs["ijikanri_unnei_years"]),
+            "ijikanri_unnei_years": int(ijikanri_unnei_years),
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
             "kijun_kinri": str(kijun_kinri),
-            "kisai_jutou": str(kisai_jutou),
-            "kisai_koufu": str(kisai_koufu),
+            "kisai_jutou": kisai_jutou,
+            "kisai_koufu": kisai_koufu,
             "kitai_bukka": str(kitai_bukka), 
             "koteishisanzei_hyoujun": str(self.initial_inputs["koteishisanzei_hyoujun"]),
             "koteishisanzei_ritsu": str(self.initial_inputs["koteishisanzei_ritsu"]),
@@ -488,21 +491,17 @@ class Final_Inputs(ft.Column):
             "SPC_shihon": str(self.sl10.value),
             "SPC_yobihi": str(self.sl11.value),
             "SPC_hiyou_atsukai": int(self.sl12.value),
-            "SPC_hiyou_total": SPC_hiyou_total,
-            "SPC_hiyou_nen": SPC_hiyou_nen,
-            "SPC_keihi_LCC": SPC_keihi_LCC,
+            "SPC_hiyou_total": str(SPC_hiyou_total),
+            "SPC_hiyou_nen": str(SPC_hiyou_nen),
+            "SPC_keihi_LCC": str(SPC_keihi_LCC),
 
-            "target_years": target_years,
+            "target_years": int(target_years),
             "tourokumenkyozei_hyoujun": str(self.initial_inputs["tourokumenkyozei_hyoujun"]),
             "tourokumenkyozei_ritsu": str(self.initial_inputs["tourokumenkyozei_ritsu"]),
             "yosantanka_hiritsu_shisetsu": str(self.initial_inputs["yosantanka_hiritsu_shisetsu"]),
             "yosantanka_hiritsu_ijikanri_1": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
             "yosantanka_hiritsu_ijikanri_2": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
             "yosantanka_hiritsu_ijikanri_3": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
-            "zei_modori": str(self.initial_inputs["zei_modori"]),
-            "zei_total": str(self.initial_inputs["zei_total"]),
-            "zeimae_rieki": str(self.initial_inputs["zeimae_rieki"]),
-            "zei_modori": str(self.initial_inputs["zei_modori"]),
             "zei_total": str(self.initial_inputs["zei_total"]),
 
         }

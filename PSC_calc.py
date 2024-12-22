@@ -11,14 +11,14 @@ from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
-inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.io()
 
 def PSC_calc():
     PSC_shuushi_income = zero_pl_PSC_income
     PSC_shuushi_payments = zero_pl_PSC_payments
 
-    shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki
-    target_years = inputs_supl_pdt.target_years
+    shoukan_kaishi_jiki = inputs_pdt.shoukan_kaishi_jiki
+    target_years = inputs_pdt.target_years
 
     ## PSC_income
     Hojokin = Decimal(inputs_pdt.hojo_ritsu) * Decimal(inputs_pdt.shisetsu_seibi)

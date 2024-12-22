@@ -11,16 +11,16 @@ from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
-inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.io()
 
 LCC_shuushi_income = zero_pl_LCC_income
 LCC_shuushi_payments = zero_pl_LCC_payments
 
-shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki
-target_years = inputs_supl_pdt.target_years
-Kappu_kinri = inputs_supl_pdt.Kappu_kinri
+shoukan_kaishi_jiki = inputs_pdt.shoukan_kaishi_jiki
+target_years = inputs_pdt.target_years
+Kappu_kinri = inputs_pdt.Kappu_kinri
 const_years = inputs_pdt.const_years
-ijikanri_years = inputs_supl_pdt.ijikanri_years
+ijikanri_years = inputs_pdt.ijikanri_years
 proj_years = inputs_pdt.proj_years
 
 # LCC_shuushi_payments 1
@@ -50,7 +50,7 @@ Shisetsu_seibihi_kappuganpon = [
             rate=Kappu_kinri, 
             per=i, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
         )
     ) for i in range(
@@ -65,7 +65,7 @@ Shisetsu_seibihi_kappukinri = [
             rate=Kappu_kinri, 
             per=i, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
         )
     ) for i in range(
@@ -77,7 +77,7 @@ Shisetsu_seibihi_kappukinri = [
 kappugoukei = pyxirr.pmt(
             rate=Kappu_kinri, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
 )
 
@@ -104,7 +104,7 @@ LCC_shuushi_payments.loc[2:, 'shisetsu_seibihi_kappukinri'] = Shisetsu_seibihi_k
 Monitoring_costs_shoki = inputs_pdt.monitoring_costs_LCC + inputs_pdt.advisory_fee
 Ijikanri_unnei_LCC = inputs_pdt.ijikanri_unnei_org_LCC
 
-SPC_keihi_LCC = inputs_supl_pdt.SPC_keihi_LCC
+SPC_keihi_LCC = inputs_pdt.SPC_keihi_LCC
 LCC_shuushi_payments.loc[const_years+1:proj_years, 'ijikanri_unneihi'] = Ijikanri_unnei_LCC
 LCC_shuushi_payments.loc[1, 'monitoring_costs'] = Monitoring_costs_shoki
 LCC_shuushi_payments.loc[2:proj_years, 'monitoring_costs'] = inputs_pdt.monitoring_costs_LCC

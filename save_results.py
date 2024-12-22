@@ -28,7 +28,8 @@ c = conn.cursor()
 
 db = TinyDB("fi_db.json")
 final_inputs = db.all()[0]
-#inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+# 将来的には、inputs_pdtの検証済の入力データを使うように修正する必要あり！
+# inputs_pdt = make_inputs_df.io()
 
 
 PSC_df = c.sql('SELECT * FROM PSC_table').df()

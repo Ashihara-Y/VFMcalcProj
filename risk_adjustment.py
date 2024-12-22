@@ -8,7 +8,7 @@ from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
 #zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
-inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.io()
 
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
@@ -31,7 +31,7 @@ SPC_SPCkeihi_SPCsetsuritduhi_df = SPC_SPCkeihi_SPCsetsuritsuhi_df.set_index('per
 SPC_keihi_sum = SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_keihi'].sum()
 SPC_seturitsuhi_sum = SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_setsuritsuhi'].sum()
 Shisetsu_seibihi_kappu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu_seibi_paymentschedule_kappu
-LCC_kappu_etc = Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years)
+LCC_kappu_etc = Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_pdt.SPC_hiyou_nen * inputs_pdt.const_years)
 
 kanmin_kinrisa = (inputs_pdt.kijun_kinri + inputs_pdt.lg_spread) - inputs_pdt.chisai_kinri
 
