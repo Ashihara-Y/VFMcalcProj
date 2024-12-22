@@ -33,7 +33,7 @@ final_inputs = db.all()[0]
 
 
 PSC_df = c.sql('SELECT * FROM PSC_table').df()
-PSC_pv_df = c.sql('SELECT * 入力OM PSC_pv_table').df()
+PSC_pv_df = c.sql('SELECT * FROM PSC_pv_table').df()
 LCC_df = c.sql('SELECT * FROM LCC_table').df()
 LCC_pv_df = c.sql('SELECT * FROM LCC_pv_table').df()
 SPC_df = c.sql('SELECT * FROM SPC_table').df()
