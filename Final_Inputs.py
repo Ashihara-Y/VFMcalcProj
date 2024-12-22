@@ -171,7 +171,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx11 = ft.Text("起債充当率")
         self.sl5 = ft.Slider(
-            value=Decimal(self.initial_inputs["kisai_jutou"]),
+            value=self.initial_inputs["kisai_jutou"],
             min=0.0,
             max=100.0,
             divisions=100,
@@ -180,7 +180,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx12 = ft.Text("起債への交付金カバー率")
         self.sl6 = ft.Slider(
-            value=Decimal(self.initial_inputs["kisai_koufu"]),
+            value=self.initial_inputs["kisai_koufu"],
             min=0.0,
             max=50.0,
             divisions=50,
@@ -189,7 +189,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx13 = ft.Text("補助率")
         self.sl7 = ft.Slider(
-            value=Decimal(self.initial_inputs["hojo_ritsu"]),
+            value=self.initial_inputs["hojo_ritsu"],
             min=0.0,
             max=70.0,
             divisions=70,
@@ -358,9 +358,10 @@ class Final_Inputs(ft.Column):
             first_end_fy = datetime.date(start_year, 3, 31)
         else:
             first_end_fy = datetime.date(start_year + 1, 3, 31)
-    
-        kijun_kinri = Decimal(self.initial_inputs['kijun_kinri'])
-        kitai_bukka = Decimal(self.initial_inputs['kitai_bukka'])
+
+        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / 100 # CSVの％表記を採取しているため、実数表記に切り替える。
+        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
+        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
 
         discount_rate = kijun_kinri + kitai_bukka
         discount_rate = Decimal(discount_rate).quantize(Decimal('0.000001'), ROUND_HALF_UP)
@@ -389,10 +390,6 @@ class Final_Inputs(ft.Column):
         SPC_hiyou_nen = SPC_fee + SPC_keihi
         SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou
         
-        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / 100 # CSVの％表記を採取しているため、実数表記に切り替える。
-        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
-        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
-
         # seelf.initial_inputsから引用している変数は、全て「最新値」になっているか、確認済み！
         final_inputs = {
             "advisory_fee": str(self.sl13.value),
