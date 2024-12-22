@@ -38,7 +38,7 @@ LCC = LCC_df.set_index('periods')
 #print(LCC.info())
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
-inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.io()
 
 #periods= [i+1 for i in range(inputs_supl_pdt.target_years.iloc[0])]
 #LCC.set_index(periods, inplace=True)
@@ -47,11 +47,11 @@ inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
 SPC_shuushi_income = zero_pl_SPC_income
 SPC_shuushi_payments = zero_pl_SPC_payments
 
-shoukan_kaishi_jiki = inputs_supl_pdt.shoukan_kaishi_jiki
-target_years = inputs_supl_pdt.target_years
-Kappu_kinri = inputs_supl_pdt.Kappu_kinri
+shoukan_kaishi_jiki = inputs_pdt.shoukan_kaishi_jiki
+target_years = inputs_pdt.target_years
+Kappu_kinri = inputs_pdt.Kappu_kinri
 const_years = inputs_pdt.const_years
-ijikanri_years = inputs_supl_pdt.ijikanri_years
+ijikanri_years = inputs_pdt.ijikanri_years
 proj_years = inputs_pdt.proj_years
 
 ## SPC_income
@@ -88,7 +88,7 @@ Kariire_hensai_ganpon = [
             rate=inputs_pdt.kijun_kinri + inputs_pdt.lg_spread, 
             per=i, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
         )
     ) for i in range(
@@ -103,7 +103,7 @@ Kariire_hensai_kinri = [
             rate=inputs_pdt.kijun_kinri + inputs_pdt.lg_spread, 
             per=i, 
             nper=ijikanri_years, 
-            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_supl_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
+            pv=Shisetsu_seibihi_kappu + inputs_pdt.SPC_shihon + (inputs_pdt.SPC_hiyou_nen * inputs_pdt.const_years),
             pmt_at_beginning=False
         )
     ) for i in range(

@@ -8,7 +8,7 @@ from pydantic import BaseModel
 import openpyxl
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
 
-inputs_pdt, inputs_supl_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.io()
 
 conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
