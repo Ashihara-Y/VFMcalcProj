@@ -336,9 +336,9 @@ class Final_Inputs(ft.Column):
 
         shisetsu_seibi_paymentschedule_ikkatsu = Decimal(self.sl2.value/100)
         shisetsu_seibi_paymentschedule_kappu = Decimal(1 - shisetsu_seibi_paymentschedule_ikkatsu).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        kisai_jutou = Decimal((self.sl5.value/100)).quantize(Decimal('0.000001'), ROUND_HALF_UP),
-        kisai_koufu = Decimal(self.sl6.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
-        hojo_ritsu = Decimal(self.sl7.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+        kisai_jutou = Decimal(self.sl5.value).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+        kisai_koufu = Decimal(self.sl6.value).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+        hojo_ritsu = Decimal(self.sl7.value).quantize(Decimal('0.000001'), ROUND_HALF_UP),
         kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
 
         # ここで、補足の入力値を算定して、辞書（final_inputs）に
@@ -372,8 +372,7 @@ class Final_Inputs(ft.Column):
         ijikanri_years = proj_years - const_years
         shoukan_kaishi_jiki = const_years + self.initial_inputs['chisai_sueoki_kikan']  + 1
 
-        kijun_kinri = Decimal(self.initial_inputs['kijun_kinri'])
-        kappu_kinri_spread = Decimal(self.sl15.value/100)
+        #kappu_kinri_spread = Decimal(self.sl15.value/100)
         lg_spread = Decimal(self.initial_inputs['lg_spread'])
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = Decimal(str(Kappu_kinri)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
