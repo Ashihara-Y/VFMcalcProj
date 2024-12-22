@@ -22,12 +22,24 @@ class Inputs(BaseModel):
     chisai_kinri: Decimal = 0.0175
     chisai_shoukan_kikan: int = 23
     chisai_sueoki_years: int = 3
-    const_years: int = 3
+    const_start_date: datetime.date
     const_start_date_year: int = 2024
     const_start_date_month: int = 11
     const_start_date_day: int = 21
+    const_years: int = 3
+    discount_rate: Decimal
+    first_end_fy: datetime.date
+    fudousanshutokuzei_hyoujun: Decimal = 0.0
+    fudousanshutokuzei_ritsu: Decimal = 0.0
     growth: Decimal = 0.0
     hojo_ritsu: Decimal = 0.4
+    houjinjuminzei_ritsu_todouhuken: Decimal = 0.0
+    houjinjuminzei_ritsu_shikuchoson: Decimal = 0.0
+    houjinzei_ritsu: Decimal = 0.0
+    ijikanri_unnei: Decimal = 47.5
+    ijikanri_unnei_LCC: Decimal = 45.125
+    ijikanri_unnei_org: Decimal = 50.0
+    ijikanri_unnei_org_LCC: Decimal = 47.5
     ijikanri_unnei_1: Decimal = 47.5
     ijikanri_unnei_1_LCC: Decimal = 45.125
     ijikanri_unnei_1_org: Decimal = 50.0
@@ -41,15 +53,14 @@ class Inputs(BaseModel):
     ijikanri_unnei_3_org: Decimal = 50.0
     ijikanri_unnei_3_org_LCC: Decimal = 47.5
     ijikanri_unnei_years: int = 20
+    Kappu_kinri: Decimal = 0.0163
     kappu_kinri_spread: Decimal = 0.01
     kijun_kinri: Decimal = 0.0163
     kisai_jutou: Decimal = 0.75
     kisai_koufu: Decimal = 0.30
     kitai_bukka: Decimal = 0.2
-    yosantanka_hiritsu_shisetsu: Decimal = 0.010
-    yosantanka_hiritsu_ijikanri_1: Decimal = 0.010
-    yosantanka_hiritsu_ijikanri_2: Decimal = 0.010
-    yosantanka_hiritsu_ijikanri_3: Decimal = 0.010
+    koteishisanzei_hyoujun: Decimal = 0.0
+    koteishisanzei_ritsu: Decimal = 0.0
     lg_spread: Decimal = 0.010
     mgmt_type: str = '市区町村'
     monitoring_costs_LCC: Decimal = 6.0
@@ -73,31 +84,19 @@ class Inputs(BaseModel):
     SPC_hiyou_atsukai: int = 1
     SPC_keihi: Decimal = 20.0
     SPC_fee: Decimal = 20.0
-    SPC_shihon: Decimal = 100.0
-    SPC_yobihi: Decimal = 456.0
-    zei_total: Decimal = 0.4197
-    houjinzei_ritsu: Decimal = 0.0
-    houjinjuminzei_kintou: Decimal = 0.18
-    fudousanshutokuzei_hyoujun: Decimal = 0.0
-    fudousanshutokuzei_ritsu: Decimal = 0.0
-    koteishisanzei_hyoujun: Decimal = 0.0
-    koteishisanzei_ritsu: Decimal = 0.0
-    tourokumenkyozei_hyoujun: Decimal = 0.0
-    tourokumenkyozei_ritsu: Decimal = 0.0
-    houjinjuminzei_ritsu_todouhuken: Decimal = 0.0
-    houjinjuminzei_ritsu_shikuchoson: Decimal = 0.0
-    option_01: Decimal = 0.0
-    option_02: Decimal = 0.0
-    first_end_fy: datetime.date
-    discount_rate: Decimal
-    ijikanri_years: int
-    shoukan_kaishi_jiki: int
-    target_years: int
-    Kappu_kinri: Decimal
     SPC_hiyou_total: Decimal
     SPC_hiyou_nen: Decimal
     SPC_keihi_LCC: Decimal
-    const_start_date: datetime.date
+    SPC_shihon: Decimal = 100.0
+    SPC_yobihi: Decimal = 456.0
+    target_years: int
+    tourokumenkyozei_hyoujun: Decimal = 0.0
+    tourokumenkyozei_ritsu: Decimal = 0.0
+    yosantanka_hiritsu_shisetsu: Decimal = 0.010
+    yosantanka_hiritsu_ijikanri_1: Decimal = 0.010
+    yosantanka_hiritsu_ijikanri_2: Decimal = 0.010
+    yosantanka_hiritsu_ijikanri_3: Decimal = 0.010
+    zei_total: Decimal = 0.4197
 
 
 # validate inputs
