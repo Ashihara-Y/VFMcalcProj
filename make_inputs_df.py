@@ -89,7 +89,7 @@ class Inputs(BaseModel):
     SPC_keihi_LCC: Decimal
     SPC_shihon: Decimal = 100.0
     SPC_yobihi: Decimal = 456.0
-    target_years: int
+    target_years: int = 45
     tourokumenkyozei_hyoujun: Decimal = 0.0
     tourokumenkyozei_ritsu: Decimal = 0.0
     yosantanka_hiritsu_shisetsu: Decimal = 0.010
