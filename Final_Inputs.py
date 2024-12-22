@@ -368,7 +368,7 @@ class Final_Inputs(ft.Column):
         target_years = 45
         proj_years = int(self.initial_inputs['proj_years'])
         const_years = int(self.initial_inputs['const_years'])
-        ijikanri_years = proj_years - const_years
+        #ijikanri_years = proj_years - const_years
         shoukan_kaishi_jiki = const_years + self.initial_inputs['chisai_sueoki_kikan']  + 1
 
         kijun_kinri = Decimal(self.initial_inputs['kijun_kinri'])
@@ -393,6 +393,23 @@ class Final_Inputs(ft.Column):
         kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
         kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
 
+        ijikanri_unnei = (
+            self.initial_inputs["ijikanri_unnei_1"] + 
+            self.initial_inputs["ijikanri_unnei_2"] + 
+            self.initial_inputs["ijikanri_unnei_3"])
+        ijikanri_unnei_LCC = (
+            self.initial_inputs["ijikanri_unnei_1_LCC"] + 
+            self.initial_inputs["ijikanri_unnei_2_LCC"] + 
+            self.initial_inputs["ijikanri_unnei_3_LCC"])
+        ijikanri_unnei_org = (
+            self.initial_inputs["ijikanri_unnei_1_org"] + 
+            self.initial_inputs["ijikanri_unnei_2_org"] + 
+            self.initial_inputs["ijikanri_unnei_3_org"])
+        ijikanri_unnei_org_LCC = (
+            self.initial_inputs["ijikanri_unnei_1_org_LCC"] +
+            self.initial_inputs["ijikanri_unnei_2_org_LCC"] +
+            self.initial_inputs["ijikanri_unnei_3_org_LCC"])
+        
         # seelf.initial_inputsから引用している変数は、全て「最新値」になっているか、確認済み！
         final_inputs = {
             "advisory_fee": str(self.sl13.value),
@@ -415,6 +432,10 @@ class Final_Inputs(ft.Column):
             "houjinjuminzei_ritsu_shikuchoson": str(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
             "hudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
             "hudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
+            "ijikanri_unnei": str(ijikanri_unnei),
+            "ijikanri_unnei_LCC": str(ijikanri_unnei_LCC),
+            "ijikanri_unnei_org": str(ijikanri_unnei_org),
+            "ijikanri_unnei_org_LCC": str(ijikanri_unnei_org_LCC),
             "ijikanri_unnei_1": str(self.initial_inputs["ijikanri_unnei_1"]),
             "ijikanri_unnei_1_LCC": str(self.initial_inputs["ijikanri_unnei_1_LCC"]),
             "ijikanri_unnei_1_org": str(self.initial_inputs["ijikanri_unnei_1_org"]),
@@ -428,7 +449,6 @@ class Final_Inputs(ft.Column):
             "ijikanri_unnei_3_org": str(self.initial_inputs["ijikanri_unnei_3_org"]),
             "ijikanri_unnei_3_org_LCC": str(self.initial_inputs["ijikanri_unnei_3_org_LCC"]),
             "ijikanri_unnei_years": int(self.initial_inputs["ijikanri_unnei_years"]),
-            "ijikanri_years": ijikanri_years,
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
             "kijun_kinri": str(kijun_kinri),
