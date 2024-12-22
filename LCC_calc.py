@@ -102,7 +102,7 @@ LCC_shuushi_payments.loc[const_years+1:proj_years, 'shisetsu_seibihi_kappugoukei
 LCC_shuushi_payments.loc[2:, 'shisetsu_seibihi_kappuganpon'] = Shisetsu_seibihi_kappuganpon_deci
 LCC_shuushi_payments.loc[2:, 'shisetsu_seibihi_kappukinri'] = Shisetsu_seibihi_kappukinri_deci
 Monitoring_costs_shoki = inputs_pdt.monitoring_costs_LCC + inputs_pdt.advisory_fee
-Ijikanri_unnei_LCC = inputs_pdt.ijikanri_unnei_org_LCC
+Ijikanri_unnei_LCC = Decimal(str(inputs_pdt.ijikanri_unnei_org_LCC))
 
 SPC_keihi_LCC = inputs_pdt.SPC_keihi_LCC
 LCC_shuushi_payments.loc[const_years+1:proj_years, 'ijikanri_unneihi'] = Ijikanri_unnei_LCC
