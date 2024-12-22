@@ -33,6 +33,7 @@ class Inputs(BaseModel):
     fudousanshutokuzei_ritsu: Decimal = 0.0
     growth: Decimal = 0.0
     hojo_ritsu: Decimal = 0.4
+    houjinjuminzei_kintou: Decimal = 0.18
     houjinjuminzei_ritsu_todouhuken: Decimal = 0.0
     houjinjuminzei_ritsu_shikuchoson: Decimal = 0.0
     houjinzei_ritsu: Decimal = 0.0
