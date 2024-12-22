@@ -34,7 +34,7 @@ def main(page: ft.Page):
                 ft.View(
                     "/final_inputs",
                     [
-                        ft.AppBar(title=ft.Text("入力確認")),
+                        ft.AppBar(title=ft.Text("入力確認と追加入力")),
                         Final_Inputs(),
                         #ft.ElevatedButton("計算", on_click=open_saved_list),
                     ],
@@ -47,7 +47,7 @@ def main(page: ft.Page):
                 ft.View(
                     "/results_detail",
                     [
-                        ft.AppBar(title=ft.Text("結果詳細")),
+                        ft.AppBar(title=ft.Text("算定結果詳細")),
                         Results(),
                         ft.ElevatedButton("結果リストへ戻る", on_click=open_saved_list),
                         ft.ElevatedButton("この結果をExcelに書き出す", on_click=result_to_excel),
@@ -61,7 +61,7 @@ def main(page: ft.Page):
                 ft.View(
                     "/view_saved",
                     [
-                        ft.AppBar(title=ft.Text("結果一覧")),
+                        ft.AppBar(title=ft.Text("算定結果一覧")),
                         View_saved(),
                         ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],
