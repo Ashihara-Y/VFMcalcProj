@@ -20,7 +20,7 @@ shoukan_kaishi_jiki = inputs_pdt.shoukan_kaishi_jiki
 target_years = inputs_pdt.target_years
 Kappu_kinri = inputs_pdt.Kappu_kinri
 const_years = inputs_pdt.const_years
-ijikanri_years = inputs_pdt.ijikanri_years
+ijikanri_years = inputs_pdt.ijikanri_unnei_years
 proj_years = inputs_pdt.proj_years
 
 # LCC_shuushi_payments 1
