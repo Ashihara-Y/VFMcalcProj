@@ -336,9 +336,9 @@ class Final_Inputs(ft.Column):
 
         shisetsu_seibi_paymentschedule_ikkatsu = Decimal(self.sl2.value/100)
         shisetsu_seibi_paymentschedule_kappu = Decimal(1 - shisetsu_seibi_paymentschedule_ikkatsu).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        kisai_jutou = Decimal(self.sl5.value).quantize(Decimal('0.000001'), ROUND_HALF_UP),
-        kisai_koufu = Decimal(self.sl6.value).quantize(Decimal('0.000001'), ROUND_HALF_UP),
-        hojo_ritsu = Decimal(self.sl7.value).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+        kisai_jutou = Decimal(self.sl5.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        kisai_koufu = Decimal(self.sl6.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        hojo_ritsu = Decimal(self.sl7.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         #kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
 
         kisai_jutou = str(kisai_jutou)
