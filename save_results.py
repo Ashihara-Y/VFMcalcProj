@@ -27,7 +27,7 @@ conn = duckdb.connect('VFM.duckdb')
 c = conn.cursor()
 
 db = TinyDB("fi_db.json")
-final_inputs = db.all()[0]
+# final_inputs = db.all()[0]
 # 将来的には、inputs_pdtの検証済の入力データを使うように修正する必要あり！
 inputs_pdt = make_inputs_df.io()
 
