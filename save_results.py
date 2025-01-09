@@ -20,6 +20,8 @@ conn = sqlite3.connect('VFM.db')
 c = conn.cursor()
 
 def init():
+    # ここでテーブルを作成するには、各カラムの型を指定する必要があるが、Decimalをどう格納するか？また「各カラムの型の指定」を、外部ファイルの読み込みで処理する方法はないか？
+    # それとも、DataFrameの各カラムの型から、テーブルを作成してもらえば十分か？
     t_list = ['PSC_table','PSC_pv_table', 'LCC_table', 'LCC_pv_table', 'SPC_table', 'Risk_table', 'VFM_table', 'PIRR_table',  'SPC_check_table']
     for x_df in t_list:
         c.execute('CREATE TABLE IF NOT EXISTS ' + x_df)
