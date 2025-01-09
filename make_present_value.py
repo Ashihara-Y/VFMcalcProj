@@ -6,17 +6,21 @@ from pydantic import BaseModel
 import openpyxl
 from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
+from sqlalchemy import create_engine
+
+engine = create_engine('sqlite:///VFM.db', echo=False)
 
 inputs_pdt = make_inputs_df.io()
 
-conn = duckdb.connect('VFM.duckdb')
-c = conn.cursor()
+#conn = duckdb.connect('VFM.duckdb')
+#c = conn.cursor()
 
-Risk_df = c.sql("SELECT * FROM Risk_table").df()
+Risk_df = pd.read_sql_query("SELECT * FROM Risk_table")
 Risk_adjust_gaku = Risk_df['risk_adjust_gaku'].loc[0]
 
-PSC_netpayments_df = c.sql("SELECT periods, net_payments FROM PSC_table").df()
-LCC_netpayments_df = c.sql("SELECT periods, net_payments FROM LCC_table").df()
+PSC_netpayments_df = pd.read_sql_query("SELECT periods, net_payments FROM PSC_table")
+LCC_netpayments_df = pd.read_sql_query("SELECT periods, net_payments FROM LCC_table")
+#PSC_netpayments_df = c.sql("SELECT periods, net_payments FROM LCC_table").df()
 
 PSC_netpayments_df['net_payments'] = PSC_netpayments_df['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 LCC_netpayments_df['net_payments'] = LCC_netpayments_df['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
@@ -54,7 +58,11 @@ VFM_percent = (VFM / PSC_present_value) * 100
 #print(VFM, VFM_percent)
 
 VFM_df = pd.DataFrame({'VFM': [VFM], 'VFM_percent': [VFM_percent]})
-c.execute('CREATE OR REPLACE TABLE VFM_table AS SELECT * from VFM_df')
-c.execute('CREATE OR REPLACE TABLE PSC_pv_table AS SELECT * from PSC_netpayments_df')
-c.execute('CREATE OR REPLACE TABLE LCC_pv_table AS SELECT * from LCC_netpayments_df')
-c.close()
+VFM_df.to_sql('VFM_table', engine, if_exists='replace', index=False)
+PSC_netpayments_df.to_sql('PSC_pv_table', engine, if_exists='replace', index=False)
+LCC_netpayments_df.to_sql('LCC_pv_table', engine, if_exists='replace', index=False)
+
+#c.execute('CREATE OR REPLACE TABLE VFM_table AS SELECT * from VFM_df')
+#c.execute('CREATE OR REPLACE TABLE PSC_pv_table AS SELECT * from PSC_netpayments_df')
+#c.execute('CREATE OR REPLACE TABLE LCC_pv_table AS SELECT * from LCC_netpayments_df')
+#c.close()

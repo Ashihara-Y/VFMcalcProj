@@ -6,14 +6,18 @@ from pydantic import BaseModel
 import openpyxl
 from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
+from sqlalchemy import create_engine
+
+engine = create_engine('sqlite:///VFM.db', echo=False)
+
 
 #zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt = make_inputs_df.io()
 
-conn = duckdb.connect('VFM.duckdb')
-c = conn.cursor()
+#conn = duckdb.connect('VFM.duckdb')
+#c = conn.cursor()
 
-LCC_kappuganpon_df = c.sql("SELECT periods, shisetsu_seibihi_kappuganpon FROM LCC_table").df()
+LCC_kappuganpon_df = pd.read_sql_query("SELECT periods, shisetsu_seibihi_kappuganpon FROM LCC_table")
 LCC_kappuganpon_df['shisetsu_seibihi_kappuganpon'] = LCC_kappuganpon_df['shisetsu_seibihi_kappuganpon'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 LCC_kappuganpon_df = LCC_kappuganpon_df.set_index('periods')
 LCC_kappuganpon_cumsum = LCC_kappuganpon_df.cumsum()
@@ -23,7 +27,7 @@ R = deque(LCC_kappuganpon_cumsum_ls)
 R.rotate(1)
 LCC_kappuganpon_cumsum_ls = list(R)
 
-SPC_SPCkeihi_SPCsetsuritsuhi_df = c.sql("SELECT periods, SPC_keihi, SPC_setsuritsuhi FROM SPC_table").df()#periods= [i+1 for i in range(inputs_supl_pdt.target_years.iloc[0])]
+SPC_SPCkeihi_SPCsetsuritsuhi_df = pd.read_sql_query("SELECT periods, SPC_keihi, SPC_setsuritsuhi FROM SPC_table")
 periods = SPC_SPCkeihi_SPCsetsuritsuhi_df['periods'].to_list()
 SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_keihi'] = SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_keihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_setsuritsuhi'] = SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_setsuritsuhi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
@@ -43,7 +47,8 @@ ribaraihiyou_sa_sum = kanmin_ribaraihiyou_sa['ribaraihiyou_sa'].sum()
 risk_adjust_gaku = ribaraihiyou_sa_sum + SPC_keihi_sum + SPC_seturitsuhi_sum + inputs_pdt.SPC_yobihi
 #print(risk_adjust_gaku)
 Risk_adjust_gaku_df = pd.DataFrame({'risk_adjust_gaku': [risk_adjust_gaku]})
-c.execute('CREATE OR REPLACE TABLE Risk_table AS SELECT * from Risk_adjust_gaku_df')
-c.close()
+Risk_adjust_gaku_df.to_sql('Risk_table', engine, if_exists='replace', index=False)
+#c.execute('CREATE OR REPLACE TABLE Risk_table AS SELECT * from Risk_adjust_gaku_df')
+#c.close()
 #Risk_df = c.sql("SELECT * FROM Risk_table").df()
 #print(Risk_df['risk_adjust_gaku'].loc[0])

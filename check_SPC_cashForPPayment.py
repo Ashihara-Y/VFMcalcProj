@@ -7,13 +7,18 @@ from decimal import *
 from pydantic import BaseModel
 import openpyxl
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
+from sqlalchemy import create_engine
+
+engine = create_engine('sqlite:///VFM.db', echo=False)
+
 
 inputs_pdt = make_inputs_df.io()
 
-conn = duckdb.connect('VFM.duckdb')
-c = conn.cursor()
+#conn = duckdb.connect('VFM.duckdb')
+#c = conn.cursor()
 
-SPC_df = c.sql("SELECT  periods, year, income_total, kariire_ganpon_hensai, payments_total, payments_total_full, net_income FROM SPC_table").df()
+SPC_df = pd.read_sql_query("SELECT periods, year, income_total, kariire_ganpon_hensai, payments_total, payments_total_full, net_income FROM SPC_table")
+#SPC_df = c.sql("SELECT  periods, year, income_total, kariire_ganpon_hensai, payments_total, payments_total_full, net_income FROM SPC_table").df()
 SPC_df['income_total'] = SPC_df['income_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC_df['kariire_ganpon_hensai'] = SPC_df['kariire_ganpon_hensai'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 SPC_df['payments_total'] = SPC_df['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
@@ -50,6 +55,9 @@ EIRR_percent = EIRR * 100
 #print(EIRR, EIRR_percent)
 
 PIRR_df = pd.DataFrame({'PIRR': [PIRR], 'PIRR_percent': [PIRR_percent]})
-c.execute('CREATE OR REPLACE TABLE PIRR_table AS SELECT * from PIRR_df')
-c.execute('CREATE OR REPLACE TABLE SPC_check_table AS SELECT * from SPC_df')
+PIRR_df.to_sql('PIRR_table', engine, if_exists='replace', index=False)
+SPC_df.to_sql('SPC_check_table', engine, if_exists='replace', index=False)
+
+#c.execute('CREATE OR REPLACE TABLE PIRR_table AS SELECT * from PIRR_df')
+#c.execute('CREATE OR REPLACE TABLE SPC_check_table AS SELECT * from SPC_df')
 #PIRR_df = c.sql("SELECT * FROM PIRR_table").df()

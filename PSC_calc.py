@@ -9,6 +9,10 @@ from decimal import *
 from pydantic import BaseModel
 from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
+from sqlalchemy import create_engine
+
+engine = create_engine('sqlite:///VFM.db', echo=False)
+
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt = make_inputs_df.io()
@@ -92,11 +96,12 @@ def PSC_calc():
     PSC['payments_total'] = PSC['payments_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
     PSC['net_payments'] = PSC['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 
-    conn = duckdb.connect('VFM.duckdb')
-    c = conn.cursor()
+    #conn = duckdb.connect('VFM.duckdb')
+    #c = conn.cursor()
 
     PSC_r = PSC.reset_index(drop=False)
-    c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
-    c.close()
+    PSC_r.to_sql('PSC_table', engine, if_exists='replace', index=False)
+    #c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
+    #c.close()
 #with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
 #   PSC.to_excel(writer, sheet_name='PSC_sheet20241111_007')

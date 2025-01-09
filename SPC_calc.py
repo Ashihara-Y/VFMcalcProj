@@ -9,9 +9,12 @@ from decimal import *
 from pydantic import BaseModel
 import openpyxl
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
+from sqlalchemy import create_engine
 
-conn = duckdb.connect('VFM.duckdb')
-c = conn.cursor()
+engine = create_engine('sqlite:///VFM.db', echo=False)
+
+#conn = duckdb.connect('VFM.duckdb')
+#c = conn.cursor()
 
 LCC_df = c.sql("SELECT * FROM LCC_table").df()
 LCC_df['hojokin'] = LCC_df['hojokin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
@@ -182,7 +185,8 @@ SPC['net_income'] = SPC['net_income'].map(lambda i: Decimal(i).quantize(Decimal(
 #print(SPC)
 
 SPC_r = SPC.reset_index(drop=False)
-c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
-c.close()
+SPC_r.to_sql('SPC_table', engine, if_exists='replace', index=False)
+#c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
+#c.close()
 #with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
 #   SPC.to_excel(writer, sheet_name='SPC_sheet20241111_005')

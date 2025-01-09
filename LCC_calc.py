@@ -9,6 +9,10 @@ from decimal import *
 from pydantic import BaseModel
 from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
+from sqlalchemy import create_engine
+
+engine = create_engine('sqlite:///VFM.db', echo=False)
+
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 inputs_pdt = make_inputs_df.io()
@@ -134,14 +138,6 @@ R = deque(Risoku_gaku)
 R.rotate(1)
 Risoku_gaku = list(R)
 LCC_shuushi_payments['kisai_risoku_gaku'] = Risoku_gaku
-#print(Chisai_zansai)
-#print(Risoku_gaku)
-#LCC_shuushi_payments.loc[
-#    const_years+1:target_years, 
-#    'kisai_risoku_gaku'
-#] = LCC_shuushi_payments.loc[
-#    const_years+1:target_years, 
-#    'chisai_zansai'] * (inputs_pdt.chisai_kinri)
 
 LCC_shuushi_payments['payments_total'] = (
     LCC_shuushi_payments['shisetsu_seibihi_ikkatsu'] + 
@@ -177,11 +173,12 @@ LCC['payments_total'] = LCC['payments_total'].map(lambda i: Decimal(i).quantize(
 LCC['net_payments'] = LCC['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
 #print(LCC)
 
-conn = duckdb.connect('VFM.duckdb')
-c = conn.cursor()
+#conn = duckdb.connect('VFM.duckdb')
+#c = conn.cursor()
 
 LCC_r = LCC.reset_index(drop=False)
-c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC_r')
-c.close()
+LCC_r.to_sql('LCC_table', engine, if_exists='replace', index=False)
+#c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC_r')
+#c.close()
 #with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
 #   LCC.to_excel(writer, sheet_name='LCC_sheet20241111_008')
