@@ -11,7 +11,7 @@ from flet.plotly_chart import PlotlyChart
 import Resultview
 import duckdb
 from tinydb import TinyDB
-
+from sqlalchemy import create_engine
 
 class View_saved(ft.Column):
     def __init__(self):
@@ -21,10 +21,12 @@ class View_saved(ft.Column):
         self.height = 3000
         self.resizable = True
 
-        conn = duckdb.connect('VFM.duckdb')
-        c = conn.cursor()
+        engine = create_engine('sqlite:///VFM.db', echo=False)
+        #conn = duckdb.connect('VFM.duckdb')
+        #c = conn.cursor()
         
-        res_summ_df = c.sql('select * from res_summ_df_res_table').df()
+        res_summ_df = pd.read_sql_table('res_summ_res_table', engine)
+        #res_summ_df = c.sql('select * from res_summ_df_res_table').df()
         grd_df_exp = res_summ_df.groupby('datetime').apply(lambda x: x.head(1), include_groups=False)
         grd_df_exp_ri = grd_df_exp.reset_index().drop('level_1', axis=1)
         grd_df_exp_ri_r = grd_df_exp_ri.sort_values('datetime', ascending=False)

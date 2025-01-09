@@ -11,6 +11,12 @@ from tinydb import TinyDB, Query
 import make_inputs_df
 import decimal
 from decimal import Decimal
+from sqlalchemy import create_engine
+import sqlite3
+
+
+engine = create_engine('sqlite:///VFM.db', echo=False)
+
 
 def init():
     if not os.path.exists('fi_db.json'):
@@ -23,24 +29,24 @@ def init():
         pass
 init()
 
-conn = duckdb.connect('VFM.duckdb')
-c = conn.cursor()
+#conn = duckdb.connect('VFM.duckdb')
+#c = conn.cursor()
 
-db = TinyDB("fi_db.json")
+#db = TinyDB("fi_db.json")
 # final_inputs = db.all()[0]
 # 将来的には、inputs_pdtの検証済の入力データを使うように修正する必要あり！
 inputs_pdt = make_inputs_df.io()
 
 
-PSC_df = c.sql('SELECT * FROM PSC_table').df()
-PSC_pv_df = c.sql('SELECT * FROM PSC_pv_table').df()
-LCC_df = c.sql('SELECT * FROM LCC_table').df()
-LCC_pv_df = c.sql('SELECT * FROM LCC_pv_table').df()
-SPC_df = c.sql('SELECT * FROM SPC_table').df()
-SPC_check_df = c.sql('SELECT * FROM SPC_check_table').df()
-Risk_df = c.sql('SELECT * FROM Risk_table').df()
-VFM_df = c.sql('SELECT * FROM VFM_table').df()
-PIRR_df = c.sql('SELECT * FROM PIRR_table').df()
+PSC_df = pd.read_sql_query("SELECT * FROM PSC_table")
+PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table")
+LCC_df = pd.read_sql_query("SELECT * FROM LCC_table")
+LCC_pv_df = pd.read_sql_query("SELECT * FROM LCC_pv_table")
+SPC_df = pd.read_sql_query("SELECT * FROM SPC_table")
+SPC_check_df = pd.read_sql_query("SELECT * FROM SPC_check_table")
+Risk_df = pd.read_sql_query("SELECT * FROM Risk_table")
+VFM_df = pd.read_sql_query("SELECT * FROM VFM_table")
+PIRR_df = pd.read_sql_query("SELECT * FROM PIRR_table")
 
 # make summary
 PSC_pv_summary_org = PSC_pv_df[['present_value']].sum()
@@ -138,18 +144,38 @@ for i in df_list:
 #    else:
 #        pass
 
-def save_ddb(x_df):
-    c.sql('CREATE TABLE IF NOT EXISTS ' + x_df[1] + '_res_table AS SELECT * FROM ' + x_df[1])
-    new_df_name = x_df[1] + '_added'
-    new_df_name = c.sql("SELECT * FROM " + x_df[1] + "_res_table").df()
-    if new_df_name['datetime'].iloc[0] != x_df[0]['datetime'].iloc[0]: 
-        c.sql('INSERT INTO ' + x_df[1] + '_res_table SELECT * FROM ' + x_df[1])   
+# df_listの要素であるDFそれぞれに、２つのIDEAと日時が追加されている。
+# 上記のDFを、「結果蓄積用テーブル」に追加していく。その最に、「既に追加済の結果」を再度追加することは避ける必要がある。
+# 他方で、『「既に追加済の結果」を再度追加する』事態は、どこで発生するのか？
+# 「PSC等の直近の計算結果テーブル」には、それぞれの直近の計算結果１つだけが保存されている。
+# したがって、「PSC等の直近の計算結果テーブル」から保存されている結果を抽出して、「結果蓄積用テーブル」への書き込みが
+# 1回だけ実施されるなら、上記の問題は発生しないのでは？
+# 結果蓄積に保存したら、直近の計算結果は消去してしまうか？これが残っていないと、どこで問題が生じるか？
+# 丁寧にやるなら、結果蓄積テーブルのDatetime列をリストに抽出して、その中に、これから書き込みDFのDatetimeが
+# 含まれていたら、書き込みを中止するか？
+# まず存在しなかれば当該の結果蓄積テーブルを空で作成する。存在すればスルーのはず。
+# 空ならばDatetimeは要素なしになるが、存在していればDatetimeには１つ以上の要素がある。
+# Datetimeリストに要素がないか、要素はあっても直近結果のDatetimeと同じ要素がなければ、直近結果を結果蓄積に書き込む。
+# Datetimeリストに、直近結果のDatetimeと同じ要素があれば、（直近結果は保存済なので）書き込みはしない。
+
+conn = sqlite3.connect('VFM.db')
+c = conn.cursor()
+
+def save_db(x_df):
+    c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
+    df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
+    list_dtime = df_dtime['datetime'].to_list()
+    if len(list_dtime)==0 or x_df[0]['datetime'].iloc[0] not in list_dtime: 
+        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
     else:
         pass
-
+    #    ('CREATE TABLE IF NOT EXISTS ' + x_df[1] + '_res_table AS SELECT * FROM ' + x_df[1])
+    #new_df_name = x_df[1] + '_added'
+    #new_df_name = pd.read_sql_query("SELECT * FROM " + x_df[1] + "_res_table")
+    
 #for i in df_list:
 #    for j in df_name_list:
 #        save_ddb(i,j)    #ft.Page.go(self, route="/view_saved")
 for j in df_name_list:
-    save_ddb(j)
+    save_db(j)
         
