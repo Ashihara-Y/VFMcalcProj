@@ -16,9 +16,13 @@ import sqlite3
 
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
-
+conn = sqlite3.connect('VFM.db')
+c = conn.cursor()
 
 def init():
+    t_list = ['PSC_table','PSC_pv_table', 'LCC_table', 'LCC_pv_table', 'SPC_table', 'Risk_table', 'VFM_table', 'PIRR_table',  'SPC_check_table']
+    for x_df in t_list:
+        c.execute('CREATE TABLE IF NOT EXISTS ' + x_df)
     if not os.path.exists('fi_db.json'):
         db = TinyDB("fi_db.json")
         db.insert({'mgmt_type': '','proj_ctgry': '','proj_type': '','const_years': '','proj_years': '','kijun_kinri': '','kitai_bukka': '','lg_spread': ''})
@@ -157,9 +161,6 @@ for i in df_list:
 # 空ならばDatetimeは要素なしになるが、存在していればDatetimeには１つ以上の要素がある。
 # Datetimeリストに要素がないか、要素はあっても直近結果のDatetimeと同じ要素がなければ、直近結果を結果蓄積に書き込む。
 # Datetimeリストに、直近結果のDatetimeと同じ要素があれば、（直近結果は保存済なので）書き込みはしない。
-
-conn = sqlite3.connect('VFM.db')
-c = conn.cursor()
 
 def save_db(x_df):
     c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
