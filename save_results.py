@@ -14,42 +14,11 @@ from decimal import Decimal
 from sqlalchemy import create_engine
 import sqlite3
 
-<<<<<<< HEAD
 class Save_results(self):
     def __init__(self    
         engine = create_engine('sqlite:///VFM.db', echo=False)
         conn = sqlite3.connect('VFM.db')
         c = conn.cursor()
-=======
-
-engine = create_engine('sqlite:///VFM.db', echo=False)
-conn = sqlite3.connect('VFM.db')
-c = conn.cursor()
-
-def init():
-    # ここでテーブルを作成するには、各カラムの型を指定する必要があるが、Decimalをどう格納するか？また「各カラムの型の指定」を、外部ファイルの読み込みで処理する方法はないか？
-    # それとも、DataFrameの各カラムの型から、テーブルを作成してもらえば十分か？
-    t_list = ['PSC_table','PSC_pv_table', 'LCC_table', 'LCC_pv_table', 'SPC_table', 'Risk_table', 'VFM_table', 'PIRR_table',  'SPC_check_table']
-    for x_df in t_list:
-        c.execute('CREATE TABLE IF NOT EXISTS ' + x_df)
-    if not os.path.exists('fi_db.json'):
-        db = TinyDB("fi_db.json")
-        db.insert({'mgmt_type': '','proj_ctgry': '','proj_type': '','const_years': '','proj_years': '','kijun_kinri': '','kitai_bukka': '','lg_spread': ''})
-    elif os.path.exists('fi_db.json') and os.path.getsize('fi_db.json') == 0:
-        db = TinyDB("fi_db.json")
-        db.insert({'mgmt_type': '','proj_ctgry': '','proj_type': '','const_years': '','proj_years': '','kijun_kinri': '','kitai_bukka': '','lg_spread': ''})
-    else:
-        pass
-init()
-
-#conn = duckdb.connect('VFM.duckdb')
-#c = conn.cursor()
-
-#db = TinyDB("fi_db.json")
-# final_inputs = db.all()[0]
-# 将来的には、inputs_pdtの検証済の入力データを使うように修正する必要あり！
-inputs_pdt = make_inputs_df.io()
->>>>>>> 0b7a77343f1edf7d114e830e5ff10795b8e7bebb
 
 
         t_list = ['PSC_table','PSC_pv_table', 'LCC_table', 'LCC_pv_table', 'SPC_table', 'Risk_table', 'VFM_table', 'PIRR_table',  'SPC_check_table']
