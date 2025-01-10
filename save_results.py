@@ -26,7 +26,7 @@ class Save_results():
 
         self.inputs_pdt = make_inputs_df.io()
 
-    def save_results(self):
+    def make_df(self):
         self.PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", self.engine)
         self.PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", self.engine)
         self.LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", self.engine)
@@ -53,7 +53,7 @@ class Save_results():
         SPC_check_mod = str('False' not in self.SPC_check_summary_org)
         self.SPC_check_res = payment_check(SPC_check_mod)
 
-    def make_summary(self):
+    def make_summary_add_ids(self):
         VFM_calc_summary_df = pd.DataFrame(columns=['VFM_percent','PSC_present_value','LCC_present_value','PIRR','SPC_payment_cash'], index=['0'])
 
         #VFM_calc_summary_df['VFM'] = VFM_summary_df['VFM'].iloc[0]
