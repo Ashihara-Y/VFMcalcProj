@@ -17,7 +17,9 @@ def VFM_calc():
     risk_adjustment
     make_present_value
     check_SPC_cashForPPayment
-    sr
+    sr.Save_results.make_df()
+    sr.Save_results.make_summary_add_ids()
+    sr.Save_results.save_db()
     #view_saved.View_saved()
     
 
