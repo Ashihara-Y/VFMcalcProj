@@ -14,130 +14,124 @@ from decimal import Decimal
 from sqlalchemy import create_engine
 import sqlite3
 
-
-engine = create_engine('sqlite:///VFM.db', echo=False)
-conn = sqlite3.connect('VFM.db')
-c = conn.cursor()
-
-def init():
-    t_list = ['PSC_table','PSC_pv_table', 'LCC_table', 'LCC_pv_table', 'SPC_table', 'Risk_table', 'VFM_table', 'PIRR_table',  'SPC_check_table']
-    for x_df in t_list:
-        c.execute('CREATE TABLE IF NOT EXISTS ' + x_df)
-    if not os.path.exists('fi_db.json'):
-        db = TinyDB("fi_db.json")
-        db.insert({'mgmt_type': '','proj_ctgry': '','proj_type': '','const_years': '','proj_years': '','kijun_kinri': '','kitai_bukka': '','lg_spread': ''})
-    elif os.path.exists('fi_db.json') and os.path.getsize('fi_db.json') == 0:
-        db = TinyDB("fi_db.json")
-        db.insert({'mgmt_type': '','proj_ctgry': '','proj_type': '','const_years': '','proj_years': '','kijun_kinri': '','kitai_bukka': '','lg_spread': ''})
-    else:
-        pass
-init()
-
-#conn = duckdb.connect('VFM.duckdb')
-#c = conn.cursor()
-
-#db = TinyDB("fi_db.json")
-# final_inputs = db.all()[0]
-# 将来的には、inputs_pdtの検証済の入力データを使うように修正する必要あり！
-inputs_pdt = make_inputs_df.io()
+class Save_results(self):
+    def __init__(self    
+        engine = create_engine('sqlite:///VFM.db', echo=False)
+        conn = sqlite3.connect('VFM.db')
+        c = conn.cursor()
 
 
-PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)
-PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", engine)
-LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", engine)
-LCC_pv_df = pd.read_sql_query("SELECT * FROM LCC_pv_table", engine)
-SPC_df = pd.read_sql_query("SELECT * FROM SPC_table", engine)
-SPC_check_df = pd.read_sql_query("SELECT * FROM SPC_check_table", engine)
-Risk_df = pd.read_sql_query("SELECT * FROM Risk_table", engine)
-VFM_df = pd.read_sql_query("SELECT * FROM VFM_table", engine)
-PIRR_df = pd.read_sql_query("SELECT * FROM PIRR_table", engine)
+        t_list = ['PSC_table','PSC_pv_table', 'LCC_table', 'LCC_pv_table', 'SPC_table', 'Risk_table', 'VFM_table', 'PIRR_table',  'SPC_check_table']
+        for x_t in t_list:
+            c.execute('CREATE TABLE IF NOT EXISTS ' + x_t)
+        if not os.path.exists('fi_db.json'):
+            db = TinyDB("fi_db.json")
+            db.insert({'mgmt_type': '','proj_ctgry': '','proj_type': '','const_years': '','proj_years': '','kijun_kinri': '','kitai_bukka': '','lg_spread': ''})
+        elif os.path.exists('fi_db.json') and os.path.getsize('fi_db.json') == 0:
+            db = TinyDB("fi_db.json")
+            db.insert({'mgmt_type': '','proj_ctgry': '','proj_type': '','const_years': '','proj_years': '','kijun_kinri': '','kitai_bukka': '','lg_spread': ''})
+        else:
+            pass
 
-# make summary
-PSC_pv_summary_org = PSC_pv_df[['present_value']].sum()
-LCC_pv_summary_org = LCC_pv_df[['present_value']].sum()
-SPC_check_summary_org = SPC_check_df.loc[int(inputs_pdt.const_years)+1:int(inputs_pdt.proj_years), 'P_payment_check'].to_list()
-VFM_summary_df = VFM_df[['VFM','VFM_percent']]
-PIRR_summary_df = PIRR_df[['PIRR_percent']]
+        inputs_pdt = make_inputs_df.io()
 
-def payment_check(bool):
-    if bool == 'True':
-        return "返済資金は十分"
-    elif bool == 'False':
-        return "返済資金が不足"
+    def save_results(self):
+        PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)
+        PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", engine)
+        LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", engine)
+        LCC_pv_df = pd.read_sql_query("SELECT * FROM LCC_pv_table", engine)
+        SPC_df = pd.read_sql_query("SELECT * FROM SPC_table", engine)
+        SPC_check_df = pd.read_sql_query("SELECT * FROM SPC_check_table", engine)
+        Risk_df = pd.read_sql_query("SELECT * FROM Risk_table", engine)
+        VFM_df = pd.read_sql_query("SELECT * FROM VFM_table", engine)
+        PIRR_df = pd.read_sql_query("SELECT * FROM PIRR_table", engine)
 
-SPC_check_mod = str('False' not in SPC_check_summary_org)
-SPC_check_res = payment_check(SPC_check_mod)
+        # make summary
+        PSC_pv_summary_org = PSC_pv_df[['present_value']].sum()
+        LCC_pv_summary_org = LCC_pv_df[['present_value']].sum()
+        SPC_check_summary_org = SPC_check_df.loc[int(inputs_pdt.const_years)+1:int(inputs_pdt.proj_years), 'P_payment_check'].to_list()
+        VFM_summary_df = VFM_df[['VFM','VFM_percent']]
+        PIRR_summary_df = PIRR_df[['PIRR_percent']]
 
-VFM_calc_summary_df = pd.DataFrame(columns=['VFM_percent','PSC_present_value','LCC_present_value','PIRR','SPC_payment_cash'], index=['0'])
+    def payment_check(bool):
+        if bool == 'True':
+            return "返済資金は十分"
+        elif bool == 'False':
+            return "返済資金が不足"
 
-#VFM_calc_summary_df['VFM'] = VFM_summary_df['VFM'].iloc[0]
-VFM_calc_summary_df['VFM_percent'] = VFM_summary_df['VFM_percent'].iloc[0]
-VFM_calc_summary_df['PSC_present_value'] = PSC_pv_summary_org.iloc[0]
-VFM_calc_summary_df['LCC_present_value'] = LCC_pv_summary_org.iloc[0]
-VFM_calc_summary_df['PIRR'] = PIRR_summary_df['PIRR_percent'].iloc[0]
-VFM_calc_summary_df['SPC_payment_cash'] = SPC_check_res
+        SPC_check_mod = str('False' not in SPC_check_summary_org)
+        SPC_check_res = payment_check(SPC_check_mod)
 
-kijun_kinri = Decimal(str(inputs_pdt.kijun_kinri)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-kitai_bukka = Decimal(str(inputs_pdt.kitai_bukka)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-lg_spread = Decimal(str(inputs_pdt.lg_spread)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+    def make_summary(self):
+        VFM_calc_summary_df = pd.DataFrame(columns=['VFM_percent','PSC_present_value','LCC_present_value','PIRR','SPC_payment_cash'], index=['0'])
 
-#discount_rate = Decimal((kijun_kinri + kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-kariire_kinri = Decimal((kijun_kinri + lg_spread)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+        #VFM_calc_summary_df['VFM'] = VFM_summary_df['VFM'].iloc[0]
+        VFM_calc_summary_df['VFM_percent'] = VFM_summary_df['VFM_percent'].iloc[0]
+        VFM_calc_summary_df['PSC_present_value'] = PSC_pv_summary_org.iloc[0]
+        VFM_calc_summary_df['LCC_present_value'] = LCC_pv_summary_org.iloc[0]
+        VFM_calc_summary_df['PIRR'] = PIRR_summary_df['PIRR_percent'].iloc[0]
+        VFM_calc_summary_df['SPC_payment_cash'] = SPC_check_res
 
-final_inputs_dic = {
-    'mgmt_type': inputs_pdt.mgmt_type,
-    'proj_ctgry': inputs_pdt.proj_ctgry,
-    'proj_type': inputs_pdt.proj_type,
-    'const_years': inputs_pdt.const_years,
-    'proj_years': inputs_pdt.proj_years,
-    'discount_rate': inputs_pdt.discount_rate,
-    'kariire_kinri': kariire_kinri,
+        kijun_kinri = Decimal(str(inputs_pdt.kijun_kinri)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+        kitai_bukka = Decimal(str(inputs_pdt.kitai_bukka)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+        lg_spread = Decimal(str(inputs_pdt.lg_spread)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+
+        #discount_rate = Decimal((kijun_kinri + kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+        kariire_kinri = Decimal((kijun_kinri + lg_spread)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+
+        final_inputs_dic = {
+            'mgmt_type': inputs_pdt.mgmt_type,
+            'proj_ctgry': inputs_pdt.proj_ctgry,
+            'proj_type': inputs_pdt.proj_type,
+            'const_years': inputs_pdt.const_years,
+            'proj_years': inputs_pdt.proj_years,
+            'discount_rate': inputs_pdt.discount_rate,
+            'kariire_kinri': kariire_kinri,
 }
 
-final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])
-#print(inputs_pdt.kijun_kinri, inputs_pdt.lg_spread)
-res_summ_df = VFM_calc_summary_df.join(final_inputs_df)
+        final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])
+        #print(inputs_pdt.kijun_kinri, inputs_pdt.lg_spread)
+        res_summ_df = VFM_calc_summary_df.join(final_inputs_df)
 
+        user_id = ULID.from_datetime(datetime.datetime.now())
+        calc_id = timeflake.random()
+        dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
 
-user_id = ULID.from_datetime(datetime.datetime.now())
-calc_id = timeflake.random()
-dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
+    def addID(x_df):
+        x_df['datetime'] = str(dtime)
+        x_df['user_id'] = str(user_id)
+        x_df['calc_id'] = str(calc_id)
 
-df_list = [
-    PSC_df,
-    PSC_pv_df,
-    LCC_df,
-    LCC_pv_df,
-    SPC_df,
-    SPC_check_df,
-    Risk_df,
-    VFM_df,
-    PIRR_df, 
-    res_summ_df
-    ]
-#df_name_list = ['PSC_df','PSC_pv_df','LCC_df','LCC_pv_df','SPC_df','SPC_check_df','Risk_df','VFM_df','PIRR_df','result_summary_df']
-df_name_list = [
-    (PSC_df,'PSC_df'),
-    (PSC_pv_df,'PSC_pv_df'),
-    (LCC_df,'LCC_df'),
-    (LCC_pv_df,'LCC_pv_df'),
-    (SPC_df,'SPC_df'),
-    (SPC_check_df,'SPC_check_df'),
-    (Risk_df,'Risk_df'),
-    (VFM_df,'VFM_df'),
-    (PIRR_df,'PIRR_df'),
-    (res_summ_df,'res_summ_df')
-    ]
+        return x_df
 
-def addID(x_df):
-    x_df['datetime'] = str(dtime)
-    x_df['user_id'] = str(user_id)
-    x_df['calc_id'] = str(calc_id)
+        df_list = [
+            PSC_df,
+            PSC_pv_df,
+            LCC_df,
+            LCC_pv_df,
+            SPC_df,
+            SPC_check_df,
+            Risk_df,
+            VFM_df,
+            PIRR_df, 
+            res_summ_df
+        ]
+        #df_name_list = ['PSC_df','PSC_pv_df','LCC_df','LCC_pv_df','SPC_df','SPC_check_df','Risk_df','VFM_df','PIRR_df','result_summary_df']
+        df_name_list = [
+            (PSC_df,'PSC_df'),
+            (PSC_pv_df,'PSC_pv_df'),
+            (LCC_df,'LCC_df'),
+            (LCC_pv_df,'LCC_pv_df'),
+            (SPC_df,'SPC_df'),
+            (SPC_check_df,'SPC_check_df'),
+            (Risk_df,'Risk_df'),
+            (VFM_df,'VFM_df'),
+            (PIRR_df,'PIRR_df'),
+            (res_summ_df,'res_summ_df')
+        ]
 
-    return x_df
-
-for i in df_list:
-    addID(i)
+        for i in df_list:
+            addID(i)
 
 #def save_ddb(x_df, name_x_df):
 #    c.sql('CREATE TABLE IF NOT EXISTS ' + name_x_df + '_results_table AS SELECT * FROM ' + name_x_df)
@@ -162,14 +156,14 @@ for i in df_list:
 # Datetimeリストに要素がないか、要素はあっても直近結果のDatetimeと同じ要素がなければ、直近結果を結果蓄積に書き込む。
 # Datetimeリストに、直近結果のDatetimeと同じ要素があれば、（直近結果は保存済なので）書き込みはしない。
 
-def save_db(x_df):
-    c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
-    df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
-    list_dtime = df_dtime['datetime'].to_list()
-    if len(list_dtime)==0 or x_df[0]['datetime'].iloc[0] not in list_dtime: 
-        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
-    else:
-        pass
+    def save_db(x_df):
+        c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
+        df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
+        list_dtime = df_dtime['datetime'].to_list()
+        if len(list_dtime)==0 or x_df[0]['datetime'].iloc[0] not in list_dtime: 
+            x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
+        else:
+            pass
     #    ('CREATE TABLE IF NOT EXISTS ' + x_df[1] + '_res_table AS SELECT * FROM ' + x_df[1])
     #new_df_name = x_df[1] + '_added'
     #new_df_name = pd.read_sql_query("SELECT * FROM " + x_df[1] + "_res_table")
@@ -177,6 +171,6 @@ def save_db(x_df):
 #for i in df_list:
 #    for j in df_name_list:
 #        save_ddb(i,j)    #ft.Page.go(self, route="/view_saved")
-for j in df_name_list:
-    save_db(j)
+        for j in df_name_list:
+            save_db(j)
         
