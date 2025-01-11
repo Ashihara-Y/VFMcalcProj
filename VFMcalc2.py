@@ -14,9 +14,9 @@ def VFM_calc():
     PSC_calc.PSC_calc()
     LCC_calc.LCC_calc()
     SPC_calc.SPC_calc()
-    risk_adjustment
-    make_present_value
-    check_SPC_cashForPPayment
+    risk_adjustment.risk_adj()
+    make_present_value.make_pv()
+    check_SPC_cashForPPayment.check_cash()
     sr.Save_results.make_df()
     sr.Save_results.make_summary_add_ids()
     sr.Save_results.save_db()

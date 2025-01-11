@@ -62,7 +62,3 @@ def make_pv():
     PSC_netpayments_df.to_sql('PSC_pv_table', engine, if_exists='replace', index=False, dtype={'present_value': DECIMAL, 'discount_factor': DECIMAL, 'net_payments': DECIMAL})
     LCC_netpayments_df.to_sql('LCC_pv_table', engine, if_exists='replace', index=False, dtype={'present_value': DECIMAL, 'discount_factor': DECIMAL, 'net_payments': DECIMAL})
 
-    #c.execute('CREATE OR REPLACE TABLE VFM_table AS SELECT * from VFM_df')
-    #c.execute('CREATE OR REPLACE TABLE PSC_pv_table AS SELECT * from PSC_netpayments_df')
-    #c.execute('CREATE OR REPLACE TABLE LCC_pv_table AS SELECT * from LCC_netpayments_df')
-    #c.close()
