@@ -9,7 +9,7 @@ from decimal import *
 from pydantic import BaseModel
 from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
-from sqlalchemy import create_engine, Decimal
+from sqlalchemy import create_engine, DECIMAL
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
 
@@ -101,20 +101,20 @@ def PSC_calc():
 
     PSC_r = PSC.reset_index(drop=False)
     PSC_r.to_sql('PSC_table', engine, if_exists='replace', index=False, dtype={
-        'hojokin' : Decimal,
-        'kouhukin' : Decimal,
-        'kisai_gaku' : Decimal,
-        'riyou_ryoukin' : Decimal,
-        'income_total' : Decimal,
-        'shisetsu_seibihi' : Decimal,
-        'ijikanri_unneihi' : Decimal,
-        'monitoring_costs' : Decimal,
-        'chisai_zansai' : Decimal,
-        'kisai_shoukan_gaku' : Decimal,
-        'kisai_shoukansumi_gaku' : Decimal,
-        'kisai_risoku_gaku' : Decimal,
-        'payments_total' : Decimal,
-        'net_payments' : Decimal,
+        'hojokin' : DECIMAL,
+        'kouhukin' : DECIMAL,
+        'kisai_gaku' : DECIMAL,
+        'riyou_ryoukin' : DECIMAL,
+        'income_total' : DECIMAL,
+        'shisetsu_seibihi' : DECIMAL,
+        'ijikanri_unneihi' : DECIMAL,
+        'monitoring_costs' : DECIMAL,
+        'chisai_zansai' : DECIMAL,
+        'kisai_shoukan_gaku' : DECIMAL,
+        'kisai_shoukansumi_gaku' : DECIMAL,
+        'kisai_risoku_gaku' : DECIMAL,
+        'payments_total' : DECIMAL,
+        'net_payments' : DECIMAL,
     })
     # c.sql("SELECT * FROM LCC_table").df()
         #c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')

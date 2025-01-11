@@ -9,7 +9,7 @@ from decimal import *
 from pydantic import BaseModel
 import openpyxl
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
-from sqlalchemy import create_engine, Decimal
+from sqlalchemy import create_engine, DECIMAL
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
@@ -186,23 +186,23 @@ def SPC_calc():
 
     SPC_r = SPC.reset_index(drop=False)
     SPC_r.to_sql('SPC_table', engine, if_exists='replace', index=False, dtype={
-        'shisetsu_seibihi_taika_ikkatsu' : Decimal,
-        'shisetsu_seibihi_taika_kappuganpon' : Decimal,
-        'shisetsu_seibihi_taika_kappukinri' : Decimal,
-        'ijikanri_unneihi_taika' : Decimal,
-        'riyou_ryoukin' : Decimal,
-        'SPC_hiyou_taika' : Decimal,
-        'income_total' : Decimal,
-        'shisetsu_seibihi' : Decimal,
-        'ijikanri_unneihi' : Decimal,
-        'kariire_ganpon_hensai' : Decimal,
-        'shiharai_risoku' : Decimal,
-        'SPC_keihi' : Decimal,
-        'SPC_setsuritsuhi' : Decimal,
-        'houjinzei_etc' : Decimal,
-        'payments_total' : Decimal,
-        'payments_total_full' : Decimal,
-        'net_income' : Decimal,
+        'shisetsu_seibihi_taika_ikkatsu' : DECIMAL,
+        'shisetsu_seibihi_taika_kappuganpon' : DECIMAL,
+        'shisetsu_seibihi_taika_kappukinri' : DECIMAL,
+        'ijikanri_unneihi_taika' : DECIMAL,
+        'riyou_ryoukin' : DECIMAL,
+        'SPC_hiyou_taika' : DECIMAL,
+        'income_total' : DECIMAL,
+        'shisetsu_seibihi' : DECIMAL,
+        'ijikanri_unneihi' : DECIMAL,
+        'kariire_ganpon_hensai' : DECIMAL,
+        'shiharai_risoku' : DECIMAL,
+        'SPC_keihi' : DECIMAL,
+        'SPC_setsuritsuhi' : DECIMAL,
+        'houjinzei_etc' : DECIMAL,
+        'payments_total' : DECIMAL,
+        'payments_total_full' : DECIMAL,
+        'net_income' : DECIMAL,
     })
     #c.execute('CREATE OR REPLACE TABLE SPC_table AS SELECT * FROM SPC_r')
     #c.close()

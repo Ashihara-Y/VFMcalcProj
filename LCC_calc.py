@@ -9,7 +9,7 @@ from decimal import *
 from pydantic import BaseModel
 from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
-from sqlalchemy import create_engine, Decimal
+from sqlalchemy import create_engine, DECIMAL
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
 
@@ -178,24 +178,24 @@ def LCC_calc():
 
     LCC_r = LCC.reset_index(drop=False)
     LCC_r.to_sql('LCC_table', engine, if_exists='replace', index=False, dtype={ 
-        'net_payments': Decimal, 
-        'hojokin': Decimal, 
-        'kouhukin': Decimal, 
-        'kisai_gaku': Decimal, 
-        'zeishu': Decimal,
-        'income_total' : Decimal,
-        'shisetsu_seibihi_ikkatsu'  : Decimal,
-        'shisetsu_seibihi_kappugoukei' : Decimal,
-        'shisetsu_seibihi_kappuganpon' : Decimal,
-        'shisetsu_seibihi_kappukinri' : Decimal,
-        'ijikanri_unneihi' : Decimal,
-        'monitoring_costs' : Decimal,
-        'SPC_keihi' : Decimal,
-        'chisai_zansai' : Decimal,
-        'kisai_shoukan_gaku' : Decimal,
-        'kisai_shoukansumi_gaku' : Decimal,
-        'kisai_risoku_gaku' : Decimal,
-        'payments_total' : Decimal,
+        'net_payments': DECIMAL, 
+        'hojokin': DECIMAL, 
+        'kouhukin': DECIMAL, 
+        'kisai_gaku': DECIMAL, 
+        'zeishu': DECIMAL,
+        'income_total' : DECIMAL,
+        'shisetsu_seibihi_ikkatsu'  : DECIMAL,
+        'shisetsu_seibihi_kappugoukei' : DECIMAL,
+        'shisetsu_seibihi_kappuganpon' : DECIMAL,
+        'shisetsu_seibihi_kappukinri' : DECIMAL,
+        'ijikanri_unneihi' : DECIMAL,
+        'monitoring_costs' : DECIMAL,
+        'SPC_keihi' : DECIMAL,
+        'chisai_zansai' : DECIMAL,
+        'kisai_shoukan_gaku' : DECIMAL,
+        'kisai_shoukansumi_gaku' : DECIMAL,
+        'kisai_risoku_gaku' : DECIMAL,
+        'payments_total' : DECIMAL,
         }
     )
     #c.execute('CREATE OR REPLACE TABLE LCC_table AS SELECT * FROM LCC_r')
