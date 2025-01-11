@@ -9,7 +9,7 @@ from decimal import *
 from pydantic import BaseModel
 from collections import deque
 import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Decimal
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
 
@@ -100,8 +100,24 @@ def PSC_calc():
     #c = conn.cursor()
 
     PSC_r = PSC.reset_index(drop=False)
-    PSC_r.to_sql('PSC_table', engine, if_exists='replace', index=False)
-    #c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
-    #c.close()
-#with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
-#   PSC.to_excel(writer, sheet_name='PSC_sheet20241111_007')
+    PSC_r.to_sql('PSC_table', engine, if_exists='replace', index=False, dtype={
+        'hojokin' : Decimal,
+        'kouhukin' : Decimal,
+        'kisai_gaku' : Decimal,
+        'riyou_ryoukin' : Decimal,
+        'income_total' : Decimal,
+        'shisetsu_seibihi' : Decimal,
+        'ijikanri_unneihi' : Decimal,
+        'monitoring_costs' : Decimal,
+        'chisai_zansai' : Decimal,
+        'kisai_shoukan_gaku' : Decimal,
+        'kisai_shoukansumi_gaku' : Decimal,
+        'kisai_risoku_gaku' : Decimal,
+        'payments_total' : Decimal,
+        'net_payments' : Decimal,
+    })
+    # c.sql("SELECT * FROM LCC_table").df()
+        #c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
+        #c.close()
+    #with pd.ExcelWriter('VFM_test.xlsx', engine='openpyxl', mode='a') as writer:
+    #   PSC.to_excel(writer, sheet_name='PSC_sheet20241111_007')
