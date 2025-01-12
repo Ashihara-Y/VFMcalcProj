@@ -117,7 +117,8 @@ def make_df_addID_saveDB():
     for i in df_list:
             addID(i)
 
-#    return df_name_list
+    #for x_df in df_name_list:
+    #    c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
     
 
 # df_listの要素であるDFそれぞれに、２つのIDと日時が追加されている。
@@ -131,7 +132,7 @@ def make_df_addID_saveDB():
 
     def save_db(df_name_list):
         for x_df in df_name_list:
-            c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
+            #c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
             df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
             list_dtime = df_dtime['datetime'].to_list()
             if len(list_dtime)==0 or x_df[0]['datetime'].iloc[0] not in list_dtime: 
@@ -143,4 +144,4 @@ def make_df_addID_saveDB():
 
 
 if __name__ == "__main__":
-    make_df()
+    make_df_addID_saveDB()
