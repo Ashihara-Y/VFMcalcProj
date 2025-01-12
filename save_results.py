@@ -81,7 +81,7 @@ def make_df():
     #print(inputs_pdt.kijun_kinri, inputs_pdt.lg_spread)
     res_summ_df = VFM_calc_summary_df.join(final_inputs_df)
 
-    def addID(self,x_df):
+    def addID(x_df):
         x_df['datetime'] = str(dtime)
         x_df['user_id'] = str(user_id)
         x_df['calc_id'] = str(calc_id)
