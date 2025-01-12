@@ -20,7 +20,7 @@ def VFM_calc():
     #Save_results()
     sr.make_df()
     #sr.make_summary_add_ids()
-    #sr.save_db()
+    sr.save_db()
     #view_saved.View_saved()
     
 
