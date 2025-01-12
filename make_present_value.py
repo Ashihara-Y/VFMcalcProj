@@ -15,11 +15,11 @@ inputs_pdt = make_inputs_df.io()
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()
 def make_pv():
-    Risk_df = pd.read_sql_query("SELECT * FROM Risk_table")
+    Risk_df = pd.read_sql_query("SELECT * FROM Risk_table", engine)
     Risk_adjust_gaku = Risk_df['risk_adjust_gaku'].loc[0]
 
-    PSC_netpayments_df = pd.read_sql_query("SELECT periods, net_payments FROM PSC_table")
-    LCC_netpayments_df = pd.read_sql_query("SELECT periods, net_payments FROM LCC_table")
+    PSC_netpayments_df = pd.read_sql_query("SELECT periods, net_payments FROM PSC_table", engine)
+    LCC_netpayments_df = pd.read_sql_query("SELECT periods, net_payments FROM LCC_table", engine)
     #PSC_netpayments_df = c.sql("SELECT periods, net_payments FROM LCC_table").df()
 
     PSC_netpayments_df['net_payments'] = PSC_netpayments_df['net_payments'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))

@@ -16,7 +16,7 @@ inputs_pdt = make_inputs_df.io()
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()
 def check_cash():
-    SPC_df = pd.read_sql_query("SELECT periods, year, income_total, kariire_ganpon_hensai, payments_total, payments_total_full, net_income FROM SPC_table")
+    SPC_df = pd.read_sql_query("SELECT periods, year, income_total, kariire_ganpon_hensai, payments_total, payments_total_full, net_income FROM SPC_table", engine)
     #SPC_df = c.sql("SELECT  periods, year, income_total, kariire_ganpon_hensai, payments_total, payments_total_full, net_income FROM SPC_table").df()
     SPC_df['income_total'] = SPC_df['income_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
     SPC_df['kariire_ganpon_hensai'] = SPC_df['kariire_ganpon_hensai'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
