@@ -14,110 +14,112 @@ from decimal import Decimal
 from sqlalchemy import create_engine
 import sqlite3
 
-class Save_results():
-    def __init__(self):   
-        self.engine = create_engine('sqlite:///VFM.db', echo=False)
-        self.conn = sqlite3.connect('VFM.db')
-        self.c = self.conn.cursor()
+engine = create_engine('sqlite:///VFM.db', echo=False)
+conn = sqlite3.connect('VFM.db')
+c = conn.cursor()
 
-        self.user_id = ULID.from_datetime(datetime.datetime.now())
-        self.calc_id = timeflake.random()
-        self.dtime = datetime.datetime.fromtimestamp(self.calc_id.timestamp // 1000)
+user_id = ULID.from_datetime(datetime.datetime.now())
+calc_id = timeflake.random()
+dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
 
-        self.inputs_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.io()
 
-    def make_df(self):
-        self.PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", self.engine)
-        self.PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", self.engine)
-        self.LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", self.engine)
-        self.LCC_pv_df = pd.read_sql_query("SELECT * FROM LCC_pv_table", self.engine)
-        self.SPC_df = pd.read_sql_query("SELECT * FROM SPC_table", self.engine)
-        self.SPC_check_df = pd.read_sql_query("SELECT * FROM SPC_check_table", self.engine)
-        self.Risk_df = pd.read_sql_query("SELECT * FROM Risk_table", self.engine)
-        self.VFM_df = pd.read_sql_query("SELECT * FROM VFM_table", self.engine)
-        self.PIRR_df = pd.read_sql_query("SELECT * FROM PIRR_table", self.engine)
+def make_df():
+    PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)
+    PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", engine)
+    LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", engine)
+    LCC_pv_df = pd.read_sql_query("SELECT * FROM LCC_pv_table", engine)
+    SPC_df = pd.read_sql_query("SELECT * FROM SPC_table", engine)
+    SPC_check_df = pd.read_sql_query("SELECT * FROM SPC_check_table", engine)
+    Risk_df = pd.read_sql_query("SELECT * FROM Risk_table", engine)
+    VFM_df = pd.read_sql_query("SELECT * FROM VFM_table", engine)
+    PIRR_df = pd.read_sql_query("SELECT * FROM PIRR_table", engine)
 
-        # make summary
-        self.PSC_pv_summary_org = self.PSC_pv_df[['present_value']].sum()
-        self.LCC_pv_summary_org = self.LCC_pv_df[['present_value']].sum()
-        self.SPC_check_summary_org = self.SPC_check_df.loc[int(self.inputs_pdt.const_years)+1:int(self.inputs_pdt.proj_years), 'P_payment_check'].to_list()
-        self.VFM_summary_df = self.VFM_df[['VFM','VFM_percent']]
-        self.PIRR_summary_df = self.PIRR_df[['PIRR_percent']]
+    # make summary
+    PSC_pv_summary_org = PSC_pv_df[['present_value']].sum()
+    LCC_pv_summary_org = LCC_pv_df[['present_value']].sum()
+    SPC_check_summary_org = SPC_check_df.loc[int(inputs_pdt.const_years)+1:int(inputs_pdt.proj_years), 'P_payment_check'].to_list()
+    VFM_summary_df = VFM_df[['VFM','VFM_percent']]
+    PIRR_summary_df = PIRR_df[['PIRR_percent']]
 
-        def payment_check(bool):
-            if bool == 'True':
-                return "返済資金は十分"
-            elif bool == 'False':
-                return "返済資金が不足"
+    def payment_check(bool):
+        if bool == 'True':
+            return "返済資金は十分"
+        elif bool == 'False':
+            return "返済資金が不足"
 
-        SPC_check_mod = str('False' not in self.SPC_check_summary_org)
-        self.SPC_check_res = payment_check(SPC_check_mod)
+    SPC_check_mod = str('False' not in SPC_check_summary_org)
+    SPC_check_res = payment_check(SPC_check_mod)
+    return PSC_df, PSC_pv_df, LCC_df, LCC_pv_df, SPC_df, SPC_check_res, VFM_df, PIRR_df, Risk_df, VFM_summary_df, PIRR_summary_df, PSC_pv_summary_org, LCC_pv_summary_org
 
-    def make_summary_add_ids(self):
-        VFM_calc_summary_df = pd.DataFrame(columns=['VFM_percent','PSC_present_value','LCC_present_value','PIRR','SPC_payment_cash'], index=['0'])
 
-        #VFM_calc_summary_df['VFM'] = VFM_summary_df['VFM'].iloc[0]
-        VFM_calc_summary_df['VFM_percent'] = self.VFM_summary_df['VFM_percent'].iloc[0]
-        VFM_calc_summary_df['PSC_present_value'] = self.PSC_pv_summary_org.iloc[0]
-        VFM_calc_summary_df['LCC_present_value'] = self.LCC_pv_summary_org.iloc[0]
-        VFM_calc_summary_df['PIRR'] = self.PIRR_summary_df['PIRR_percent'].iloc[0]
-        VFM_calc_summary_df['SPC_payment_cash'] = self.SPC_check_res
+def make_summary_add_ids(PSC_df, PSC_pv_df, LCC_df, LCC_pv_df, SPC_df, SPC_check_df, SPC_check_res, VFM_df, PIRR_df, Risk_df, VFM_summary_df, PIRR_summary_df, PSC_pv_summary_org, LCC_pv_summary_org):
+    VFM_calc_summary_df = pd.DataFrame(columns=['VFM_percent','PSC_present_value','LCC_present_value','PIRR','SPC_payment_cash'], index=['0'])
 
-        kijun_kinri = Decimal(str(self.inputs_pdt.kijun_kinri)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-        kitai_bukka = Decimal(str(self.inputs_pdt.kitai_bukka)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-        lg_spread = Decimal(str(self.inputs_pdt.lg_spread)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+    #VFM_calc_summary_df['VFM'] = VFM_summary_df['VFM'].iloc[0]
+    VFM_calc_summary_df['VFM_percent'] = VFM_summary_df['VFM_percent'].iloc[0]
+    VFM_calc_summary_df['PSC_present_value'] = PSC_pv_summary_org.iloc[0]
+    VFM_calc_summary_df['LCC_present_value'] = LCC_pv_summary_org.iloc[0]
+    VFM_calc_summary_df['PIRR'] = PIRR_summary_df['PIRR_percent'].iloc[0]
+    VFM_calc_summary_df['SPC_payment_cash'] = SPC_check_res
 
-        #discount_rate = Decimal((kijun_kinri + kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-        kariire_kinri = Decimal((kijun_kinri + lg_spread)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+    kijun_kinri = Decimal(str(inputs_pdt.kijun_kinri)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+    #kitai_bukka = Decimal(str(inputs_pdt.kitai_bukka)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+    lg_spread = Decimal(str(inputs_pdt.lg_spread)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
 
-        final_inputs_dic = {
-            'mgmt_type': self.inputs_pdt.mgmt_type,
-            'proj_ctgry': self.inputs_pdt.proj_ctgry,
-            'proj_type': self.inputs_pdt.proj_type,
-            'const_years': self.inputs_pdt.const_years,
-            'proj_years': self.inputs_pdt.proj_years,
-            'discount_rate': self.inputs_pdt.discount_rate,
-            'kariire_kinri': kariire_kinri,
-        }
+    #discount_rate = Decimal((kijun_kinri + kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
+    kariire_kinri = Decimal((kijun_kinri + lg_spread)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
 
-        final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])
-        #print(inputs_pdt.kijun_kinri, inputs_pdt.lg_spread)
-        self.res_summ_df = VFM_calc_summary_df.join(final_inputs_df)
+    final_inputs_dic = {
+        'mgmt_type': inputs_pdt.mgmt_type,
+        'proj_ctgry': inputs_pdt.proj_ctgry,
+        'proj_type': inputs_pdt.proj_type,
+        'const_years': inputs_pdt.const_years,
+        'proj_years': inputs_pdt.proj_years,
+        'discount_rate': inputs_pdt.discount_rate,
+        'kariire_kinri': kariire_kinri,
+    }
 
-        def addID(self,x_df):
-            x_df['datetime'] = str(self.dtime)
-            x_df['user_id'] = str(self.user_id)
-            x_df['calc_id'] = str(self.calc_id)
+    final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])
+    #print(inputs_pdt.kijun_kinri, inputs_pdt.lg_spread)
+    res_summ_df = VFM_calc_summary_df.join(final_inputs_df)
 
-            return x_df
+    def addID(self,x_df):
+        x_df['datetime'] = str(dtime)
+        x_df['user_id'] = str(user_id)
+        x_df['calc_id'] = str(calc_id)
 
-        df_list = [
-            self.PSC_df,
-            self.PSC_pv_df,
-            self.LCC_df,
-            self.LCC_pv_df,
-            self.SPC_df,
-            self.SPC_check_df,
-            self.Risk_df,
-            self.VFM_df,
-            self.PIRR_df, 
-            self.res_summ_df
+        return x_df
+
+    df_list = [
+        PSC_df,
+        PSC_pv_df,
+        LCC_df,
+        LCC_pv_df,
+        SPC_df,
+        SPC_check_df,
+        Risk_df,
+        VFM_df,
+        PIRR_df, 
+        res_summ_df
         ]
-        self.df_name_list = [
-            (self.PSC_df,'self.PSC_df'),
-            (self.PSC_pv_df,'self.PSC_pv_df'),
-            (self.LCC_df,'self.LCC_df'),
-            (self.LCC_pv_df,'self.LCC_pv_df'),
-            (self.SPC_df,'self.SPC_df'),
-            (self.SPC_check_df,'self.SPC_check_df'),
-            (self.Risk_df,'self.Risk_df'),
-            (self.VFM_df,'self.VFM_df'),
-            (self.PIRR_df,'self.PIRR_df'),
-            (self.res_summ_df,'self.res_summ_df')
+    df_name_list = [
+        (PSC_df,'PSC_df'),
+        (PSC_pv_df,'PSC_pv_df'),
+        (LCC_df,'LCC_df'),
+        (LCC_pv_df,'LCC_pv_df'),
+        (SPC_df,'SPC_df'),
+        (SPC_check_df,'SPC_check_df'),
+        (Risk_df,'Risk_df'),
+        (VFM_df,'VFM_df'),
+        (PIRR_df,'PIRR_df'),
+        (res_summ_df,'res_summ_df')
         ]
 
-        for i in df_list:
+    for i in df_list:
             addID(i)
+    
+    return df_name_list
 
 # df_listの要素であるDFそれぞれに、２つのIDと日時が追加されている。
 # 上記のDFを、「結果蓄積用テーブル」に追加していく。その際に、「既に追加済の結果」を再度追加することは避ける必要がある。
@@ -133,13 +135,13 @@ class Save_results():
 # Datetimeリストに要素がないか、要素はあっても直近結果のDatetimeと同じ要素がなければ、直近結果を結果蓄積に書き込む。
 # Datetimeリストに、直近結果のDatetimeと同じ要素があれば、（直近結果は保存済なので）書き込みはしない。
 
-    def save_db(self):
-        for x_df in self.df_name_list:
-            self.c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
-            df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', self.engine, columns=['datetime'])
-            list_dtime = df_dtime['datetime'].to_list()
-            if len(list_dtime)==0 or x_df[0]['datetime'].iloc[0] not in list_dtime: 
-                x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', self.engine, if_exists='append', index=False)
-            else:
-                pass
+def save_db(df_name_list):
+    for x_df in df_name_list:
+        c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
+        df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
+        list_dtime = df_dtime['datetime'].to_list()
+        if len(list_dtime)==0 or x_df[0]['datetime'].iloc[0] not in list_dtime: 
+            x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
+        else:
+            pass
         
