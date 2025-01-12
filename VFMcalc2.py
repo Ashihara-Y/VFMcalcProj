@@ -1,7 +1,7 @@
 import sys
 
 sys.dont_write_bytecode = True
-import os
+#import os
 import save_results as sr
 import PSC_calc
 import LCC_calc
