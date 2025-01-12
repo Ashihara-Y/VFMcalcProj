@@ -131,13 +131,8 @@ def make_df_addID_saveDB():
 # Datetimeリストに、直近結果のDatetimeと同じ要素があれば、（直近結果は保存済なので）書き込みはしない。
 
     for x_df in df_name_list:
-            #c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
-            #df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
-            #list_dtime = df_dtime['datetime'].to_list()
-            #if len(list_dtime)==0 or x_df[0]['datetime'].iloc[0] not in list_dtime: 
+        x_df[0].applymap(lambda x: float(x) if isinstance(x, Decimal) else x)
         x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
-            #else:
-            #    pass
     
 
 
