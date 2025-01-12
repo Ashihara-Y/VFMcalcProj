@@ -129,7 +129,7 @@ def make_df_addID_saveDB():
 # Datetimeリストに要素がないか、要素はあっても直近結果のDatetimeと同じ要素がなければ、直近結果を結果蓄積に書き込む。
 # Datetimeリストに、直近結果のDatetimeと同じ要素があれば、（直近結果は保存済なので）書き込みはしない。
 
-    def save_db():
+    def save_db(df_name_list):
         for x_df in df_name_list:
             c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
             df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
