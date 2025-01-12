@@ -2,7 +2,7 @@ import sys
 
 sys.dont_write_bytecode = True
 import os
-import save_results as sr
+from save_results import Save_results
 import PSC_calc
 import LCC_calc
 import SPC_calc
@@ -17,9 +17,10 @@ def VFM_calc():
     risk_adjustment.risk_adj()
     make_present_value.make_pv()
     check_SPC_cashForPPayment.check_cash()
-    sr.Save_results.make_df()
-    sr.Save_results.make_summary_add_ids()
-    sr.Save_results.save_db()
+    Save_results()
+    #sr.Save_results.make_df(self)
+    #sr.Save_results.make_summary_add_ids()
+    #sr.Save_results.save_db()
     #view_saved.View_saved()
     
 
