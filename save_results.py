@@ -50,10 +50,7 @@ def make_df():
 
     SPC_check_mod = str('False' not in SPC_check_summary_org)
     SPC_check_res = payment_check(SPC_check_mod)
-    return PSC_df, PSC_pv_df, LCC_df, LCC_pv_df, SPC_df, SPC_check_res, VFM_df, PIRR_df, Risk_df, VFM_summary_df, PIRR_summary_df, PSC_pv_summary_org, LCC_pv_summary_org
 
-
-def make_summary_add_ids(PSC_df, PSC_pv_df, LCC_df, LCC_pv_df, SPC_df, SPC_check_df, SPC_check_res, VFM_df, PIRR_df, Risk_df, VFM_summary_df, PIRR_summary_df, PSC_pv_summary_org, LCC_pv_summary_org):
     VFM_calc_summary_df = pd.DataFrame(columns=['VFM_percent','PSC_present_value','LCC_present_value','PIRR','SPC_payment_cash'], index=['0'])
 
     #VFM_calc_summary_df['VFM'] = VFM_summary_df['VFM'].iloc[0]
@@ -119,15 +116,9 @@ def make_summary_add_ids(PSC_df, PSC_pv_df, LCC_df, LCC_pv_df, SPC_df, SPC_check
     for i in df_list:
             addID(i)
     
-    return df_name_list
 
 # df_listの要素であるDFそれぞれに、２つのIDと日時が追加されている。
 # 上記のDFを、「結果蓄積用テーブル」に追加していく。その際に、「既に追加済の結果」を再度追加することは避ける必要がある。
-# 他方で、『「既に追加済の結果」を再度追加する』事態は、どこで発生するのか？
-# 「PSC等の直近の計算結果テーブル」には、それぞれの直近の計算結果１つだけが保存されている。
-# したがって、「PSC等の直近の計算結果テーブル」から保存されている結果を抽出して、「結果蓄積用テーブル」への書き込みが
-# 1回だけ実施されるなら、上記の問題は発生しないのでは？
-# 結果蓄積に保存したら、直近の計算結果は消去してしまうか？これが残っていないと、どこで問題が生じるか？
 # 丁寧にやるなら、結果蓄積テーブルのDatetime列をリストに抽出して、その中に、これから書き込みDFのDatetimeが
 # 含まれていたら、書き込みを中止するか？
 # まず存在しなければ当該の結果蓄積テーブルを空で作成する。存在すればスルーのはず。
@@ -135,7 +126,6 @@ def make_summary_add_ids(PSC_df, PSC_pv_df, LCC_df, LCC_pv_df, SPC_df, SPC_check
 # Datetimeリストに要素がないか、要素はあっても直近結果のDatetimeと同じ要素がなければ、直近結果を結果蓄積に書き込む。
 # Datetimeリストに、直近結果のDatetimeと同じ要素があれば、（直近結果は保存済なので）書き込みはしない。
 
-def save_db(df_name_list):
     for x_df in df_name_list:
         c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
         df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
