@@ -25,7 +25,7 @@ def risk_adj():
     R.rotate(1)
     LCC_kappuganpon_cumsum_ls = list(R)
 
-    SPC_SPCkeihi_SPCsetsuritsuhi_df = pd.read_sql_query("SELECT periods, SPC_keihi, SPC_setsuritsuhi FROM SPC_table")
+    SPC_SPCkeihi_SPCsetsuritsuhi_df = pd.read_sql_query("SELECT periods, SPC_keihi, SPC_setsuritsuhi FROM SPC_table",engine)
     periods = SPC_SPCkeihi_SPCsetsuritsuhi_df['periods'].to_list()
     SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_keihi'] = SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_keihi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
     SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_setsuritsuhi'] = SPC_SPCkeihi_SPCsetsuritsuhi_df['SPC_setsuritsuhi'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
