@@ -25,7 +25,7 @@ dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
 inputs_pdt = make_inputs_df.io()
 df_name_list=[]
 
-def make_df():
+def make_df_addID_saveDB():
     PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)
     PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", engine)
     LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", engine)
@@ -117,7 +117,7 @@ def make_df():
     for i in df_list:
             addID(i)
 
-    return df_name_list
+#    return df_name_list
     
 
 # df_listの要素であるDFそれぞれに、２つのIDと日時が追加されている。
@@ -129,13 +129,18 @@ def make_df():
 # Datetimeリストに要素がないか、要素はあっても直近結果のDatetimeと同じ要素がなければ、直近結果を結果蓄積に書き込む。
 # Datetimeリストに、直近結果のDatetimeと同じ要素があれば、（直近結果は保存済なので）書き込みはしない。
 
-def save_db():
-    for x_df in df_name_list:
-        c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
-        df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
-        list_dtime = df_dtime['datetime'].to_list()
-        if len(list_dtime)==0 or x_df[0]['datetime'].iloc[0] not in list_dtime: 
-            x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
-        else:
-            pass
-        
+    def save_db():
+        for x_df in df_name_list:
+            c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
+            df_dtime = pd.read_sql_table(x_df[1].replace('_df','') + '_res_table', engine, columns=['datetime'])
+            list_dtime = df_dtime['datetime'].to_list()
+            if len(list_dtime)==0 or x_df[0]['datetime'].iloc[0] not in list_dtime: 
+                x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
+            else:
+                pass
+    
+    save_db(df_name_list)
+
+
+if __name__ == "__main__":
+    make_df()
