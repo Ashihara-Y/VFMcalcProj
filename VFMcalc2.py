@@ -18,9 +18,9 @@ def VFM_calc():
     make_present_value.make_pv()
     check_SPC_cashForPPayment.check_cash()
     #Save_results()
-    sr.Save_results.make_df()
-    sr.Save_results.make_summary_add_ids()
-    sr.Save_results.save_db()
+    sr.make_df()
+    sr.make_summary_add_ids()
+    sr.save_db()
     #view_saved.View_saved()
     
 
