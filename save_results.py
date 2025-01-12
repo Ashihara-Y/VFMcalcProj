@@ -15,7 +15,7 @@ from sqlalchemy import create_engine
 import sqlite3
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
-conn = sqlite3.connect('VFM.db', connect_args={'check_same_thread': False})
+conn = sqlite3.connect('VFM.db')
 c = conn.cursor()
 
 user_id = ULID.from_datetime(datetime.datetime.now())
