@@ -6,7 +6,6 @@ from simpledt import DataFrame
 import plotly.express as px
 from flet.plotly_chart import PlotlyChart
 import duckdb
-import tinydb
 from tinydb import TinyDB, Query
 #import glob
 import openpyxl
@@ -16,7 +15,7 @@ import openpyxl
 class Results(ft.Stack):
     def __init__(self):
         super().__init__()
-        self.title = "結果 要約"
+        self.title = "結果 詳細"
         self.width = 1800
         self.height = 1000
         self.resizable = True
@@ -24,9 +23,6 @@ class Results(ft.Stack):
         con = TinyDB("selected_res.json")
         self.dtime = con.all()[0]['selected_datetime']
         con.close()
-        con2 = TinyDB("fi_db.json")
-        self.final_inputs = con2.all()[0]
-        con2.close()
 
         conn = duckdb.connect('VFM.duckdb')
         c = conn.cursor()
@@ -73,40 +69,39 @@ class Results(ft.Stack):
 
         # ここでタブを定義できないか？各タブに、各Cardを配置する形で実装できないか？
 
-        return ft.Card(
-            content=ft.Container(
-                content=ft.Column(
-                    controls=[
-                        #ft.Column(
-                        #    [
-                        #        ft.Row(
-                        #            [self.tx_PSC, self.v_PSC],
-                        #            alignment=ft.MainAxisAlignment.START,
-                        #        ),
-                        #        ft.Row(
-                        #            [self.tx_LCC, self.v_LCC],
-                        #            alignment=ft.MainAxisAlignment.START,
-                        #        ),
-                        #        ft.Row(
-                        #            [self.tx_VFM, self.v_VFM],
-                        #            alignment=ft.MainAxisAlignment.START,
-                        #        ),
-                        #        ft.Row(
-                        #            [self.tx_VFM_percent, self.v_VFM_percent],
-                        #            alignment=ft.MainAxisAlignment.START,
-                        #        ),
-                        #    ]
-                        #),
-                        self.graph,
-                        lv,
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                ),
-                # content=lv,
-                width=1800,
-                padding=10,
+        return ft.tabs(
+                selected_index=1,
+                animation_duration=300,
+                tabs=[
+                    ft.Tab(
+                        text="結果・入力の要約",
+                        content=ft.Card(
+                            content=ft.Container(
+                                content=ft.Column(
+                                    controls=[
+                                        self.graph,
+                                        lv,
+                                    ],
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                ),
+                                width=1800,
+                                padding=10,
+                            )
+                        ),
+                    ),
+                    ft.Tab(
+                        text="Tab 2",
+                        icon=ft.Icons.BOOK,
+                        content=ft.Text("This is Tab 2"),
+                    ),
+                    ft.Tab(
+                        text="Tab 3",
+                        icon=ft.Icons.SETTINGS,
+                        content=ft.Text("This is Tab 3"),
+                    ),
+                ],
             )
-        )
+ 
     def export_to_excel():
         wb = openpyxl.load_workbook('VFM_result_sheet.xlsx')
         ws = wb.active
