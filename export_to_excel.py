@@ -29,7 +29,7 @@ def export_to_excel():
         table_name = pd.read_sql_query(query, engine)
         selected_res_list.append(table_name)
 
-    dtime_w = dtime.replace(' ', '_')
+    dtime_w = dtime.replace(' ', '_').replace(':', '_')
     file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
     save_path = 'vfm_output/' + file_name
 

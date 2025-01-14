@@ -19,7 +19,7 @@ class Results(ft.Stack):
     def __init__(self):
         super().__init__()
         self.title = "結果 詳細"
-        self.width = 1800
+        self.width = 2100
         self.height = 1000
         self.resizable = True
 
@@ -96,7 +96,8 @@ class Results(ft.Stack):
         simpledt_PIRR_dt = simpledt_PIRR_df.datatable
         self.table_PIRR = simpledt_PIRR_dt
 
-        simpledt_res_summ_df = DataFrame(res_summ_df)
+        res_summ_df_t = res_summ_df.transpose()
+        simpledt_res_summ_df = DataFrame(res_summ_df_t)
         simpledt_res_summ_dt = simpledt_res_summ_df.datatable
         self.table_res_summ = simpledt_res_summ_dt
 
@@ -155,7 +156,7 @@ class Results(ft.Stack):
                                     ],
                                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                 ),
-                                width=1800,
+                                width=2100,
                                 padding=10,
                             )
                         ),
@@ -171,7 +172,7 @@ class Results(ft.Stack):
                                     ],
                                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                 ),
-                                width=1800,
+                                width=2100,
                                 padding=10,
                             )
                         )
@@ -187,7 +188,7 @@ class Results(ft.Stack):
                                     ],
                                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                 ),
-                                width=1800,
+                                width=2100,
                                 padding=10,
                             )
                         )
