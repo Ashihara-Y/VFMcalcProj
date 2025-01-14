@@ -8,7 +8,7 @@ from simpledt import DataFrame
 #import plotly.express as px
 from flet.plotly_chart import PlotlyChart
 #import glob
-import Resultview
+import Resultview2
 import duckdb
 from tinydb import TinyDB
 from sqlalchemy import create_engine
