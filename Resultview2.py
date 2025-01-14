@@ -130,7 +130,7 @@ class Results(ft.Stack):
 
         # ここでタブを定義できないか？各タブに、各Cardを配置する形で実装できないか？
 
-        return ft.tabs(
+        return ft.Tabs(
                 selected_index=1,
                 animation_duration=300,
                 tabs=[
