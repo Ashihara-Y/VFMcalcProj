@@ -79,7 +79,7 @@ class View_saved(ft.Column):
         dtime_dic = {'selected_datetime': str(dtime)}
         con.insert(dtime_dic)
         con.close()
-        self.page.session.set(dtime_dic)
+        self.page.session.set("selected_datetime", str(dtime))
         self.page.go("/results_detail")
 
     def build(self):
