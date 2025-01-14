@@ -109,8 +109,8 @@ class View_saved(ft.Column):
                 #i.color=ft.Colors.AMBER_50
                 i.selected=False
                 page = ft.Page
-                i.on_long_press=self.send_mess()
-                i.on_select_changed=self.send_mess()
+                i.on_long_press=self.send_mess
+                i.on_select_changed=self.send_mess
 
             #df_t  = df.tranpose().reset_index()
             table = df.datatable

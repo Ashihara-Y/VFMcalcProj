@@ -16,7 +16,7 @@ from sqlalchemy import create_engine
 
 # savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
 class Results(ft.Stack):
-    def __init__(self, page: ft.Page):
+    def __init__(self):
         super().__init__()
         self.title = "結果 詳細"
         self.width = 2100
