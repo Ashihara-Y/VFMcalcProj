@@ -9,6 +9,7 @@ import duckdb
 from tinydb import TinyDB, Query
 #import glob
 import openpyxl
+#from openpyxl import Workbook, load_workbook
 import sqlite3
 from sqlalchemy import create_engine
 
@@ -102,33 +103,42 @@ class Results(ft.Stack):
         lv_01 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
         )
+        lv_01.controls.append(ft.Text('算定結果要約'))
         lv_01.controls.append(self.table_res_summ)
         lv_01.controls.append(ft.Divider())
+        lv_01.controls.append(ft.Text('VFM結果'))
         lv_01.controls.append(self.table_VFM)
         lv_01.controls.append(ft.Divider())
+        lv_01.controls.append(ft.Text('PIRR結果'))
         lv_01.controls.append(self.table_PIRR)
 
         lv_02 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
         )
+        lv_02.controls.append(ft.Text('PSCでの公共側収支'))
         lv_02.controls.append(self.table_PSC)
         lv_02.controls.append(ft.Divider())
+        lv_02.controls.append(ft.Text('PSCでの公共側キャッシュ・フローとその現在価値'))
         lv_02.controls.append(self.table_PSC_pv)
         lv_02.controls.append(ft.Divider())
+        lv_02.controls.append(ft.Text('PFI-LCCでの公共側収支'))
         lv_02.controls.append(self.table_LCC)
         lv_02.controls.append(ft.Divider())
+        lv_02.controls.append(ft.Text('PFI-LCCでの公共側キャッシュ・フローとその現在価値'))
         lv_02.controls.append(self.table_LCC_pv)
         lv_02.controls.append(ft.Divider())
+        lv_02.controls.append(ft.Text('PSCへのリスク調整'))
         lv_02.controls.append(self.table_Risk)
 
         lv_03 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
         )
+        lv_03.controls.append(ft.Text('PFI-LCCでのSPC側収支'))
         lv_03.controls.append(self.table_SPC)
         lv_03.controls.append(ft.Divider())
+        lv_03.controls.append(ft.Text('PFI-LCCでのSPCの返済資金確認結果'))
         lv_03.controls.append(self.table_SPC_check)
 
-        # ここでタブを定義できないか？各タブに、各Cardを配置する形で実装できないか？
 
         return ft.Tabs(
                 selected_index=1,
@@ -151,7 +161,7 @@ class Results(ft.Stack):
                         ),
                     ),
                     ft.Tab(
-                        text="Tab 2",
+                        text="PSC,LCCでの公共側収支等",
                         content=ft.Card(
                             content=ft.Container(
                                 content=ft.Column(
@@ -167,7 +177,7 @@ class Results(ft.Stack):
                         )
                     ),
                     ft.Tab(
-                        text="Tab 3",
+                        text="SPC収支等",
                         content=ft.Card(
                             content=ft.Container(
                                 content=ft.Column(
@@ -185,8 +195,47 @@ class Results(ft.Stack):
                 ],
             )
  
-    #def export_to_excel():
-    #    wb = openpyxl.load_workbook('VFM_result_sheet.xlsx')
-    #    ws = wb.active
-    #    ws.append(['PSC', 'LCC', 'VFM', 'VFM_percent'])
+    def export_to_excel(self):
+        dtime = self.dtime.replace(' ', '_')
+        file_name = 'VFM_result_sheet_' + dtime + '.xlsx'
+        save_path = 'storage/vfm_output/' + file_name
+
+        wb = openpyxl.Workbook()
+        ws = wb['Sheet']
+        ws.title = 'Summary_result_sheet'
+        #wb.create_sheet(title='PSC_result_sheet')
+        #wb.create_sheet(title='PSC_pv_result_sheet')
+        #wb.create_sheet(title='LCC_result_sheet')
+        #wb.create_sheet(title='LCC_pv_result_sheet')
+        #wb.create_sheet(title='SPC_result_sheet')
+        #wb.create_sheet(title='SPC_check_result_sheet')
+        #wb.create_sheet(title='Risk_result_sheet')
+        #wb.create_sheet(title='VFM_result_sheet')
+        #wb.create_sheet(title='PIRR_result_sheet')
+        #wb.create_sheet(title='res_summ_result_sheet')
+        wb.save(save_path)
+
+        PSC_res_df = self.selected_res_list[0]
+        PSC_pv_df = self.selected_res_list[1]
+        LCC_res_df = self.selected_res_list[2]
+        LCC_pv_df = self.selected_res_list[3]
+        SPC_res_df = self.selected_res_list[4]
+        SPC_check_df = self.selected_res_list[5]
+        Risk_res_df = self.selected_res_list[6]
+        VFM_res_df = self.selected_res_list[7]
+        PIRR_res_df = self.selected_res_list[8]
+        res_summ_df = self.selected_res_list[9]
+
+        with pd.ExcelWriter(save_path, engine='openpyxl', mode='a') as writer:
+            res_summ_df.to_excel(writer, sheet_name='Summary_result_sheet')
+            PSC_res_df.to_excel(writer, sheet_name='PSC_result_sheet')
+            PSC_pv_df.to_excel(writer, sheet_name='PSC_pv_result_sheet')
+            LCC_res_df.to_excel(writer, sheet_name='LCC_result_sheet')
+            LCC_pv_df.to_excel(writer, sheet_name='LCC_pv_result_sheet')
+            SPC_res_df.to_excel(writer, sheet_name='SPC_result_sheet')
+            SPC_check_df.to_excel(writer, sheet_name='SPC_check_result_sheet')
+            Risk_res_df.to_excel(writer, sheet_name='Risk_result_sheet')
+            VFM_res_df.to_excel(writer, sheet_name='VFM_result_sheet')
+            PIRR_res_df.to_excel(writer, sheet_name='PIRR_result_sheet')
+
 

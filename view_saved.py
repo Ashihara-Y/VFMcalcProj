@@ -21,7 +21,7 @@ class View_saved(ft.Column):
         self.height = 3000
         self.resizable = True
 
-        engine = create_engine('sqlite:///VFM.db', echo=False)
+        engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         #conn = duckdb.connect('VFM.duckdb')
         #c = conn.cursor()
         
@@ -109,9 +109,9 @@ class View_saved(ft.Column):
             table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
             table.width=1500
-            table.show_checkbox_column=True
-            table.checkbox_column_width=15
-            table.checkbox_horizontal_margin=10
+            table.show_checkbox_column=False
+            #table.checkbox_column_width=15
+            #table.checkbox_horizontal_margin=10
             table.on_select_all=True
             
             summ_lv.controls.append(table)
