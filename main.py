@@ -6,6 +6,7 @@ from Final_Inputs import Final_Inputs
 from Resultview2 import Results
 from view_saved import View_saved
 import save_results
+import export_to_excel
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -93,7 +94,7 @@ def main(page: ft.Page):
         page.go("/")
     
     def result_to_excel(e):
-        Results.export_to_excel()
+        export_to_excel()
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop

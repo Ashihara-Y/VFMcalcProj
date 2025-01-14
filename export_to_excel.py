@@ -1,97 +1,66 @@
 import pandas as pd
 import openpyxl
-import pathlib
-from pathlib import Path
-import tinydb
 from tinydb import TinyDB, Query
-import yaml
-import os
-import shutil
+from sqlalchemy import create_engine
 
+con = TinyDB("selected_res.json")
+dtime = con.all()[0]['selected_datetime']
+con.close()
 
-
+engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
+        
 def export_to_excel():
-    # mock data
-    jigyouhiyou_sekisan = {
-        'shisetsu_seibi_kouritsusei_DBDBO': 0.05,
-        'shisetsu_seibi_kouritsusei_BTBTO': 0.05,
-        'shisetsu_seibi_PSC_rakusatsu': 0.0,
-        'shisetsu_seibi_PSC_yosantanka': 3000.0,
-        'ijikanri_jinkenhi_kouritsusei_DBDBO': 0.05,
-        'ijikanri_jinkenhi_kouritsusei_BTBTO': 0.05,
-        'ijikanri_jinkenhi_bukkajousyou': 0.02,
-        'ijikanri_jinkenhi_PSC_rakusatsu': 0.0,
-        'ijikanri_jinkenhi_PSC_yosantanka': 30.0,
-        'ijikanri_shuzenhi_kouritsusei_DBDBO': 0.05,
-        'ijikanri_shuzenhi_kouritsusei_BTBTO': 0.05,
-        'ijikanri_shuzenhi_bukkajousyou': 0.02, 
-        'ijikanri_shuzenhi_PSC_rakusatsu': 0.0,
-        'ijikanri_shuzenhi_PSC_yosantanka': 15.0,
-        'ijikanri_douryokuhi_kouritsusei_DBDBO': 0.05,
-        'ijikanri_douryokuhi_kouritsusei_BTBTO': 0.05,
-        'ijikanri_douryokuhi_bukkajousyou': 0.02,
-        'ijikanri_douryokuhi_PSC_rakusatsu': 0.0,
-        'ijikanri_douryokuhi_PSC_yosantanka': 5.0,
-        'ijikanri_option01_kouritsusei_DBDBO': 0.05,
-        'ijikanri_option01_kouritsusei_BTBTO': 0.05,
-        'ijikanri_option01_bukkajousyou': 0.02,
-        'ijikanri_option01_PSC_rakusatsu': 0.0,
-        'ijikanri_option01_PSC_yosantanka': 0.0,
-        'ijikanri_option02_kouritsusei_DBDBO': 0.05,
-        'ijikanri_option02_kouritsusei_BTBTO': 0.05,
-        'ijikanri_option02_bukkajousyou': 0.02,
-        'ijikanri_option02_PSC_rakusatsu': 0.0,
-        'ijikanri_option02_PSC_yosantanka': 0.0,
-    }
+    table_names = [
+        'PSC_res_table', 
+        'PSC_pv_res_table', 
+        'LCC_res_table', 
+        'LCC_pv_res_table', 
+        'SPC_res_table', 
+        'SPC_check_res_table',
+        'Risk_res_table',
+        'VFM_res_table',
+        'PIRR_res_table',
+        'res_summ_res_table',
+    ]
 
-    db = TinyDB("inputs_db.json")
-    inputs = db.all()[0]
+    selected_res_list = []
+    for table_name in table_names:
+        query = 'select * from ' + table_name + ' where datetime = ' + '"' + dtime + '"'
+        table_name = pd.read_sql_query(query, engine)
+        selected_res_list.append(table_name)
 
-    fin = open('to_excel_01.yml')
-    res_01 = yaml.load(fin, Loader=yaml.FullLoader)
-    res_list0 = []
-    for r in res_01['file_sheet']:
-        res_list0.append(list(r.values())[0])
-    book = res_list0[0]
-    sheet = res_list0[1]
-    fin.close()
+    dtime_w = dtime.replace(' ', '_')
+    file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
+    save_path = 'storage/vfm_output/' + file_name
 
-    fin = open('to_excel_02.yml')
-    res_02 = yaml.load(fin, Loader=yaml.FullLoader)
-    fin.close()
+    wb = openpyxl.Workbook()
+    ws = wb['Sheet']
+    ws.title = 'Summary_result_sheet'
+    wb.save(save_path)
 
-    # 標準算定フォーマットのExcelブックを開いて、別名でOutputディレクトリに保存する
-    file = res_list0[0]
-    file = str(Path('VFM標準算定シート.xlsx')) 
-    file_els = file.split('.',2)
-    file_copy = file_els[0] + '_copy.' + file_els[1]
+    PSC_res_df = selected_res_list[0]
+    PSC_pv_df = selected_res_list[1]
+    LCC_res_df = selected_res_list[2]
+    LCC_pv_df = selected_res_list[3]
+    SPC_res_df = selected_res_list[4]
+    SPC_check_df = selected_res_list[5]
+    Risk_res_df = selected_res_list[6]
+    VFM_res_df = selected_res_list[7]
+    PIRR_res_df = selected_res_list[8]
+    res_summ_df = selected_res_list[9]
 
-    file_copy_outpath = Path('vfm_output')
-    file_copy_outpath.mkdir(parents=True, exist_ok=True)
-    file_copy_outpath_file = file_copy_outpath / file_copy
-    shutil.copy(file, file_copy_outpath_file)
+    with pd.ExcelWriter(save_path, engine='openpyxl', mode='a') as writer:
+        res_summ_df.to_excel(writer, sheet_name='Summary_result_sheet')
+        PSC_res_df.to_excel(writer, sheet_name='PSC_result_sheet')
+        PSC_pv_df.to_excel(writer, sheet_name='PSC_pv_result_sheet')
+        LCC_res_df.to_excel(writer, sheet_name='LCC_result_sheet')
+        LCC_pv_df.to_excel(writer, sheet_name='LCC_pv_result_sheet')
+        SPC_res_df.to_excel(writer, sheet_name='SPC_result_sheet')
+        SPC_check_df.to_excel(writer, sheet_name='SPC_check_result_sheet')
+        Risk_res_df.to_excel(writer, sheet_name='Risk_result_sheet')
+        VFM_res_df.to_excel(writer, sheet_name='VFM_result_sheet')
+        PIRR_res_df.to_excel(writer, sheet_name='PIRR_result_sheet')
 
-    # 保存したブックの「事業費用概算」シートを開いて、初期入力値のうち、Part1を書き込む
-    # テスト用のモックとして、上記のjigyouhiyou_sekisanを書き込む
-    book = openpyxl.load_workbook(file_copy_outpath)
-    sheet_01 = book['事業費用概算']
-
-    for r in res_01["cell-position_value"]:
-        cell = list(r.keys())[0]
-        val = list(r.values())[0]
-        #print(cell, val)
-        sheet_01[cell] = jigyouhiyou_sekisan[val]
-    book.save(file_copy_outpath)
-
-    # 次に、保存したブックの該当事業形式シートを開いて、初期入力値のうち、Part2を書き込む
-    sheet_02 = book[inputs['proj_type']]
-
-    for r in res_02["cell-position_value"]:
-        cell = list(r.keys())[0]
-        val = list(r.values())[0]
-        #print(cell, val)
-        sheet_02[cell] = inputs[val]
-    book.save(file_copy_outpath)
 
 # 上記をmok dataなしで動かすには、事業費用概算シートへの入力値用の入力画面とDB入力への統合が必要
 if __name__ == '__main__':
