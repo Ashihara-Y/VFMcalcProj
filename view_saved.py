@@ -118,14 +118,12 @@ class View_saved(ft.Column):
             row = row.rename(columns={"index":"項目名", 0:"値"}).drop(0, axis=0)
             df = DataFrame(row)
             dr = df.datarows
-            for j in range(len(dr)):
-                dr[j].data = dtime
-                for i in dr[j]:
-                    i.data = dtime                
-                    i.color=ft.Colors.AMBER_50
-                    i.selected=False
-                    i.on_long_press=self.send_mess
-                    i.on_select_changed=self.send_mess
+            for i in dr:
+                i.data = dtime                
+                #i.color=ft.Colors.AMBER_50
+                i.selected=False
+                i.on_long_press=self.send_mess
+                i.on_select_changed=self.send_mess
 
             #df_t  = df.tranpose().reset_index()
             table = df.datatable
