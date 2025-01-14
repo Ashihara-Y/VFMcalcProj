@@ -95,19 +95,22 @@ class View_saved(ft.Column):
 
         for row in self.res_summ_list.itertuples():
             row = pd.DataFrame(row).drop(0, axis=0)
+            dtime = row['datetime'].iloc[0]
+            row = row.tranpose().reset_index()
             df = DataFrame(row)
             dr = df.datarows
-            dtime = dr[0].cells[0].content.value
-            dr[0].data = dtime
-            for i in dr:
-                i.data = dtime                
-                i.color=ft.Colors.AMBER_50
-                i.selected=False
-                i.on_long_press=self.send_mess
-                i.on_select_changed=self.send_mess
+            #dtime = dr[0].cells[0].content.value
+            for j in range(len(dr)):
+                dr[j].data = dtime
+                for i in dr[j]:
+                    i.data = dtime                
+                    i.color=ft.Colors.AMBER_50
+                    i.selected=False
+                    i.on_long_press=self.send_mess
+                    i.on_select_changed=self.send_mess
 
-            df_t  = df.tranpose().reset_index()
-            table = df_t.datatable
+            #df_t  = df.tranpose().reset_index()
+            table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
             table.width=1500
             table.show_checkbox_column=False
