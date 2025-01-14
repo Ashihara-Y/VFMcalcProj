@@ -31,7 +31,7 @@ def export_to_excel():
 
     dtime_w = dtime.replace(' ', '_')
     file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
-    save_path = 'storage/vfm_output/' + file_name
+    save_path = 'vfm_output/' + file_name
 
     wb = openpyxl.Workbook()
     ws = wb['Sheet']
