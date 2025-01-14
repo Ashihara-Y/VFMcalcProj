@@ -94,7 +94,7 @@ def main(page: ft.Page):
         page.go("/")
     
     def result_to_excel(e):
-        export_to_excel()
+        export_to_excel.export_to_excel()
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
