@@ -79,7 +79,7 @@ class View_saved(ft.Column):
         dtime_dic = {'selected_datetime': str(dtime)}
         con.insert(dtime_dic)
         con.close()
-        self.page.session.set(list(dtime_dic)[0], dtime)
+        self.page.session.set(dtime_dic)
         self.page.go("/results_detail")
 
     def build(self):
@@ -106,7 +106,8 @@ class View_saved(ft.Column):
                 i.on_long_press=self.send_mess
                 i.on_select_changed=self.send_mess
 
-            table = df.datatable
+            df_t  = df.tranpose().reset_index()
+            table = df_t.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
             table.width=1500
             table.show_checkbox_column=False
