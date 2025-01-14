@@ -54,18 +54,19 @@ class View_saved(ft.Column):
     # ListViewのセルを選択したときに呼び出される。
     # 選択された日時を、selected_res.jsonに書き込む。次の画面に渡す。
     # session storageに書き込む形も併設しておいた。
-    def send_mess(e, page: ft.Page):
+    def send_mess(self, e):
         #ft.Page.pubsub.send_all(Message)
         if os.path.exists("selected_res.json"):
             os.remove("selected_res.json")
         con = TinyDB('selected_res.json')
         con.truncate()
         dtime = e.control.data
+        #print(dtime)
         dtime_dic = {'selected_datetime': str(dtime)}
         con.insert(dtime_dic)
         con.close()
-        page.session.set("selected_datetime", str(dtime))
-        page.go("/results_detail")
+        #page.session.set("selected_datetime", str(dtime))
+        self.page.go("/results_detail")
 
     def build(self):
         summ_lv = ft.ListView(
@@ -108,8 +109,8 @@ class View_saved(ft.Column):
                 #i.color=ft.Colors.AMBER_50
                 i.selected=False
                 page = ft.Page
-                i.on_long_press=self.send_mess(page)
-                i.on_select_changed=self.send_mess(page)
+                i.on_long_press=self.send_mess()
+                i.on_select_changed=self.send_mess()
 
             #df_t  = df.tranpose().reset_index()
             table = df.datatable

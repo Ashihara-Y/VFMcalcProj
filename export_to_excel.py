@@ -4,12 +4,13 @@ from tinydb import TinyDB, Query
 from sqlalchemy import create_engine
 
 con = TinyDB("selected_res.json")
-dtime = con.all()[0]['selected_datetime']
-con.close()
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         
 def export_to_excel():
+    dtime = con.all()[0]['selected_datetime']
+    con.close()
+
     table_names = [
         'PSC_res_table', 
         'PSC_pv_res_table', 

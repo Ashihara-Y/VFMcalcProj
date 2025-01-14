@@ -23,10 +23,10 @@ class Results(ft.Stack):
         self.height = 1000
         self.resizable = True
 
-        #con = TinyDB("selected_res.json")
-        self.dtime = page.session.get('selected_datetime')
-        #self.dtime = con.all()[0]['selected_datetime']
-        #con.close()
+        con = TinyDB("selected_res.json")
+        #self.dtime = page.session.get('selected_datetime')
+        self.dtime = con.all()[0]['selected_datetime']
+        con.close()
 
         #conn = sqlite3.connect('VFM.duckdb')
         #c = conn.cursor()
