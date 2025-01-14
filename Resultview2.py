@@ -24,12 +24,12 @@ class Results(ft.Stack):
         self.resizable = True
 
         con = TinyDB("selected_res.json")
-        self.dtime = self.page.session.get('selected_datetime')
-        #self.dtime = con.all()[0]['selected_datetime']
+        #self.dtime = self.page.session.get('selected_datetime')
+        self.dtime = con.all()[0]['selected_datetime']
         con.close()
 
-        conn = sqlite3.connect('VFM.duckdb')
-        c = conn.cursor()
+        #conn = sqlite3.connect('VFM.duckdb')
+        #c = conn.cursor()
 
         engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         
