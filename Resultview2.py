@@ -96,7 +96,7 @@ class Results(ft.Stack):
         simpledt_PIRR_dt = simpledt_PIRR_df.datatable
         self.table_PIRR = simpledt_PIRR_dt
 
-        res_summ_df_t = res_summ_df.transpose()
+        res_summ_df_t = res_summ_df.transpose().reset_index()
         simpledt_res_summ_df = DataFrame(res_summ_df_t)
         simpledt_res_summ_dt = simpledt_res_summ_df.datatable
         self.table_res_summ = simpledt_res_summ_dt
