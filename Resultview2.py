@@ -64,6 +64,13 @@ class Results(ft.Stack):
         PIRR_res_df = self.selected_res_list[8]
         res_summ_df = self.selected_res_list[9]
 
+        PSC_res_df = PSC_res_df.rename(
+            columns={
+                "datetime": "算定日時",
+                
+            }
+        )
+
         # 総括表をここに追加する。PSC,LCC、SPCの表も作成して、別個定義しておく。
         simpledt_PSC_df = DataFrame(PSC_res_df)
         simpledt_PSC_dt = simpledt_PSC_df.datatable
