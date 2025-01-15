@@ -3,7 +3,7 @@ import pandas as pd
 import tinydb
 from tinydb import TinyDB, Query
 import pyxirr
-
+import flet as ft
 from dataclasses import asdict, dataclass
 import datetime
 from decimal import *
@@ -14,6 +14,16 @@ import dateutil
 # ⇒「本番環境のデータ」（FI）に切り替える！
 db = TinyDB("fi_db.json")
 inputs = db.all()[0]
+
+df = pd.DataFrame(inputs, index=[0])
+list_df = df.T.reset_index()[0].to_list()
+
+for item in list_df:
+    if not item:
+        ft.page.go("/")
+    else:
+        pass
+
 
 # schema for validation
 @dataclass

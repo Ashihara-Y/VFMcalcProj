@@ -314,14 +314,14 @@ class Final_Inputs(ft.Column):
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
         return ft.Column(
             [
-                self.tx0,self.tx1,self.tx2,
-                self.tx3,self.tx4,self.tx5,self.tx6,
-                self.dt1,self.dt2,
-                self.tx7,self.sl1,self.tx8,self.sl2,
-                self.tx9,self.sl3,self.tx10,self.sl4,
-                self.tx11,self.sl5,self.tx12,self.sl6,
-                self.tx13,self.sl7,self.tx14,self.sl8,
-                self.tx15,self.sl9,self.tx16,self.sl10,
+                self.tx0, self.tx1, self.tx2,
+                self.tx3, self.tx4, self.tx5, self.tx6,
+                self.dt1, self.dt2,
+                self.tx7, self.sl1, self.tx8, self.sl2,
+                self.tx9, self.sl3, self.tx10,self.sl4,
+                self.tx11,self.sl5, self.tx12,self.sl6,
+                self.tx13,self.sl7, self.tx14,self.sl8,
+                self.tx15,self.sl9, self.tx16,self.sl10,
                 self.tx17,self.sl11,self.tx18,self.sl12,
                 self.tx19,self.sl13,self.tx20,self.sl14,
                 self.tx21,self.sl15,self.tx22,self.sl16,
@@ -505,6 +505,13 @@ class Final_Inputs(ft.Column):
             "zei_total": str(self.initial_inputs["zei_total"]),
 
         }
+
+        for item in list(final_inputs.values()):
+            if not item:
+                ft.page.go("/")
+            else:
+                pass
+
 
         if os.path.exists("fi_db.json"):
             os.remove("fi_db.json")

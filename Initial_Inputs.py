@@ -474,6 +474,13 @@ class Initial_Inputs(ft.Column):
             "houjinjuminzei_ritsu_shikuchoson": houjinjuminzei_ritsu_shikuchoson,
         }
 
+        for item in list(initial_inputs.values()):
+            if not item:
+                ft.page.go("/")
+            else:
+                pass
+
+
         if os.path.exists("ii_db.json"):
             os.remove("ii_db.json")
         db = TinyDB('ii_db.json')
