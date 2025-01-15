@@ -117,19 +117,6 @@ def make_df_addID_saveDB():
     for i in df_list:
             addID(i)
 
-    #for x_df in df_name_list:
-    #    c.execute('CREATE TABLE IF NOT EXISTS ' + x_df[1].replace('_df','') + '_res_table')
-    
-
-# df_listの要素であるDFそれぞれに、２つのIDと日時が追加されている。
-# 上記のDFを、「結果蓄積用テーブル」に追加していく。その際に、「既に追加済の結果」を再度追加することは避ける必要がある。
-# 丁寧にやるなら、結果蓄積テーブルのDatetime列をリストに抽出して、その中に、これから書き込みDFのDatetimeが
-# 含まれていたら、書き込みを中止するか？
-# まず存在しなければ当該の結果蓄積テーブルを空で作成する。存在すればスルーのはず。
-# 空ならばDatetimeは要素なしになるが、存在していればDatetimeには１つ以上の要素がある。
-# Datetimeリストに要素がないか、要素はあっても直近結果のDatetimeと同じ要素がなければ、直近結果を結果蓄積に書き込む。
-# Datetimeリストに、直近結果のDatetimeと同じ要素があれば、（直近結果は保存済なので）書き込みはしない。
-
     for x_df in df_name_list:
         x_df[0].applymap(lambda x: float(x) if isinstance(x, decimal.Decimal) else x)
         x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)

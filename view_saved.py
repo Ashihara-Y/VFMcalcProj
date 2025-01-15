@@ -3,13 +3,13 @@ sys.dont_write_bytecode = True
 import os
 import pandas as pd
 import flet as ft
-import simpledt
+#import simpledt
 from simpledt import DataFrame
 #import plotly.express as px
-from flet.plotly_chart import PlotlyChart
+#from flet.plotly_chart import PlotlyChart
 #import glob
-import Resultview2
-import duckdb
+#import Resultview2
+#import duckdb
 from tinydb import TinyDB
 from sqlalchemy import create_engine
 
