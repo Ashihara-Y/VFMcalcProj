@@ -1,14 +1,14 @@
 import pandas as pd
-import tinydb
+#import tinydb
 from tinydb import TinyDB, Query
 import pyxirr
-import duckdb
+#import duckdb
 from dataclasses import asdict, dataclass
 import datetime
 from decimal import *
-from pydantic import BaseModel
+#from pydantic import BaseModel
 from collections import deque
-import make_inputs_df, make_pl_waku, make_empty_pls, make_3pls_withZero
+import make_inputs_df, make_3pls_withZero
 from sqlalchemy import create_engine, DECIMAL
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
