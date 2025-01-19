@@ -20,7 +20,7 @@ list_df = df.T.reset_index()[0].to_list()
 
 for item in list_df:
     if not item:
-        ft.page.go("/")
+        ft.Page.go("/")
     else:
         pass
 
