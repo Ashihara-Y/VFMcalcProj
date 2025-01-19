@@ -8,7 +8,7 @@ import tinydb
 from tinydb import TinyDB, Query
 #import VFMcalc2 as vc
 from VFMcalc2 import VFM_calc
-import save_results as sr
+#import save_results as sr
 from decimal import *
 import dateutil
 
