@@ -18,8 +18,8 @@ def make_empty_pl(cols):
 
     cols_waku = ['year','periods']
 
-    target_years = final_inputs.target_years
-    first_end_fy = final_inputs.first_end_fy
+    target_years = final_inputs['target_years']
+    first_end_fy = final_inputs['first_end_fy']
 
     waku = make_pl_waku.make_waku_df(first_end_fy, target_years, cols_waku)
 
