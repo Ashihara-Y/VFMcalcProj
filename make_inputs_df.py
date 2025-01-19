@@ -16,13 +16,13 @@ db = TinyDB("fi_db.json")
 inputs = db.all()[0]
 
 df = pd.DataFrame(inputs, index=[0])
-list_df = df.T.reset_index()[0].to_list()
+#list_df = df.T.reset_index()[0].to_list()
 
-for item in list_df:
-    if not item:
-        ft.Page.go("/")
-    else:
-        pass
+#for item in list_df:
+#    if not item:
+#        ft.Page.go("/")
+#    else:
+#        pass
 
 
 # schema for validation
