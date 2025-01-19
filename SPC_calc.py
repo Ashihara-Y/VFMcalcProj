@@ -13,7 +13,7 @@ from sqlalchemy import create_engine, DECIMAL
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
-inputs_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.main()
 
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()

@@ -10,7 +10,7 @@ from sqlalchemy import create_engine, DECIMAL
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
 
-inputs_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.main()
 
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()

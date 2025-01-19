@@ -22,7 +22,7 @@ user_id = ULID.from_datetime(datetime.datetime.now())
 calc_id = timeflake.random()
 dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
 
-inputs_pdt = make_inputs_df.io()
+inputs_pdt = make_inputs_df.main()
 df_name_list=[]
 
 def make_df_addID_saveDB():
