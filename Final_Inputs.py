@@ -506,11 +506,11 @@ class Final_Inputs(ft.Column):
 
         }
 
-        for item in list(final_inputs.values()):
-            if not item:
-                ft.page.go("/")
-            else:
-                pass
+        #for item in list(final_inputs.values()):
+        #    if not item:
+        #        ft.page.go("/")
+        #    else:
+        #        pass
 
 
         if os.path.exists("fi_db.json"):
