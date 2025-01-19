@@ -22,10 +22,11 @@ user_id = ULID.from_datetime(datetime.datetime.now())
 calc_id = timeflake.random()
 dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
 
-inputs_pdt = make_inputs_df.main()
 df_name_list=[]
 
 def make_df_addID_saveDB():
+    inputs_pdt = make_inputs_df.main()
+
     PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)
     PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", engine)
     LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", engine)
