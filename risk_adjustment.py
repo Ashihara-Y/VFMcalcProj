@@ -10,11 +10,12 @@ from sqlalchemy import create_engine, DECIMAL
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
 
-inputs_pdt = make_inputs_df.main()
 
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()
 def risk_adj():
+    inputs_pdt = make_inputs_df.main()
+
     LCC_kappuganpon_df = pd.read_sql_query("SELECT periods, shisetsu_seibihi_kappuganpon FROM LCC_table", engine)
     LCC_kappuganpon_df['shisetsu_seibihi_kappuganpon'] = LCC_kappuganpon_df['shisetsu_seibihi_kappuganpon'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
     LCC_kappuganpon_df = LCC_kappuganpon_df.set_index('periods')

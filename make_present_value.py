@@ -10,11 +10,12 @@ from sqlalchemy import create_engine, DECIMAL
 
 engine = create_engine('sqlite:///VFM.db', echo=False)
 
-inputs_pdt = make_inputs_df.main()
 
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()
 def make_pv():
+    inputs_pdt = make_inputs_df.main()
+
     Risk_df = pd.read_sql_query("SELECT * FROM Risk_table", engine)
     Risk_adjust_gaku = Risk_df['risk_adjust_gaku'].loc[0]
 
