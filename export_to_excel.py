@@ -50,6 +50,19 @@ def export_to_excel():
     PIRR_res_df = selected_res_list[8]
     res_summ_df = selected_res_list[9]
 
+    PSC_res_df = PSC_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    PSC_pv_df =  PSC_pv_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    LCC_res_df = LCC_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    LCC_pv_df = LCC_pv_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    SPC_res_df = SPC_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    SPC_check_df = SPC_check_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    Risk_res_df = Risk_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    VFM_res_df = VFM_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    PIRR_res_df = PIRR_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    res_summ_df = res_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    res_summ_df = res_summ_df.T.reset_index()
+
+
     with pd.ExcelWriter(save_path, engine='openpyxl', if_sheet_exists='overlay', mode='a') as writer:
         res_summ_df.to_excel(writer, sheet_name='Summary_result_sheet')
         PSC_res_df.to_excel(writer, sheet_name='PSC_result_sheet')
