@@ -9,7 +9,7 @@ from simpledt import DataFrame
 #from flet.plotly_chart import PlotlyChart
 #import glob
 #import Resultview2
-#import duckdb
+import sqlite3
 from tinydb import TinyDB
 from sqlalchemy import create_engine
 
@@ -22,7 +22,8 @@ class View_saved(ft.Column):
         self.resizable = True
 
         engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
-        #conn = duckdb.connect('VFM.duckdb')
+        self.engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
+        #conn = sqlite3.connect("":memory:")
         #c = conn.cursor()
         
         res_summ_df = pd.read_sql_table('res_summ_res_table', engine)
@@ -56,15 +57,15 @@ class View_saved(ft.Column):
     # session storageに書き込む形も併設しておいた。
     def send_mess(self, e):
         #ft.Page.pubsub.send_all(Message)
-        if os.path.exists("selected_res.json"):
-            os.remove("selected_res.json")
-        con = TinyDB('selected_res.json')
-        con.truncate()
+        #if os.path.exists("selected_res.json"):
+        #    os.remove("selected_res.json")
+        #con = TinyDB('selected_res.json')
+        #con.truncate()
         dtime = e.control.data
         #print(dtime)
         dtime_dic = {'selected_datetime': str(dtime)}
-        con.insert(dtime_dic)
-        con.close()
+        dtime_df = pd.DataFrame(dtime_dic, index=[0])
+        dtime_df.to_sql('sel_res', self.engine_m, if_exists='replace', index=False)
         #page.session.set("selected_datetime", str(dtime))
         self.page.go("/results_detail")
 
@@ -108,7 +109,7 @@ class View_saved(ft.Column):
                 i.data = dtime                
                 #i.color=ft.Colors.AMBER_50
                 i.selected=False
-                page = ft.Page
+                #page = ft.Page
                 i.on_long_press=self.send_mess
                 i.on_select_changed=self.send_mess
 
