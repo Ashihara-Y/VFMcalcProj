@@ -3,8 +3,8 @@ sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
 from simpledt import DataFrame
-import plotly.express as px
-from flet.plotly_chart import PlotlyChart
+#import plotly.express as px
+#from flet.plotly_chart import PlotlyChart
 import duckdb
 from tinydb import TinyDB, Query
 #import glob
@@ -23,13 +23,12 @@ class Results(ft.Stack):
         self.height = 1000
         self.resizable = True
 
-        con = TinyDB("selected_res.json")
-        #self.dtime = page.session.get('selected_datetime')
-        self.dtime = con.all()[0]['selected_datetime']
-        con.close()
+        #con = TinyDB("selected_res.json")
+        engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
+        df_res = pd.read_sql_table('sel_res', engine_m)
+        self.dtime = df_res['selected_datetime'].iloc[0]
+        #con.close()
 
-        #conn = sqlite3.connect('VFM.duckdb')
-        #c = conn.cursor()
 
         engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         
