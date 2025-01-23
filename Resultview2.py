@@ -3,8 +3,8 @@ sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
 from simpledt import DataFrame
-import plotly.express as px
-from flet.plotly_chart import PlotlyChart
+#import plotly.express as px
+#from flet.plotly_chart import PlotlyChart
 import duckdb
 from tinydb import TinyDB, Query
 #import glob
