@@ -6,12 +6,8 @@ flet-desktop
 flet-runtime
 flet-web
 pydantic
-jupyter
-kaleido
 numpy
 pandas
-plotly
-prefect
 pyarrow
 pymupdf
 python-ulid
@@ -22,5 +18,4 @@ tinydb
 pyxirr
 duckdb
 duckdb-engine
-sqlmodel
 sqlalchemy
