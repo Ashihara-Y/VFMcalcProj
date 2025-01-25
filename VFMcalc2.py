@@ -16,7 +16,7 @@ def VFM_calc():
 
     proj_type = inputs['proj_type']
 
-    if proj_type == "BTO/DBO/RO":
+    if proj_type == "BTO":
 
         PSC_calc.PSC_calc()
         LCC_calc.LCC_calc()
@@ -30,7 +30,35 @@ def VFM_calc():
         #sr.save_db()
         #view_saved.View_saved()
     
-    elif proj_type == "BT/DB":
+    if proj_type == "DBO(SPCなし)":
+
+        PSC_calc.PSC_calc()
+        LCC_calc.LCC_calc()
+        SPC_calc.SPC_calc()
+        risk_adjustment.risk_adj()
+        make_present_value.make_pv()
+        check_SPC_cashForPPayment.check_cash()
+         #Save_results()
+        sr.make_df_addID_saveDB()
+        #sr.make_summary_add_ids()
+        #sr.save_db()
+        #view_saved.View_saved()
+    
+    if proj_type == "BOT/BOO":
+
+        PSC_calc.PSC_calc()
+        LCC_calc.LCC_calc()
+        SPC_calc.SPC_calc()
+        risk_adjustment.risk_adj()
+        make_present_value.make_pv()
+        check_SPC_cashForPPayment.check_cash()
+         #Save_results()
+        sr.make_df_addID_saveDB()
+        #sr.make_summary_add_ids()
+        #sr.save_db()
+        #view_saved.View_saved()
+    
+    elif proj_type == "BT/DB(いずれもSPCなし)":
         PSC_calc.PSC_calc()
         LCC_calc.LCC_calc()
         SPC_calc.SPC_calc()        
