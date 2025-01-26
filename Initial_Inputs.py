@@ -20,8 +20,9 @@ class Initial_Inputs(ft.Column):
         self.resizable = True
         self.slider_value = ft.Text("0.00")
     
-    def handle_change(e, self):
-        self.slider_value.value = str(e.control.value)
+    def handle_change(self, e):
+        sl_value = e.control.value
+        self.slider_value.value = str(sl_value)
         self.page.update()
 
     def build(self):
