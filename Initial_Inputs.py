@@ -124,7 +124,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}百万円",
             on_change=self.handle_change,
         )
-        self.tx2 = ft.Text("維持管理運営費(年額)人件費 落札価格ベース")
+        self.tx2 = ft.Text("維持管理運営費(年額)人件費 落札価格ベース(百万円)")
         self.sl2 = ft.CupertinoSlider(
             value=0,
             min=0,
@@ -133,7 +133,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}百万円",
             on_change=self.handle_change,
         )
-        self.tx3 = ft.Text("維持管理運営費(年額)人件費 予算単価ベース")
+        self.tx3 = ft.Text("維持管理運営費(年額)人件費 予算単価ベース(百万円)")
         self.sl3 = ft.CupertinoSlider(
             value=0,
             min=0,
@@ -142,7 +142,7 @@ class Initial_Inputs(ft.Column):
             on_change=self.handle_change,
             #label="{value}百万円",
         )
-        self.tx4 = ft.Text("維持管理運営費(年額)修繕費 落札価格ベース")
+        self.tx4 = ft.Text("維持管理運営費(年額)修繕費 落札価格ベース(百万円)")
         self.sl4 = ft.CupertinoSlider(
             value=0,
             min=0,
@@ -151,7 +151,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}百万円",
             on_change=self.handle_change,
         )
-        self.tx5 = ft.Text("維持管理運営費(年額)修繕費 予算単価ベース")
+        self.tx5 = ft.Text("維持管理運営費(年額)修繕費 予算単価ベース(百万円)")
         self.sl5 = ft.CupertinoSlider(
             value=0,
             min=0,
@@ -160,7 +160,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}百万円",
             on_change=self.handle_change,
         )
-        self.tx6 = ft.Text("維持管理運営費(年額)動力費 落札価格ベース")
+        self.tx6 = ft.Text("維持管理運営費(年額)動力費 落札価格ベース(百万円)")
         self.sl6 = ft.CupertinoSlider(
             value=0,
             min=0,
@@ -169,7 +169,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}百万円",
             on_change=self.handle_change,
         )
-        self.tx7 = ft.Text("維持管理運営費(年額)動力費 予算単価ベース")
+        self.tx7 = ft.Text("維持管理運営費(年額)動力費 予算単価ベース(百万円)")
         self.sl7 = ft.CupertinoSlider(
             value=0,
             min=0,
@@ -178,7 +178,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}百万円",
             on_change=self.handle_change,
         )
-        self.tx8 = ft.Text("施設整備費の効率性")
+        self.tx8 = ft.Text("施設整備費の効率性(%)(推奨:5%")
         self.sl8 = ft.CupertinoSlider(
             value=0,
             min=0.0,
@@ -187,7 +187,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}%",
             on_change=self.handle_change,
         )
-        self.tx9 = ft.Text("維持管理運営費の効率性(人件費)")
+        self.tx9 = ft.Text("維持管理運営費の効率性(人件費,%)(推奨:5%)")
         self.sl9 = ft.CupertinoSlider(
             value=0,
             min=0.0,
@@ -196,7 +196,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}%",
             on_change=self.handle_change,
         )
-        self.tx10 = ft.Text("維持管理運営費の効率性(修繕費)")
+        self.tx10 = ft.Text("維持管理運営費の効率性(修繕費,%)(推奨:5%)")
         self.sl10 = ft.CupertinoSlider(
             value=0,
             min=0.0,
@@ -205,7 +205,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}%",
             on_change=self.handle_change,
         )
-        self.tx11 = ft.Text("維持管理運営費の効率性(動力費)")
+        self.tx11 = ft.Text("維持管理運営費の効率性(動力費,%)(推奨:5%)")
         self.sl11 = ft.CupertinoSlider(
             value=0,
             min=0.0,
@@ -214,7 +214,7 @@ class Initial_Inputs(ft.Column):
             #label="{value}%",
             on_change=self.handle_change,
         )
-        self.tx12 = ft.Text("落札率(競争の効果反映)")
+        self.tx12 = ft.Text("落札率(競争の効果反映,%)(推奨:95%)")
         self.sl12 = ft.CupertinoSlider(
             value=0,
             min=80,
