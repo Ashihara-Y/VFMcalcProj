@@ -11,16 +11,18 @@ from tinydb import TinyDB, Query
 from decimal import *
 
 class Initial_Inputs(ft.Column):
+
     def __init__(self):
         super().__init__()
         self.title = "初期入力"
         self.width = 500
         self.height = 2000
         self.resizable = True
+        self.slider_value = ft.Txet("0.00")
     
-    def handle_change(e, page):
-        slider_value.value = str(e.control.value)
-        page.update()
+    def handle_change(e, self):
+        self.slider_value.value = str(e.control.value)
+        self.page.update()
 
     def build(self):
         self.dd1 = ft.Dropdown(
@@ -110,7 +112,7 @@ class Initial_Inputs(ft.Column):
             max=100000,
             divisions=10000,
             label="{value}百万円",
-            #on_change=slider_changed,
+            on_change=self.handle_changed,
         )
         self.tx1 = ft.Text("施設整備費 予算単価ベース")
         self.sl1 = ft.Slider(
