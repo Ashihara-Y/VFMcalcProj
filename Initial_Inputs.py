@@ -116,21 +116,22 @@ class Initial_Inputs(ft.Column):
             on_change=self.handle_change,
         )
         self.tx1 = ft.Text("施設整備費 予算単価ベース")
-        self.sl1 = ft.Slider(
+        self.sl1 = ft.CupertinoSlider(
             value=3000,
             min=100,
             max=100000,
             divisions=10000,
-            label="{value}百万円",
-            #on_change=slider_changed,
+            #label="{value}百万円",
+            on_change=self.handle_change,
         )
         self.tx2 = ft.Text("維持管理運営費(年額)人件費 落札価格ベース")
-        self.sl2 = ft.Slider(
+        self.sl2 = ft.CupertinoSlider(
             value=0,
             min=0,
             max=1000,
             divisions=1000,
-            label="{value}百万円",
+            #label="{value}百万円",
+            on_change=self.handle_change,
         )
         self.tx3 = ft.Text("維持管理運営費(年額)人件費 予算単価ベース")
         self.sl3 = ft.Slider(
@@ -216,11 +217,13 @@ class Initial_Inputs(ft.Column):
         return ft.Column(
             [
                 self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
-                self.tx0,  self.slider_value, self.sl0, self.tx1,  self.sl1,  self.tx2,  self.sl2,
-                self.tx3,  self.sl3, self.tx4,  self.sl4,  self.tx5,  self.sl5,
-                self.tx6,  self.sl6, self.tx7,  self.sl7,  self.tx8,  self.sl8,
-                self.tx9,  self.sl9, self.tx10, self.sl10, self.tx11, self.sl11,
-                self.tx12, self.sl12,
+                self.tx0,  self.slider_value, self.sl0, self.tx1,  self.slider_value, self.sl1,  
+                self.tx2,  self.slider_value, self.sl2, self.tx3,  self.slider_value, self.sl3, 
+                self.tx4,  self.slider_value, self.sl4,  self.tx5,  self.slider_value, self.sl5,
+                self.tx6,  self.slider_value, self.sl6, self.tx7,  self.slider_value, self.sl7,  
+                self.tx8,  self.slider_value, self.sl8, self.tx9,  self.slider_value, self.sl9, 
+                self.tx10, self.slider_value, self.sl10, self.tx11, self.slider_value, self.sl11,
+                self.tx12, self.slider_value, self.sl12,
                 self.b
             ],
             scroll=ft.ScrollMode.ALWAYS,
