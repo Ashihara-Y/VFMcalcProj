@@ -106,19 +106,19 @@ class Initial_Inputs(ft.Column):
                 ft.dropdown.Option("5"),
             ],
         )
-        self.tx0 = ft.Text("施設整備費 落札価格ベース")
+        self.tx0 = ft.Text("施設整備費 落札価格ベース(百万円)")
         self.sl0 = ft.CupertinoSlider(
-            value=0,
+            value=1500,
             min=0,
             max=100000,
             divisions=10000,
             #label="{value}百万円",
             on_change=self.handle_change,
         )
-        self.tx1 = ft.Text("施設整備費 予算単価ベース")
+        self.tx1 = ft.Text("施設整備費 予算単価ベース(百万円)")
         self.sl1 = ft.CupertinoSlider(
-            value=3000,
-            min=100,
+            value=1500,
+            min=0,
             max=100000,
             divisions=10000,
             #label="{value}百万円",
