@@ -112,7 +112,7 @@ class Initial_Inputs(ft.Column):
             max=100000,
             divisions=10000,
             label="{value}百万円",
-            on_change=self.handle_changed,
+            on_change=self.handle_change,
         )
         self.tx1 = ft.Text("施設整備費 予算単価ベース")
         self.sl1 = ft.Slider(
