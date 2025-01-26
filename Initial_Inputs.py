@@ -17,6 +17,10 @@ class Initial_Inputs(ft.Column):
         self.width = 500
         self.height = 2000
         self.resizable = True
+    
+    def handle_change(e, page):
+        slider_value.value = str(e.control.value)
+        page.update()
 
     def build(self):
         self.dd1 = ft.Dropdown(
@@ -100,7 +104,7 @@ class Initial_Inputs(ft.Column):
             ],
         )
         self.tx0 = ft.Text("施設整備費 落札価格ベース")
-        self.sl0 = ft.Slider(
+        self.sl0 = ft.CupertinoSlider(
             value=0,
             min=0,
             max=100000,
