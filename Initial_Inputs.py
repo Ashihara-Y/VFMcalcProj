@@ -216,7 +216,7 @@ class Initial_Inputs(ft.Column):
         return ft.Column(
             [
                 self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
-                self.tx0,  self.sl0, self.tx1,  self.sl1,  self.tx2,  self.sl2,
+                self.tx0,  self.slider_value, self.sl0, self.tx1,  self.sl1,  self.tx2,  self.sl2,
                 self.tx3,  self.sl3, self.tx4,  self.sl4,  self.tx5,  self.sl5,
                 self.tx6,  self.sl6, self.tx7,  self.sl7,  self.tx8,  self.sl8,
                 self.tx9,  self.sl9, self.tx10, self.sl10, self.tx11, self.sl11,
