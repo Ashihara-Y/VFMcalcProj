@@ -18,7 +18,7 @@ class Initial_Inputs(ft.Column):
         self.width = 500
         self.height = 2000
         self.resizable = True
-        self.slider_value = ft.Text("0.00")
+        self.slider_value = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
     
     def handle_change(self, e):
         sl_value = e.control.value
@@ -111,7 +111,7 @@ class Initial_Inputs(ft.Column):
             value=1500,
             min=0,
             max=100000,
-            divisions=10000,
+            #divisions=10000,
             #label="{value}百万円",
             on_change=self.handle_change,
         )
@@ -120,7 +120,7 @@ class Initial_Inputs(ft.Column):
             value=1500,
             min=0,
             max=100000,
-            divisions=10000,
+            #divisions=10000,
             #label="{value}百万円",
             on_change=self.handle_change,
         )
