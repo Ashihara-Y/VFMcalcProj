@@ -248,7 +248,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx8 = ft.Text("施設整備費支払 一括払の比率(%)")
         self.sl2 = ft.Slider(
-            value=0,
+            value=50,
             min=0.0,
             max=100,
             divisions=100,
@@ -463,6 +463,7 @@ class Final_Inputs(ft.Column):
             ],
             scroll=ft.ScrollMode.AUTO,
             height=2000,
+            width=800,
         )
 
     def button_clicked(self, e):
