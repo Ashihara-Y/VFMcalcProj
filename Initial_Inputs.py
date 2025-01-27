@@ -296,7 +296,7 @@ class Initial_Inputs(ft.Column):
                         self.tx12, self.slider_value12, self.sl12,
                         self.b
                     ],
-                    scroll=ft.ScrollMode.ALWAYS,
+                    scroll=ft.ScrollMode.AUTO,
                     height=1500,
                 )
 
