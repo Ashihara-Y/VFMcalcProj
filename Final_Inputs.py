@@ -457,7 +457,7 @@ class Final_Inputs(ft.Column):
                 self.tx17,self.slider_value11, self.sl11,self.tx18,self.slider_value12, self.sl12,
                 self.tx19,self.slider_value13, self.sl13,self.tx20,self.slider_value14, self.sl14,
                 self.tx21,self.slider_value15, self.sl15,self.tx22,self.slider_value16, self.sl16,
-                self.dd01,self.dd02,self.tx24,self.sl18,
+                self.dd01,self.dd02,
                 self.tx25,self.slider_value19, self.sl19,self.tx26,self.slider_value20, self.sl20,
                 self.b,
             ],
