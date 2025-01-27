@@ -217,7 +217,7 @@ class Initial_Inputs(ft.Column):
         self.tx12 = ft.Text("落札率(競争の効果反映,%)(推奨:95%)")
         self.sl12 = ft.CupertinoSlider(
             value=0,
-            min=80,
+            min=0,
             max=100,
             #divisions=20,
             #label="{value}%",
