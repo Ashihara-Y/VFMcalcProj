@@ -20,26 +20,26 @@ class Final_Inputs(ft.Column):
         self.height = 3000
         self.resizable = True
 
-        self.slider_value01 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value02 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value03 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value04 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value05 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value06 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value07 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value08 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value09 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value10 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value11 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value12 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value13 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value14 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value15 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value16 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value17 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value18 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value19 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value20 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value05 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value06 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value07 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value08 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value13 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value14 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value15 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value17 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value18 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value19 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value20 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
 
         db = TinyDB("ii_db.json")
         self.initial_inputs = db.all()[0]        
@@ -237,147 +237,161 @@ class Final_Inputs(ft.Column):
         )
 
         self.tx7 = ft.Text("地方債償還期間(年)")
-        self.sl1 = ft.CupertinoSlider(
+        self.sl1 = ft.Slider(
             value=int(self.initial_inputs["chisai_shoukan_kikan"]),
             min=0,
             max=30,
             divisions=30,
-            #label="{value}年",
+            label="{value}年",
+            round=0,
             on_change=self.handle_change_01,
         )
         self.tx8 = ft.Text("施設整備費支払 一括払の比率(%)")
-        self.sl2 = ft.CupertinoSlider(
+        self.sl2 = ft.Slider(
             value=0,
             min=0.0,
             max=100,
             divisions=100,
-            #label="{value}%",
+            label="{value}%",
+            round=1,
             on_change=self.handle_change_02,
         )
         self.tx9 = ft.Text("モニタリング等費用(PSC)(百万円、推奨:10)")
-        self.sl3 = ft.CupertinoSlider(
+        self.sl3 = ft.Slider(
             value=0,
             min=0,
             max=100,
             divisions=100,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=1,
             on_change=self.handle_change_03,
         )
         self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、推奨:6)")
-        self.sl4 = ft.CupertinoSlider(
+        self.sl4 = ft.Slider(
             value=0,
             min=0,
             max=100,
             divisions=100,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=1,
             on_change=self.handle_change_04,
         )
         self.tx11 = ft.Text("起債充当率(%)")
-        self.sl5 = ft.CupertinoSlider(
+        self.sl5 = ft.Slider(
             value:=self.initial_inputs["kisai_jutou"],
             min=0.0,
             max=100.0,
             divisions=100,
-            #label="{value}%",
+            label="{value}%",
+            round=1,
             on_change=self.handle_change_05,
         )
         self.tx12 = ft.Text("起債への交付金カバー率(%)")
-        self.sl6 = ft.CupertinoSlider(
+        self.sl6 = ft.Slider(
             value:=self.initial_inputs["kisai_koufu"],
             min=0.0,
             max=50.0,
             divisions=50,
-            #label="{value}%",
+            label="{value}%",
+            round=1,
             on_change=self.handle_change_06,
         )
         self.tx13 = ft.Text("補助率(%)")
-        self.sl7 = ft.CupertinoSlider(
+        self.sl7 = ft.Slider(
             value:=self.initial_inputs["hojo_ritsu"],
             min=0.0,
             max=70.0,
             divisions=700,
-            #label="{value}%",
+            label="{value}%",
+            round=1,
             on_change=self.handle_change_07,
         )
         self.tx14 = ft.Text("SPC経費年額(百万円)")
-        self.sl8 = ft.CupertinoSlider(
+        self.sl8 = ft.Slider(
             value:=Decimal(self.initial_inputs["SPC_keihi"]),
             min=0,
             max=50,
             divisions=50,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=1,
             on_change=self.handle_change_08,
         )
         self.tx15 = ft.Text("SPCへの手数料(百万円)")
-        self.sl9 = ft.CupertinoSlider(
+        self.sl9 = ft.Slider(
             value:=Decimal(self.initial_inputs["SPC_fee"]),
             min=0,
             max=50,
             divisions=50,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=1,
             on_change=self.handle_change_09,
         )
         self.tx16 = ft.Text("SPC資本金(百万円)")
-        self.sl10 = ft.CupertinoSlider(
+        self.sl10 = ft.Slider(
             value:=Decimal(self.initial_inputs["SPC_shihon"]),
             min=0,
             max=100,
             divisions=100,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=1,
             on_change=self.handle_change_10,
         )
         self.tx17 = ft.Text("SPC予備費(百万円)")
-        self.sl11 = ft.CupertinoSlider(
+        self.sl11 = ft.Slider(
             value:=Decimal(self.initial_inputs["SPC_yobihi"]),
             min=0,
             max=1000,
             divisions=1000000,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=1,
             on_change=self.handle_change_11,
         )
         self.tx18 = ft.Text("SPC経費の扱い（デフォルト：割賦に含める:1）")
-        self.sl12 = ft.CupertinoSlider(
+        self.sl12 = ft.Slider(
             value:=self.initial_inputs["SPC_hiyou_atsukai"],
             min=0,
             max=1,
             divisions=1,
-            #label="{value}",
+            label="{value}",
             on_change=self.handle_change_12,
         )
         self.tx19 = ft.Text("アドバイザリー等経費(百万円)")
-        self.sl13 = ft.CupertinoSlider(
+        self.sl13 = ft.Slider(
             value=0,
             min=0,
             max=50,
             divisions=50000,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=1,
             on_change=self.handle_change_13,
         )
         self.tx20 = ft.Text("利用料金収入(百万円)")
-        self.sl14 = ft.CupertinoSlider(
+        self.sl14 = ft.Slider(
             value:=self.initial_inputs["riyou_ryoukin"],
             min=0,
             max=100,
             divisions=100000,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=1,
             on_change=self.handle_change_14,
         )
         self.tx21 = ft.Text("割賦金利へのスプレッド(%)")
-        self.sl15 = ft.CupertinoSlider(
+        self.sl15 = ft.Slider(
             value=0.00,
             min=0.00,
             max=2.00,
             divisions=200,
-            #label="{value}％",
+            label="{value}％",
+            round=2,
             on_change=self.handle_change_15,
         )
         self.tx22 = ft.Text("施設整備開始年")
-        self.sl16 = ft.CupertinoSlider(
+        self.sl16 = ft.Slider(
             value:=const_start_year,
             min=const_start_year,
             max=(const_start_year + 10),
             divisions=10,
-            #label="{value}年",
+            label="{value}年",
             on_change=self.handle_change_16,
         )
         self.dd01 = ft.Dropdown(
@@ -412,21 +426,21 @@ class Final_Inputs(ft.Column):
             ],
         )
         self.tx25 = ft.Text("予備入力（１）")
-        self.sl19 = ft.CupertinoSlider(
+        self.sl19 = ft.Slider(
             value=0,
             min=0,
             max=1,
             divisions=100,
-            #label="{value}",
+            label="{value}",
             on_change=self.handle_change_19,
         )
         self.tx26 = ft.Text("予備入力（２）")
-        self.sl20 = ft.CupertinoSlider(
+        self.sl20 = ft.Slider(
             value=0,
             min=0,
             max=1,
             divisions=100,
-            #label="{value}",
+            label="{value}",
             on_change=self.handle_change_20,
         )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
