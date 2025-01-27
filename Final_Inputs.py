@@ -482,8 +482,8 @@ class Final_Inputs(ft.Column):
         # 含めて、TinyDBに格納、それをMake_inputsで呼び出して、
         # pydanticで検証する。
         const_start_date_year = int(self.sl16.value)
-        const_start_date_month = int(self.sl17.value)
-        const_start_date_day = int(self.sl18.value)
+        const_start_date_month = int(self.dd01.value)
+        const_start_date_day = int(self.dd02.value)
         #const_start_date_year = self.initial_inputs['const_start_date_year']
         #const_start_date_month = self.initial_inputs['const_start_date_month']
         #const_start_date_day = self.initial_inputs['const_start_date_day']
