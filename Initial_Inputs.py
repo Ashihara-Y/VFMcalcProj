@@ -268,7 +268,7 @@ class Initial_Inputs(ft.Column):
         )
         self.tx10 = ft.Text("維持管理運営費の効率性(修繕費,%)(推奨:5%)")
         self.sl10 = ft.Slider(
-            value=0,
+            value=5,
             min=0.0,
             max=20,
             divisions=200,
@@ -278,7 +278,7 @@ class Initial_Inputs(ft.Column):
         )
         self.tx11 = ft.Text("維持管理運営費の効率性(動力費,%)(推奨:5%)")
         self.sl11 = ft.Slider(
-            value=0,
+            value=5,
             min=0.0,
             max=20,
             divisions=200,
@@ -288,7 +288,7 @@ class Initial_Inputs(ft.Column):
         )
         self.tx12 = ft.Text("落札率(競争の効果反映,%)(推奨:95%)")
         self.sl12 = ft.Slider(
-            value=0,
+            value=95,
             min=0,
             max=100,
             divisions=100,
