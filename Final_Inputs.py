@@ -20,6 +20,109 @@ class Final_Inputs(ft.Column):
         self.height = 3000
         self.resizable = True
 
+        self.slider_value01 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value02 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value03 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value04 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value05 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value06 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value07 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value08 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value09 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value10 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value11 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value12 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value13 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value14 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value15 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value16 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value17 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value18 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value19 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value20 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+
+    def handle_change_01(self, e):
+        sl_value = e.control.value
+        self.slider_value01.value = str(sl_value)
+        self.page.update()
+    def handle_change_02(self, e):
+        sl_value = e.control.value
+        self.slider_value02.value = str(sl_value)
+        self.page.update()
+    def handle_change_03(self, e):
+        sl_value = e.control.value
+        self.slider_value03.value = str(sl_value)
+        self.page.update()
+    def handle_change_04(self, e):
+        sl_value = e.control.value
+        self.slider_value04.value = str(sl_value)
+        self.page.update()
+    def handle_change_05(self, e):
+        sl_value = e.control.value
+        self.slider_value05.value = str(sl_value)
+        self.page.update()
+    def handle_change_06(self, e):
+        sl_value = e.control.value
+        self.slider_value06.value = str(sl_value)
+        self.page.update()
+    def handle_change_07(self, e):
+        sl_value = e.control.value
+        self.slider_value07.value = str(sl_value)
+        self.page.update()
+    def handle_change_08(self, e):
+        sl_value = e.control.value
+        self.slider_value08.value = str(sl_value)
+        self.page.update()
+    def handle_change_09(self, e):
+        sl_value = e.control.value
+        self.slider_value09.value = str(sl_value)
+        self.page.update()
+    def handle_change_10(self, e):
+        sl_value = e.control.value
+        self.slider_value10.value = str(sl_value)
+        self.page.update()
+    def handle_change_11(self, e):
+        sl_value = e.control.value
+        self.slider_value11.value = str(sl_value)
+        self.page.update()
+    def handle_change_12(self, e):
+        sl_value = e.control.value
+        self.slider_value12.value = str(sl_value)
+        self.page.update()
+    def handle_change_13(self, e):
+        sl_value = e.control.value
+        self.slider_value13.value = str(sl_value)
+        self.page.update()
+    def handle_change_14(self, e):
+        sl_value = e.control.value
+        self.slider_value14.value = str(sl_value)
+        self.page.update()
+    def handle_change_15(self, e):
+        sl_value = e.control.value
+        self.slider_value15.value = str(sl_value)
+        self.page.update()
+    def handle_change_16(self, e):
+        sl_value = e.control.value
+        self.slider_value16.value = str(sl_value)
+        self.page.update()
+    def handle_change_17(self, e):
+        sl_value = e.control.value
+        self.slider_value17.value = str(sl_value)
+        self.page.update()
+    def handle_change_18(self, e):
+        sl_value = e.control.value
+        self.slider_value18.value = str(sl_value)
+        self.page.update()
+    def handle_change_19(self, e):
+        sl_value = e.control.value
+        self.slider_value19.value = str(sl_value)
+        self.page.update()
+    def handle_change_20(self, e):
+        sl_value = e.control.value
+        self.slider_value20.value = str(sl_value)
+        self.page.update()
+
+
         db = TinyDB("ii_db.json")
         self.initial_inputs = db.all()[0]
         
@@ -133,183 +236,198 @@ class Final_Inputs(ft.Column):
             ],
         )
 
-        self.tx7 = ft.Text("地方債償還期間")
-        self.sl1 = ft.Slider(
+        self.tx7 = ft.Text("地方債償還期間(年)")
+        self.sl1 = ft.CupertinoSlider(
             value=int(self.initial_inputs["chisai_shoukan_kikan"]),
             min=0,
             max=30,
             divisions=30,
-            label="{value}年",
-#            badge=self.sl1.value,
+            #label="{value}年",
+            on_change=self.handle_change_01,
         )
-        self.tx8 = ft.Text("施設整備費支払 一括払の比率")
-        self.sl2 = ft.Slider(
-            value=50,
+        self.tx8 = ft.Text("施設整備費支払 一括払の比率(%)")
+        self.sl2 = ft.CupertinoSlider(
+            value=0,
             min=0.0,
             max=100,
             divisions=100,
-            label="{value}%",
-#            badge=self.sl2.value,
+            #label="{value}%",
+            on_change=self.handle_change_02,
         )
-        self.tx9 = ft.Text("モニタリング等費用(PSC)")
-        self.sl3 = ft.Slider(
-            value=10,
+        self.tx9 = ft.Text("モニタリング等費用(PSC)(百万円、推奨:10)")
+        self.sl3 = ft.CupertinoSlider(
+            value=0,
             min=0,
             max=100,
             divisions=100,
-            label="{value}百万円",
-#            badge=self.sl3.value,
+            #label="{value}百万円",
+            on_change=self.handle_change_03,
         )
-        self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)")
-        self.sl4 = ft.Slider(
-            value=6,
+        self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、推奨:6)")
+        self.sl4 = ft.CupertinoSlider(
+            value=0,
             min=0,
             max=100,
             divisions=100,
-            label="{value}百万円",
-#            badge=self.sl4.value,
+            #label="{value}百万円",
+            on_change=self.handle_change_04,
         )
-        self.tx11 = ft.Text("起債充当率")
-        self.sl5 = ft.Slider(
+        self.tx11 = ft.Text("起債充当率(%)")
+        self.sl5 = ft.CupertinoSlider(
             value=self.initial_inputs["kisai_jutou"],
             min=0.0,
             max=100.0,
             divisions=100,
-            label="{value}%",
-#            badge=self.sl5.value,
+            #label="{value}%",
+            on_change=self.handle_change_05,
         )
-        self.tx12 = ft.Text("起債への交付金カバー率")
-        self.sl6 = ft.Slider(
+        self.tx12 = ft.Text("起債への交付金カバー率(%)")
+        self.sl6 = ft.CupertinoSlider(
             value=self.initial_inputs["kisai_koufu"],
             min=0.0,
             max=50.0,
             divisions=50,
-            label="{value}%",
-#            badge=self.sl6.value,
+            #label="{value}%",
+            on_change=self.handle_change_06,
         )
-        self.tx13 = ft.Text("補助率")
-        self.sl7 = ft.Slider(
+        self.tx13 = ft.Text("補助率(%)")
+        self.sl7 = ft.CupertinoSlider(
             value=self.initial_inputs["hojo_ritsu"],
             min=0.0,
             max=70.0,
-            divisions=70,
-            label="{value}%",
-#            badge=self.sl7.value,
+            divisions=700,
+            #label="{value}%",
+            on_change=self.handle_change_07,
         )
-        self.tx14 = ft.Text("SPC経費年額")
-        self.sl8 = ft.Slider(
+        self.tx14 = ft.Text("SPC経費年額(百万円)")
+        self.sl8 = ft.CupertinoSlider(
             value=Decimal(self.initial_inputs["SPC_keihi"]),
             min=0,
             max=50,
             divisions=50,
-            label="{value}百万円",
-#            badge=self.sl8.value,
+            #label="{value}百万円",
+            on_change=self.handle_change_08,
         )
-        self.tx15 = ft.Text("SPCへの手数料")
-        self.sl9 = ft.Slider(
+        self.tx15 = ft.Text("SPCへの手数料(百万円)")
+        self.sl9 = ft.CupertinoSlider(
             value=Decimal(self.initial_inputs["SPC_fee"]),
             min=0,
             max=50,
             divisions=50,
-            label="{value}百万円",
-#            badge=self.sl9.value,
+            #label="{value}百万円",
+            on_change=self.handle_change_09,
         )
-        self.tx16 = ft.Text("SPC資本金")
-        self.sl10 = ft.Slider(
+        self.tx16 = ft.Text("SPC資本金(百万円)")
+        self.sl10 = ft.CupertinoSlider(
             value=Decimal(self.initial_inputs["SPC_shihon"]),
             min=0,
             max=100,
             divisions=100,
-            label="{value}百万円",
-#            badge=self.sl10.value,
+            #label="{value}百万円",
+            on_change=self.handle_change_10,
         )
-        self.tx17 = ft.Text("SPC予備費")
-        self.sl11 = ft.Slider(
+        self.tx17 = ft.Text("SPC予備費(百万円)")
+        self.sl11 = ft.CupertinoSlider(
             value=Decimal(self.initial_inputs["SPC_yobihi"]),
             min=0,
             max=1000,
-            divisions=1000,
-            label="{value}百万円",
-#            badge=self.sl11.value,
+            divisions=1000000,
+            #label="{value}百万円",
+            on_change=self.handle_change_11,
         )
-        self.tx18 = ft.Text("SPC経費の扱い（デフォルト：割賦に含める）")
-        self.sl12 = ft.Slider(
+        self.tx18 = ft.Text("SPC経費の扱い（デフォルト：割賦に含める:1）")
+        self.sl12 = ft.CupertinoSlider(
             value=self.initial_inputs["SPC_hiyou_atsukai"],
             min=0,
             max=1,
             divisions=1,
-            label="{value}",
-#            badge=self.sl12.value,
+            #label="{value}",
+            on_change=self.handle_change_12,
         )
-        self.tx19 = ft.Text("アドバイザリー等経費")
-        self.sl13 = ft.Slider(
-            value=25,
+        self.tx19 = ft.Text("アドバイザリー等経費(百万円)")
+        self.sl13 = ft.CupertinoSlider(
+            value=0,
             min=0,
             max=50,
-            divisions=50,
-            label="{value}百万円",
-#            badge=self.sl13.value,
+            divisions=50000,
+            #label="{value}百万円",
+            on_change=self.handle_change_13,
         )
-        self.tx20 = ft.Text("利用料金収入")
-        self.sl14 = ft.Slider(
+        self.tx20 = ft.Text("利用料金収入(百万円)")
+        self.sl14 = ft.CupertinoSlider(
             value=self.initial_inputs["riyou_ryoukin"],
             min=0,
             max=100,
-            divisions=100,
-            label="{value}百万円",
-#            badge=self.sl14.value,
+            divisions=100000,
+            #label="{value}百万円",
+            on_change=self.handle_change_14,
         )
-        self.tx21 = ft.Text("割賦金利へのスプレッド")
-        self.sl15 = ft.Slider(
-            value=1.00,
+        self.tx21 = ft.Text("割賦金利へのスプレッド(%)")
+        self.sl15 = ft.CupertinoSlider(
+            value=0.00,
             min=0.00,
             max=2.00,
             divisions=200,
-            label="{value}％",
-#            badge=self.sl15.value,
+            #label="{value}％",
+            on_change=self.handle_change_15,
         )
         self.tx22 = ft.Text("施設整備開始年")
-        self.sl16 = ft.Slider(
+        self.sl16 = ft.CupertinoSlider(
             value=const_start_year,
             min=const_start_year,
             max=(const_start_year + 10),
             divisions=10,
-            label="{value}年",
-#            badge=self.sl16.value,
+            #label="{value}年",
+            on_change=self.handle_change_16,
         )
-        self.tx23 = ft.Text("施設整備開始月")
-        self.sl17 = ft.Slider(
-            value=const_start_month,
-            min=1,
-            max=12,
-            divisions=12,
-            label="{value}月",
-#            badge=self.sl17.value,
+        self.dd01 = ft.Dropdown(
+            label="施設整備開始月",
+            hint_text="施設整備開始月を選択してください",
+            width=400,
+            value="20",
+            options=[
+                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
+                ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
+                ft.dropdown.Option("7"),  ft.dropdown.Option("8"),  ft.dropdown.Option("9"),
+                ft.dropdown.Option("10"), ft.dropdown.Option("11"), ft.dropdown.Option("12"),
+            ],
         )
-        self.tx24 = ft.Text("施設整備開始日")
-        self.sl18 = ft.Slider(
-            value=const_start_day,
-            min=1,
-            max=31,
-            divisions=31,
-            label="{value}日",
-#            badge=self.sl18.value,
+        self.dd02 = ft.Dropdown(
+            label="施設整備開始日",
+            hint_text="施設整備開始日を選択してください",
+            width=400,
+            value="20",
+            options=[
+                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
+                ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
+                ft.dropdown.Option("7"),  ft.dropdown.Option("8"),  ft.dropdown.Option("9"),
+                ft.dropdown.Option("10"), ft.dropdown.Option("11"), ft.dropdown.Option("12"),
+                ft.dropdown.Option("13"), ft.dropdown.Option("14"), ft.dropdown.Option("15"),
+                ft.dropdown.Option("16"), ft.dropdown.Option("17"), ft.dropdown.Option("18"),
+                ft.dropdown.Option("19"), ft.dropdown.Option("20"), ft.dropdown.Option("21"),
+                ft.dropdown.Option("22"), ft.dropdown.Option("23"), ft.dropdown.Option("24"),
+                ft.dropdown.Option("25"), ft.dropdown.Option("26"), ft.dropdown.Option("27"),
+                ft.dropdown.Option("28"), ft.dropdown.Option("29"), ft.dropdown.Option("30"),
+                ft.dropdown.Option("31"), 
+            ],
         )
         self.tx25 = ft.Text("予備入力（１）")
-        self.sl19 = ft.Slider(
+        self.sl19 = ft.CupertinoSlider(
             value=0,
             min=0,
-            max=0,
-            divisions=31,
-            label="{value}",
+            max=1,
+            divisions=100,
+            #label="{value}",
+            on_change=self.handle_change_19,
         )
         self.tx26 = ft.Text("予備入力（２）")
-        self.sl20 = ft.Slider(
+        self.sl20 = ft.CupertinoSlider(
             value=0,
             min=0,
-            max=0,
-            divisions=31,
-            label="{value}",
+            max=1,
+            divisions=100,
+            #label="{value}",
+            on_change=self.handle_change_20,
         )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
         return ft.Column(
@@ -317,19 +435,19 @@ class Final_Inputs(ft.Column):
                 self.tx0, self.tx1, self.tx2,
                 self.tx3, self.tx4, self.tx5, self.tx6,
                 self.dt1, self.dt2,
-                self.tx7, self.sl1, self.tx8, self.sl2,
-                self.tx9, self.sl3, self.tx10,self.sl4,
-                self.tx11,self.sl5, self.tx12,self.sl6,
-                self.tx13,self.sl7, self.tx14,self.sl8,
-                self.tx15,self.sl9, self.tx16,self.sl10,
-                self.tx17,self.sl11,self.tx18,self.sl12,
-                self.tx19,self.sl13,self.tx20,self.sl14,
-                self.tx21,self.sl15,self.tx22,self.sl16,
-                self.tx23,self.sl17,self.tx24,self.sl18,
-                self.tx25,self.sl19,self.tx26,self.sl20,
+                self.tx7, self.slider_value01, self.sl1, self.tx8, self.slider_value02, self.sl2,
+                self.tx9, self.slider_value03, self.sl3, self.tx10,self.slider_value04, self.sl4,
+                self.tx11,self.slider_value05, self.sl5, self.tx12,self.slider_value06, self.sl6,
+                self.tx13,self.slider_value07, self.sl7, self.tx14,self.slider_value08, self.sl8,
+                self.tx15,self.slider_value09, self.sl9, self.tx16,self.slider_value10, self.sl10,
+                self.tx17,self.slider_value11, self.sl11,self.tx18,self.slider_value12, self.sl12,
+                self.tx19,self.slider_value13, self.sl13,self.tx20,self.slider_value14, self.sl14,
+                self.tx21,self.slider_value15, self.sl15,self.tx22,self.slider_value16, self.sl16,
+                self.dd01,self.dd02,self.tx24,self.sl18,
+                self.tx25,self.slider_value19, self.sl19,self.tx26,self.slider_value20, self.sl20,
                 self.b,
             ],
-            scroll=ft.ScrollMode.ALWAYS,
+            scroll=ft.ScrollMode.AUTO,
         )
 
     def button_clicked(self, e):

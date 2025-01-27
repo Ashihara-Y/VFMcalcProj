@@ -171,7 +171,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0,
             max=100000,
-            #divisions=10000,
+            divisions=100000000,
             #label="{value}百万円",
             on_change=self.handle_change_00,
         )
@@ -180,7 +180,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0,
             max=100000,
-            #divisions=10000,
+            divisions=100000000,
             #label="{value}百万円",
             on_change=self.handle_change_01,
         )
@@ -189,7 +189,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0,
             max=1000,
-            #divisions=1000,
+            divisions=1000,
             #label="{value}百万円",
             on_change=self.handle_change_02,
         )
@@ -198,7 +198,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0,
             max=1000,
-            #divisions=1000,
+            divisions=1000,
             on_change=self.handle_change_03,
             #label="{value}百万円",
         )
@@ -207,7 +207,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0,
             max=100,
-            #divisions=100,
+            divisions=100,
             #label="{value}百万円",
             on_change=self.handle_change_04,
         )
@@ -216,7 +216,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0,
             max=100,
-            #divisions=100,
+            divisions=100,
             #label="{value}百万円",
             on_change=self.handle_change_05,
         )
@@ -225,7 +225,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0,
             max=100,
-            #divisions=100,
+            divisions=100,
             #label="{value}百万円",
             on_change=self.handle_change_06,
         )
@@ -234,7 +234,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0,
             max=100,
-            #divisions=100,
+            divisions=100,
             #label="{value}百万円",
             on_change=self.handle_change_07,
         )
@@ -243,7 +243,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0.0,
             max=20,
-            #divisions=20,
+            divisions=200,
             #label="{value}%",
             on_change=self.handle_change_08,
         )
@@ -252,7 +252,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0.0,
             max=20,
-            #divisions=20,
+            divisions=200,
             #label="{value}%",
             on_change=self.handle_change_09,
         )
@@ -261,7 +261,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0.0,
             max=20,
-            #divisions=20,
+            divisions=200,
             #label="{value}%",
             on_change=self.handle_change_10,
         )
@@ -270,7 +270,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0.0,
             max=20,
-            #divisions=20,
+            divisions=200,
             #label="{value}%",
             on_change=self.handle_change_11,
         )
@@ -279,7 +279,7 @@ class Initial_Inputs(ft.Column):
             value=0,
             min=0,
             max=100,
-            #divisions=20,
+            divisions=100,
             #label="{value}%",
             on_change=self.handle_change_12,
         )
