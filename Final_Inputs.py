@@ -41,6 +41,9 @@ class Final_Inputs(ft.Column):
         self.slider_value19 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
         self.slider_value20 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
 
+        db = TinyDB("ii_db.json")
+        self.initial_inputs = db.all()[0]        
+
     def handle_change_01(self, e):
         sl_value = e.control.value
         self.slider_value01.value = str(sl_value)
@@ -123,9 +126,6 @@ class Final_Inputs(ft.Column):
         self.page.update()
 
 
-        db = TinyDB("ii_db.json")
-        self.initial_inputs = db.all()[0]
-        
     def build(self):
 
         date_format = '%Y-%m-%d'
