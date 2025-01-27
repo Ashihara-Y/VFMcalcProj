@@ -18,19 +18,19 @@ class Initial_Inputs(ft.Column):
         self.width = 500
         self.height = 2000
         self.resizable = True
-        self.slider_value00 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value01 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value02 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value03 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value04 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value05 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value06 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value07 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value08 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value09 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value10 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value11 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
-        self.slider_value12 = ft.Text("0.00", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value00 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value05 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value06 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value07 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value08 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
     
     def handle_change_00(self, e):
         sl_value = e.control.value
@@ -167,120 +167,132 @@ class Initial_Inputs(ft.Column):
             ],
         )
         self.tx0 = ft.Text("施設整備費 落札価格ベース(百万円)")
-        self.sl0 = ft.CupertinoSlider(
+        self.sl0 = ft.Slider(
             value=0,
             min=0,
             max=100000,
-            divisions=100000000,
-            #label="{value}百万円",
+            divisions=100000,
+            label="{value}百万円",
+            round=0,
             on_change=self.handle_change_00,
         )
         self.tx1 = ft.Text("施設整備費 予算単価ベース(百万円)")
-        self.sl1 = ft.CupertinoSlider(
+        self.sl1 = ft.Slider(
             value=0,
             min=0,
             max=100000,
-            divisions=100000000,
-            #label="{value}百万円",
+            divisions=100000,
+            label="{value}百万円",
+            round=0,
             on_change=self.handle_change_01,
         )
         self.tx2 = ft.Text("維持管理運営費(年額)人件費 落札価格ベース(百万円)")
-        self.sl2 = ft.CupertinoSlider(
+        self.sl2 = ft.Slider(
             value=0,
             min=0,
             max=1000,
             divisions=1000,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=0,
             on_change=self.handle_change_02,
         )
         self.tx3 = ft.Text("維持管理運営費(年額)人件費 予算単価ベース(百万円)")
-        self.sl3 = ft.CupertinoSlider(
+        self.sl3 = ft.Slider(
             value=0,
             min=0,
             max=1000,
             divisions=1000,
             on_change=self.handle_change_03,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=0,
         )
         self.tx4 = ft.Text("維持管理運営費(年額)修繕費 落札価格ベース(百万円)")
-        self.sl4 = ft.CupertinoSlider(
+        self.sl4 = ft.Slider(
             value=0,
             min=0,
             max=100,
             divisions=100,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=0,
             on_change=self.handle_change_04,
         )
         self.tx5 = ft.Text("維持管理運営費(年額)修繕費 予算単価ベース(百万円)")
-        self.sl5 = ft.CupertinoSlider(
+        self.sl5 = ft.Slider(
             value=0,
             min=0,
             max=100,
             divisions=100,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=0,
             on_change=self.handle_change_05,
         )
         self.tx6 = ft.Text("維持管理運営費(年額)動力費 落札価格ベース(百万円)")
-        self.sl6 = ft.CupertinoSlider(
+        self.sl6 = ft.Slider(
             value=0,
             min=0,
             max=100,
             divisions=100,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=0,
             on_change=self.handle_change_06,
         )
         self.tx7 = ft.Text("維持管理運営費(年額)動力費 予算単価ベース(百万円)")
-        self.sl7 = ft.CupertinoSlider(
+        self.sl7 = ft.Slider(
             value=0,
             min=0,
             max=100,
             divisions=100,
-            #label="{value}百万円",
+            label="{value}百万円",
+            round=0,
             on_change=self.handle_change_07,
         )
         self.tx8 = ft.Text("施設整備費の効率性(%)(推奨:5%")
-        self.sl8 = ft.CupertinoSlider(
-            value=0,
+        self.sl8 = ft.Slider(
+            value=5,
             min=0.0,
             max=20,
             divisions=200,
-            #label="{value}%",
+            label="{value}%",
+            round=1,
             on_change=self.handle_change_08,
         )
         self.tx9 = ft.Text("維持管理運営費の効率性(人件費,%)(推奨:5%)")
-        self.sl9 = ft.CupertinoSlider(
-            value=0,
+        self.sl9 = ft.Slider(
+            value=5,
             min=0.0,
             max=20,
             divisions=200,
-            #label="{value}%",
+            label="{value}%",
+            round=1,
             on_change=self.handle_change_09,
         )
         self.tx10 = ft.Text("維持管理運営費の効率性(修繕費,%)(推奨:5%)")
-        self.sl10 = ft.CupertinoSlider(
+        self.sl10 = ft.Slider(
             value=0,
             min=0.0,
             max=20,
             divisions=200,
-            #label="{value}%",
+            label="{value}%",
+            round=1,
             on_change=self.handle_change_10,
         )
         self.tx11 = ft.Text("維持管理運営費の効率性(動力費,%)(推奨:5%)")
-        self.sl11 = ft.CupertinoSlider(
+        self.sl11 = ft.Slider(
             value=0,
             min=0.0,
             max=20,
             divisions=200,
-            #label="{value}%",
+            label="{value}%",
+            round=1,
             on_change=self.handle_change_11,
         )
         self.tx12 = ft.Text("落札率(競争の効果反映,%)(推奨:95%)")
-        self.sl12 = ft.CupertinoSlider(
+        self.sl12 = ft.Slider(
             value=0,
             min=0,
             max=100,
             divisions=100,
-            #label="{value}%",
+            label="{value}%",
             on_change=self.handle_change_12,
         )
         self.b = ft.ElevatedButton(text="初期値の入力", on_click=self.button_clicked)
