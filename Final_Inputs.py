@@ -462,8 +462,9 @@ class Final_Inputs(ft.Column):
                 self.b,
             ],
             scroll=ft.ScrollMode.AUTO,
-            height=2000,
-            width=800,
+            #height=2000,
+            #width=1000,
+            expand=True,
         )
 
     def button_clicked(self, e):
