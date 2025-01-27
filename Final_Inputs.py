@@ -274,7 +274,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx11 = ft.Text("起債充当率(%)")
         self.sl5 = ft.CupertinoSlider(
-            value=self.initial_inputs["kisai_jutou"],
+            value:=self.initial_inputs["kisai_jutou"],
             min=0.0,
             max=100.0,
             divisions=100,
@@ -283,7 +283,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx12 = ft.Text("起債への交付金カバー率(%)")
         self.sl6 = ft.CupertinoSlider(
-            value=self.initial_inputs["kisai_koufu"],
+            value:=self.initial_inputs["kisai_koufu"],
             min=0.0,
             max=50.0,
             divisions=50,
@@ -292,7 +292,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx13 = ft.Text("補助率(%)")
         self.sl7 = ft.CupertinoSlider(
-            value=self.initial_inputs["hojo_ritsu"],
+            value:=self.initial_inputs["hojo_ritsu"],
             min=0.0,
             max=70.0,
             divisions=700,
@@ -301,7 +301,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx14 = ft.Text("SPC経費年額(百万円)")
         self.sl8 = ft.CupertinoSlider(
-            value=Decimal(self.initial_inputs["SPC_keihi"]),
+            value:=Decimal(self.initial_inputs["SPC_keihi"]),
             min=0,
             max=50,
             divisions=50,
@@ -310,7 +310,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx15 = ft.Text("SPCへの手数料(百万円)")
         self.sl9 = ft.CupertinoSlider(
-            value=Decimal(self.initial_inputs["SPC_fee"]),
+            value:=Decimal(self.initial_inputs["SPC_fee"]),
             min=0,
             max=50,
             divisions=50,
@@ -319,7 +319,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx16 = ft.Text("SPC資本金(百万円)")
         self.sl10 = ft.CupertinoSlider(
-            value=Decimal(self.initial_inputs["SPC_shihon"]),
+            value:=Decimal(self.initial_inputs["SPC_shihon"]),
             min=0,
             max=100,
             divisions=100,
@@ -328,7 +328,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx17 = ft.Text("SPC予備費(百万円)")
         self.sl11 = ft.CupertinoSlider(
-            value=Decimal(self.initial_inputs["SPC_yobihi"]),
+            value:=Decimal(self.initial_inputs["SPC_yobihi"]),
             min=0,
             max=1000,
             divisions=1000000,
@@ -337,7 +337,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx18 = ft.Text("SPC経費の扱い（デフォルト：割賦に含める:1）")
         self.sl12 = ft.CupertinoSlider(
-            value=self.initial_inputs["SPC_hiyou_atsukai"],
+            value:=self.initial_inputs["SPC_hiyou_atsukai"],
             min=0,
             max=1,
             divisions=1,
@@ -355,7 +355,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx20 = ft.Text("利用料金収入(百万円)")
         self.sl14 = ft.CupertinoSlider(
-            value=self.initial_inputs["riyou_ryoukin"],
+            value:=self.initial_inputs["riyou_ryoukin"],
             min=0,
             max=100,
             divisions=100000,
@@ -373,7 +373,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx22 = ft.Text("施設整備開始年")
         self.sl16 = ft.CupertinoSlider(
-            value=const_start_year,
+            value:=const_start_year,
             min=const_start_year,
             max=(const_start_year + 10),
             divisions=10,
