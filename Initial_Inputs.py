@@ -285,7 +285,7 @@ class Initial_Inputs(ft.Column):
         )
         self.b = ft.ElevatedButton(text="初期値の入力", on_click=self.button_clicked)
         return ft.Column(
-                    [ft.Container(
+                    controls=[ft.Container(
                         content=[
                             self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
                             self.tx0,  self.slider_value00, self.sl0, self.tx1,  self.slider_value01, self.sl1,  
@@ -299,7 +299,8 @@ class Initial_Inputs(ft.Column):
                         ],
                         #height=3000, 
                         expand=True,),],
-                    scroll=ft.ScrollMode.ALWAYS)
+                    scroll=ft.ScrollMode.ALWAYS
+                )
 
     def button_clicked(self, e):
         # jgb_rates.JGB_rates_conv()
