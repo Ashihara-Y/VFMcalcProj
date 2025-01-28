@@ -346,14 +346,9 @@ class Final_Inputs(ft.Column):
             round=1,
             on_change=self.handle_change_11,
         )
-        self.tx18 = ft.Text("SPC経費の扱い（デフォルト：サービス対価で支払:1）")
-        self.sl12 = ft.Slider(
-            value:=self.initial_inputs["SPC_hiyou_atsukai"],
-            min=0,
-            max=1,
-            divisions=1,
-            label="{value}",
-            on_change=self.handle_change_12,
+        self.sw01 = ft.Switch(
+            label="SPC経費の扱い（デフォルト：サービス対価で支払）",
+            value=1,
         )
         self.tx19 = ft.Text("アドバイザリー等経費(百万円)")
         self.sl13 = ft.Slider(
@@ -461,7 +456,8 @@ class Final_Inputs(ft.Column):
                 self.tx15,self.slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
                 self.tx16,self.slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
                 self.tx17,self.slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
-                self.tx18,self.slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
+                #self.tx18,self.slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
+                self.sw01,
                 self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="amber"),
                 self.tx20,self.slider_value14, self.sl14,ft.Divider(height=1, color="amber"),
                 self.tx21,self.slider_value15, self.sl15,ft.Divider(height=1, color="amber"),
@@ -634,7 +630,7 @@ class Final_Inputs(ft.Column):
             "SPC_fee": str(self.sl9.value),
             "SPC_shihon": str(self.sl10.value),
             "SPC_yobihi": str(self.sl11.value),
-            "SPC_hiyou_atsukai": int(self.sl12.value),
+            "SPC_hiyou_atsukai": int(self.sw01.value),
             "SPC_hiyou_total": str(SPC_hiyou_total),
             "SPC_hiyou_nen": str(SPC_hiyou_nen),
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
