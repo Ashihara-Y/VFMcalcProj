@@ -346,7 +346,7 @@ class Final_Inputs(ft.Column):
             round=1,
             on_change=self.handle_change_11,
         )
-        self.tx18 = ft.Text("SPC経費の扱い（デフォルト：割賦に含める:1）")
+        self.tx18 = ft.Text("SPC経費の扱い（デフォルト：サービス対価で支払:1）")
         self.sl12 = ft.Slider(
             value:=self.initial_inputs["SPC_hiyou_atsukai"],
             min=0,
@@ -449,21 +449,31 @@ class Final_Inputs(ft.Column):
                 self.tx0, self.tx1, self.tx2,
                 self.tx3, self.tx4, self.tx5, self.tx6,
                 self.dt1, self.dt2,
-                self.tx7, self.slider_value01, self.sl1, self.tx8, self.slider_value02, self.sl2,
-                self.tx9, self.slider_value03, self.sl3, self.tx10,self.slider_value04, self.sl4,
-                self.tx11,self.slider_value05, self.sl5, self.tx12,self.slider_value06, self.sl6,
-                self.tx13,self.slider_value07, self.sl7, self.tx14,self.slider_value08, self.sl8,
-                self.tx15,self.slider_value09, self.sl9, self.tx16,self.slider_value10, self.sl10,
-                self.tx17,self.slider_value11, self.sl11,self.tx18,self.slider_value12, self.sl12,
-                self.tx19,self.slider_value13, self.sl13,self.tx20,self.slider_value14, self.sl14,
-                self.tx21,self.slider_value15, self.sl15,self.tx22,self.slider_value16, self.sl16,
+                self.tx7, self.slider_value01, self.sl1, ft.Divider(height=1, color="white"), 
+                self.tx8, self.slider_value02, self.sl2, ft.Divider(height=1, color="white"),
+                self.tx9, self.slider_value03, self.sl3, ft.Divider(height=1, color="white"),
+                self.tx10,self.slider_value04, self.sl4, ft.Divider(height=1, color="white"),
+                self.tx11,self.slider_value05, self.sl5, ft.Divider(height=1, color="white"),
+                self.tx12,self.slider_value06, self.sl6, ft.Divider(height=1, color="white"),
+                self.tx13,self.slider_value07, self.sl7, ft.Divider(height=1, color="white"),
+                self.tx14,self.slider_value08, self.sl8, ft.Divider(height=1, color="white"),
+                self.tx15,self.slider_value09, self.sl9, ft.Divider(height=1, color="white"),
+                self.tx16,self.slider_value10, self.sl10,ft.Divider(height=1, color="white"),
+                self.tx17,self.slider_value11, self.sl11,ft.Divider(height=1, color="white"),
+                self.tx18,self.slider_value12, self.sl12,ft.Divider(height=1, color="white"),
+                self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="white"),
+                self.tx20,self.slider_value14, self.sl14,ft.Divider(height=1, color="white"),
+                self.tx21,self.slider_value15, self.sl15,ft.Divider(height=1, color="white"),
+                self.tx22,self.slider_value16, self.sl16,ft.Divider(height=1, color="white"),
                 self.dd01,self.dd02,
-                self.tx25,self.slider_value19, self.sl19,self.tx26,self.slider_value20, self.sl20,
+                self.tx25,self.slider_value19, self.sl19,ft.Divider(height=1, color="white"),
+                self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="white"),
                 self.b,
             ],
             scroll=ft.ScrollMode.AUTO,
-            #height=2000,
-            #width=1000,
+            height=2000,
+            width=800,
+            padding=5,
             expand=True,
         )
 
@@ -480,9 +490,6 @@ class Final_Inputs(ft.Column):
         kisai_koufu = str(kisai_koufu)
         hojo_ritsu = str(hojo_ritsu)
 
-        # ここで、補足の入力値を算定して、辞書（final_inputs）に
-        # 含めて、TinyDBに格納、それをMake_inputsで呼び出して、
-        # pydanticで検証する。
         const_start_date_year = int(self.sl16.value)
         const_start_date_month = int(self.dd01.value)
         const_start_date_day = int(self.dd02.value)
