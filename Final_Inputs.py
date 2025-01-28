@@ -470,7 +470,7 @@ class Final_Inputs(ft.Column):
                     self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="amber"),
                     self.b,
                 ],
-                    #scroll=ft.ScrollMode.AUTO,
+                    scroll=ft.ScrollMode.AUTO,
                     #horizontal_alignment=ft.CrossAxisAlignment.START,            #height=2000,
                     #width=1000,
                     #padding=10,
