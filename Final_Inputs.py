@@ -143,6 +143,9 @@ class Final_Inputs(ft.Column):
         self.tx6 = ft.Text(str("地方債償還据置期間： " + str(self.initial_inputs["chisai_sueoki_kikan"]) + "年"))
     
         self.dt1 = ft.DataTable(
+            width=800,
+            data_row_max_height=80,
+            heading_row_height=80,
             columns=[
                 ft.DataColumn(ft.Text("事業費項目")),
                 ft.DataColumn(ft.Text("入力値"), numeric=True),
@@ -183,10 +186,9 @@ class Final_Inputs(ft.Column):
                         ],
                 ),
             ],
-            data_row_max_height=80,
-            heading_row_height=80,
         )
         self.dt2 = ft.DataTable(
+            width=800,
             columns=[
                 ft.DataColumn(ft.Text("税目")),
                 ft.DataColumn(ft.Text("標準／均等割"), numeric=True),
@@ -476,7 +478,7 @@ class Final_Inputs(ft.Column):
                 #padding=5,
                 expand=True,
             ),
-            width=1500,
+            width=3000,
             height=3000,
             padding=5,
             expand=True,
