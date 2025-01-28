@@ -444,7 +444,7 @@ class Final_Inputs(ft.Column):
             on_change=self.handle_change_20,
         )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
-        return ft.responsiveRow([
+        return ft.ResponsiveRow([
             ft.Column(
             [
                 self.tx0, self.tx1, self.tx2,
