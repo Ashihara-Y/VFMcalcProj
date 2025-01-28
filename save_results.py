@@ -75,8 +75,11 @@ def make_df_addID_saveDB():
         'proj_type': inputs_pdt.proj_type,
         'const_years': inputs_pdt.const_years,
         'proj_years': inputs_pdt.proj_years,
-        'discount_rate': float(inputs_pdt.discount_rate),
-        'kariire_kinri': float(kariire_kinri),
+        'discount_rate': round(float(inputs_pdt.discount_rate),6),
+        'kariire_kinri': round(float(kariire_kinri),6),
+        'Kappu_kinri': round(float(inputs_pdt.Kappu_kinri),6),
+        'kappu_kinri_spread': round(float(inputs_pdt.kappu_kinri_spread),6),
+        'SPC_fee': inputs_pdt.SPC_fee,
     }
 
     final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])

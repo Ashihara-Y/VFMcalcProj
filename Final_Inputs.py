@@ -385,13 +385,23 @@ class Final_Inputs(ft.Column):
             on_change=self.handle_change_15,
         )
         self.tx22 = ft.Text("施設整備開始年")
-        self.sl16 = ft.Slider(
-            value:=const_start_year,
-            min=const_start_year,
-            max=(const_start_year + 10),
-            divisions=10,
-            label="{value}年",
-            on_change=self.handle_change_16,
+        self.dd00 = ft.Dropdown(
+            value=const_start_year,
+            label="施設整備開始年",
+            hint_text="施設整備開始年を選択してください",
+            width=400,
+            options=[
+                ft.dropdown.Option('"' + str(const_start_year+1) + '"'), 
+                ft.dropdown.Option('"' + str(const_start_year+2) + '"'), 
+                ft.dropdown.Option('"' + str(const_start_year+3) + '"'),
+                ft.dropdown.Option('"' + str(const_start_year+4) + '"'), 
+                ft.dropdown.Option('"' + str(const_start_year+5) + '"'), 
+                ft.dropdown.Option('"' + str(const_start_year+6) + '"'),
+                ft.dropdown.Option('"' + str(const_start_year+7) + '"'), 
+                ft.dropdown.Option('"' + str(const_start_year+8) + '"'), 
+                ft.dropdown.Option('"' + str(const_start_year+9) + '"'),
+                ft.dropdown.Option('"' + str(const_start_year+10) + '"'),
+            ],
         )
         self.dd01 = ft.Dropdown(
             label="施設整備開始月",

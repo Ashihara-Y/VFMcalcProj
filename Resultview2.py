@@ -109,6 +109,7 @@ class Results(ft.Stack):
         )
         PSC_pv_df = PSC_pv_df.rename(
             columns={
+                'period':'経過年数',
                 'net_payments':'収支（キャッシュ・フロー）', 
                 'discount_factor':'割引係数', 
                 'present_value':'収支（キャッシュ・フロー）現在価値', 
@@ -143,6 +144,7 @@ class Results(ft.Stack):
         )
         LCC_pv_df = LCC_pv_df.rename(
             columns={
+                'period':'経過年数',
                 'net_payments':'収支(キャッシュ・フロー)', 
                 'discount_factor':'割引係数', 
                 'present_value':'収支(キャッシュ・フロー)現在価値',
@@ -192,19 +194,19 @@ class Results(ft.Stack):
                 'risk_adjust_gaku':'リスク調整額', 
             }
         )
-        VFM_res_df = VFM_res_df.rename(
-            columns={
-                'VFM':'VFM(金額)', 
-                'VFM_percent':'VFM(％)', 
-            }
-        )
-        PIRR_res_df = PIRR_res_df.rename(
-            columns={
-                'PIRR':'プロジェクト内部収益率', 
-                'PIRR_percent':'プロジェクト内部収益率(％)', 
-                
-            }
-        )
+        #VFM_res_df = VFM_res_df.rename(
+        #    columns={
+        #        'VFM':'VFM(金額)', 
+        #        'VFM_percent':'VFM(％)', 
+        #    }
+        #)
+        #PIRR_res_df = PIRR_res_df.rename(
+        #    columns={
+        #        'PIRR':'プロジェクト内部収益率', 
+        #        'PIRR_percent':'プロジェクト内部収益率(％)', 
+        #        
+        #    }
+        #)
         res_summ_df = res_summ_df.rename(
             columns={
                 'VFM_percent':'VFM(％)', 
@@ -219,6 +221,9 @@ class Results(ft.Stack):
                 'proj_years':'事業期間', 
                 'discount_rate':'割引率(％)', 
                 'kariire_kinri':'借入コスト(％)',
+                'Kappu_kinri':'割賦金利(％)',
+                'kappu_kinri_spread':'割賦スプレッド(％)',
+                'SPC_fee':'SPCへの手数料(百万円)',
             }
         )
         # 総括表をここに追加する。PSC,LCC、SPCの表も作成して、別個定義しておく。
@@ -259,14 +264,15 @@ class Results(ft.Stack):
         simpledt_Risk_dt = simpledt_Risk_df.datatable
         self.table_Risk = simpledt_Risk_dt
 
-        simpledt_VFM_df = DataFrame(VFM_res_df)
-        simpledt_VFM_dt = simpledt_VFM_df.datatable
-        self.table_VFM = simpledt_VFM_dt
-        simpledt_PIRR_df = DataFrame(PIRR_res_df)
-        simpledt_PIRR_dt = simpledt_PIRR_df.datatable
-        self.table_PIRR = simpledt_PIRR_dt
+        #simpledt_VFM_df = DataFrame(VFM_res_df)
+        #simpledt_VFM_dt = simpledt_VFM_df.datatable
+        #self.table_VFM = simpledt_VFM_dt
+        #simpledt_PIRR_df = DataFrame(PIRR_res_df)
+        #simpledt_PIRR_dt = simpledt_PIRR_df.datatable
+        #self.table_PIRR = simpledt_PIRR_dt
 
         res_summ_df_t = res_summ_df.transpose().reset_index()
+        res_summ_df_t = res_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
         simpledt_res_summ_df = DataFrame(res_summ_df_t)
         simpledt_res_summ_dt = simpledt_res_summ_df.datatable
         self.table_res_summ = simpledt_res_summ_dt
@@ -276,12 +282,12 @@ class Results(ft.Stack):
         )
         lv_01.controls.append(ft.Text('算定結果要約'))
         lv_01.controls.append(self.table_res_summ)
-        lv_01.controls.append(ft.Divider())
-        lv_01.controls.append(ft.Text('VFM結果'))
-        lv_01.controls.append(self.table_VFM)
-        lv_01.controls.append(ft.Divider())
-        lv_01.controls.append(ft.Text('PIRR結果'))
-        lv_01.controls.append(self.table_PIRR)
+        #lv_01.controls.append(ft.Divider())
+        #lv_01.controls.append(ft.Text('VFM結果'))
+        #lv_01.controls.append(self.table_VFM)
+        #lv_01.controls.append(ft.Divider())
+        #lv_01.controls.append(ft.Text('PIRR結果'))
+        #lv_01.controls.append(self.table_PIRR)
 
         lv_02 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
