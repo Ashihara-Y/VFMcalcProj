@@ -183,6 +183,7 @@ class Final_Inputs(ft.Column):
                         ],
                 ),
             ],
+            data_row_max_height=15.0,
         )
         self.dt2 = ft.DataTable(
             columns=[
@@ -444,7 +445,7 @@ class Final_Inputs(ft.Column):
                 controls=[
                     self.tx0, self.tx1, self.tx2,
                     self.tx3, self.tx4, self.tx5, self.tx6,
-                    self.dt1, self.dt2,
+                    self.dt1, self.dt2, ft.Divider(height=1, color="amber"),
                     self.tx7, self.slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
                     self.tx8, self.slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
                     self.tx9, self.slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
