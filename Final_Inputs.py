@@ -448,7 +448,7 @@ class Final_Inputs(ft.Column):
             expand=True,
             spacing=10,
             padding=5,
-            auto_scroll=True,
+            #auto_scroll=True,
             item_extent=1500,
             first_item_prototype=False,
             horizontal=False,
