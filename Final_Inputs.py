@@ -282,7 +282,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx11 = ft.Text("起債充当率(%)")
         self.sl5 = ft.Slider(
-            value:=self.initial_inputs["kisai_jutou"],
+            value:=self.initial_inputs["kisai_jutou"]*100,
             min=0.0,
             max=100.0,
             divisions=100,
@@ -292,7 +292,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx12 = ft.Text("起債への交付金カバー率(%)")
         self.sl6 = ft.Slider(
-            value:=self.initial_inputs["kisai_koufu"],
+            value:=self.initial_inputs["kisai_koufu"]*100,
             min=0.0,
             max=50.0,
             divisions=50,
@@ -302,7 +302,7 @@ class Final_Inputs(ft.Column):
         )
         self.tx13 = ft.Text("補助率(%)")
         self.sl7 = ft.Slider(
-            value:=self.initial_inputs["hojo_ritsu"],
+            value:=self.initial_inputs["hojo_ritsu"]*100,
             min=0.0,
             max=70.0,
             divisions=700,
