@@ -444,7 +444,8 @@ class Final_Inputs(ft.Column):
             on_change=self.handle_change_20,
         )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
-        return ft.Column(
+        return ft.responsiveRow([
+            ft.Column(
             [
                 self.tx0, self.tx1, self.tx2,
                 self.tx3, self.tx4, self.tx5, self.tx6,
@@ -472,10 +473,11 @@ class Final_Inputs(ft.Column):
             ],
             scroll=ft.ScrollMode.AUTO,
             height=2000,
-            width=800,
-            padding=5,
+            #width=800,
+            #padding=5,
             expand=True,
         )
+        ])
 
     def button_clicked(self, e):
 
