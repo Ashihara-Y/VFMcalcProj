@@ -444,7 +444,7 @@ class Final_Inputs(ft.Column):
         )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
         return 
-        ft.Stack(
+        ft.Card(
             [
                     ft.Container(
                         content=[
