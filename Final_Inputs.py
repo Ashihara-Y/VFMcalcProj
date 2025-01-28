@@ -443,8 +443,18 @@ class Final_Inputs(ft.Column):
             on_change=self.handle_change_20,
         )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
-        return ft.Container(
-            content=ft.Column(controls=[
+
+        fi_lv = ft.ListView(
+            expand=True,
+            spacing=10,
+            padding=5,
+            auto_scroll=True,
+            item_extent=1500,
+            first_item_prototype=False,
+            horizontal=False,
+        )
+
+        fi_lv.controls= [
                     self.tx0, self.tx1, self.tx2,
                     self.tx3, self.tx4, self.tx5, self.tx6,
                     self.dt1, self.dt2, ft.Divider(height=1, color="amber"),
@@ -469,17 +479,23 @@ class Final_Inputs(ft.Column):
                     self.tx25,self.slider_value19, self.sl19,ft.Divider(height=1, color="amber"),
                     self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="amber"),
                     self.b,
+
+        ]        
+
+        return ft.Container(
+            content=ft.Column(controls=[
+                    fi_lv,
                 ],
                     #scroll=ft.ScrollMode.HIDDEN,
                     alignment=ft.MainAxisAlignment.START,
                     horizontal_alignment=ft.CrossAxisAlignment.START,            #height=2000,
-                    width=float("inf"),
+                    width=1300,
                     height=2000,
                     spacing=10,
                     #expand=True,
             ),
-                    width=float("inf"),
-                    height=float("inf"),
+                    width=1500,
+                    height=2100,
                     padding=10,
                     margin=10,
         )
