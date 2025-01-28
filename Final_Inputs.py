@@ -184,6 +184,7 @@ class Final_Inputs(ft.Column):
                 ),
             ],
             data_row_max_height=15.0,
+            heading_row_height=15,
         )
         self.dt2 = ft.DataTable(
             columns=[
@@ -394,7 +395,7 @@ class Final_Inputs(ft.Column):
             label="施設整備開始月",
             hint_text="施設整備開始月を選択してください",
             width=400,
-            value="20",
+            value=const_start_month,
             options=[
                 ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
                 ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
@@ -406,7 +407,7 @@ class Final_Inputs(ft.Column):
             label="施設整備開始日",
             hint_text="施設整備開始日を選択してください",
             width=400,
-            value="20",
+            value=const_start_day,
             options=[
                 ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
                 ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
