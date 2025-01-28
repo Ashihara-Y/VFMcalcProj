@@ -471,17 +471,17 @@ class Final_Inputs(ft.Column):
                     self.b,
                 ],
                     #scroll=ft.ScrollMode.AUTO,
-                    #alignment=ft.MainAxisAlignment.START,
                     #horizontal_alignment=ft.CrossAxisAlignment.START,            #height=2000,
                     #width=1000,
                     #padding=10,
                     #margin=10,
                     #expand=True,
             ),
-                    #width=2100,
-                    #height=3000,
-                    #padding=5,
-                    #expand=True,
+                    #alignment=ft.MainAxisAlignment.START,
+                    width=2100,
+                    height=3000,
+                    padding=10,
+                    margin=10,
         )
 
     def button_clicked(self, e):
