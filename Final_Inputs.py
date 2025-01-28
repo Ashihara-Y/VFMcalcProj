@@ -479,7 +479,7 @@ class Final_Inputs(ft.Column):
                     #expand=True,
             ),
                     width=float("inf"),
-                    height=4000,
+                    height=float("inf"),
                     padding=10,
                     margin=10,
         )
