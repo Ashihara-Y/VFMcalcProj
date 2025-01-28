@@ -443,23 +443,11 @@ class Final_Inputs(ft.Column):
             on_change=self.handle_change_20,
         )
         self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
-        return ft.Container([
-            ft.Column(
-                controls=[
+        return ft.Container(
+            content=ft.Column(controls=[
                     self.tx0, self.tx1, self.tx2,
                     self.tx3, self.tx4, self.tx5, self.tx6,
                     self.dt1, self.dt2, ft.Divider(height=1, color="amber"),
-                ],
-                #scroll=ft.ScrollMode.AUTO,
-                #alignment=ft.MainAxisAlignment.START,
-                #horizontal_alignment=ft.CrossAxisAlignment.START,            #height=2000,
-                #width=2000,
-                #padding=10,
-                #margin=10,
-                #expand=True,
-            ),
-            ft.Column(
-                controls=[
                     self.tx7, self.slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
                     self.tx8, self.slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
                     self.tx9, self.slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
@@ -494,7 +482,6 @@ class Final_Inputs(ft.Column):
                     #height=3000,
                     #padding=5,
                     #expand=True,
-        ],
         )
 
     def button_clicked(self, e):
