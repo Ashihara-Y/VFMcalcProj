@@ -183,8 +183,8 @@ class Final_Inputs(ft.Column):
                         ],
                 ),
             ],
-            data_row_max_height=30.0,
-            heading_row_height=30,
+            data_row_max_height=50,
+            heading_row_height=50,
         )
         self.dt2 = ft.DataTable(
             columns=[
