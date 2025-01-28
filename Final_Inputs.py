@@ -384,23 +384,23 @@ class Final_Inputs(ft.Column):
             round=2,
             on_change=self.handle_change_15,
         )
-        self.tx22 = ft.Text("施設整備開始年")
         self.dd00 = ft.Dropdown(
             value=const_start_year,
             label="施設整備開始年",
             hint_text="施設整備開始年を選択してください",
             width=400,
             options=[
-                ft.dropdown.Option('"' + str(const_start_year+1) + '"'), 
-                ft.dropdown.Option('"' + str(const_start_year+2) + '"'), 
-                ft.dropdown.Option('"' + str(const_start_year+3) + '"'),
-                ft.dropdown.Option('"' + str(const_start_year+4) + '"'), 
-                ft.dropdown.Option('"' + str(const_start_year+5) + '"'), 
-                ft.dropdown.Option('"' + str(const_start_year+6) + '"'),
-                ft.dropdown.Option('"' + str(const_start_year+7) + '"'), 
-                ft.dropdown.Option('"' + str(const_start_year+8) + '"'), 
-                ft.dropdown.Option('"' + str(const_start_year+9) + '"'),
-                ft.dropdown.Option('"' + str(const_start_year+10) + '"'),
+                ft.dropdown.Option(str(const_start_year)), 
+                ft.dropdown.Option(str(const_start_year+1)), 
+                ft.dropdown.Option(str(const_start_year+2)), 
+                ft.dropdown.Option(str(const_start_year+3)),
+                ft.dropdown.Option(str(const_start_year+4)), 
+                ft.dropdown.Option(str(const_start_year+5)), 
+                ft.dropdown.Option(str(const_start_year+6)),
+                ft.dropdown.Option(str(const_start_year+7)), 
+                ft.dropdown.Option(str(const_start_year+8)), 
+                ft.dropdown.Option(str(const_start_year+9)),
+                ft.dropdown.Option(str(const_start_year+10)),
             ],
         )
         self.dd01 = ft.Dropdown(
@@ -495,8 +495,7 @@ class Final_Inputs(ft.Column):
                     self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="amber"),
                     self.tx20,self.slider_value14, self.sl14,ft.Divider(height=1, color="amber"),
                     self.tx21,self.slider_value15, self.sl15,ft.Divider(height=1, color="amber"),
-                    self.tx22,self.slider_value16, self.sl16,ft.Divider(height=1, color="amber"),
-                    self.dd01,self.dd02,ft.Divider(height=1, color="amber"),
+                    self.dd00,self.dd01,self.dd02,ft.Divider(height=1, color="amber"),
                     self.tx25,self.slider_value19, self.sl19,ft.Divider(height=1, color="amber"),
                     self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="amber"),
                     self.b,
@@ -535,7 +534,7 @@ class Final_Inputs(ft.Column):
         kisai_koufu = str(kisai_koufu)
         hojo_ritsu = str(hojo_ritsu)
 
-        const_start_date_year = int(self.sl16.value)
+        const_start_date_year = int(self.dd00.value)
         const_start_date_month = int(self.dd01.value)
         const_start_date_day = int(self.dd02.value)
         #const_start_date_year = self.initial_inputs['const_start_date_year']
