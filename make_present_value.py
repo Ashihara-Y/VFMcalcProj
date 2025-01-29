@@ -60,6 +60,6 @@ def make_pv():
 
     VFM_df = pd.DataFrame({'VFM': [VFM], 'VFM_percent': [VFM_percent]})
     VFM_df.to_sql('VFM_table', engine, if_exists='replace', index=False, dtype={'VFM': DECIMAL, 'VFM_percent': DECIMAL})
-    PSC_netpayments_df.to_sql('PSC_pv_table', engine, if_exists='replace', index=True, index_label='period', dtype={'present_value': DECIMAL, 'discount_factor': DECIMAL, 'net_payments': DECIMAL})
-    LCC_netpayments_df.to_sql('LCC_pv_table', engine, if_exists='replace', index=True, index_label='period', dtype={'present_value': DECIMAL, 'discount_factor': DECIMAL, 'net_payments': DECIMAL})
+    PSC_netpayments_df.to_sql('PSC_pv_table', engine, if_exists='replace', index=False, dtype={'present_value': DECIMAL, 'discount_factor': DECIMAL, 'net_payments': DECIMAL})
+    LCC_netpayments_df.to_sql('LCC_pv_table', engine, if_exists='replace', index=False, dtype={'present_value': DECIMAL, 'discount_factor': DECIMAL, 'net_payments': DECIMAL})
 

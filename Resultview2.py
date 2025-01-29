@@ -76,6 +76,12 @@ class Results(ft.Stack):
         PIRR_res_df = PIRR_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
         res_summ_df = res_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
 
+        period_col = pd.DataFrame(index=range(45+1),columns=['period'])
+        period_col['period'] = period_col.index.to_series()
+
+        PSC_pv_df = period_col.join(PSC_pv_df)
+        LCC_pv_df = period_col.join(LCC_pv_df)
+
         PSC_res_income_df = PSC_res_df[['periods','year','hojokin', 'kouhukin', 'kisai_gaku', 'riyou_ryoukin', 'income_total']]
         PSC_res_payments_df = PSC_res_df[['periods','year','shisetsu_seibihi', 'ijikanri_unneihi', 'monitoring_costs', 'kisai_shoukan_gaku', 'kisai_risoku_gaku', 'payments_total', 'net_payments']]
         LCC_res_income_df = LCC_res_df[['periods','year','hojokin', 'kouhukin', 'kisai_gaku', 'zeishu', 'income_total']]
