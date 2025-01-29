@@ -240,12 +240,12 @@ class Results(ft.Stack):
         simpledt_PSC_payments_dt = simpledt_PSC_payments_df.datatable
         self.table_PSC_payments = simpledt_PSC_payments_dt
 
-        PSC_pv_df['経過年数'] = PSC_pv_df['経過年数'].map(lambda i: round(i,0))
+        PSC_pv_df['経過年数'] = PSC_pv_df['経過年数'].apply(lambda i: round(i,0))
         simpledt_PSC_pv_df = DataFrame(PSC_pv_df)
         simpledt_PSC_pv_dt = simpledt_PSC_pv_df.datatable
         self.table_PSC_pv = simpledt_PSC_pv_dt
 
-        LCC_pv_df['経過年数'] = LCC_pv_df['経過年数'].map(lambda i: round(i,0))
+        LCC_pv_df['経過年数'] = LCC_pv_df['経過年数'].apply(lambda i: round(i,0))
         simpledt_LCC_income_df = DataFrame(LCC_res_income_df)
         simpledt_LCC_income_dt = simpledt_LCC_income_df.datatable
         self.table_LCC_income = simpledt_LCC_income_dt
