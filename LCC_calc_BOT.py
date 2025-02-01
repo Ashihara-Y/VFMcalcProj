@@ -40,6 +40,8 @@ def LCC_calc():
     LCC_shuushi_income.loc[inputs_pdt.const_years, 'kisai_gaku'] = Kisai_gaku_LCC
     Kouhukin_LCC = Kisai_gaku_LCC * (inputs_pdt.kisai_koufu)
     LCC_shuushi_income.loc[inputs_pdt.const_years, 'kouhukin'] = Kouhukin_LCC
+    Koteishisanzei_zeishu = inputs_pdt.koteishisanzei_hyoujun * inputs_pdt.koteishisanzei_ritsu
+    LCC_shuushi_income.loc[inputs_pdt.const_years+1:proj_years, 'zeishu'] = Koteishisanzei_zeishu
     LCC_shuushi_income['income_total'] = (
         LCC_shuushi_income['hojokin'] + 
         LCC_shuushi_income['kouhukin'] + 
