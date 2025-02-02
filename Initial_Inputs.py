@@ -321,11 +321,11 @@ class Initial_Inputs(ft.Column):
 
     def button_clicked(self, e):
         # jgb_rates.JGB_rates_conv()
-        if self.dd3.value == "BT/DB":
-            self.dd4.value = self.dd5.value
+        if self.dd3.value == "BT/DB(いずれもSPCなし)":
+            self.dd4.value = self.dd6.value
         
-        if self.dd3.value == "O":
-            self.dd5.value = "0"
+        #if self.dd3.value == "O":
+        #    self.dd5.value = "0"
 
         proj_years = int(self.dd4.value)
         const_years = int(self.dd6.value)
@@ -412,7 +412,7 @@ class Initial_Inputs(ft.Column):
         # gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
         kitai_bukka = kitai_bukka_j - gonensai_rimawari
 
-        if self.dd2.value == "サービス購入型":
+        if self.dd2.value == "サービス購入型" and self.dd3.value != "BOT/BOO":
             houjinzei_ritsu = 0.0
             houjinjuminzei_kintou = 0.18
             hudousanshutokuzei_hyoujun = 0.0
@@ -421,6 +421,19 @@ class Initial_Inputs(ft.Column):
             koteishisanzei_ritsu = 0.0
             tourokumenkyozei_hyoujun = 0.0
             tourokumenkyozei_ritsu = 0.0
+            houjinjuminzei_ritsu_todouhuken = 0.0
+            houjinjuminzei_ritsu_shikuchoson = 0.0
+            riyou_ryoukin = 0.0
+
+        elif self.dd2.value == "サービス購入型" and self.dd3.value == "BOT/BOO":
+            houjinzei_ritsu = 0.0
+            houjinjuminzei_kintou = 0.18
+            hudousanshutokuzei_hyoujun = shisetsu_seibi_org_LCC
+            hudousanshutokuzei_ritsu = 0.04
+            koteishisanzei_hyoujun = shisetsu_seibi_org_LCC
+            koteishisanzei_ritsu = 0.014
+            tourokumenkyozei_hyoujun = shisetsu_seibi_org_LCC
+            tourokumenkyozei_ritsu = 0.004
             houjinjuminzei_ritsu_todouhuken = 0.0
             houjinjuminzei_ritsu_shikuchoson = 0.0
             riyou_ryoukin = 0.0
@@ -443,10 +456,16 @@ class Initial_Inputs(ft.Column):
         else:
             pass
 
-        SPC_fee = Decimal(20).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        SPC_shihon = Decimal(100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        SPC_yobihi = Decimal(456).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        SPC_hiyou_atsukai = int(1)
+        if self.dd3.value == "DBO(SPCなし)" or self.dd3.value == "BT/DB(いずれもSPCなし)":
+            SPC_fee = Decimal(0).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+            SPC_shihon = Decimal(0).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+            SPC_yobihi = Decimal(0).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+            SPC_hiyou_atsukai = int(1)
+        else:
+            SPC_fee = Decimal(20).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+            SPC_shihon = Decimal(100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+            SPC_yobihi = Decimal(456).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+            SPC_hiyou_atsukai = int(1)
 
         initial_inputs = {
             "mgmt_type": self.dd1.value,
@@ -513,11 +532,11 @@ class Initial_Inputs(ft.Column):
             "houjinjuminzei_ritsu_shikuchoson": houjinjuminzei_ritsu_shikuchoson,
         }
 
-        #for item in list(initial_inputs.values()):
-        #    if not item:
-        #        ft.page.go("/")
-        #    else:
-        #        pass
+        for item in list(initial_inputs.values()):
+            if not item:
+                self.page.go("/")
+            else:
+                pass
 
 
         if os.path.exists("ii_db.json"):

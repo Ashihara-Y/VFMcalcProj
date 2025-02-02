@@ -36,11 +36,12 @@ def check_cash():
     year = SPC_df['year'].tolist()
     value = SPC_df['net_income'].tolist()
 
-    PIRR = xirr(year, value)
+    if sum(value) == 0:
+        PIRR = 0
+    else:
+        PIRR = xirr(year, value)
+    
     PIRR_percent = PIRR * 100
-    #print(PIRR, PIRR_percent)
-
-    #print(SPC_df[['income_total','payments_total_full','net_income_full']])
 
     net_total_income_sum = float(SPC_df['net_income_full'].sum())
     SPC_shihon = float(inputs_pdt.SPC_shihon)
