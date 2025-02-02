@@ -1,9 +1,6 @@
 import pandas as pd
 import openpyxl
-from tinydb import TinyDB, Query
 from sqlalchemy import create_engine
-
-con = TinyDB("selected_res.json")
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
 engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
