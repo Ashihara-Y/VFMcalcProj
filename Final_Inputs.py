@@ -523,7 +523,7 @@ class Final_Inputs(ft.Column):
                     self.b,
 
         ]        
-        if self.initial_inputs["mgmt_type"] == "DBO(SPCなし)" or self.initial_inputs["mgmt_type"] == "BT/DB(いずれもSPCなし)":
+        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             return ft.Container(
                 content=ft.Column(controls=[
                         fi_lv1,
@@ -563,7 +563,7 @@ class Final_Inputs(ft.Column):
             )
 
     def button_clicked(self, e):
-        if self.initial_inputs["mgmt_type"] == "DBO(SPCなし)" or self.initial_inputs["mgmt_type"] == "BT/DB(いずれもSPCなし)":
+        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             shisetsu_seibi_paymentschedule_ikkatsu = Decimal(1).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         else:         
             shisetsu_seibi_paymentschedule_ikkatsu = Decimal(self.sl2.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
@@ -613,7 +613,7 @@ class Final_Inputs(ft.Column):
         # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
         first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
-        if self.initial_inputs["mgmt_type"] == "DBO(SPCなし)" or self.initial_inputs["mgmt_type"] == "BT/DB(いずれもSPCなし)":
+        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             SPC_keihi = Decimal(0)
             SPC_fee = Decimal(0)
             SPC_shihon = Decimal(0)
@@ -650,7 +650,7 @@ class Final_Inputs(ft.Column):
             Decimal(self.initial_inputs["ijikanri_unnei_2_org_LCC"]) +
             Decimal(self.initial_inputs["ijikanri_unnei_3_org_LCC"]))
         
-        if self.initial_inputs["mgmt_type"] == "DBO(SPCなし)" or self.initial_inputs["mgmt_type"] == "BT/DB(いずれもSPCなし)":        
+        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":        
             final_inputs = {
             "advisory_fee": str(self.sl13.value),
             "chisai_kinri": str(chisai_kinri), 
