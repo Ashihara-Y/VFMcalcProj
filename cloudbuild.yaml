@@ -17,11 +17,11 @@ steps:
     args: [
       'run', 
       'deploy', 
-      'vfmcalcproj', 
+      'vfm-calc', 
       '--image', 
       'gcr.io/${PROJECT_ID}/vfmcalcproj/$COMMIT_SHA',
       '--region', 
-      'asia-northeast1', 
+      'asia-east1', 
       '--allow-unauthenticated'
      ]
 images:

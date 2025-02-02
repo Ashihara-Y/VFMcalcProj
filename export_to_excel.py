@@ -1,97 +1,210 @@
 import pandas as pd
 import openpyxl
-import pathlib
-from pathlib import Path
-import tinydb
 from tinydb import TinyDB, Query
-import yaml
-import os
-import shutil
+from sqlalchemy import create_engine
 
+con = TinyDB("selected_res.json")
 
-
+engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
+        
 def export_to_excel():
-    # mock data
-    jigyouhiyou_sekisan = {
-        'shisetsu_seibi_kouritsusei_DBDBO': 0.05,
-        'shisetsu_seibi_kouritsusei_BTBTO': 0.05,
-        'shisetsu_seibi_PSC_rakusatsu': 0.0,
-        'shisetsu_seibi_PSC_yosantanka': 3000.0,
-        'ijikanri_jinkenhi_kouritsusei_DBDBO': 0.05,
-        'ijikanri_jinkenhi_kouritsusei_BTBTO': 0.05,
-        'ijikanri_jinkenhi_bukkajousyou': 0.02,
-        'ijikanri_jinkenhi_PSC_rakusatsu': 0.0,
-        'ijikanri_jinkenhi_PSC_yosantanka': 30.0,
-        'ijikanri_shuzenhi_kouritsusei_DBDBO': 0.05,
-        'ijikanri_shuzenhi_kouritsusei_BTBTO': 0.05,
-        'ijikanri_shuzenhi_bukkajousyou': 0.02, 
-        'ijikanri_shuzenhi_PSC_rakusatsu': 0.0,
-        'ijikanri_shuzenhi_PSC_yosantanka': 15.0,
-        'ijikanri_douryokuhi_kouritsusei_DBDBO': 0.05,
-        'ijikanri_douryokuhi_kouritsusei_BTBTO': 0.05,
-        'ijikanri_douryokuhi_bukkajousyou': 0.02,
-        'ijikanri_douryokuhi_PSC_rakusatsu': 0.0,
-        'ijikanri_douryokuhi_PSC_yosantanka': 5.0,
-        'ijikanri_option01_kouritsusei_DBDBO': 0.05,
-        'ijikanri_option01_kouritsusei_BTBTO': 0.05,
-        'ijikanri_option01_bukkajousyou': 0.02,
-        'ijikanri_option01_PSC_rakusatsu': 0.0,
-        'ijikanri_option01_PSC_yosantanka': 0.0,
-        'ijikanri_option02_kouritsusei_DBDBO': 0.05,
-        'ijikanri_option02_kouritsusei_BTBTO': 0.05,
-        'ijikanri_option02_bukkajousyou': 0.02,
-        'ijikanri_option02_PSC_rakusatsu': 0.0,
-        'ijikanri_option02_PSC_yosantanka': 0.0,
-    }
+    dtime = con.all()[0]['selected_datetime']
+    con.close()
 
-    db = TinyDB("inputs_db.json")
-    inputs = db.all()[0]
+    table_names = [
+        'PSC_res_table', 
+        'PSC_pv_res_table', 
+        'LCC_res_table', 
+        'LCC_pv_res_table', 
+        'SPC_res_table', 
+        'SPC_check_res_table',
+        'Risk_res_table',
+        'VFM_res_table',
+        'PIRR_res_table',
+        'res_summ_res_table',
+    ]
 
-    fin = open('to_excel_01.yml')
-    res_01 = yaml.load(fin, Loader=yaml.FullLoader)
-    res_list0 = []
-    for r in res_01['file_sheet']:
-        res_list0.append(list(r.values())[0])
-    book = res_list0[0]
-    sheet = res_list0[1]
-    fin.close()
+    selected_res_list = []
+    for table_name in table_names:
+        query = 'select * from ' + table_name + ' where datetime = ' + '"' + dtime + '"'
+        table_name = pd.read_sql_query(query, engine)
+        selected_res_list.append(table_name)
 
-    fin = open('to_excel_02.yml')
-    res_02 = yaml.load(fin, Loader=yaml.FullLoader)
-    fin.close()
+    dtime_w = dtime.replace(' ', '_').replace(':', '_')
+    file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
+    save_path = 'vfm_output/' + file_name
 
-    # 標準算定フォーマットのExcelブックを開いて、別名でOutputディレクトリに保存する
-    file = res_list0[0]
-    file = str(Path('VFM標準算定シート.xlsx')) 
-    file_els = file.split('.',2)
-    file_copy = file_els[0] + '_copy.' + file_els[1]
+    wb = openpyxl.Workbook()
+    ws = wb['Sheet']
+    ws.title = 'Summary_result_sheet'
+    wb.save(save_path)
 
-    file_copy_outpath = Path('vfm_output')
-    file_copy_outpath.mkdir(parents=True, exist_ok=True)
-    file_copy_outpath_file = file_copy_outpath / file_copy
-    shutil.copy(file, file_copy_outpath_file)
+    PSC_res_df = selected_res_list[0]
+    PSC_pv_df = selected_res_list[1]
+    LCC_res_df = selected_res_list[2]
+    LCC_pv_df = selected_res_list[3]
+    SPC_res_df = selected_res_list[4]
+    SPC_check_df = selected_res_list[5]
+    Risk_res_df = selected_res_list[6]
+    VFM_res_df = selected_res_list[7]
+    PIRR_res_df = selected_res_list[8]
+    res_summ_df = selected_res_list[9]
 
-    # 保存したブックの「事業費用概算」シートを開いて、初期入力値のうち、Part1を書き込む
-    # テスト用のモックとして、上記のjigyouhiyou_sekisanを書き込む
-    book = openpyxl.load_workbook(file_copy_outpath)
-    sheet_01 = book['事業費用概算']
+    PSC_res_df = PSC_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    PSC_pv_df =  PSC_pv_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    LCC_res_df = LCC_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    LCC_pv_df = LCC_pv_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    SPC_res_df = SPC_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    SPC_check_df = SPC_check_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    Risk_res_df = Risk_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    VFM_res_df = VFM_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    PIRR_res_df = PIRR_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    res_summ_df = res_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
 
-    for r in res_01["cell-position_value"]:
-        cell = list(r.keys())[0]
-        val = list(r.values())[0]
-        #print(cell, val)
-        sheet_01[cell] = jigyouhiyou_sekisan[val]
-    book.save(file_copy_outpath)
+    PSC_res_df = PSC_res_df.rename(
+         columns={
+                'periods':'経過年度', 
+                'year':'スケジュール', 
+                'hojokin':'補助金', 
+                'kouhukin':'交付金', 
+                'kisai_gaku':'起債発行額', 
+                'riyou_ryoukin':'利用料金収入',
+                'income_total':'収入計', 
+                'shisetsu_seibihi':'施設整備費用', 
+                'ijikanri_unneihi':'維持管理運営費用',
+                'monitoring_costs':'モニタリング等費用', 
+                'chisai_zansai':'(起債残債)', 
+                'kisai_shoukan_gaku':'起債償還額',
+                'kisai_shoukansumi_gaku':'(起債償還済額)', 
+                'kisai_risoku_gaku':'起債利息', 
+                'payments_total':'支出計',
+                'net_payments':'収支（キャッシュ・フロー）', 
+            }
+    )
+    PSC_pv_df = PSC_pv_df.rename(
+        columns={
+                'net_payments':'収支（キャッシュ・フロー）', 
+                'discount_factor':'割引係数', 
+                'present_value':'収支（キャッシュ・フロー）現在価値', 
+            }
+    )
+    LCC_res_df = LCC_res_df.rename(
+        columns={
+                'periods':'経過年度', 
+                'year':'スケジュール', 
+                'hojokin':'補助金', 
+                'kouhukin':'交付金', 
+                'kisai_gaku':'起債発行額', 
+                'zeishu':'税収',
+                'income_total':'収入計', 
+                'shisetsu_seibihi_ikkatsu':'施設整備サービス対価(一括払)',
+                'shisetsu_seibihi_kappugoukei':'(施設整備サービス対価(割賦計）)', 
+                'shisetsu_seibihi_kappuganpon':'施設整備サービス対価(割賦元本)',
+                'shisetsu_seibihi_kappukinri':'施設整備サービス対価(割賦金利)', 
+                'ijikanri_unneihi':'維持管理費サービス対価', 
+                'monitoring_costs':'モニタリング等費用',
+                'SPC_keihi':'SPC費用', 
+                'chisai_zansai':'(起債残債)', 
+                'kisai_shoukan_gaku':'起債償還額',
+                'kisai_shoukansumi_gaku':'(起債償還済額)', 
+                'kisai_risoku_gaku':'起債利息', 
+                'payments_total':'支出計',
+                'net_payments':'収支', 
+            }
+    )
+    LCC_pv_df = LCC_pv_df.rename(
+        columns={
+                'net_payments':'収支(キャッシュ・フロー)', 
+                'discount_factor':'割引係数', 
+                'present_value':'収支(キャッシュ・フロー)現在価値',
+            }
+    )
+    SPC_res_df = SPC_res_df.rename(
+        columns={
+                'periods':'経過年度', 
+                'year':'スケジュール', 
+                'shisetsu_seibihi_taika_ikkatsu':'施設整備サービス対価(一括払)',
+                'shisetsu_seibihi_taika_kappuganpon':'施設整備サービス対価(割賦元本)',
+                'shisetsu_seibihi_taika_kappukinri':'施設整備サービス対価(割賦金利)', 
+                'ijikanri_unneihi_taika':'維持管理費サービス対価',
+                'SPC_hiyou_taika':'SPC費用サービス対価', 
+                'riyou_ryoukin':'利用料金収入', 
+                'income_total':'収入計', 
+                'shisetsu_seibihi':'施設整備費用',
+                'ijikanri_unneihi':'維持管理費', 
+                'kariire_ganpon_hensai':'(借入元本返済)', 
+                'shiharai_risoku':'支払利息',
+                'SPC_keihi':'SPC経費', 
+                'SPC_setsuritsuhi':'SPC当初費用（設立費用、予備費）', 
+                'houjinzei_etc':'法人税・公租公課', 
+                'payments_total_full':'支出計（元本返済込）',
+                'payments_total':'支出計', 
+                'net_income':'収支(キャッシュ・フロー)', 
+            }
+    )
+    SPC_check_df = SPC_check_df.rename(
+        columns={
+                'year':'スケジュール', 
+                'income_total':'収入計', 
+                'kariire_ganpon_hensai':'借入元本返済', 
+                'payments_total':'支出計',
+                'payments_total_full':'支出計(元本返済込)', 
+                'net_income':'収支(キャッシュ・フロー)', 
+                'net_income_full':'収支(元本返済込)',
+                'Cash_for_P_payment':'元本返済充当可能額', 
+                'P_payment_check':'元本返済可否', 
+            }
+    )
+    Risk_res_df = Risk_res_df.rename(
+        columns={
+                'risk_adjust_gaku':'リスク調整額', 
+            }
+    )
+    VFM_res_df = VFM_res_df.rename(
+        columns={
+                'VFM':'VFM(金額)', 
+                'VFM_percent':'VFM(％)', 
+            }
+    )
+    PIRR_res_df = PIRR_res_df.rename(
+        columns={
+                'PIRR':'プロジェクト内部収益率', 
+                'PIRR_percent':'プロジェクト内部収益率(％)', 
+                
+            }
+    )
+    res_summ_df = res_summ_df.rename(
+        columns={
+                'VFM_percent':'VFM(％)', 
+                'PSC_present_value':'PSCでの公共キャッシュ・フロー現在価値', 
+                'LCC_present_value':'PFI-LCCでの公共キャッシュ・フロー現在価値', 
+                'PIRR':'プロジェクト内部収益率(％)',
+                'SPC_payment_cash':'SPCの元本返済可否', 
+                'mgmt_type':'発注者区分', 
+                'proj_ctgry':'事業形態', 
+                'proj_type':'事業方式',
+                'const_years':'施設整備期間', 
+                'proj_years':'事業期間', 
+                'discount_rate':'割引率(％)', 
+                'kariire_kinri':'借入コスト(％)',
+            }
+    )
 
-    # 次に、保存したブックの該当事業形式シートを開いて、初期入力値のうち、Part2を書き込む
-    sheet_02 = book[inputs['proj_type']]
+    res_summ_df = res_summ_df.T.reset_index()
 
-    for r in res_02["cell-position_value"]:
-        cell = list(r.keys())[0]
-        val = list(r.values())[0]
-        #print(cell, val)
-        sheet_02[cell] = inputs[val]
-    book.save(file_copy_outpath)
+
+    with pd.ExcelWriter(save_path, engine='openpyxl', if_sheet_exists='overlay', mode='a') as writer:
+        res_summ_df.to_excel(writer, sheet_name='Summary_result_sheet')
+        PSC_res_df.to_excel(writer, sheet_name='PSC_result_sheet')
+        PSC_pv_df.to_excel(writer, sheet_name='PSC_pv_result_sheet')
+        LCC_res_df.to_excel(writer, sheet_name='LCC_result_sheet')
+        LCC_pv_df.to_excel(writer, sheet_name='LCC_pv_result_sheet')
+        SPC_res_df.to_excel(writer, sheet_name='SPC_result_sheet')
+        SPC_check_df.to_excel(writer, sheet_name='SPC_check_result_sheet')
+        Risk_res_df.to_excel(writer, sheet_name='Risk_result_sheet')
+        VFM_res_df.to_excel(writer, sheet_name='VFM_result_sheet')
+        PIRR_res_df.to_excel(writer, sheet_name='PIRR_result_sheet')
+
 
 # 上記をmok dataなしで動かすには、事業費用概算シートへの入力値用の入力画面とDB入力への統合が必要
 if __name__ == '__main__':
