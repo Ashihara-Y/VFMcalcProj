@@ -260,7 +260,7 @@ class Final_Inputs(ft.Column):
             round=1,
             on_change=self.handle_change_02,
         )
-        self.tx9 = ft.Text("モニタリング等費用(PSC)(百万円、推奨:10程度)")
+        self.tx9 = ft.Text("モニタリング等費用(PSC)(百万円、BT/DB:5程度、その他:10程度)")
         self.sl3 = ft.Slider(
             value=0,
             min=0,
@@ -270,7 +270,7 @@ class Final_Inputs(ft.Column):
             round=1,
             on_change=self.handle_change_03,
         )
-        self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、推奨:6程度)")
+        self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、BT/DB:3程度、その他:6程度)")
         self.sl4 = ft.Slider(
             value=0,
             min=0,
