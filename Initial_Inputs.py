@@ -412,7 +412,7 @@ class Initial_Inputs(ft.Column):
         # gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
         kitai_bukka = kitai_bukka_j - gonensai_rimawari
 
-        if self.dd2.value == "サービス購入型" and self.dd3.value != "BOT/BOO":
+        if self.dd2.value == "サービス購入型" and self.dd3.value == "BTO":
             houjinzei_ritsu = 0.0
             houjinjuminzei_kintou = 0.18
             hudousanshutokuzei_hyoujun = 0.0
@@ -424,7 +424,6 @@ class Initial_Inputs(ft.Column):
             houjinjuminzei_ritsu_todouhuken = 0.0
             houjinjuminzei_ritsu_shikuchoson = 0.0
             riyou_ryoukin = 0.0
-
         elif self.dd2.value == "サービス購入型" and self.dd3.value == "BOT/BOO":
             houjinzei_ritsu = 0.0
             houjinjuminzei_kintou = 0.18
@@ -434,6 +433,18 @@ class Initial_Inputs(ft.Column):
             koteishisanzei_ritsu = 0.014
             tourokumenkyozei_hyoujun = shisetsu_seibi_org_LCC
             tourokumenkyozei_ritsu = 0.004
+            houjinjuminzei_ritsu_todouhuken = 0.0
+            houjinjuminzei_ritsu_shikuchoson = 0.0
+            riyou_ryoukin = 0.0
+        else:
+            houjinzei_ritsu = 0.0
+            houjinjuminzei_kintou = 0.0
+            hudousanshutokuzei_hyoujun = 0.0
+            hudousanshutokuzei_ritsu = 0.0
+            koteishisanzei_hyoujun = 0.0
+            koteishisanzei_ritsu = 0.0
+            tourokumenkyozei_hyoujun = 0.0
+            tourokumenkyozei_ritsu = 0.0
             houjinjuminzei_ritsu_todouhuken = 0.0
             houjinjuminzei_ritsu_shikuchoson = 0.0
             riyou_ryoukin = 0.0
