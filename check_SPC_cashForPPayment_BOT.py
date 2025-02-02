@@ -36,7 +36,11 @@ def check_cash():
     year = SPC_df['year'].tolist()
     value = SPC_df['net_income'].tolist()
 
-    PIRR = xirr(year, value)
+    if sum(value) == 0:
+        PIRR = 0
+    else:
+        PIRR = xirr(year, value)
+
     PIRR_percent = PIRR * 100
     #print(PIRR, PIRR_percent)
 
@@ -49,7 +53,12 @@ def check_cash():
 
 
     value_EIRR = SPC_df['net_income_full'].to_list()
-    EIRR = xirr(year, value_EIRR)
+
+    if SPC_shihon == 0:
+        EIRR = 0
+    else:
+        EIRR = xirr(year, value_EIRR)
+
     EIRR_percent = EIRR * 100
     #print(EIRR, EIRR_percent)
 
