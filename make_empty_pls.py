@@ -9,12 +9,12 @@ from decimal import *
 from pydantic import BaseModel
 import make_inputs_df, make_pl_waku
 
-db = TinyDB("fi_db.json")
-final_inputs = db.all()[0]
 
 
 def make_empty_pl(cols):
     #inputs_pdt = make_inputs_df.main()
+    db = TinyDB("fi_db.json")
+    final_inputs = db.all()[0]
 
     cols_waku = ['year','periods']
 
