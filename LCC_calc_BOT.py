@@ -40,8 +40,9 @@ def LCC_calc():
     LCC_shuushi_income.loc[inputs_pdt.const_years, 'kisai_gaku'] = Kisai_gaku_LCC
     Kouhukin_LCC = Kisai_gaku_LCC * (inputs_pdt.kisai_koufu)
     LCC_shuushi_income.loc[inputs_pdt.const_years, 'kouhukin'] = Kouhukin_LCC
-    Koteishisanzei_zeishu = inputs_pdt.koteishisanzei_hyoujun * inputs_pdt.koteishisanzei_ritsu
-    LCC_shuushi_income.loc[inputs_pdt.const_years+1:proj_years, 'zeishu'] = Koteishisanzei_zeishu
+    if inputs_pdt.mgmt_type == '市町村':
+        Koteishisanzei_zeishu = inputs_pdt.koteishisanzei_hyoujun * inputs_pdt.koteishisanzei_ritsu
+        LCC_shuushi_income.loc[inputs_pdt.const_years+1:proj_years, 'zeishu'] = Koteishisanzei_zeishu
     LCC_shuushi_income['income_total'] = (
         LCC_shuushi_income['hojokin'] + 
         LCC_shuushi_income['kouhukin'] + 
@@ -51,6 +52,7 @@ def LCC_calc():
 
     # LCC_shuushi_payments 2
     # Pyxirrの仕様として、支払いは「マイナス値」で算出される（Excelと同じはず）
+    # 割賦がゼロの場合に、以下の処理がエラーになるようなら、「割賦がゼロではないことを確認する」条件式を、この位置に追加する必要がある。
     Shisetsu_seibihi_kappuganpon = [
         (
             pyxirr.ppmt(

@@ -501,12 +501,12 @@ class Final_Inputs(ft.Column):
                     self.b,
 
         ]        
-
-        return ft.Container(
-            content=ft.Column(controls=[
-                    fi_lv1,
-                    fi_lv2,
-                ],
+        if self.initial_inputs["mgmt_type"] == "DBO(SPCなし)" or self.initial_inputs["mgmt_type"] == "BT/DB(いずれもSPCなし)":
+            return ft.Container(
+                content=ft.Column(controls=[
+                        fi_lv1,
+                        fi_lv2,
+                    ],
                     #scroll=ft.ScrollMode.HIDDEN,
                     alignment=ft.MainAxisAlignment.START,
                     horizontal_alignment=ft.CrossAxisAlignment.START,            #height=2000,
@@ -514,12 +514,31 @@ class Final_Inputs(ft.Column):
                     height=2000,
                     spacing=10,
                     #expand=True,
-            ),
+                ),
                     width=float("inf"),
                     height=2100,
                     padding=10,
                     margin=10,
-        )
+            )
+        else:
+            return ft.Container(
+                content=ft.Column(controls=[
+                        fi_lv1,
+                        fi_lv2,
+                    ],
+                    #scroll=ft.ScrollMode.HIDDEN,
+                    alignment=ft.MainAxisAlignment.START,
+                    horizontal_alignment=ft.CrossAxisAlignment.START,            #height=2000,
+                    width=float("inf"),
+                    height=2000,
+                    spacing=10,
+                    #expand=True,
+                ),
+                    width=float("inf"),
+                    height=2100,
+                    padding=10,
+                    margin=10,
+            )
 
     def button_clicked(self, e):
 
