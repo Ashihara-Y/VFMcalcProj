@@ -260,7 +260,7 @@ class Final_Inputs(ft.Column):
             round=1,
             on_change=self.handle_change_02,
         )
-        self.tx9 = ft.Text("モニタリング等費用(PSC)(百万円、推奨:10)")
+        self.tx9 = ft.Text("モニタリング等費用(PSC)(百万円、推奨:10程度)")
         self.sl3 = ft.Slider(
             value=0,
             min=0,
@@ -270,7 +270,7 @@ class Final_Inputs(ft.Column):
             round=1,
             on_change=self.handle_change_03,
         )
-        self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、推奨:6)")
+        self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、推奨:6程度)")
         self.sl4 = ft.Slider(
             value=0,
             min=0,
@@ -472,6 +472,15 @@ class Final_Inputs(ft.Column):
             first_item_prototype=False,
             horizontal=False,
         )
+        fi_lv3 = ft.ListView(
+            expand=True,
+            spacing=10,
+            padding=5,
+            #auto_scroll=True,
+            item_extent=1500,
+            first_item_prototype=False,
+            horizontal=False,
+        )
 
         fi_lv1.controls= [
                     self.tx0, self.tx1, self.tx2,
@@ -490,7 +499,6 @@ class Final_Inputs(ft.Column):
                     self.tx15,self.slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
                     self.tx16,self.slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
                     self.tx17,self.slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
-                    #self.tx18,self.slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
                     self.sw01,ft.Divider(height=1, color="amber"),
                     self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="amber"),
                     self.tx20,self.slider_value14, self.sl14,ft.Divider(height=1, color="amber"),
@@ -501,11 +509,25 @@ class Final_Inputs(ft.Column):
                     self.b,
 
         ]        
+        fi_lv3.controls= [
+                    self.tx7, self.slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
+                    self.tx9, self.slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
+                    self.tx10,self.slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
+                    self.tx11,self.slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
+                    self.tx12,self.slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
+                    self.tx13,self.slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
+                    self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="amber"),
+                    self.dd00,self.dd01,self.dd02,ft.Divider(height=1, color="amber"),
+                    self.tx25,self.slider_value19, self.sl19,ft.Divider(height=1, color="amber"),
+                    self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="amber"),
+                    self.b,
+
+        ]        
         if self.initial_inputs["mgmt_type"] == "DBO(SPCなし)" or self.initial_inputs["mgmt_type"] == "BT/DB(いずれもSPCなし)":
             return ft.Container(
                 content=ft.Column(controls=[
                         fi_lv1,
-                        fi_lv2,
+                        fi_lv3,
                     ],
                     #scroll=ft.ScrollMode.HIDDEN,
                     alignment=ft.MainAxisAlignment.START,
@@ -541,8 +563,11 @@ class Final_Inputs(ft.Column):
             )
 
     def button_clicked(self, e):
+        if self.initial_inputs["mgmt_type"] == "DBO(SPCなし)" or self.initial_inputs["mgmt_type"] == "BT/DB(いずれもSPCなし)":
+            shisetsu_seibi_paymentschedule_ikkatsu = Decimal(1).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        else:         
+            shisetsu_seibi_paymentschedule_ikkatsu = Decimal(self.sl2.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
-        shisetsu_seibi_paymentschedule_ikkatsu = Decimal(self.sl2.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         shisetsu_seibi_paymentschedule_kappu = Decimal(1 - shisetsu_seibi_paymentschedule_ikkatsu).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         kisai_jutou = Decimal(self.sl5.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         kisai_koufu = Decimal(self.sl6.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
@@ -588,9 +613,15 @@ class Final_Inputs(ft.Column):
         # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
         first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
-        SPC_keihi = Decimal(self.sl8.value)
-        SPC_fee = Decimal(self.sl9.value)
-        SPC_shihon = Decimal(self.sl10.value)
+        if self.initial_inputs["mgmt_type"] == "DBO(SPCなし)" or self.initial_inputs["mgmt_type"] == "BT/DB(いずれもSPCなし)":
+            SPC_keihi = Decimal(0)
+            SPC_fee = Decimal(0)
+            SPC_shihon = Decimal(0)
+            SPC_yobihi = Decimal(0)
+        else:
+            SPC_keihi = Decimal(self.sl8.value)
+            SPC_fee = Decimal(self.sl9.value)
+            SPC_shihon = Decimal(self.sl10.value)
 
         ijikanri_unnei_years = int(self.initial_inputs['ijikanri_unnei_years'])
         houjinjuminzei_kintou = Decimal(self.initial_inputs['houjinjuminzei_kintou'])
@@ -619,7 +650,100 @@ class Final_Inputs(ft.Column):
             Decimal(self.initial_inputs["ijikanri_unnei_2_org_LCC"]) +
             Decimal(self.initial_inputs["ijikanri_unnei_3_org_LCC"]))
         
-        final_inputs = {
+        if self.initial_inputs["mgmt_type"] == "DBO(SPCなし)" or self.initial_inputs["mgmt_type"] == "BT/DB(いずれもSPCなし)":        
+            final_inputs = {
+            "advisory_fee": str(self.sl13.value),
+            "chisai_kinri": str(chisai_kinri), 
+            "chisai_shoukan_kikan": int(self.sl1.value),
+            "chisai_sueoki_years": int(self.initial_inputs["chisai_sueoki_kikan"]),
+            "const_start_date_year": int(self.dd00.value),
+            "const_start_date_month": int(self.dd01.value),
+            "const_start_date_day": int(self.dd02.value),
+            "const_start_date": const_start_date, 
+            "const_years": int(self.initial_inputs["const_years"]),
+            "discount_rate": str(discount_rate),
+
+            "first_end_fy": str(first_end_fy),
+            "fudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
+            "fudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
+            "growth": str(self.initial_inputs["growth"]),
+            "hojo_ritsu": hojo_ritsu,
+            "houjinzei_ritsu": str(self.initial_inputs["houjinzei_ritsu"]),
+            "houjinjuminzei_kintou": str(self.initial_inputs["houjinjuminzei_kintou"]),
+            "houjinjuminzei_ritsu_todouhuken": str(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
+            "houjinjuminzei_ritsu_shikuchoson": str(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
+            "ijikanri_unnei": str(ijikanri_unnei),
+            "ijikanri_unnei_LCC": str(ijikanri_unnei_LCC),
+            "ijikanri_unnei_org": str(ijikanri_unnei_org),
+            "ijikanri_unnei_org_LCC": str(ijikanri_unnei_org_LCC),
+            "ijikanri_unnei_1": str(self.initial_inputs["ijikanri_unnei_1"]),
+            "ijikanri_unnei_1_LCC": str(self.initial_inputs["ijikanri_unnei_1_LCC"]),
+            "ijikanri_unnei_1_org": str(self.initial_inputs["ijikanri_unnei_1_org"]),
+            "ijikanri_unnei_1_org_LCC": str(self.initial_inputs["ijikanri_unnei_1_org_LCC"]),
+            "ijikanri_unnei_2": str(self.initial_inputs["ijikanri_unnei_2"]),
+            "ijikanri_unnei_2_LCC": str(self.initial_inputs["ijikanri_unnei_2_LCC"]),
+            "ijikanri_unnei_2_org": str(self.initial_inputs["ijikanri_unnei_2_org"]),
+            "ijikanri_unnei_2_org_LCC": str(self.initial_inputs["ijikanri_unnei_2_org_LCC"]),
+            "ijikanri_unnei_3": str(self.initial_inputs["ijikanri_unnei_3"]),
+            "ijikanri_unnei_3_LCC": str(self.initial_inputs["ijikanri_unnei_3_LCC"]),
+            "ijikanri_unnei_3_org": str(self.initial_inputs["ijikanri_unnei_3_org"]),
+            "ijikanri_unnei_3_org_LCC": str(self.initial_inputs["ijikanri_unnei_3_org_LCC"]),
+            "ijikanri_unnei_years": int(ijikanri_unnei_years),
+            "kappu_kinri_spread": str(kappu_kinri_spread),
+            "Kappu_kinri": str(Kappu_kinri),
+            "kijun_kinri": str(kijun_kinri),
+            "kisai_jutou": kisai_jutou,
+            "kisai_koufu": kisai_koufu,
+            "kitai_bukka": str(kitai_bukka), 
+            "koteishisanzei_hyoujun": str(self.initial_inputs["koteishisanzei_hyoujun"]),
+            "koteishisanzei_ritsu": str(self.initial_inputs["koteishisanzei_ritsu"]),
+
+            "lg_spread": str(self.initial_inputs["lg_spread"]),
+            "mgmt_type": self.initial_inputs["mgmt_type"],
+            "monitoring_costs_PSC": str(self.sl3.value),
+            "monitoring_costs_LCC": str(self.sl4.value),
+
+            "option_01": str(self.sl19.value),
+            "option_02": str(self.sl20.value),
+            "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
+            "proj_ctgry": self.initial_inputs["proj_ctgry"],
+            "proj_type": self.initial_inputs["proj_type"],
+            "proj_years": int(self.initial_inputs["proj_years"]),
+            "rakusatsu_ritsu": str(self.initial_inputs["rakusatsu_ritsu"]),
+            "reduc_shisetsu": str(self.initial_inputs["reduc_shisetsu"]),
+            "reduc_ijikanri_1": str(self.initial_inputs["reduc_ijikanri_1"]),
+            "reduc_ijikanri_2": str(self.initial_inputs["reduc_ijikanri_2"]),
+            "reduc_ijikanri_3": str(self.initial_inputs["reduc_ijikanri_3"]),
+            "riyouryoukin_shunyu": str(self.sl14.value),
+
+            "shisetsu_seibi": str(self.initial_inputs["shisetsu_seibi"]),
+            "shisetsu_seibi_LCC": str(self.initial_inputs["shisetsu_seibi_LCC"]),
+            "shisetsu_seibi_org": str(self.initial_inputs["shisetsu_seibi_org"]),
+            "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
+            "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
+            "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
+            "shoukan_kaishi_jiki": shoukan_kaishi_jiki,
+            "SPC_keihi": str(SPC_keihi),
+            "SPC_fee": str(SPC_fee),
+            "SPC_shihon": str(SPC_shihon),
+            "SPC_yobihi": str(SPC_yobihi),
+            "SPC_hiyou_atsukai": int(1),
+            "SPC_hiyou_total": str(SPC_hiyou_total),
+            "SPC_hiyou_nen": str(SPC_hiyou_nen),
+            "SPC_keihi_LCC": str(SPC_keihi_LCC),
+
+            "target_years": int(target_years),
+            "tourokumenkyozei_hyoujun": str(self.initial_inputs["tourokumenkyozei_hyoujun"]),
+            "tourokumenkyozei_ritsu": str(self.initial_inputs["tourokumenkyozei_ritsu"]),
+            "yosantanka_hiritsu_shisetsu": str(self.initial_inputs["yosantanka_hiritsu_shisetsu"]),
+            "yosantanka_hiritsu_ijikanri_1": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
+            "yosantanka_hiritsu_ijikanri_2": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
+            "yosantanka_hiritsu_ijikanri_3": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
+            "zei_total": str(self.initial_inputs["zei_total"]),
+
+            }
+        else:
+            final_inputs = {
             "advisory_fee": str(self.sl13.value),
             "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(self.sl1.value),
@@ -709,7 +833,7 @@ class Final_Inputs(ft.Column):
             "yosantanka_hiritsu_ijikanri_3": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
             "zei_total": str(self.initial_inputs["zei_total"]),
 
-        }
+            }
 
         #for item in list(final_inputs.values()):
         #    if not item:
