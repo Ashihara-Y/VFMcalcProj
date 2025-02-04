@@ -622,6 +622,15 @@ class Final_Inputs(ft.Column):
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = Decimal(str(Kappu_kinri)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
+        JRB_rates_df = pd.read_csv(
+            "JRB_rates.csv",
+            encoding="utf-8",
+            sep='\t', 
+            names=[0,1,2,3,4,5], 
+            index_col=0)
+
+        chisai_shoukan_kikan = int(self.sl1.value)
+        chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan].iloc[0]
         # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
         first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
