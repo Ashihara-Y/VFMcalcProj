@@ -252,6 +252,8 @@ class Results(ft.Stack):
         self.table_LCC_income = simpledt_LCC_income_dt
         simpledt_LCC_payments_df = DataFrame(LCC_res_payments_df)
         simpledt_LCC_payments_dt = simpledt_LCC_payments_df.datatable
+        simpledt_LCC_payments_dt.column_spacing = 10
+        simpledt_LCC_payments_dt.headline_row_height =30 
         self.table_LCC_payments = simpledt_LCC_payments_dt
 
         simpledt_LCC_pv_df = DataFrame(LCC_pv_df)
