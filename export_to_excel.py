@@ -1,15 +1,15 @@
 import pandas as pd
 import openpyxl
-from tinydb import TinyDB, Query
 from sqlalchemy import create_engine
 
-con = TinyDB("selected_res.json")
-
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
+engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
         
 def export_to_excel():
-    dtime = con.all()[0]['selected_datetime']
-    con.close()
+    df_res = pd.read_sql_table('sel_res', engine_m)
+    dtime = df_res['selected_datetime'].iloc[0]
+    #dtime = con.all()[0]['selected_datetime']
+    #con.close()
 
     table_names = [
         'PSC_res_table', 

@@ -62,9 +62,9 @@ def make_df_addID_saveDB():
     VFM_calc_summary_df['PIRR'] = PIRR_summary_df['PIRR_percent'].iloc[0]
     VFM_calc_summary_df['SPC_payment_cash'] = SPC_check_res
 
-    kijun_kinri = decimal.Decimal(str(inputs_pdt.kijun_kinri)).quantize(decimal.Decimal('0.001'), 'ROUND_HALF_UP')
+    kijun_kinri = decimal.Decimal(str(inputs_pdt.kijun_kinri)).quantize(decimal.Decimal('0.00001'), 'ROUND_HALF_UP')
     #kitai_bukka = Decimal(str(inputs_pdt.kitai_bukka)).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
-    lg_spread = decimal.Decimal(str(inputs_pdt.lg_spread)).quantize(decimal.Decimal('0.001'), 'ROUND_HALF_UP')
+    lg_spread = decimal.Decimal(str(inputs_pdt.lg_spread)).quantize(decimal.Decimal('0.00001'), 'ROUND_HALF_UP')
 
     #discount_rate = Decimal((kijun_kinri + kitai_bukka)*100).quantize(Decimal('0.001'), 'ROUND_HALF_UP')
     kariire_kinri = decimal.Decimal((kijun_kinri + lg_spread)*100).quantize(decimal.Decimal('0.001'), 'ROUND_HALF_UP')
@@ -75,8 +75,11 @@ def make_df_addID_saveDB():
         'proj_type': inputs_pdt.proj_type,
         'const_years': inputs_pdt.const_years,
         'proj_years': inputs_pdt.proj_years,
-        'discount_rate': float(inputs_pdt.discount_rate),
-        'kariire_kinri': float(kariire_kinri),
+        'discount_rate': round(float(inputs_pdt.discount_rate),6),
+        'kariire_kinri': round(float(kariire_kinri),6),
+        'Kappu_kinri': round(float(inputs_pdt.Kappu_kinri)*100,6),
+        'kappu_kinri_spread': round(float(inputs_pdt.kappu_kinri_spread)*100,6),
+        'SPC_fee': round(float(inputs_pdt.SPC_fee),1),
     }
 
     final_inputs_df = pd.DataFrame(final_inputs_dic, index=['0'])

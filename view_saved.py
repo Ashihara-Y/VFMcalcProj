@@ -53,14 +53,8 @@ class View_saved(ft.Column):
 
     # 以下のメソッドは、選択された日時を、次の画面に渡すためのメソッド。
     # ListViewのセルを選択したときに呼び出される。
-    # 選択された日時を、selected_res.jsonに書き込む。次の画面に渡す。
-    # session storageに書き込む形も併設しておいた。
+    # 選択された日時を、SQLiteのテーブルsel_resに書き込んで、次の画面に渡す。
     def send_mess(self, e):
-        #ft.Page.pubsub.send_all(Message)
-        #if os.path.exists("selected_res.json"):
-        #    os.remove("selected_res.json")
-        #con = TinyDB('selected_res.json')
-        #con.truncate()
         dtime = e.control.data
         #print(dtime)
         dtime_dic = {'selected_datetime': str(dtime)}
@@ -84,6 +78,7 @@ class View_saved(ft.Column):
             row_dic = row._asdict()
             row = pd.DataFrame(row_dic, index=[0])
             dtime = row['datetime'].iloc[0]
+            row['discount_rate'] = row['discount_rate'] * 100
             row = row.rename(
                 columns={
                     "datetime": "算定日時",
@@ -116,7 +111,7 @@ class View_saved(ft.Column):
             #df_t  = df.tranpose().reset_index()
             table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
-            table.width=1500
+            table.width=500
             table.show_checkbox_column=False
             #table.checkbox_column_width=15
             #table.checkbox_horizontal_margin=10
@@ -131,9 +126,9 @@ class View_saved(ft.Column):
                         summ_lv,
                     ],
                     alignment=ft.MainAxisAlignment.START,
-                    horizontal_alignment=ft.CrossAxisAlignment.END,
+                    horizontal_alignment=ft.CrossAxisAlignment.START,
                 ),
-                width=1800,
+                width=800,
                 height=3000,
                 padding=5,
         )
