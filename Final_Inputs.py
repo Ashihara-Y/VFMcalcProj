@@ -527,7 +527,8 @@ class Final_Inputs(ft.Column):
                     self.tx12,self.slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
                     self.tx13,self.slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
                     self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="amber"),
-                    self.dd00,self.dd01,self.dd02, self.dd03,ft.Divider(height=1, color="amber"),
+                    self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"), 
+                    self.dd03,ft.Divider(height=1, color="amber"),
                     self.tx25,self.slider_value19, self.sl19,ft.Divider(height=1, color="amber"),
                     self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="amber"),
                     self.b,
@@ -630,7 +631,7 @@ class Final_Inputs(ft.Column):
             index_col=0)
 
         chisai_shoukan_kikan = int(self.sl1.value)
-        chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan].iloc[0]
+        chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan]
         # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
         first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
