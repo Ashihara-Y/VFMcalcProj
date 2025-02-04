@@ -237,6 +237,8 @@ class Results(ft.Stack):
         self.table_PSC_income = simpledt_PSC_income_dt
         simpledt_PSC_payments_df = DataFrame(PSC_res_payments_df)
         simpledt_PSC_payments_dt = simpledt_PSC_payments_df.datatable
+        simpledt_PSC_payments_dt.column_spacing = 10
+        simpledt_PSC_payments_dt.headline_row_height =30 
         self.table_PSC_payments = simpledt_PSC_payments_dt
 
         PSC_pv_df['経過年数'] = PSC_pv_df['経過年数'].apply(lambda i: int(i))
