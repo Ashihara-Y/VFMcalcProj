@@ -62,6 +62,10 @@ class Results(ft.Stack):
         PIRR_res_df = self.selected_res_list[8]
         res_summ_df = self.selected_res_list[9]
 
+        PSC_res_df['year'] = PSC_res_df['year'].replace(' 00:00:00.00','')
+        LCC_res_df['year'] = LCC_res_df['year'].replace(' 00:00:00.00','')
+        SPC_res_df['year'] = SPC_res_df['year'].replace(' 00:00:00.00','')
+        SPC_check_df['year'] = SPC_check_df['year'].replace(' 00:00:00.00','')
         res_summ_df['discount_rate'] = res_summ_df['discount_rate'] * 100
 
         PSC_res_df = PSC_res_df.drop(['chisai_zansai', 'kisai_shoukansumi_gaku', 'datetime', 'user_id', 'calc_id'], axis=1)
