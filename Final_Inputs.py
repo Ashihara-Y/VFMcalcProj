@@ -434,6 +434,16 @@ class Final_Inputs(ft.Column):
                 ft.dropdown.Option("31"), 
             ],
         )
+        self.dd03 = ft.Dropdown(
+            label="地方債償還据置期間",
+            hint_text="据置期間を選択してください",
+            width=400,
+            value=self.initial_inputs['chisai_sueoki_kikan'],
+            options=[
+                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
+                ft.dropdown.Option("4"),  ft.dropdown.Option("5"), 
+            ],
+        )
         self.tx25 = ft.Text("予備入力（１）")
         self.sl19 = ft.Slider(
             value=0,
@@ -503,7 +513,7 @@ class Final_Inputs(ft.Column):
                     self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="amber"),
                     self.tx20,self.slider_value14, self.sl14,ft.Divider(height=1, color="amber"),
                     self.tx21,self.slider_value15, self.sl15,ft.Divider(height=1, color="amber"),
-                    self.dd00,self.dd01,self.dd02,ft.Divider(height=1, color="amber"),
+                    self.dd00,self.dd01,self.dd02, self.dd03,ft.Divider(height=1, color="amber"),
                     self.tx25,self.slider_value19, self.sl19,ft.Divider(height=1, color="amber"),
                     self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="amber"),
                     self.b,
@@ -517,7 +527,7 @@ class Final_Inputs(ft.Column):
                     self.tx12,self.slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
                     self.tx13,self.slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
                     self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="amber"),
-                    self.dd00,self.dd01,self.dd02,ft.Divider(height=1, color="amber"),
+                    self.dd00,self.dd01,self.dd02, self.dd03,ft.Divider(height=1, color="amber"),
                     self.tx25,self.slider_value19, self.sl19,ft.Divider(height=1, color="amber"),
                     self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="amber"),
                     self.b,
@@ -603,7 +613,9 @@ class Final_Inputs(ft.Column):
         target_years = 45
         #proj_years = int(self.initial_inputs['proj_years'])
         const_years = int(self.initial_inputs['const_years'])
-        shoukan_kaishi_jiki = const_years + self.initial_inputs['chisai_sueoki_kikan']  + 1
+
+        chisai_sueoki_kikan = int(self.dd03.value)
+        shoukan_kaishi_jiki = const_years + chisai_sueoki_kikan + 1
 
         kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         lg_spread = Decimal(self.initial_inputs['lg_spread']).quantize(Decimal('0.000001'), ROUND_HALF_UP)
@@ -655,7 +667,7 @@ class Final_Inputs(ft.Column):
             "advisory_fee": str(self.sl13.value),
             "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(self.sl1.value),
-            "chisai_sueoki_years": int(self.initial_inputs["chisai_sueoki_kikan"]),
+            "chisai_sueoki_years": chisai_sueoki_kikan,
             "const_start_date_year": int(self.dd00.value),
             "const_start_date_month": int(self.dd01.value),
             "const_start_date_day": int(self.dd02.value),
@@ -834,12 +846,6 @@ class Final_Inputs(ft.Column):
             "zei_total": str(self.initial_inputs["zei_total"]),
 
             }
-
-        #for item in list(final_inputs.values()):
-        #    if not item:
-        #        ft.page.go("/")
-        #    else:
-        #        pass
 
 
         if os.path.exists("fi_db.json"):
