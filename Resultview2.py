@@ -51,7 +51,6 @@ class Results(ft.Stack):
             self.selected_res_list.append(table_name)
 
     def build(self):
-        # ここで、各結果・IDを格納したテーブルから、該当Datetimeのものを抽出して、DFに格納する。
         PSC_res_df = self.selected_res_list[0]
         PSC_pv_df = self.selected_res_list[1]
         LCC_res_df = self.selected_res_list[2]

@@ -392,10 +392,14 @@ class Initial_Inputs(ft.Column):
 
         y, d = divmod(int(self.dd4.value), 5)
 
-        if d > 2:
-            r_idx = str((y + 1) * 5) + "年"
-        elif d <= 2:
-            r_idx = str(y * 5) + "年"
+        if y >= 1:
+
+            if d > 2:
+                r_idx = str((y + 1) * 5) + "年"
+            elif d <= 2:
+                r_idx = str(y * 5) + "年"
+        else:
+            r_idx = str(d) + "年"
 
         r1 = JGB_rates_df.loc[r_idx].iloc[0]
 
