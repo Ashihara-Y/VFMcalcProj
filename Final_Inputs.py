@@ -434,26 +434,26 @@ class Final_Inputs(ft.Column):
                 ft.dropdown.Option("31"), 
             ],
         )
-        self.dd03 = ft.Dropdown(
-            label="地方債償還据置期間",
-            hint_text="据置期間を選択してください",
-            width=400,
-            value=self.initial_inputs['chisai_sueoki_kikan'],
-            options=[
-                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
-                ft.dropdown.Option("4"),  ft.dropdown.Option("5"), 
-            ],
-        )
-        self.tx25 = ft.Text("予備入力（１）")
+        #self.dd03 = ft.Dropdown(
+        #    label="地方債償還据置期間",
+        #    hint_text="据置期間を選択してください",
+        #    width=400,
+        #    value=self.initial_inputs['chisai_sueoki_kikan'],
+        #    options=[
+        #        ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
+        #        ft.dropdown.Option("4"),  ft.dropdown.Option("5"), 
+        #    ],
+        #)
+        self.tx25 = ft.Text("地方債償還据置期間")
         self.sl19 = ft.Slider(
-            value=0,
+            value=self.initial_inputs['chisai_sueoki_kikan'],
             min=0,
-            max=1,
-            divisions=100,
-            label="{value}",
+            max=5,
+            divisions=5,
+            label="{value}年",
             on_change=self.handle_change_19,
         )
-        self.tx26 = ft.Text("予備入力（２）")
+        self.tx26 = ft.Text("予備入力")
         self.sl20 = ft.Slider(
             value=0,
             min=0,
@@ -498,39 +498,38 @@ class Final_Inputs(ft.Column):
                     self.dt1, self.dt2, ft.Divider(height=1, color="amber"),
         ]
         fi_lv2.controls= [
-                    self.tx7, self.slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
-                    self.tx8, self.slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
-                    self.tx9, self.slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
-                    self.tx10,self.slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
-                    self.tx11,self.slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
-                    self.tx12,self.slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
-                    self.tx13,self.slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
-                    self.tx14,self.slider_value08, self.sl8, ft.Divider(height=1, color="amber"),
-                    self.tx15,self.slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
-                    self.tx16,self.slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
-                    self.tx17,self.slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
+                    self.tx7, self.slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
+                    self.tx25, self.slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
+                    self.tx8, self.slider_value02, self.sl2,  ft.Divider(height=1, color="amber"),
+                    self.tx9, self.slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
+                    self.tx10,self.slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
+                    self.tx11,self.slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    self.tx12,self.slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    self.tx13,self.slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    self.tx14,self.slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
+                    self.tx15,self.slider_value09, self.sl9,  ft.Divider(height=1, color="amber"),
+                    self.tx16,self.slider_value10, self.sl10, ft.Divider(height=1, color="amber"),
+                    self.tx17,self.slider_value11, self.sl11, ft.Divider(height=1, color="amber"),
                     self.sw01,ft.Divider(height=1, color="amber"),
-                    self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="amber"),
-                    self.tx20,self.slider_value14, self.sl14,ft.Divider(height=1, color="amber"),
-                    self.tx21,self.slider_value15, self.sl15,ft.Divider(height=1, color="amber"),
-                    self.dd00,self.dd01,self.dd02, self.dd03,ft.Divider(height=1, color="amber"),
-                    self.tx25,self.slider_value19, self.sl19,ft.Divider(height=1, color="amber"),
-                    self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="amber"),
+                    self.tx19,self.slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
+                    self.tx20,self.slider_value14, self.sl14, ft.Divider(height=1, color="amber"),
+                    self.tx21,self.slider_value15, self.sl15, ft.Divider(height=1, color="amber"),
+                    self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"),
+                    self.tx26,self.slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
                     self.b,
 
         ]        
         fi_lv3.controls= [
-                    self.tx7, self.slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
-                    self.tx9, self.slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
-                    self.tx10,self.slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
-                    self.tx11,self.slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
-                    self.tx12,self.slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
-                    self.tx13,self.slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
-                    self.tx19,self.slider_value13, self.sl13,ft.Divider(height=1, color="amber"),
+                    self.tx7, self.slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
+                    self.tx25, self.slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
+                    self.tx9, self.slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
+                    self.tx10,self.slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
+                    self.tx11,self.slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    self.tx12,self.slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    self.tx13,self.slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    self.tx19,self.slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
                     self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"), 
-                    self.dd03,ft.Divider(height=1, color="amber"),
-                    self.tx25,self.slider_value19, self.sl19,ft.Divider(height=1, color="amber"),
-                    self.tx26,self.slider_value20, self.sl20,ft.Divider(height=1, color="amber"),
+                    self.tx26,self.slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
                     self.b,
 
         ]        
@@ -615,7 +614,7 @@ class Final_Inputs(ft.Column):
         #proj_years = int(self.initial_inputs['proj_years'])
         const_years = int(self.initial_inputs['const_years'])
 
-        chisai_sueoki_kikan = int(self.dd03.value)
+        chisai_sueoki_kikan = int(self.sl19.value)
         shoukan_kaishi_jiki = const_years + chisai_sueoki_kikan + 1
 
         kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
@@ -644,6 +643,7 @@ class Final_Inputs(ft.Column):
             SPC_keihi = Decimal(self.sl8.value)
             SPC_fee = Decimal(self.sl9.value)
             SPC_shihon = Decimal(self.sl10.value)
+            SPC_yobihi = Decimal(self.sl11.value)
 
         ijikanri_unnei_years = int(self.initial_inputs['ijikanri_unnei_years'])
         houjinjuminzei_kintou = Decimal(self.initial_inputs['houjinjuminzei_kintou'])
@@ -725,7 +725,6 @@ class Final_Inputs(ft.Column):
             "monitoring_costs_PSC": str(self.sl3.value),
             "monitoring_costs_LCC": str(self.sl4.value),
 
-            "option_01": str(self.sl19.value),
             "option_02": str(self.sl20.value),
             "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.initial_inputs["proj_ctgry"],
@@ -744,7 +743,7 @@ class Final_Inputs(ft.Column):
             "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
-            "shoukan_kaishi_jiki": shoukan_kaishi_jiki,
+            "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
             "SPC_keihi": str(SPC_keihi),
             "SPC_fee": str(SPC_fee),
             "SPC_shihon": str(SPC_shihon),
@@ -817,7 +816,6 @@ class Final_Inputs(ft.Column):
             "monitoring_costs_PSC": str(self.sl3.value),
             "monitoring_costs_LCC": str(self.sl4.value),
 
-            "option_01": str(self.sl19.value),
             "option_02": str(self.sl20.value),
             "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.initial_inputs["proj_ctgry"],
@@ -836,12 +834,12 @@ class Final_Inputs(ft.Column):
             "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
-            "shoukan_kaishi_jiki": shoukan_kaishi_jiki,
-            "SPC_keihi": str(self.sl8.value),
-            "SPC_fee": str(self.sl9.value),
-            "SPC_shihon": str(self.sl10.value),
-            "SPC_yobihi": str(self.sl11.value),
-            "SPC_hiyou_atsukai": int(self.sw01.value),
+            "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
+            "SPC_keihi": str(SPC_keihi),
+            "SPC_fee": str(SPC_fee),
+            "SPC_shihon": str(SPC_shihon),
+            "SPC_yobihi": str(SPC_yobihi),
+            "SPC_hiyou_atsukai": int(1),
             "SPC_hiyou_total": str(SPC_hiyou_total),
             "SPC_hiyou_nen": str(SPC_hiyou_nen),
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
