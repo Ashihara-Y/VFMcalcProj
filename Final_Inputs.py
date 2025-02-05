@@ -725,7 +725,6 @@ class Final_Inputs(ft.Column):
             "monitoring_costs_PSC": str(self.sl3.value),
             "monitoring_costs_LCC": str(self.sl4.value),
 
-            "option_01": str(self.sl19.value),
             "option_02": str(self.sl20.value),
             "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.initial_inputs["proj_ctgry"],
@@ -744,7 +743,7 @@ class Final_Inputs(ft.Column):
             "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
-            "shoukan_kaishi_jiki": shoukan_kaishi_jiki,
+            "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
             "SPC_keihi": str(SPC_keihi),
             "SPC_fee": str(SPC_fee),
             "SPC_shihon": str(SPC_shihon),
@@ -817,7 +816,6 @@ class Final_Inputs(ft.Column):
             "monitoring_costs_PSC": str(self.sl3.value),
             "monitoring_costs_LCC": str(self.sl4.value),
 
-            "option_01": str(self.sl19.value),
             "option_02": str(self.sl20.value),
             "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.initial_inputs["proj_ctgry"],
@@ -836,6 +834,7 @@ class Final_Inputs(ft.Column):
             "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
+            "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
             "SPC_keihi": str(SPC_keihi),
             "SPC_fee": str(SPC_fee),
             "SPC_shihon": str(SPC_shihon),
@@ -844,7 +843,6 @@ class Final_Inputs(ft.Column):
             "SPC_hiyou_total": str(SPC_hiyou_total),
             "SPC_hiyou_nen": str(SPC_hiyou_nen),
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
-            "shoukan_kaishi_jiki": shoukan_kaishi_jiki,
 
             "target_years": int(target_years),
             "tourokumenkyozei_hyoujun": str(self.initial_inputs["tourokumenkyozei_hyoujun"]),
