@@ -444,7 +444,7 @@ class Final_Inputs(ft.Column):
         #        ft.dropdown.Option("4"),  ft.dropdown.Option("5"), 
         #    ],
         #)
-        self.tx25 = ft.Text("地方債償還据置期間"),
+        self.tx25 = ft.Text("地方債償還据置期間")
         self.sl19 = ft.Slider(
             value=self.initial_inputs['chisai_sueoki_kikan'],
             min=0,
