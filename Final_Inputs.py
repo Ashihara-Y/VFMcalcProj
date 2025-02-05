@@ -632,7 +632,7 @@ class Final_Inputs(ft.Column):
         chisai_shoukan_kikan = int(self.sl1.value)
         chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan]
         # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
-        #first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
+        first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             SPC_keihi = Decimal(0)
