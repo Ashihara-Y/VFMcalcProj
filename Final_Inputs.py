@@ -453,7 +453,7 @@ class Final_Inputs(ft.Column):
             label="{value}年",
             on_change=self.handle_change_19,
         )
-        self.tx26 = ft.Text("予備入力（２）")
+        self.tx26 = ft.Text("予備入力")
         self.sl20 = ft.Slider(
             value=0,
             min=0,
