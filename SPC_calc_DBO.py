@@ -84,7 +84,8 @@ def SPC_calc():
     #print(SPC_shuushi_income)
 
     #SPC_payments
-    Shisetsu_seibihi_kappu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu_seibi_paymentschedule_ikkatsu
+    Shisetsu_seibihi_kappu = inputs_pdt.shisetsu_seibi_org_LCC * inputs_pdt.shisetsu_seibi_paymentschedule_kappu
+    #Shisetsu_seibihi_kappu = inputs_pdt.shisetsu_seibi_org_LCC * shisetsu_seibi_paymentschedule_ikkatsu
 
     Kariire_hensai_ganpon = [
         (

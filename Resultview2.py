@@ -62,6 +62,10 @@ class Results(ft.Stack):
         PIRR_res_df = self.selected_res_list[8]
         res_summ_df = self.selected_res_list[9]
 
+        PSC_res_df['year'] = PSC_res_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
+        LCC_res_df['year'] = LCC_res_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
+        SPC_res_df['year'] = SPC_res_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
+        SPC_check_df['year'] = SPC_check_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
         res_summ_df['discount_rate'] = res_summ_df['discount_rate'] * 100
 
         PSC_res_df = PSC_res_df.drop(['chisai_zansai', 'kisai_shoukansumi_gaku', 'datetime', 'user_id', 'calc_id'], axis=1)
@@ -135,10 +139,10 @@ class Results(ft.Stack):
             columns={
                 'periods':'経過年度', 
                 'year':'スケジュール', 
-                'shisetsu_seibihi_ikkatsu':'施設整備サービス対価(一括払)',
-                'shisetsu_seibihi_kappuganpon':'施設整備サービス対価(割賦元本)',
-                'shisetsu_seibihi_kappukinri':'施設整備サービス対価(割賦金利)', 
-                'ijikanri_unneihi':'維持管理費サービス対価', 
+                'shisetsu_seibihi_ikkatsu':'施設整備対価(一括払)',
+                'shisetsu_seibihi_kappuganpon':'施設整備対価(割賦元本)',
+                'shisetsu_seibihi_kappukinri':'施設整備対価(割賦金利)', 
+                'ijikanri_unneihi':'維持管理費対価', 
                 'monitoring_costs':'モニタリング等費用',
                 'SPC_keihi':'SPC費用', 
                 'kisai_shoukan_gaku':'起債償還額',
@@ -159,11 +163,11 @@ class Results(ft.Stack):
             columns={
                 'periods':'経過年度', 
                 'year':'スケジュール', 
-                'shisetsu_seibihi_taika_ikkatsu':'施設整備サービス対価(一括払)',
-                'shisetsu_seibihi_taika_kappuganpon':'施設整備サービス対価(割賦元本)',
-                'shisetsu_seibihi_taika_kappukinri':'施設整備サービス対価(割賦金利)', 
-                'ijikanri_unneihi_taika':'維持管理費サービス対価',
-                'SPC_hiyou_taika':'SPC費用サービス対価', 
+                'shisetsu_seibihi_taika_ikkatsu':'施設整備対価(一括払)',
+                'shisetsu_seibihi_taika_kappuganpon':'施設整備対価(割賦元本)',
+                'shisetsu_seibihi_taika_kappukinri':'施設整備対価(割賦金利)', 
+                'ijikanri_unneihi_taika':'維持管理費対価',
+                'SPC_hiyou_taika':'SPC費用対価', 
                 'riyou_ryoukin':'利用料金収入', 
                 'income_total':'収入計', 
             }
@@ -237,6 +241,8 @@ class Results(ft.Stack):
         self.table_PSC_income = simpledt_PSC_income_dt
         simpledt_PSC_payments_df = DataFrame(PSC_res_payments_df)
         simpledt_PSC_payments_dt = simpledt_PSC_payments_df.datatable
+        simpledt_PSC_payments_dt.column_spacing = 10
+        simpledt_PSC_payments_dt.headline_row_height =30 
         self.table_PSC_payments = simpledt_PSC_payments_dt
 
         PSC_pv_df['経過年数'] = PSC_pv_df['経過年数'].apply(lambda i: int(i))
@@ -250,6 +256,8 @@ class Results(ft.Stack):
         self.table_LCC_income = simpledt_LCC_income_dt
         simpledt_LCC_payments_df = DataFrame(LCC_res_payments_df)
         simpledt_LCC_payments_dt = simpledt_LCC_payments_df.datatable
+        simpledt_LCC_payments_dt.column_spacing = 10
+        simpledt_LCC_payments_dt.headline_row_height =30 
         self.table_LCC_payments = simpledt_LCC_payments_dt
 
         simpledt_LCC_pv_df = DataFrame(LCC_pv_df)
