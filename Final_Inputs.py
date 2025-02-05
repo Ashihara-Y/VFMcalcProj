@@ -643,6 +643,7 @@ class Final_Inputs(ft.Column):
             SPC_keihi = Decimal(self.sl8.value)
             SPC_fee = Decimal(self.sl9.value)
             SPC_shihon = Decimal(self.sl10.value)
+            SPC_yobihi = Decimal(self.sl11.value)
 
         ijikanri_unnei_years = int(self.initial_inputs['ijikanri_unnei_years'])
         houjinjuminzei_kintou = Decimal(self.initial_inputs['houjinjuminzei_kintou'])
@@ -835,15 +836,15 @@ class Final_Inputs(ft.Column):
             "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
-            "shoukan_kaishi_jiki": shoukan_kaishi_jiki,
-            "SPC_keihi": str(self.sl8.value),
-            "SPC_fee": str(self.sl9.value),
-            "SPC_shihon": str(self.sl10.value),
-            "SPC_yobihi": str(self.sl11.value),
-            "SPC_hiyou_atsukai": int(self.sw01.value),
+            "SPC_keihi": str(SPC_keihi),
+            "SPC_fee": str(SPC_fee),
+            "SPC_shihon": str(SPC_shihon),
+            "SPC_yobihi": str(SPC_yobihi),
+            "SPC_hiyou_atsukai": int(1),
             "SPC_hiyou_total": str(SPC_hiyou_total),
             "SPC_hiyou_nen": str(SPC_hiyou_nen),
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
+            "shoukan_kaishi_jiki": shoukan_kaishi_jiki,
 
             "target_years": int(target_years),
             "tourokumenkyozei_hyoujun": str(self.initial_inputs["tourokumenkyozei_hyoujun"]),
