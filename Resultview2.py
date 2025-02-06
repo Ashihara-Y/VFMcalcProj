@@ -42,9 +42,9 @@ class Results(ft.Stack):
                 'pre_kyoukouka',
                 'shisetsu_seibi_LCC',
                 'yosantanka_hiritsu_shisetsu',
-                'yosantanka_hiritsu_ijikanri_1'
-                'yosantanka_hiritsu_ijikanri_2'
-                'yosantanka_hiritsu_ijikanri_3'
+                'yosantanka_hiritsu_ijikanri_1',
+                'yosantanka_hiritsu_ijikanri_2',
+                'yosantanka_hiritsu_ijikanri_3',
                 'zei_total',
             ], 
         axis=1)
