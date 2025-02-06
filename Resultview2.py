@@ -3,16 +3,10 @@ sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
 from simpledt import DataFrame
-#import plotly.express as px
-#from flet.plotly_chart import PlotlyChart
-import duckdb
 from tinydb import TinyDB, Query
-#import glob
 import openpyxl
-#from openpyxl import Workbook, load_workbook
-import sqlite3
 from sqlalchemy import create_engine
-
+import make_inputs_df
 
 # savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
 class Results(ft.Stack):
@@ -29,6 +23,100 @@ class Results(ft.Stack):
         self.dtime = df_res['selected_datetime'].iloc[0]
         #con.close()
 
+        inputs_pdt = make_inputs_df.main()
+        inputs_dic = inputs_pdt.model_dump()
+        final_inputs_df = pd.DataFrame(inputs_dic, index=[0])
+        final_inputs_df = final_inputs_df.drop(
+            [
+                'const_start_date_year',
+                'const_start_date_month', 
+                'const_start_date_day',
+                'first_end_fy',
+                'growth',
+                'houjinjuminzei_ritsu_todouhuken',
+                'houjinjuminzei_ritsu_shikuchoson',
+                'ijikanri_unnei_LCC',
+                'ijikanri_unnei_1_LCC',
+                'ijikanri_unnei_2_LCC',
+                'ijikanri_unnei_3_LCC',
+                'pre_kyoukouka',
+                'shisetsu_seibi_LCC',
+                'yosantanka_hiritsu_shisetsu',
+                'yosantanka_hiritsu_ijikanri_1'
+                'yosantanka_hiritsu_ijikanri_2'
+                'yosantanka_hiritsu_ijikanri_3'
+                'zei_total',
+            ], 
+        axis=1)
+        final_inputs_df = final_inputs_df.rename(
+            columns={
+                'mgmt_type':'施設管理者区分',
+                'proj_ctgry':'事業形態',
+                'proj_type':'事業方式',
+                'target_years':'対象期間',
+                'proj_years':'事業期間',
+                'const_years':'施設整備期間',
+                'const_start_date':'施設整備開始日',
+                'ijikanri_unnei_years':'維持管理運営費期間',
+                'rakusatsu_ritsu':'落札率',
+                'reduc_shisetsu':'施設整備削減率',
+                'reduc_ijikanri_1':'維持管理運営費（人件費）削減率',
+                'reduc_ijikanri_2':'維持管理運営費（修繕費）削減率',
+                'reduc_ijikanri_3':'維持管理運営費（動力費）削減率',
+                'shisetsu_seibi':'施設整備費(競争効果反映後)',
+                'shisetsu_seibi_org':'施設整備費原額',
+                'shisetsu_seibi_org_LCC':'LCC施設整備費（削減率適用）',
+                'ijikanri_unnei':'維持管理運営費総額(競争効果反映後)',
+                'ijikanri_unnei_org':'維持管理運営費総額原額',
+                'ijikanri_unnei_org_LCC':'LCC維持管理運営費総額（削減率適用）',
+                'ijikanri_unnei_1':'維持管理運営費(人件費)(競争効果反映後)',
+                'ijikanri_unnei_1_org':'維持管理運営費(人件費)原額',
+                'ijikanri_unnei_1_org_LCC':'LCC維持管理運営費(人件費)（削減率適用）',
+                'ijikanri_unnei_2':'維持管理運営費(修繕費)(競争効果反映後)',
+                'ijikanri_unnei_2_org':'維持管理運営費(修繕費)原額',
+                'ijikanri_unnei_2_org_LCC':'LCC維持管理運営費(修繕費)（削減率適用）',
+                'ijikanri_unnei_3':'維持管理運営費(動力費)(競争効果反映後)',
+                'ijikanri_unnei_3_org':'維持管理運営費(動力費)原額',
+                'ijikanri_unnei_3_org_LCC':'LCC維持管理運営費(動力費)（削減率適用）',
+                'hojo_ritsu':'補助率',
+                'kisai_jutou':'起債充当率',
+                'kisai_koufu':'起債交付金カバー率',
+                'advisory_fee':'アドバイザリー手数料',
+                'monitoring_costs_LCC':'LCCモニタリング等費用',
+                'monitoring_costs_PSC':'PSCモニタリング等費用',
+                'SPC_hiyou_atsukai':'SPC費用の処理（デフォルト：サービス対価に含める）',
+                'SPC_fee':'SPC手数料',
+                'SPC_keihi':'SPC経費',
+                'SPC_setsuritsuhi':'SPC設立費用',
+                'SPC_hiyou_total':'SPC費用総額',
+                'SPC_hiyou_nen':'SPC費用年額',
+                'SPC_keihi_LCC':'LCCでのSPC経費',
+                'SPC_shihon':'SPC資本金',
+                'SPC_yobihi':'SPC予備費',
+                'riyouryoukin_shunyu':'利用料金収入',
+                'shisetsu_seibi_paymentsschedule_ikkatsu':'施設整備対価一括払比率',
+                'shisetsu_seibi_paymentsschedule_kappu':'施設整備対価割賦払比率',
+                'kijun_kinri':'基準金利',
+                'lg_spread':'官民スプレッド',
+                'kitai_bukka':'期待物価上昇率',
+                'discount_rate':'割引率',
+                'Kappu_kinri':'割賦金利',
+                'kappu_kinri_spread':'割賦スプレッド',
+                'chisai_kinri':'地方債金利',
+                'chisai_shoukan_kikan':'地方債償還期間',
+                'chisai_sueoki_years':'地方債償還据置期間',
+                'shoukan_kaishi_jiki':'地方債償還開始時期',
+                'houjinzei_ritsu':'法人税率',
+                'houjinjuminzei_kintou':'法人住民税均等割',
+                'fudousanshutokuzei_hyoujun':'不動産取得税課税標準',
+                'fudousanshutokuzei_ritsu':'不動産取得税率',
+                'koteishisanzei_hyoujun':'固定資産税課税標準',
+                'koteishisanzei_ritsu':'固定資産税率',
+                'tourokumenkyozei_hyoujun':'登録免許税課税標準',
+                'tourokumenkyozei_ritsu':'登録免許税率',
+            }
+        )
+        self.final_inputs_df = final_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
 
         engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         
@@ -235,7 +323,11 @@ class Results(ft.Stack):
                 'SPC_fee':'SPCへの手数料(百万円)',
             }
         )
-        # 総括表をここに追加する。PSC,LCC、SPCの表も作成して、別個定義しておく。
+        # 最終入力・パラメータの表を作成
+        simpledt_finalinputs_df = DataFrame(self.final_inputs_df)
+        simpledt_finalinputs_dt = simpledt_finalinputs_df.datatable
+        self.table_finalinputs = simpledt_finalinputs_dt
+
         simpledt_PSC_income_df = DataFrame(PSC_res_income_df)
         simpledt_PSC_income_dt = simpledt_PSC_income_df.datatable
         self.table_PSC_income = simpledt_PSC_income_dt
@@ -337,6 +429,11 @@ class Results(ft.Stack):
         lv_03.controls.append(ft.Text('PFI-LCCでのSPCの返済資金確認結果'))
         lv_03.controls.append(self.table_SPC_check)
 
+        lv_04 = ft.ListView(
+            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
+        )
+        lv_04.controls.append(ft.Text('入力値・パラメータ等一覧'))
+        lv_04.controls.append(self.table_finalinputs)
 
         return ft.Tabs(
                 selected_index=1,
@@ -382,6 +479,22 @@ class Results(ft.Stack):
                                     controls=[
                                         #self.graph,
                                         lv_03,
+                                    ],
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                ),
+                                width=2100,
+                                padding=10,
+                            )
+                        )
+                    ),
+                    ft.Tab(
+                        text="入力値等一覧",
+                        content=ft.Card(
+                            content=ft.Container(
+                                content=ft.Column(
+                                    controls=[
+                                        #self.graph,
+                                        lv_04,
                                     ],
                                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                 ),
