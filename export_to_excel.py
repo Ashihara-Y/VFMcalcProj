@@ -31,7 +31,7 @@ def export_to_excel():
         table_name = pd.read_sql_query(query, engine)
         selected_res_list.append(table_name)
 
-    dtime_w = dtime.replace(' ', '_').replace(':', '_')
+    dtime_w = dtime.replace(' ', '_').replace(':', '_').replace('+09_00', '')
     file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
     save_path = 'vfm_output/' + file_name
 
@@ -197,17 +197,17 @@ def export_to_excel():
 
 
     with pd.ExcelWriter(save_path, engine='openpyxl', if_sheet_exists='overlay', mode='a') as writer:
-        res_summ_df.to_excel(writer, sheet_name='算定結果概要')
-        PSC_res_df.to_excel(writer, sheet_name='PSC算定結果')
-        PSC_pv_df.to_excel(writer, sheet_name='PSC現在価値算定結果')
-        LCC_res_df.to_excel(writer, sheet_name='LCC算定結果')
-        LCC_pv_df.to_excel(writer, sheet_name='LCC現在価値算定結果')
-        SPC_res_df.to_excel(writer, sheet_name='SPC算定結果')
-        SPC_check_df.to_excel(writer, sheet_name='SPC返済資金チェック結果')
-        Risk_res_df.to_excel(writer, sheet_name='リスク調整額')
-        VFM_res_df.to_excel(writer, sheet_name='VFM算定結果')
-        PIRR_res_df.to_excel(writer, sheet_name='PIRR算定結果')
-        final_inputs_df.to_excel(writer, sheet_name='最終入力等')
+        res_summ_df.to_excel(writer, sheet_name='算定結果概要', index=False)
+        PSC_res_df.to_excel(writer, sheet_name='PSC算定結果', index=False)
+        PSC_pv_df.to_excel(writer, sheet_name='PSC現在価値算定結果', index=False)
+        LCC_res_df.to_excel(writer, sheet_name='LCC算定結果', index=False)
+        LCC_pv_df.to_excel(writer, sheet_name='LCC現在価値算定結果', index=False)
+        SPC_res_df.to_excel(writer, sheet_name='SPC算定結果', index=False)
+        SPC_check_df.to_excel(writer, sheet_name='SPC返済資金チェック結果', index=False)
+        Risk_res_df.to_excel(writer, sheet_name='リスク調整額', index=False)
+        VFM_res_df.to_excel(writer, sheet_name='VFM算定結果', index=False)
+        PIRR_res_df.to_excel(writer, sheet_name='PIRR算定結果', index=False)
+        final_inputs_df.to_excel(writer, sheet_name='最終入力等', index=False)
 
 
 # 上記をmok dataなしで動かすには、事業費用概算シートへの入力値用の入力画面とDB入力への統合が必要
