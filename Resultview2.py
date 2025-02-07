@@ -159,6 +159,27 @@ class Results(ft.Stack):
                 'tourokumenkyozei_ritsu',            
             ]]
 
+        final_inputs_df['rakusatsu_ritsu'] = final_inputs_df['rakusatsu_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['reduc_ijikanri_1'] = final_inputs_df['reduc_ijikanri_1'].apply(lambda x: x * 100)
+        final_inputs_df['reduc_ijikanri_2'] = final_inputs_df['reduc_ijikanri_2'].apply(lambda x: x * 100)
+        final_inputs_df['reduc_ijikanri_3'] = final_inputs_df['reduc_ijikanri_3'].apply(lambda x: x * 100)
+        final_inputs_df['hojo_ritsu'] = final_inputs_df['hojo_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['kisai_jutou'] = final_inputs_df['kisai_jutou'].apply(lambda x: x * 100)
+        final_inputs_df['kisai_koufu'] = final_inputs_df['kisai_koufu'].apply(lambda x: x * 100)
+        final_inputs_df['shisetsu_seibi_paymentsschedule_ikkatsu'] = final_inputs_df['shisetsu_seibi_paymentsschedule_ikkatsu'].apply(lambda x: x * 100)
+        final_inputs_df['shisetsu_seibi_paymentsschedule_kappu'] = final_inputs_df['shisetsu_seibi_paymentsschedule_kappu'].apply(lambda x: x * 100)
+        final_inputs_df['kijun_kinri'] = final_inputs_df['kijun_kinri'].apply(lambda x: x * 100)
+        final_inputs_df['lg_spread'] = final_inputs_df['lg_spread'].apply(lambda x: x * 100)
+        final_inputs_df['kitai_bukka'] = final_inputs_df['kitai_bukka'].apply(lambda x: x * 100)
+        final_inputs_df['discount_rate'] = final_inputs_df['discount_rate'].apply(lambda x: x * 100)
+        final_inputs_df['Kappu_kinri'] = final_inputs_df['Kappu_kinri'].apply(lambda x: x * 100)
+        final_inputs_df['kappu_kinri_spread'] = final_inputs_df['kappu_kinri_spread'].apply(lambda x: x * 100)
+        final_inputs_df['chisai_kinri'] = final_inputs_df['chisai_kinri'].apply(lambda x: x * 100)
+        final_inputs_df['houjinzei_ritsu'] = final_inputs_df['houjinzei_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['fudousanshutokuzei_ritsu'] = final_inputs_df['fudousanshutokuzei_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['koteishisanzei_ritsu'] = final_inputs_df['koteishisanzei_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['tourokumenkyozei_ritsu'] = final_inputs_df['tourokumenkyozei_ritsu'].apply(lambda x: x * 100)
+
         final_inputs_df = final_inputs_df.rename(
             columns={
                 'mgmt_type':'施設管理者区分',
@@ -168,62 +189,61 @@ class Results(ft.Stack):
                 'const_years':'施設整備期間',
                 'const_start_date':'施設整備開始日',
                 'ijikanri_unnei_years':'維持管理運営費期間',
-                'rakusatsu_ritsu':'落札率',
-                'reduc_shisetsu':'施設整備削減率',
-                'reduc_ijikanri_1':'維持管理運営費（人件費）削減率',
-                'reduc_ijikanri_2':'維持管理運営費（修繕費）削減率',
-                'reduc_ijikanri_3':'維持管理運営費（動力費）削減率',
-                'shisetsu_seibi':'施設整備費(競争効果反映後)',
-                'shisetsu_seibi_org':'施設整備費原額',
-                'shisetsu_seibi_org_LCC':'LCC施設整備費（削減率適用）',
-                'ijikanri_unnei':'維持管理運営費総額(競争効果反映後)',
-                'ijikanri_unnei_org':'維持管理運営費総額原額',
-                'ijikanri_unnei_org_LCC':'LCC維持管理運営費総額（削減率適用）',
-                'ijikanri_unnei_1':'維持管理運営費(人件費)(競争効果反映後)',
-                'ijikanri_unnei_1_org':'維持管理運営費(人件費)原額',
-                'ijikanri_unnei_1_org_LCC':'LCC維持管理運営費(人件費)（削減率適用）',
-                'ijikanri_unnei_2':'維持管理運営費(修繕費)(競争効果反映後)',
-                'ijikanri_unnei_2_org':'維持管理運営費(修繕費)原額',
-                'ijikanri_unnei_2_org_LCC':'LCC維持管理運営費(修繕費)（削減率適用）',
-                'ijikanri_unnei_3':'維持管理運営費(動力費)(競争効果反映後)',
-                'ijikanri_unnei_3_org':'維持管理運営費(動力費)原額',
-                'ijikanri_unnei_3_org_LCC':'LCC維持管理運営費(動力費)（削減率適用）',
-                'hojo_ritsu':'補助率',
-                'kisai_jutou':'起債充当率',
-                'kisai_koufu':'起債交付金カバー率',
-                'advisory_fee':'アドバイザリー手数料',
-                'monitoring_costs_LCC':'PFI-LCCでのモニタリング等費用',
-                'monitoring_costs_PSC':'PSCでのモニタリング等費用',
+                'rakusatsu_ritsu':'落札率(%)',
+                'reduc_shisetsu':'施設整備削減率(%)',
+                'reduc_ijikanri_1':'維持管理運営費（人件費）削減率(%)',
+                'reduc_ijikanri_2':'維持管理運営費（修繕費）削減率(%)',
+                'reduc_ijikanri_3':'維持管理運営費（動力費）削減率(%)',
+                'shisetsu_seibi':'施設整備費(競争効果反映後)(百万円)',
+                'shisetsu_seibi_org':'施設整備費原額(百万円)',
+                'shisetsu_seibi_org_LCC':'LCC施設整備費（削減率適用）(百万円)',
+                'ijikanri_unnei':'維持管理運営費総額(競争効果反映後)(百万円)',
+                'ijikanri_unnei_org':'維持管理運営費総額原額(百万円)',
+                'ijikanri_unnei_org_LCC':'LCC維持管理運営費総額（削減率適用）(百万円)',
+                'ijikanri_unnei_1':'維持管理運営費(人件費)(競争効果反映後)(百万円)',
+                'ijikanri_unnei_1_org':'維持管理運営費(人件費)原額(百万円)',
+                'ijikanri_unnei_1_org_LCC':'LCC維持管理運営費(人件費)（削減率適用）(百万円)',
+                'ijikanri_unnei_2':'維持管理運営費(修繕費)(競争効果反映後)(百万円)',
+                'ijikanri_unnei_2_org':'維持管理運営費(修繕費)原額(百万円)',
+                'ijikanri_unnei_2_org_LCC':'LCC維持管理運営費(修繕費)（削減率適用）(百万円)',
+                'ijikanri_unnei_3':'維持管理運営費(動力費)(競争効果反映後)(百万円)',
+                'ijikanri_unnei_3_org':'維持管理運営費(動力費)原額(百万円)',
+                'ijikanri_unnei_3_org_LCC':'LCC維持管理運営費(動力費)（削減率適用）(百万円)',
+                'hojo_ritsu':'補助率(%)',
+                'kisai_jutou':'起債充当率(%)',
+                'kisai_koufu':'起債交付金カバー率(%)',
+                'advisory_fee':'アドバイザリー手数料(百万円)',
+                'monitoring_costs_LCC':'PFI-LCCでのモニタリング等費用(百万円)',
+                'monitoring_costs_PSC':'PSCでのモニタリング等費用(百万円)',
                 'SPC_hiyou_atsukai':'SPC費用の処理（デフォルト：サービス対価に含める）',
-                'SPC_fee':'SPC手数料',
-                'SPC_keihi':'SPC経費',
-                'SPC_setsuritsuhi':'SPC設立費用',
-                'SPC_hiyou_total':'SPC費用総額',
-                'SPC_hiyou_nen':'SPC費用年額',
-                'SPC_keihi_LCC':'LCCでのSPC経費',
-                'SPC_shihon':'SPC資本金',
-                'SPC_yobihi':'SPC予備費',
-                'riyouryoukin_shunyu':'利用料金収入',
-                'shisetsu_seibi_paymentsschedule_ikkatsu':'施設整備対価一括払比率',
-                'shisetsu_seibi_paymentsschedule_kappu':'施設整備対価割賦払比率',
-                'kijun_kinri':'基準金利',
-                'lg_spread':'官民スプレッド',
-                'kitai_bukka':'期待物価上昇率',
-                'discount_rate':'割引率',
-                'Kappu_kinri':'割賦金利',
-                'kappu_kinri_spread':'割賦スプレッド',
-                'chisai_kinri':'地方債金利',
+                'SPC_fee':'SPC手数料(百万円)',
+                'SPC_keihi':'SPC経費(百万円)',
+                'SPC_setsuritsuhi':'SPC設立費用(百万円)',
+                'SPC_hiyou_total':'SPC費用総額(百万円)',
+                'SPC_hiyou_nen':'SPC費用年額(百万円)',
+                'SPC_keihi_LCC':'LCCでのSPC経費(百万円)',
+                'SPC_shihon':'SPC資本金(百万円)',
+                'SPC_yobihi':'SPC予備費(百万円)',
+                'riyouryoukin_shunyu':'利用料金収入(百万円)',
+                'shisetsu_seibi_paymentsschedule_ikkatsu':'施設整備対価一括払比率(%)',
+                'shisetsu_seibi_paymentsschedule_kappu':'施設整備対価割賦払比率(%)',
+                'kijun_kinri':'基準金利(%)',
+                'lg_spread':'官民スプレッド(%)',
+                'kitai_bukka':'期待物価上昇率(%)',
+                'discount_rate':'割引率(%)',
+                'Kappu_kinri':'割賦金利(%)',
+                'kappu_kinri_spread':'割賦スプレッド(%)',
+                'chisai_kinri':'地方債金利(%)',
                 'chisai_shoukan_kikan':'地方債償還期間',
                 'chisai_sueoki_years':'地方債償還据置期間',
-                'shoukan_kaishi_jiki':'地方債償還開始時期',
-                'houjinzei_ritsu':'法人税率',
-                'houjinjuminzei_kintou':'法人住民税均等割',
-                'fudousanshutokuzei_hyoujun':'不動産取得税課税標準',
-                'fudousanshutokuzei_ritsu':'不動産取得税率',
-                'koteishisanzei_hyoujun':'固定資産税課税標準',
-                'koteishisanzei_ritsu':'固定資産税率',
-                'tourokumenkyozei_hyoujun':'登録免許税課税標準',
-                'tourokumenkyozei_ritsu':'登録免許税率',
+                'houjinzei_ritsu':'法人税率(%)',
+                'houjinjuminzei_kintou':'法人住民税均等割(百万円)',
+                'fudousanshutokuzei_hyoujun':'不動産取得税課税標準(百万円)',
+                'fudousanshutokuzei_ritsu':'不動産取得税率(%)',
+                'koteishisanzei_hyoujun':'固定資産税課税標準(百万円)',
+                'koteishisanzei_ritsu':'固定資産税率(%)',
+                'tourokumenkyozei_hyoujun':'登録免許税課税標準(百万円)',
+                'tourokumenkyozei_ritsu':'登録免許税率(%)',
             }
         )
         self.final_inputs_df = final_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
