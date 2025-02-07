@@ -336,7 +336,11 @@ class Initial_Inputs(ft.Column):
             ft.page.go("/")
 
         calc_id = timeflake.random()
-        const_start_date = datetime.date.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo")).strftime('%Y-%m-%d')
+        dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
+        #dtime_year = dtime.year
+        #dtime_month = dtime.month
+        #dtime_day = dtime.day
+        const_start_date = datetime.date(dtime.year, dtime.month, dtime.day).strftime('%Y-%m-%d')
         
         shisetsu_seibi_org_R = Decimal(self.sl0.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         shisetsu_seibi_org_Y = Decimal(self.sl1.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
