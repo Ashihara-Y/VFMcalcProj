@@ -269,7 +269,7 @@ class Results(ft.Stack):
         )
 
         final_inputs_df.to_sql('final_inputs_table', engine, if_exists='replace', index=False)
-        final_inputs_df = final_inputs_df.drop(['datetime'], axis=1)
+        final_inputs_df = final_inputs_df.drop(columns='datetime')
         self.final_inputs_df = final_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
 
         table_names = [
