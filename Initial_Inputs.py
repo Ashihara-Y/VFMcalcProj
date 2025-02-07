@@ -6,7 +6,7 @@ import flet as ft
 import pandas as pd
 import pyarrow as pa
 import datetime
-import tinydb
+import timeflake
 from tinydb import TinyDB, Query
 from decimal import *
 from zoneinfo import ZoneInfo
@@ -335,9 +335,9 @@ class Initial_Inputs(ft.Column):
         if proj_years < const_years:
             ft.page.go("/")
 
-        const_start_date = datetime.date.today(tz=ZoneInfo("Asia/Tokyo")).strftime('%Y-%m-%d')
+        calc_id = timeflake.random()
+        const_start_date = datetime.date.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo")).strftime('%Y-%m-%d')
         
-
         shisetsu_seibi_org_R = Decimal(self.sl0.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         shisetsu_seibi_org_Y = Decimal(self.sl1.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         shisetsu_seibi_org = Decimal(shisetsu_seibi_org_R + shisetsu_seibi_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)
