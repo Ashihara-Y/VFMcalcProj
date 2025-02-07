@@ -18,6 +18,7 @@ class Results(ft.Stack):
         self.height = 1000
         self.resizable = True
 
+        engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         #con = TinyDB("selected_res.json")
         engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
         df_res = pd.read_sql_table('sel_res', engine_m)
@@ -195,11 +196,13 @@ class Results(ft.Stack):
             final_inputs_df['fudousanshutokuzei_ritsu'] = final_inputs_df['fudousanshutokuzei_ritsu'].apply(lambda x: x * 100)
             final_inputs_df['koteishisanzei_ritsu'] = final_inputs_df['koteishisanzei_ritsu'].apply(lambda x: x * 100)
             final_inputs_df['tourokumenkyozei_ritsu'] = final_inputs_df['tourokumenkyozei_ritsu'].apply(lambda x: x * 100)
+            final_inputs_df['datetime'] = self.dtime
 
         final_inputs_df = final_inputs_df.applymap(lambda x: round(float(x), 3) if isinstance(x, decimal.Decimal) else str(x))
 
         final_inputs_df = final_inputs_df.rename(
             columns={
+                'datetime':'datetime',
                 'mgmt_type':'施設管理者区分',
                 'proj_ctgry':'事業形態',
                 'proj_type':'事業方式',
@@ -264,11 +267,10 @@ class Results(ft.Stack):
                 'tourokumenkyozei_ritsu':'登録免許税率(%)',
             }
         )
+
+        final_inputs_df.to_sql('final_inputs_table', engine, if_exists='replace', index=False)
+        final_inputs_df = final_inputs_df.drop(['datetime'], axis=1)
         self.final_inputs_df = final_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
-
-        engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
-
-        self.final_inputs_df.to_sql('final_inputs_table', engine, if_exists='replace', index=False)
 
         table_names = [
             'PSC_res_table', 
@@ -441,19 +443,6 @@ class Results(ft.Stack):
                 'risk_adjust_gaku':'リスク調整額', 
             }
         )
-        #VFM_res_df = VFM_res_df.rename(
-        #    columns={
-        #        'VFM':'VFM(金額)', 
-        #        'VFM_percent':'VFM(％)', 
-        #    }
-        #)
-        #PIRR_res_df = PIRR_res_df.rename(
-        #    columns={
-        #        'PIRR':'プロジェクト内部収益率', 
-        #        'PIRR_percent':'プロジェクト内部収益率(％)', 
-        #        
-        #    }
-        #)
         res_summ_df = res_summ_df.rename(
             columns={
                 'VFM_percent':'VFM(％)', 
@@ -521,13 +510,6 @@ class Results(ft.Stack):
         simpledt_Risk_dt = simpledt_Risk_df.datatable
         self.table_Risk = simpledt_Risk_dt
 
-        #simpledt_VFM_df = DataFrame(VFM_res_df)
-        #simpledt_VFM_dt = simpledt_VFM_df.datatable
-        #self.table_VFM = simpledt_VFM_dt
-        #simpledt_PIRR_df = DataFrame(PIRR_res_df)
-        #simpledt_PIRR_dt = simpledt_PIRR_df.datatable
-        #self.table_PIRR = simpledt_PIRR_dt
-        
         res_summ_df_t = res_summ_df.transpose().reset_index()
         res_summ_df_t = res_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
         simpledt_res_summ_df = DataFrame(res_summ_df_t)
@@ -539,12 +521,6 @@ class Results(ft.Stack):
         )
         lv_01.controls.append(ft.Text('算定結果要約'))
         lv_01.controls.append(self.table_res_summ)
-        #lv_01.controls.append(ft.Divider())
-        #lv_01.controls.append(ft.Text('VFM結果'))
-        #lv_01.controls.append(self.table_VFM)
-        #lv_01.controls.append(ft.Divider())
-        #lv_01.controls.append(ft.Text('PIRR結果'))
-        #lv_01.controls.append(self.table_PIRR)
 
         lv_02 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False

@@ -22,6 +22,7 @@ def export_to_excel():
         'VFM_res_table',
         'PIRR_res_table',
         'res_summ_res_table',
+        'final_inputs_table',
     ]
 
     selected_res_list = []
@@ -49,6 +50,7 @@ def export_to_excel():
     VFM_res_df = selected_res_list[7]
     PIRR_res_df = selected_res_list[8]
     res_summ_df = selected_res_list[9]
+    final_inputs_df = selected_res_list[10]
 
     PSC_res_df = PSC_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
     PSC_pv_df =  PSC_pv_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
@@ -190,20 +192,21 @@ def export_to_excel():
             }
     )
 
-    res_summ_df = res_summ_df.T.reset_index()
+    res_summ_df = res_summ_df.T.reset_index().rename(columns={"index":"項目名", 0:"値"})
 
 
     with pd.ExcelWriter(save_path, engine='openpyxl', if_sheet_exists='overlay', mode='a') as writer:
-        res_summ_df.to_excel(writer, sheet_name='Summary_result_sheet')
-        PSC_res_df.to_excel(writer, sheet_name='PSC_result_sheet')
-        PSC_pv_df.to_excel(writer, sheet_name='PSC_pv_result_sheet')
-        LCC_res_df.to_excel(writer, sheet_name='LCC_result_sheet')
-        LCC_pv_df.to_excel(writer, sheet_name='LCC_pv_result_sheet')
-        SPC_res_df.to_excel(writer, sheet_name='SPC_result_sheet')
-        SPC_check_df.to_excel(writer, sheet_name='SPC_check_result_sheet')
-        Risk_res_df.to_excel(writer, sheet_name='Risk_result_sheet')
-        VFM_res_df.to_excel(writer, sheet_name='VFM_result_sheet')
-        PIRR_res_df.to_excel(writer, sheet_name='PIRR_result_sheet')
+        res_summ_df.to_excel(writer, sheet_name='算定結果概要')
+        PSC_res_df.to_excel(writer, sheet_name='PSC算定結果')
+        PSC_pv_df.to_excel(writer, sheet_name='PSC現在価値算定結果')
+        LCC_res_df.to_excel(writer, sheet_name='LCC算定結果')
+        LCC_pv_df.to_excel(writer, sheet_name='LCC現在価値算定結果')
+        SPC_res_df.to_excel(writer, sheet_name='SPC算定結果')
+        SPC_check_df.to_excel(writer, sheet_name='SPC返済資金チェック結果')
+        Risk_res_df.to_excel(writer, sheet_name='リスク調整額')
+        VFM_res_df.to_excel(writer, sheet_name='VFM算定結果')
+        PIRR_res_df.to_excel(writer, sheet_name='PIRR算定結果')
+        final_inputs_df.to_excel(writer, sheet_name='最終入力等')
 
 
 # 上記をmok dataなしで動かすには、事業費用概算シートへの入力値用の入力画面とDB入力への統合が必要
