@@ -9,6 +9,7 @@ import datetime
 import tinydb
 from tinydb import TinyDB, Query
 from decimal import *
+from zoneinfo import ZoneInfo
 
 class Initial_Inputs(ft.Column):
 
@@ -334,7 +335,7 @@ class Initial_Inputs(ft.Column):
         if proj_years < const_years:
             ft.page.go("/")
 
-        const_start_date = datetime.date.today().strftime('%Y-%m-%d')
+        const_start_date = datetime.date.today(tz=ZoneInfo("Asia/Tokyo")).strftime('%Y-%m-%d')
         
 
         shisetsu_seibi_org_R = Decimal(self.sl0.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
