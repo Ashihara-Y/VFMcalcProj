@@ -7,6 +7,7 @@ from tinydb import TinyDB, Query
 import openpyxl
 from sqlalchemy import create_engine
 import make_inputs_df
+import decimal
 
 # savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
 class Results(ft.Stack):
@@ -94,7 +95,8 @@ class Results(ft.Stack):
             ]]
         
             final_inputs_df['rakusatsu_ritsu'] = final_inputs_df['rakusatsu_ritsu'].apply(lambda x: x * 100)
-            final_inputs_df['reduc_shisetsu'] = final_inputs_df['reduc_shisetsu'].apply(lambda x: x * 100)            final_inputs_df['reduc_ijikanri_1'] = final_inputs_df['reduc_ijikanri_1'].apply(lambda x: x * 100)
+            final_inputs_df['reduc_shisetsu'] = final_inputs_df['reduc_shisetsu'].apply(lambda x: x * 100)
+            final_inputs_df['reduc_ijikanri_1'] = final_inputs_df['reduc_ijikanri_1'].apply(lambda x: x * 100)
             final_inputs_df['reduc_ijikanri_2'] = final_inputs_df['reduc_ijikanri_2'].apply(lambda x: x * 100)
             final_inputs_df['reduc_ijikanri_3'] = final_inputs_df['reduc_ijikanri_3'].apply(lambda x: x * 100)
             final_inputs_df['hojo_ritsu'] = final_inputs_df['hojo_ritsu'].apply(lambda x: x * 100)
@@ -194,6 +196,8 @@ class Results(ft.Stack):
             final_inputs_df['koteishisanzei_ritsu'] = final_inputs_df['koteishisanzei_ritsu'].apply(lambda x: x * 100)
             final_inputs_df['tourokumenkyozei_ritsu'] = final_inputs_df['tourokumenkyozei_ritsu'].apply(lambda x: x * 100)
 
+        final_inputs_df = final_inputs_df.applymap(lambda x: float(x).round(3) if isinstance(x, decimal.Decimal) else str(x))
+
         final_inputs_df = final_inputs_df.rename(
             columns={
                 'mgmt_type':'施設管理者区分',
@@ -263,7 +267,9 @@ class Results(ft.Stack):
         self.final_inputs_df = final_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
 
         engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
-        
+
+        self.final_inputs_df.to_sql('final_inputs_table', engine, if_exists='replace', index=False)
+
         table_names = [
             'PSC_res_table', 
             'PSC_pv_res_table', 
