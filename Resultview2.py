@@ -107,6 +107,7 @@ class Results(ft.Stack):
             final_inputs_df['kitai_bukka'] = final_inputs_df['kitai_bukka'].apply(lambda x: x * 100)
             final_inputs_df['discount_rate'] = final_inputs_df['discount_rate'].apply(lambda x: x * 100)
             final_inputs_df['chisai_kinri'] = final_inputs_df['chisai_kinri'].apply(lambda x: x * 100)
+            final_inputs_df['datetime'] = self.dtime
 
         else:
             final_inputs_df = final_inputs_df[[
@@ -198,7 +199,7 @@ class Results(ft.Stack):
             final_inputs_df['tourokumenkyozei_ritsu'] = final_inputs_df['tourokumenkyozei_ritsu'].apply(lambda x: x * 100)
             final_inputs_df['datetime'] = self.dtime
 
-        final_inputs_df = final_inputs_df.applymap(lambda x: round(float(x), 3) if isinstance(x, decimal.Decimal) else str(x))
+        final_inputs_df = final_inputs_df.map(lambda x: round(float(x), 3) if isinstance(x, decimal.Decimal) else str(x))
 
         final_inputs_df = final_inputs_df.rename(
             columns={
