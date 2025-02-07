@@ -196,7 +196,7 @@ class Results(ft.Stack):
             final_inputs_df['koteishisanzei_ritsu'] = final_inputs_df['koteishisanzei_ritsu'].apply(lambda x: x * 100)
             final_inputs_df['tourokumenkyozei_ritsu'] = final_inputs_df['tourokumenkyozei_ritsu'].apply(lambda x: x * 100)
 
-        final_inputs_df = final_inputs_df.applymap(lambda x: float(x).round(3) if isinstance(x, decimal.Decimal) else str(x))
+        final_inputs_df = final_inputs_df.applymap(lambda x: round(float(x), 3) if isinstance(x, decimal.Decimal) else str(x))
 
         final_inputs_df = final_inputs_df.rename(
             columns={
