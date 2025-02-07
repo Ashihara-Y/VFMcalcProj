@@ -37,7 +37,7 @@ def export_to_excel():
 
     wb = openpyxl.Workbook()
     ws = wb['Sheet']
-    ws.title = 'Summary_result_sheet'
+    ws.title = '算定結果概要'
     wb.save(save_path)
 
     PSC_res_df = selected_res_list[0]
@@ -192,6 +192,7 @@ def export_to_excel():
             }
     )
 
+    final_inputs_df = final_inputs_df.T.reset_index().rename(columns={"index":"項目名", 0:"値"})
     res_summ_df = res_summ_df.T.reset_index().rename(columns={"index":"項目名", 0:"値"})
 
 
