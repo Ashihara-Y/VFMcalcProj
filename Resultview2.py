@@ -48,7 +48,7 @@ class Results(ft.Stack):
                 'zei_total',
             ], 
         axis=1)
-        if final_inputs_df["proj_type"] == "DBO(SPCなし)" or final_inputs_df["proj_type"] == "BT/DB(いずれもSPCなし)":
+        if inputs_pdt.proj_type == "DBO(SPCなし)" or inputs_pdt.proj_type == "BT/DB(いずれもSPCなし)":
             final_inputs_df = final_inputs_df[[
                 'mgmt_type',
                 'proj_ctgry',
