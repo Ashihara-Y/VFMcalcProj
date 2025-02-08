@@ -62,7 +62,7 @@ def main(page: ft.Page):
                 ft.View(
                     "/view_saved",
                     [
-                        ft.AppBar(title=ft.Text("算定結果一覧")),
+                        ft.AppBar(title=ft.Text("算定結果一覧(要約表を長めにクリックすると詳細に遷移します)")),
                         View_saved(),
                         ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],

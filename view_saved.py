@@ -16,7 +16,7 @@ from sqlalchemy import create_engine
 class View_saved(ft.Column):
     def __init__(self):
         super().__init__()
-        self.title = "VFM算定結果リスト"
+        self.title = "VFM算定結果リスト(結果要約を長めにクリックすると詳細に遷移します)"
         self.width = 1800
         self.height = 3000
         self.resizable = True

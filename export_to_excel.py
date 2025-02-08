@@ -22,6 +22,7 @@ def export_to_excel():
         'VFM_res_table',
         'PIRR_res_table',
         'res_summ_res_table',
+        'final_inputs_table',
     ]
 
     selected_res_list = []
@@ -30,13 +31,13 @@ def export_to_excel():
         table_name = pd.read_sql_query(query, engine)
         selected_res_list.append(table_name)
 
-    dtime_w = dtime.replace(' ', '_').replace(':', '_')
+    dtime_w = dtime.replace(' ', '_').replace(':', '_').replace('+09_00', '')
     file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
     save_path = 'vfm_output/' + file_name
 
     wb = openpyxl.Workbook()
     ws = wb['Sheet']
-    ws.title = 'Summary_result_sheet'
+    ws.title = '算定結果概要'
     wb.save(save_path)
 
     PSC_res_df = selected_res_list[0]
@@ -49,6 +50,7 @@ def export_to_excel():
     VFM_res_df = selected_res_list[7]
     PIRR_res_df = selected_res_list[8]
     res_summ_df = selected_res_list[9]
+    final_inputs_df = selected_res_list[10]
 
     PSC_res_df = PSC_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
     PSC_pv_df =  PSC_pv_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
@@ -60,6 +62,8 @@ def export_to_excel():
     VFM_res_df = VFM_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
     PIRR_res_df = PIRR_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
     res_summ_df = res_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    final_inputs_df = final_inputs_df.drop('datetime', axis=1)
+    res_summ_df['discount_rate'] = res_summ_df['discount_rate'].apply(lambda x: round(float(x*100), 4))
 
     PSC_res_df = PSC_res_df.rename(
          columns={
@@ -176,8 +180,8 @@ def export_to_excel():
     res_summ_df = res_summ_df.rename(
         columns={
                 'VFM_percent':'VFM(％)', 
-                'PSC_present_value':'PSCでの公共キャッシュ・フロー現在価値', 
-                'LCC_present_value':'PFI-LCCでの公共キャッシュ・フロー現在価値', 
+                'PSC_present_value':'PSCでの公共キャッシュ・フロー現在価値(百万円)', 
+                'LCC_present_value':'PFI-LCCでの公共キャッシュ・フロー現在価値(百万円)', 
                 'PIRR':'プロジェクト内部収益率(％)',
                 'SPC_payment_cash':'SPCの元本返済可否', 
                 'mgmt_type':'発注者区分', 
@@ -187,23 +191,28 @@ def export_to_excel():
                 'proj_years':'事業期間', 
                 'discount_rate':'割引率(％)', 
                 'kariire_kinri':'借入コスト(％)',
+                'Kappu_kinri':'割賦金利(％)',
+                'kappu_kinri_spread':'割賦金利スプレッド(％)',
+                'SPC_fee':'SPCへの手数料(百万円)',
             }
     )
 
-    res_summ_df = res_summ_df.T.reset_index()
+    final_inputs_df = final_inputs_df.T.reset_index().rename(columns={"index":"項目名", 0:"値"})
+    res_summ_df = res_summ_df.T.reset_index().rename(columns={"index":"項目名", 0:"値"})
 
 
     with pd.ExcelWriter(save_path, engine='openpyxl', if_sheet_exists='overlay', mode='a') as writer:
-        res_summ_df.to_excel(writer, sheet_name='Summary_result_sheet')
-        PSC_res_df.to_excel(writer, sheet_name='PSC_result_sheet')
-        PSC_pv_df.to_excel(writer, sheet_name='PSC_pv_result_sheet')
-        LCC_res_df.to_excel(writer, sheet_name='LCC_result_sheet')
-        LCC_pv_df.to_excel(writer, sheet_name='LCC_pv_result_sheet')
-        SPC_res_df.to_excel(writer, sheet_name='SPC_result_sheet')
-        SPC_check_df.to_excel(writer, sheet_name='SPC_check_result_sheet')
-        Risk_res_df.to_excel(writer, sheet_name='Risk_result_sheet')
-        VFM_res_df.to_excel(writer, sheet_name='VFM_result_sheet')
-        PIRR_res_df.to_excel(writer, sheet_name='PIRR_result_sheet')
+        res_summ_df.to_excel(writer, sheet_name='算定結果概要', index=False)
+        PSC_res_df.to_excel(writer, sheet_name='PSC算定結果', index=False)
+        PSC_pv_df.to_excel(writer, sheet_name='PSC現在価値算定結果', index=False)
+        LCC_res_df.to_excel(writer, sheet_name='LCC算定結果', index=False)
+        LCC_pv_df.to_excel(writer, sheet_name='LCC現在価値算定結果', index=False)
+        SPC_res_df.to_excel(writer, sheet_name='SPC算定結果', index=False)
+        SPC_check_df.to_excel(writer, sheet_name='SPC返済資金チェック結果', index=False)
+        Risk_res_df.to_excel(writer, sheet_name='リスク調整額', index=False)
+        VFM_res_df.to_excel(writer, sheet_name='VFM算定結果', index=False)
+        PIRR_res_df.to_excel(writer, sheet_name='PIRR算定結果', index=False)
+        final_inputs_df.to_excel(writer, sheet_name='最終入力等', index=False)
 
 
 # 上記をmok dataなしで動かすには、事業費用概算シートへの入力値用の入力画面とDB入力への統合が必要
