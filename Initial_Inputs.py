@@ -6,9 +6,10 @@ import flet as ft
 import pandas as pd
 import pyarrow as pa
 import datetime
-import tinydb
+import timeflake
 from tinydb import TinyDB, Query
 from decimal import *
+from zoneinfo import ZoneInfo
 
 class Initial_Inputs(ft.Column):
 
@@ -154,7 +155,7 @@ class Initial_Inputs(ft.Column):
         )
         self.dd6 = ft.Dropdown(
             label="施設整備期間",
-            hint_text="施設整備期間（O方式ではゼロ）を選択してください",
+            hint_text="施設整備期間を選択してください",
             width=400,
             value="1",
             options=[
@@ -170,8 +171,8 @@ class Initial_Inputs(ft.Column):
         self.sl0 = ft.Slider(
             value=0,
             min=0,
-            max=100000,
-            divisions=100000,
+            max=50000,
+            divisions=50000,
             label="{value}百万円",
             round=0,
             on_change=self.handle_change_00,
@@ -180,8 +181,8 @@ class Initial_Inputs(ft.Column):
         self.sl1 = ft.Slider(
             value=0,
             min=0,
-            max=100000,
-            divisions=100000,
+            max=50000,
+            divisions=50000,
             label="{value}百万円",
             round=0,
             on_change=self.handle_change_01,
@@ -190,8 +191,8 @@ class Initial_Inputs(ft.Column):
         self.sl2 = ft.Slider(
             value=0,
             min=0,
-            max=1000,
-            divisions=1000,
+            max=500,
+            divisions=500,
             label="{value}百万円",
             round=0,
             on_change=self.handle_change_02,
@@ -200,8 +201,8 @@ class Initial_Inputs(ft.Column):
         self.sl3 = ft.Slider(
             value=0,
             min=0,
-            max=1000,
-            divisions=1000,
+            max=500,
+            divisions=500,
             on_change=self.handle_change_03,
             label="{value}百万円",
             round=0,
@@ -334,9 +335,13 @@ class Initial_Inputs(ft.Column):
         if proj_years < const_years:
             ft.page.go("/")
 
-        const_start_date = datetime.date.today().strftime('%Y-%m-%d')
+        calc_id = timeflake.random()
+        dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
+        #dtime_year = dtime.year
+        #dtime_month = dtime.month
+        #dtime_day = dtime.day
+        const_start_date = datetime.date(dtime.year, dtime.month, dtime.day).strftime('%Y-%m-%d')
         
-
         shisetsu_seibi_org_R = Decimal(self.sl0.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         shisetsu_seibi_org_Y = Decimal(self.sl1.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         shisetsu_seibi_org = Decimal(shisetsu_seibi_org_R + shisetsu_seibi_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)

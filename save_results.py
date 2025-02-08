@@ -13,14 +13,16 @@ import make_inputs_df
 import decimal
 from sqlalchemy import create_engine
 import sqlite3
+from zoneinfo import ZoneInfo
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
 conn = sqlite3.connect('VFM.db')
 c = conn.cursor()
 
-user_id = ULID.from_datetime(datetime.datetime.now())
+user_id = ULID.from_datetime(datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")))
 calc_id = timeflake.random()
-dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000)
+#JST = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
+dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
 
 df_name_list=[]
 

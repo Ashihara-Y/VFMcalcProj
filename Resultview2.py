@@ -3,16 +3,11 @@ sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
 from simpledt import DataFrame
-#import plotly.express as px
-#from flet.plotly_chart import PlotlyChart
-import duckdb
 from tinydb import TinyDB, Query
-#import glob
 import openpyxl
-#from openpyxl import Workbook, load_workbook
-import sqlite3
 from sqlalchemy import create_engine
-
+import make_inputs_df
+import decimal
 
 # savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
 class Results(ft.Stack):
@@ -23,15 +18,204 @@ class Results(ft.Stack):
         self.height = 1000
         self.resizable = True
 
+        engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         #con = TinyDB("selected_res.json")
         engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
         df_res = pd.read_sql_table('sel_res', engine_m)
         self.dtime = df_res['selected_datetime'].iloc[0]
         #con.close()
 
+        inputs_pdt = make_inputs_df.main()
+        inputs_dic = inputs_pdt.model_dump()
+        final_inputs_df = pd.DataFrame(inputs_dic, index=[0])
+        final_inputs_df = final_inputs_df.drop(
+            [
+                'const_start_date_year',
+                'const_start_date_month', 
+                'const_start_date_day',
+                'first_end_fy',
+                'growth',
+                'houjinjuminzei_ritsu_todouhuken',
+                'houjinjuminzei_ritsu_shikuchoson',
+                'ijikanri_unnei_LCC',
+                'ijikanri_unnei_1_LCC',
+                'ijikanri_unnei_2_LCC',
+                'ijikanri_unnei_3_LCC',
+                'pre_kyoukouka',
+                'shisetsu_seibi_LCC',
+                'target_years',
+                'yosantanka_hiritsu_shisetsu',
+                'yosantanka_hiritsu_ijikanri_1',
+                'yosantanka_hiritsu_ijikanri_2',
+                'yosantanka_hiritsu_ijikanri_3',
+                'zei_total',
+            ], 
+        axis=1)
 
-        engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
-        
+        final_inputs_df['SPC_setsuritsuhi'] = inputs_pdt.SPC_shihon + inputs_pdt.SPC_yobihi
+
+        final_inputs_df = final_inputs_df[[
+                'mgmt_type',
+                'proj_ctgry',
+                'proj_type',
+                'proj_years',
+                'const_years',
+                'const_start_date',
+                'ijikanri_unnei_years',
+                'rakusatsu_ritsu',
+                'reduc_shisetsu',
+                'reduc_ijikanri_1',
+                'reduc_ijikanri_2',
+                'reduc_ijikanri_3',
+                'shisetsu_seibi',
+                'shisetsu_seibi_org',
+                'shisetsu_seibi_org_LCC',
+                'ijikanri_unnei',
+                'ijikanri_unnei_org',
+                'ijikanri_unnei_org_LCC',
+                'ijikanri_unnei_1',
+                'ijikanri_unnei_1_org',
+                'ijikanri_unnei_1_org_LCC',
+                'ijikanri_unnei_2',
+                'ijikanri_unnei_2_org',
+                'ijikanri_unnei_2_org_LCC',
+                'ijikanri_unnei_3',
+                'ijikanri_unnei_3_org',
+                'ijikanri_unnei_3_org_LCC',
+                'hojo_ritsu',
+                'kisai_jutou',
+                'kisai_koufu',
+                'advisory_fee',
+                'monitoring_costs_PSC',
+                'monitoring_costs_LCC',
+                'SPC_hiyou_atsukai',
+                'SPC_fee',
+                'SPC_keihi',
+                'SPC_setsuritsuhi',
+                'SPC_hiyou_total',
+                'SPC_hiyou_nen',
+                'SPC_keihi_LCC',
+                'SPC_shihon',
+                'SPC_yobihi',
+                'riyouryoukin_shunyu',
+                'shisetsu_seibi_paymentschedule_ikkatsu',
+                'shisetsu_seibi_paymentschedule_kappu',
+                'kijun_kinri',
+                'lg_spread',
+                'kitai_bukka',
+                'discount_rate',
+                'Kappu_kinri',
+                'kappu_kinri_spread',
+                'chisai_kinri',
+                'chisai_shoukan_kikan',
+                'chisai_sueoki_years',
+                'houjinzei_ritsu',
+                'houjinjuminzei_kintou',
+                'fudousanshutokuzei_hyoujun',
+                'fudousanshutokuzei_ritsu',
+                'koteishisanzei_hyoujun',
+                'koteishisanzei_ritsu',
+                'tourokumenkyozei_hyoujun',
+                'tourokumenkyozei_ritsu',            
+            ]]
+
+        final_inputs_df['rakusatsu_ritsu'] = final_inputs_df['rakusatsu_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['reduc_shisetsu'] = final_inputs_df['reduc_shisetsu'].apply(lambda x: x * 100)
+        final_inputs_df['reduc_ijikanri_1'] = final_inputs_df['reduc_ijikanri_1'].apply(lambda x: x * 100)
+        final_inputs_df['reduc_ijikanri_2'] = final_inputs_df['reduc_ijikanri_2'].apply(lambda x: x * 100)
+        final_inputs_df['reduc_ijikanri_3'] = final_inputs_df['reduc_ijikanri_3'].apply(lambda x: x * 100)
+        final_inputs_df['hojo_ritsu'] = final_inputs_df['hojo_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['kisai_jutou'] = final_inputs_df['kisai_jutou'].apply(lambda x: x * 100)
+        final_inputs_df['kisai_koufu'] = final_inputs_df['kisai_koufu'].apply(lambda x: x * 100)
+        final_inputs_df['shisetsu_seibi_paymentschedule_ikkatsu'] = final_inputs_df['shisetsu_seibi_paymentschedule_ikkatsu'].apply(lambda x: x * 100)
+        final_inputs_df['shisetsu_seibi_paymentschedule_kappu'] = final_inputs_df['shisetsu_seibi_paymentschedule_kappu'].apply(lambda x: x * 100)
+        final_inputs_df['kijun_kinri'] = final_inputs_df['kijun_kinri'].apply(lambda x: x * 100)
+        final_inputs_df['lg_spread'] = final_inputs_df['lg_spread'].apply(lambda x: x * 100)
+        final_inputs_df['kitai_bukka'] = final_inputs_df['kitai_bukka'].apply(lambda x: x * 100)
+        final_inputs_df['discount_rate'] = final_inputs_df['discount_rate'].apply(lambda x: x * 100)
+        final_inputs_df['Kappu_kinri'] = final_inputs_df['Kappu_kinri'].apply(lambda x: x * 100)
+        final_inputs_df['kappu_kinri_spread'] = final_inputs_df['kappu_kinri_spread'].apply(lambda x: x * 100)
+        final_inputs_df['chisai_kinri'] = final_inputs_df['chisai_kinri'].apply(lambda x: x * 100)
+        final_inputs_df['houjinzei_ritsu'] = final_inputs_df['houjinzei_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['fudousanshutokuzei_ritsu'] = final_inputs_df['fudousanshutokuzei_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['koteishisanzei_ritsu'] = final_inputs_df['koteishisanzei_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['tourokumenkyozei_ritsu'] = final_inputs_df['tourokumenkyozei_ritsu'].apply(lambda x: x * 100)
+        final_inputs_df['datetime'] = self.dtime
+
+        final_inputs_df = final_inputs_df.map(lambda x: round(float(x), 3) if isinstance(x, decimal.Decimal) else str(x))
+
+        final_inputs_df = final_inputs_df.rename(
+            columns={
+                'datetime':'datetime',
+                'mgmt_type':'施設管理者区分',
+                'proj_ctgry':'事業形態',
+                'proj_type':'事業方式',
+                'proj_years':'事業期間',
+                'const_years':'施設整備期間',
+                'const_start_date':'施設整備開始日',
+                'ijikanri_unnei_years':'維持管理運営費期間',
+                'rakusatsu_ritsu':'落札率(%)',
+                'reduc_shisetsu':'施設整備削減率(%)',
+                'reduc_ijikanri_1':'維持管理運営費（人件費）削減率(%)',
+                'reduc_ijikanri_2':'維持管理運営費（修繕費）削減率(%)',
+                'reduc_ijikanri_3':'維持管理運営費（動力費）削減率(%)',
+                'shisetsu_seibi':'施設整備費(競争効果反映後)(百万円)',
+                'shisetsu_seibi_org':'施設整備費原額(百万円)',
+                'shisetsu_seibi_org_LCC':'LCC施設整備費（削減率適用）(百万円)',
+                'ijikanri_unnei':'維持管理運営費総額(競争効果反映後)(百万円)',
+                'ijikanri_unnei_org':'維持管理運営費総額原額(百万円)',
+                'ijikanri_unnei_org_LCC':'LCC維持管理運営費総額（削減率適用）(百万円)',
+                'ijikanri_unnei_1':'維持管理運営費(人件費)(競争効果反映後)(百万円)',
+                'ijikanri_unnei_1_org':'維持管理運営費(人件費)原額(百万円)',
+                'ijikanri_unnei_1_org_LCC':'LCC維持管理運営費(人件費)（削減率適用）(百万円)',
+                'ijikanri_unnei_2':'維持管理運営費(修繕費)(競争効果反映後)(百万円)',
+                'ijikanri_unnei_2_org':'維持管理運営費(修繕費)原額(百万円)',
+                'ijikanri_unnei_2_org_LCC':'LCC維持管理運営費(修繕費)（削減率適用）(百万円)',
+                'ijikanri_unnei_3':'維持管理運営費(動力費)(競争効果反映後)(百万円)',
+                'ijikanri_unnei_3_org':'維持管理運営費(動力費)原額(百万円)',
+                'ijikanri_unnei_3_org_LCC':'LCC維持管理運営費(動力費)（削減率適用）(百万円)',
+                'hojo_ritsu':'補助率(%)',
+                'kisai_jutou':'起債充当率(%)',
+                'kisai_koufu':'起債交付金カバー率(%)',
+                'advisory_fee':'アドバイザリー手数料(百万円)',
+                'monitoring_costs_LCC':'PFI-LCCでのモニタリング等費用(百万円)',
+                'monitoring_costs_PSC':'PSCでのモニタリング等費用(百万円)',
+                'SPC_hiyou_atsukai':'SPC費用の処理（デフォルト：サービス対価に含める）',
+                'SPC_fee':'SPC手数料(百万円)',
+                'SPC_keihi':'SPC経費(百万円)',
+                'SPC_setsuritsuhi':'SPC設立費用(百万円)',
+                'SPC_hiyou_total':'SPC費用総額(百万円)',
+                'SPC_hiyou_nen':'SPC費用年額(百万円)',
+                'SPC_keihi_LCC':'LCCでのSPC経費(百万円)',
+                'SPC_shihon':'SPC資本金(百万円)',
+                'SPC_yobihi':'SPC予備費(百万円)',
+                'riyouryoukin_shunyu':'利用料金収入(百万円)',
+                'shisetsu_seibi_paymentschedule_ikkatsu':'施設整備対価一括払比率(%)',
+                'shisetsu_seibi_paymentschedule_kappu':'施設整備対価割賦払比率(%)',
+                'kijun_kinri':'基準金利(%)',
+                'lg_spread':'官民スプレッド(%)',
+                'kitai_bukka':'期待物価上昇率(%)',
+                'discount_rate':'割引率(%)',
+                'Kappu_kinri':'割賦金利(%)',
+                'kappu_kinri_spread':'割賦スプレッド(%)',
+                'chisai_kinri':'地方債金利(%)',
+                'chisai_shoukan_kikan':'地方債償還期間',
+                'chisai_sueoki_years':'地方債償還据置期間',
+                'houjinzei_ritsu':'法人税率(%)',
+                'houjinjuminzei_kintou':'法人住民税均等割(百万円)',
+                'fudousanshutokuzei_hyoujun':'不動産取得税課税標準(百万円)',
+                'fudousanshutokuzei_ritsu':'不動産取得税率(%)',
+                'koteishisanzei_hyoujun':'固定資産税課税標準(百万円)',
+                'koteishisanzei_ritsu':'固定資産税率(%)',
+                'tourokumenkyozei_hyoujun':'登録免許税課税標準(百万円)',
+                'tourokumenkyozei_ritsu':'登録免許税率(%)',
+            }
+        )
+
+        final_inputs_df.to_sql('final_inputs_table', engine, if_exists='replace', index=False)
+        final_inputs_df = final_inputs_df.drop(columns='datetime')
+        self.final_inputs_df = final_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
+
         table_names = [
             'PSC_res_table', 
             'PSC_pv_res_table', 
@@ -203,19 +387,6 @@ class Results(ft.Stack):
                 'risk_adjust_gaku':'リスク調整額', 
             }
         )
-        #VFM_res_df = VFM_res_df.rename(
-        #    columns={
-        #        'VFM':'VFM(金額)', 
-        #        'VFM_percent':'VFM(％)', 
-        #    }
-        #)
-        #PIRR_res_df = PIRR_res_df.rename(
-        #    columns={
-        #        'PIRR':'プロジェクト内部収益率', 
-        #        'PIRR_percent':'プロジェクト内部収益率(％)', 
-        #        
-        #    }
-        #)
         res_summ_df = res_summ_df.rename(
             columns={
                 'VFM_percent':'VFM(％)', 
@@ -235,7 +406,11 @@ class Results(ft.Stack):
                 'SPC_fee':'SPCへの手数料(百万円)',
             }
         )
-        # 総括表をここに追加する。PSC,LCC、SPCの表も作成して、別個定義しておく。
+        # 最終入力・パラメータの表を作成
+        simpledt_finalinputs_df = DataFrame(self.final_inputs_df)
+        simpledt_finalinputs_dt = simpledt_finalinputs_df.datatable
+        self.table_finalinputs = simpledt_finalinputs_dt
+
         simpledt_PSC_income_df = DataFrame(PSC_res_income_df)
         simpledt_PSC_income_dt = simpledt_PSC_income_df.datatable
         self.table_PSC_income = simpledt_PSC_income_dt
@@ -279,13 +454,6 @@ class Results(ft.Stack):
         simpledt_Risk_dt = simpledt_Risk_df.datatable
         self.table_Risk = simpledt_Risk_dt
 
-        #simpledt_VFM_df = DataFrame(VFM_res_df)
-        #simpledt_VFM_dt = simpledt_VFM_df.datatable
-        #self.table_VFM = simpledt_VFM_dt
-        #simpledt_PIRR_df = DataFrame(PIRR_res_df)
-        #simpledt_PIRR_dt = simpledt_PIRR_df.datatable
-        #self.table_PIRR = simpledt_PIRR_dt
-        
         res_summ_df_t = res_summ_df.transpose().reset_index()
         res_summ_df_t = res_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
         simpledt_res_summ_df = DataFrame(res_summ_df_t)
@@ -297,12 +465,6 @@ class Results(ft.Stack):
         )
         lv_01.controls.append(ft.Text('算定結果要約'))
         lv_01.controls.append(self.table_res_summ)
-        #lv_01.controls.append(ft.Divider())
-        #lv_01.controls.append(ft.Text('VFM結果'))
-        #lv_01.controls.append(self.table_VFM)
-        #lv_01.controls.append(ft.Divider())
-        #lv_01.controls.append(ft.Text('PIRR結果'))
-        #lv_01.controls.append(self.table_PIRR)
 
         lv_02 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
@@ -337,6 +499,11 @@ class Results(ft.Stack):
         lv_03.controls.append(ft.Text('PFI-LCCでのSPCの返済資金確認結果'))
         lv_03.controls.append(self.table_SPC_check)
 
+        lv_04 = ft.ListView(
+            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
+        )
+        lv_04.controls.append(ft.Text('入力値・パラメータ等一覧'))
+        lv_04.controls.append(self.table_finalinputs)
 
         return ft.Tabs(
                 selected_index=1,
@@ -382,6 +549,22 @@ class Results(ft.Stack):
                                     controls=[
                                         #self.graph,
                                         lv_03,
+                                    ],
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                ),
+                                width=2100,
+                                padding=10,
+                            )
+                        )
+                    ),
+                    ft.Tab(
+                        text="入力値等一覧",
+                        content=ft.Card(
+                            content=ft.Container(
+                                content=ft.Column(
+                                    controls=[
+                                        #self.graph,
+                                        lv_04,
                                     ],
                                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                 ),
