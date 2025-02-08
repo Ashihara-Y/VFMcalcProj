@@ -155,7 +155,7 @@ class Initial_Inputs(ft.Column):
         )
         self.dd6 = ft.Dropdown(
             label="施設整備期間",
-            hint_text="施設整備期間（O方式ではゼロ）を選択してください",
+            hint_text="施設整備期間を選択してください",
             width=400,
             value="1",
             options=[
@@ -171,8 +171,8 @@ class Initial_Inputs(ft.Column):
         self.sl0 = ft.Slider(
             value=0,
             min=0,
-            max=100000,
-            divisions=100000,
+            max=50000,
+            divisions=50000,
             label="{value}百万円",
             round=0,
             on_change=self.handle_change_00,
@@ -181,8 +181,8 @@ class Initial_Inputs(ft.Column):
         self.sl1 = ft.Slider(
             value=0,
             min=0,
-            max=100000,
-            divisions=100000,
+            max=50000,
+            divisions=50000,
             label="{value}百万円",
             round=0,
             on_change=self.handle_change_01,
