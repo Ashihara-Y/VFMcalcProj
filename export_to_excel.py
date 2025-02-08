@@ -179,8 +179,8 @@ def export_to_excel():
     res_summ_df = res_summ_df.rename(
         columns={
                 'VFM_percent':'VFM(％)', 
-                'PSC_present_value':'PSCでの公共キャッシュ・フロー現在価値', 
-                'LCC_present_value':'PFI-LCCでの公共キャッシュ・フロー現在価値', 
+                'PSC_present_value':'PSCでの公共キャッシュ・フロー現在価値(百万円)', 
+                'LCC_present_value':'PFI-LCCでの公共キャッシュ・フロー現在価値(百万円)', 
                 'PIRR':'プロジェクト内部収益率(％)',
                 'SPC_payment_cash':'SPCの元本返済可否', 
                 'mgmt_type':'発注者区分', 
@@ -190,6 +190,9 @@ def export_to_excel():
                 'proj_years':'事業期間', 
                 'discount_rate':'割引率(％)', 
                 'kariire_kinri':'借入コスト(％)',
+                'kappu_kinri':'割賦金利(％)',
+                'kappu_kinri_spread':'割賦金利スプレッド(％)',
+                'SPC_fee':'SPCへの手数料(百万円)',
             }
     )
 
