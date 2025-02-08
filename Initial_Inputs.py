@@ -191,8 +191,8 @@ class Initial_Inputs(ft.Column):
         self.sl2 = ft.Slider(
             value=0,
             min=0,
-            max=1000,
-            divisions=1000,
+            max=500,
+            divisions=500,
             label="{value}百万円",
             round=0,
             on_change=self.handle_change_02,
@@ -201,8 +201,8 @@ class Initial_Inputs(ft.Column):
         self.sl3 = ft.Slider(
             value=0,
             min=0,
-            max=1000,
-            divisions=1000,
+            max=500,
+            divisions=500,
             on_change=self.handle_change_03,
             label="{value}百万円",
             round=0,
