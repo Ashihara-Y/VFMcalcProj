@@ -62,6 +62,7 @@ def export_to_excel():
     VFM_res_df = VFM_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
     PIRR_res_df = PIRR_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
     res_summ_df = res_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+    final_inputs_df = final_inputs_df.drop('datetime', axis=1)
 
     PSC_res_df = PSC_res_df.rename(
          columns={
