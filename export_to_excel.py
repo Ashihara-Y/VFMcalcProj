@@ -191,7 +191,7 @@ def export_to_excel():
                 'proj_years':'事業期間', 
                 'discount_rate':'割引率(％)', 
                 'kariire_kinri':'借入コスト(％)',
-                'kappu_kinri':'割賦金利(％)',
+                'Kappu_kinri':'割賦金利(％)',
                 'kappu_kinri_spread':'割賦金利スプレッド(％)',
                 'SPC_fee':'SPCへの手数料(百万円)',
             }
