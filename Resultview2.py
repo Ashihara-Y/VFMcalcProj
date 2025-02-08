@@ -51,70 +51,8 @@ class Results(ft.Stack):
                 'zei_total',
             ], 
         axis=1)
-<<<<<<< HEAD
-        final_inputs_df = final_inputs_df[[
-=======
-        if inputs_pdt.proj_type == "DBO(SPCなし)" or inputs_pdt.proj_type == "BT/DB(いずれもSPCなし)":
-            final_inputs_df = final_inputs_df[[
-                'mgmt_type',
-                'proj_ctgry',
-                'proj_type',
-                'proj_years',
-                'const_years',
-                'const_start_date',
-                'ijikanri_unnei_years',
-                'rakusatsu_ritsu',
-                'reduc_shisetsu',
-                'reduc_ijikanri_1',
-                'reduc_ijikanri_2',
-                'reduc_ijikanri_3',
-                'shisetsu_seibi',
-                'shisetsu_seibi_org',
-                'shisetsu_seibi_org_LCC',
-                'ijikanri_unnei',
-                'ijikanri_unnei_org',
-                'ijikanri_unnei_org_LCC',
-                'ijikanri_unnei_1',
-                'ijikanri_unnei_1_org',
-                'ijikanri_unnei_1_org_LCC',
-                'ijikanri_unnei_2',
-                'ijikanri_unnei_2_org',
-                'ijikanri_unnei_2_org_LCC',
-                'ijikanri_unnei_3',
-                'ijikanri_unnei_3_org',
-                'ijikanri_unnei_3_org_LCC',
-                'hojo_ritsu',
-                'kisai_jutou',
-                'kisai_koufu',
-                'advisory_fee',
-                'monitoring_costs_PSC',
-                'monitoring_costs_LCC',
-                'riyouryoukin_shunyu',
-                'kijun_kinri',
-                'kitai_bukka',
-                'discount_rate',
-                'chisai_kinri',
-                'chisai_shoukan_kikan',
-                'chisai_sueoki_years',
-            ]]
         
-            final_inputs_df['rakusatsu_ritsu'] = final_inputs_df['rakusatsu_ritsu'].apply(lambda x: x * 100)
-            final_inputs_df['reduc_shisetsu'] = final_inputs_df['reduc_shisetsu'].apply(lambda x: x * 100)
-            final_inputs_df['reduc_ijikanri_1'] = final_inputs_df['reduc_ijikanri_1'].apply(lambda x: x * 100)
-            final_inputs_df['reduc_ijikanri_2'] = final_inputs_df['reduc_ijikanri_2'].apply(lambda x: x * 100)
-            final_inputs_df['reduc_ijikanri_3'] = final_inputs_df['reduc_ijikanri_3'].apply(lambda x: x * 100)
-            final_inputs_df['hojo_ritsu'] = final_inputs_df['hojo_ritsu'].apply(lambda x: x * 100)
-            final_inputs_df['kisai_jutou'] = final_inputs_df['kisai_jutou'].apply(lambda x: x * 100)
-            final_inputs_df['kisai_koufu'] = final_inputs_df['kisai_koufu'].apply(lambda x: x * 100)
-            final_inputs_df['kijun_kinri'] = final_inputs_df['kijun_kinri'].apply(lambda x: x * 100)
-            final_inputs_df['kitai_bukka'] = final_inputs_df['kitai_bukka'].apply(lambda x: x * 100)
-            final_inputs_df['discount_rate'] = final_inputs_df['discount_rate'].apply(lambda x: x * 100)
-            final_inputs_df['chisai_kinri'] = final_inputs_df['chisai_kinri'].apply(lambda x: x * 100)
-            final_inputs_df['datetime'] = self.dtime
-
-        else:
-            final_inputs_df = final_inputs_df[[
->>>>>>> 7f149cb62f386298509f9651483b984df49f8eec
+        final_inputs_df = final_inputs_df[[
                 'mgmt_type',
                 'proj_ctgry',
                 'proj_type',
@@ -180,7 +118,6 @@ class Results(ft.Stack):
                 'tourokumenkyozei_ritsu',            
             ]]
 
-<<<<<<< HEAD
         final_inputs_df['rakusatsu_ritsu'] = final_inputs_df['rakusatsu_ritsu'].apply(lambda x: x * 100)
         final_inputs_df['reduc_shisetsu'] = final_inputs_df['reduc_shisetsu'].apply(lambda x: x * 100)
         final_inputs_df['reduc_ijikanri_1'] = final_inputs_df['reduc_ijikanri_1'].apply(lambda x: x * 100)
@@ -202,30 +139,6 @@ class Results(ft.Stack):
         final_inputs_df['fudousanshutokuzei_ritsu'] = final_inputs_df['fudousanshutokuzei_ritsu'].apply(lambda x: x * 100)
         final_inputs_df['koteishisanzei_ritsu'] = final_inputs_df['koteishisanzei_ritsu'].apply(lambda x: x * 100)
         final_inputs_df['tourokumenkyozei_ritsu'] = final_inputs_df['tourokumenkyozei_ritsu'].apply(lambda x: x * 100)
-=======
-            final_inputs_df['rakusatsu_ritsu'] = final_inputs_df['rakusatsu_ritsu'].apply(lambda x: x * 100)
-            final_inputs_df['reduc_shisetsu'] = final_inputs_df['reduc_shisetsu'].apply(lambda x: x * 100)
-            final_inputs_df['reduc_ijikanri_1'] = final_inputs_df['reduc_ijikanri_1'].apply(lambda x: x * 100)
-            final_inputs_df['reduc_ijikanri_2'] = final_inputs_df['reduc_ijikanri_2'].apply(lambda x: x * 100)
-            final_inputs_df['reduc_ijikanri_3'] = final_inputs_df['reduc_ijikanri_3'].apply(lambda x: x * 100)
-            final_inputs_df['hojo_ritsu'] = final_inputs_df['hojo_ritsu'].apply(lambda x: x * 100)
-            final_inputs_df['kisai_jutou'] = final_inputs_df['kisai_jutou'].apply(lambda x: x * 100)
-            final_inputs_df['kisai_koufu'] = final_inputs_df['kisai_koufu'].apply(lambda x: x * 100)
-            final_inputs_df['shisetsu_seibi_paymentsschedule_ikkatsu'] = final_inputs_df['shisetsu_seibi_paymentsschedule_ikkatsu'].apply(lambda x: x * 100)
-            final_inputs_df['shisetsu_seibi_paymentsschedule_kappu'] = final_inputs_df['shisetsu_seibi_paymentsschedule_kappu'].apply(lambda x: x * 100)
-            final_inputs_df['kijun_kinri'] = final_inputs_df['kijun_kinri'].apply(lambda x: x * 100)
-            final_inputs_df['lg_spread'] = final_inputs_df['lg_spread'].apply(lambda x: x * 100)
-            final_inputs_df['kitai_bukka'] = final_inputs_df['kitai_bukka'].apply(lambda x: x * 100)
-            final_inputs_df['discount_rate'] = final_inputs_df['discount_rate'].apply(lambda x: x * 100)
-            final_inputs_df['Kappu_kinri'] = final_inputs_df['Kappu_kinri'].apply(lambda x: x * 100)
-            final_inputs_df['kappu_kinri_spread'] = final_inputs_df['kappu_kinri_spread'].apply(lambda x: x * 100)
-            final_inputs_df['chisai_kinri'] = final_inputs_df['chisai_kinri'].apply(lambda x: x * 100)
-            final_inputs_df['houjinzei_ritsu'] = final_inputs_df['houjinzei_ritsu'].apply(lambda x: x * 100)
-            final_inputs_df['fudousanshutokuzei_ritsu'] = final_inputs_df['fudousanshutokuzei_ritsu'].apply(lambda x: x * 100)
-            final_inputs_df['koteishisanzei_ritsu'] = final_inputs_df['koteishisanzei_ritsu'].apply(lambda x: x * 100)
-            final_inputs_df['tourokumenkyozei_ritsu'] = final_inputs_df['tourokumenkyozei_ritsu'].apply(lambda x: x * 100)
-            final_inputs_df['datetime'] = self.dtime
->>>>>>> 7f149cb62f386298509f9651483b984df49f8eec
 
         final_inputs_df = final_inputs_df.map(lambda x: round(float(x), 3) if isinstance(x, decimal.Decimal) else str(x))
 
