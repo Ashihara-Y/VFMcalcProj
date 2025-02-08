@@ -63,7 +63,7 @@ def export_to_excel():
     PIRR_res_df = PIRR_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
     res_summ_df = res_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
     final_inputs_df = final_inputs_df.drop('datetime', axis=1)
-    res_summ_df['discount_rate'] = res_summ_df['discount_rate'].map(lambda x: round(float(x*100), 4))
+    res_summ_df['discount_rate'] = res_summ_df['discount_rate'].apply(lambda x: round(float(x*100), 4))
 
     PSC_res_df = PSC_res_df.rename(
          columns={
