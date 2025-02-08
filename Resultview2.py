@@ -51,7 +51,9 @@ class Results(ft.Stack):
                 'zei_total',
             ], 
         axis=1)
-        
+
+        final_inputs_df['SPC_setsuritsuhi'] = inputs_pdt.SPC_shihon + inputs_pdt.SPC_yobihi
+
         final_inputs_df = final_inputs_df[[
                 'mgmt_type',
                 'proj_ctgry',
@@ -96,8 +98,8 @@ class Results(ft.Stack):
                 'SPC_shihon',
                 'SPC_yobihi',
                 'riyouryoukin_shunyu',
-                'shisetsu_seibi_paymentsschedule_ikkatsu',
-                'shisetsu_seibi_paymentsschedule_kappu',
+                'shisetsu_seibi_paymentschedule_ikkatsu',
+                'shisetsu_seibi_paymentschedule_kappu',
                 'kijun_kinri',
                 'lg_spread',
                 'kitai_bukka',

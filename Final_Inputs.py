@@ -264,8 +264,8 @@ class Final_Inputs(ft.Column):
         self.sl3 = ft.Slider(
             value=0,
             min=0,
-            max=100,
-            divisions=100,
+            max=50,
+            divisions=50,
             label="{value}百万円",
             round=1,
             on_change=self.handle_change_03,
@@ -274,8 +274,8 @@ class Final_Inputs(ft.Column):
         self.sl4 = ft.Slider(
             value=0,
             min=0,
-            max=100,
-            divisions=100,
+            max=50,
+            divisions=50,
             label="{value}百万円",
             round=1,
             on_change=self.handle_change_04,
