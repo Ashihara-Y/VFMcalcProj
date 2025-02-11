@@ -7,7 +7,10 @@ from fastapi import FastAPI, Response
 from fastapi.responses import FileResponse
 import flet.fastapi as flet_fastapi
 
-app = flet_fastapi.app()
+def s_h(page: ft.Page):
+    page.add(ft.Text(""))
+
+app = flet_fastapi.app(session_handler=s_h)
 
 @app.get("/download/{filename}")
 def download(filename: str):
