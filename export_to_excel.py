@@ -1,7 +1,18 @@
 import pandas as pd
 import openpyxl
 from sqlalchemy import create_engine
+import flet as ft
 from flet import FilePicker, Button, Column, Row, Tab, Text, View, FilePickerResultEvent, Page
+from fastapi import FastAPI, Response
+from fastapi.responses import FileResponse
+import flet.fastapi as flet_fastapi
+
+app = flet_fastapi.app()
+
+@app.get("/download/{filename}")
+def download(filename: str):
+    path = f"vfm_output/{filename}"
+    return FileResponse(path, filename=filename)
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
 engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})

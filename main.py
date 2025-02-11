@@ -52,6 +52,7 @@ def main(page: ft.Page):
                         Results(),
                         ft.ElevatedButton("結果リストへ戻る", on_click=open_saved_list),
                         ft.ElevatedButton("この結果をExcelに書き出す", on_click=result_to_excel),
+                        ft.ElevatedButton("出力したファイルをダウンロード", on_click=lambda _: page.launch_url("/download/VFM_result_sheet.xlsx")),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
