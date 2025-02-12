@@ -7,15 +7,6 @@ from fastapi import FastAPI, Response
 from fastapi.responses import FileResponse
 import flet.fastapi as flet_fastapi
 
-def s_h(page: ft.Page):
-    page.add(ft.Text(""))
-
-app = flet_fastapi.app(session_handler=s_h)
-
-@app.get("/download/{filename}")
-def download(filename: str):
-    path = f"vfm_output/{filename}"
-    return FileResponse(path, filename=filename)
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
 engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
@@ -54,6 +45,9 @@ def export_to_excel():
     ws = wb['Sheet']
     ws.title = '算定結果概要'
     wb.save(save_path)
+
+    download_df = pd.DataFrame({'file_name': file_name, 'save_path': save_path, 'datetime': dtime_w}, index=[0])
+    download_df.to_sql('download_table', engine, if_exists='replace', index=False)
 
     PSC_res_df = selected_res_list[0]
     PSC_pv_df = selected_res_list[1]
