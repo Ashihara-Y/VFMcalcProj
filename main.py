@@ -78,7 +78,7 @@ def main(page: ft.Page):
                     "/download",
                     [
                         ft.AppBar(title=ft.Text("出力ファイルのダウンロード")),
-                        download.download_excel(),
+                        download.download(),
                         #ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
@@ -113,7 +113,7 @@ def main(page: ft.Page):
 
     def download_excel(e):  
         page.go("/download")
-        download()
+        download.download()
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
