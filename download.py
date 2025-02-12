@@ -2,6 +2,7 @@ import flet as ft
 from sqlalchemy import create_engine
 from fastapi.responses import FileResponse
 import flet.fastapi as flet_fastapi
+from fastapi import FastAPI
 import pandas as pd
 
 def download():
@@ -15,10 +16,11 @@ def download():
     #def s_h(page: ft.Page):
     #    page.add(ft.Text(""))
 
-    #app = flet_fastapi.app(session_handler=s_h)
+    app = FastAPI()
+    #app = flet_fastapi()
 
-    #@app.get("/download/{filename}")
-    path = f"vfm_output/{filename}"
-    return FileResponse(path, filename=filename)
+    @app.get("/download")
+    async def main():
+        return FileResponse(path=save_path, filename=filename)
 
 #download(filenamw  = filename)
