@@ -22,10 +22,11 @@ def download():
     #def s_h(page: ft.Page):
     #    page.add(ft.Text(""))
 
-    #app = flet_fastapi.app(session_handler=s_h)
+    app = FastAPI()
+    #app = flet_fastapi()
 
-    #@app.get("/download/{filename}")
-    path = f"vfm_output/{filename}"
-    return FileResponse(path, filename=filename)
+    @app.get("/download")
+    async def main():
+        return FileResponse(path=save_path, filename=filename)
 
 #download(filenamw  = filename)
