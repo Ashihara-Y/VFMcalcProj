@@ -19,3 +19,4 @@ pyxirr
 duckdb
 duckdb-engine
 sqlalchemy
+styleframe
