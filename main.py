@@ -30,6 +30,7 @@ def main(page: ft.Page):
                 scroll=ft.ScrollMode.ALWAYS,
             ),
         )
+        page.update()
         if page.route == "/final_inputs":
             # page.views.clear()
             page.views.append(
@@ -43,6 +44,7 @@ def main(page: ft.Page):
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
             )
+            page.update()
         elif page.route == "/results_detail":
             # page.views.clear()
             page.views.append(
@@ -58,6 +60,8 @@ def main(page: ft.Page):
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
             )
+            page.update()
+
         elif page.route == "/view_saved":
             # page.views.clear()
             page.views.append(
@@ -71,8 +75,9 @@ def main(page: ft.Page):
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
             )
+            page.update()
+
         elif page.route == "/download":
-            # page.views.clear()
             page.views.append(
                 ft.View(
                     "/download",
@@ -84,7 +89,6 @@ def main(page: ft.Page):
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
             )
-        page.update()
 
     def view_pop(e):
         print("View popped:", e.view)
