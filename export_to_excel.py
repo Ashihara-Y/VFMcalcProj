@@ -212,18 +212,30 @@ def export_to_excel():
     res_summ_df = res_summ_df.T.reset_index().rename(columns={"index":"項目名", 0:"値"})
 
 
-    with pd.ExcelWriter(save_path, engine='openpyxl', if_sheet_exists='overlay', mode='a') as writer:
-        res_summ_df.to_excel(writer, sheet_name='算定結果概要', index=False)
-        PSC_res_df.to_excel(writer, sheet_name='PSC算定結果', index=False)
-        PSC_pv_df.to_excel(writer, sheet_name='PSC現在価値算定結果', index=False)
-        LCC_res_df.to_excel(writer, sheet_name='LCC算定結果', index=False)
-        LCC_pv_df.to_excel(writer, sheet_name='LCC現在価値算定結果', index=False)
-        SPC_res_df.to_excel(writer, sheet_name='SPC算定結果', index=False)
-        SPC_check_df.to_excel(writer, sheet_name='SPC返済資金チェック結果', index=False)
-        Risk_res_df.to_excel(writer, sheet_name='リスク調整額', index=False)
-        VFM_res_df.to_excel(writer, sheet_name='VFM算定結果', index=False)
-        PIRR_res_df.to_excel(writer, sheet_name='PIRR算定結果', index=False)
-        final_inputs_df.to_excel(writer, sheet_name='最終入力等', index=False)
+    with StyleFrame.ExcelWriter(save_path, engine='openpyxl', if_sheet_exists='overlay', mode='a') as writer:
+        sf_res_summ_df = StyleFrame(res_summ_df)
+        sf_PSC_res_df = StyleFrame(PSC_res_df)
+        sf_PSC_pv_df = StyleFrame(PSC_pv_df)
+        sf_LCC_res_df = StyleFrame(LCC_res_df)
+        sf_LCC_pv_df = StyleFrame(LCC_pv_df)
+        sf_SPC_res_df = StyleFrame(SPC_res_df)
+        sf_SPC_check_df = StyleFrame(SPC_check_df)
+        sf_Risk_res_df = StyleFrame(Risk_res_df)
+        sf_VFM_res_df = StyleFrame(VFM_res_df)
+        sf_PIRR_res_df = StyleFrame(PIRR_res_df)
+        sf_final_inputs_df = StyleFrame(final_inputs_df)
+    
+        sf_res_summ_df.to_excel(writer, sheet_name='算定結果概要', index=False, startrow=1, startcol=1)
+        sf_PSC_res_df.to_excel(writer, sheet_name='PSC算定結果', index=False, startrow=1, startcol=1)
+        sf_PSC_pv_df.to_excel(writer, sheet_name='PSC現在価値算定結果', index=False, startrow=1, startcol=1)
+        sf_LCC_res_df.to_excel(writer, sheet_name='LCC算定結果', index=False, startrow=1, startcol=1)
+        sf_LCC_pv_df.to_excel(writer, sheet_name='LCC現在価値算定結果', index=False, startrow=1, startcol=1)
+        sf_SPC_res_df.to_excel(writer, sheet_name='SPC算定結果', index=False, startrow=1, startcol=1)
+        sf_SPC_check_df.to_excel(writer, sheet_name='SPC返済資金チェック結果', index=False, startrow=1, startcol=1)
+        sf_Risk_res_df.to_excel(writer, sheet_name='リスク調整額', index=False, startrow=1, startcol=1)
+        sf_VFM_res_df.to_excel(writer, sheet_name='VFM算定結果', index=False, startrow=1, startcol=1)
+        sf_PIRR_res_df.to_excel(writer, sheet_name='PIRR算定結果', index=False, startrow=1, startcol=1)
+        sf_final_inputs_df.to_excel(writer, sheet_name='最終入力等', index=False, startrow=1, startcol=1)
     
 
 
