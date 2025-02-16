@@ -212,7 +212,7 @@ def export_to_excel():
     res_summ_df = res_summ_df.T.reset_index().rename(columns={"index":"項目名", 0:"値"})
 
 
-    with StyleFrame.ExcelWriter(save_path, engine='openpyxl', if_sheet_exists='overlay', mode='a') as writer:
+    with StyleFrame.ExcelWriter(save_path, if_sheet_exists='overlay', mode='a') as writer:
         sf_res_summ_df = StyleFrame(res_summ_df)
         sf_PSC_res_df = StyleFrame(PSC_res_df)
         sf_PSC_pv_df = StyleFrame(PSC_pv_df)
