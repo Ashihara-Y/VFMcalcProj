@@ -6,6 +6,8 @@ from flet import FilePicker, Button, Column, Row, Tab, Text, View, FilePickerRes
 from fastapi import FastAPI, Response
 from fastapi.responses import FileResponse
 import flet.fastapi as flet_fastapi
+import styleframe
+from styleframe import StyleFrame
 
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
