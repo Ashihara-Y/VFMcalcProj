@@ -76,10 +76,10 @@ def export_to_excel():
     final_inputs_df = final_inputs_df.drop('datetime', axis=1)
     res_summ_df['discount_rate'] = res_summ_df['discount_rate'].apply(lambda x: round(float(x*100), 4))
 
-    PSC_res_df['year'] = PSC_res_df['yaer'].apply(lambda x: x.replace('00:00:00.000000',''))
-    LCC_res_df['year'] = LCC_res_df['yaer'].apply(lambda x: x.replace('00:00:00.000000',''))
-    SPC_res_df['year'] = SPC_res_df['yaer'].apply(lambda x: x.replace('00:00:00.000000',''))
-    SPC_check_df['year'] = SPC_check_df['yaer'].apply(lambda x: x.replace('00:00:00.000000',''))
+    PSC_res_df['year'] = PSC_res_df['year'].apply(lambda x: x.replace('00:00:00.000000',''))
+    LCC_res_df['year'] = LCC_res_df['year'].apply(lambda x: x.replace('00:00:00.000000',''))
+    SPC_res_df['year'] = SPC_res_df['year'].apply(lambda x: x.replace('00:00:00.000000',''))
+    SPC_check_df['year'] = SPC_check_df['year'].apply(lambda x: x.replace('00:00:00.000000',''))
 
     PSC_res_df = PSC_res_df.rename(
          columns={
