@@ -236,8 +236,8 @@ def export_to_excel():
         sf_res_summ_df.set_column_width(columns='値', width=20)
         sf_final_inputs_df.set_column_width(columns='項目名', width=50)
         sf_final_inputs_df.set_column_width(columns='値', width=20)
-        sf_res_summ_df.set_row_height(rows=list(range(2, len(len_res_summ_df)+2)), height=12)
-        sf_final_inputs_df.set_row_height(rows=list(range(2, len(len_final_inputs_df)+2)), height=12)
+        sf_res_summ_df.set_row_height(rows=list(range(2, len_res_summ_df+2)), height=12)
+        sf_final_inputs_df.set_row_height(rows=list(range(2, len_final_inputs_df+2)), height=12)
     
         sf_res_summ_df.to_excel(writer, sheet_name='算定結果概要', index=False, startrow=1, startcol=1)
         sf_PSC_res_df.to_excel(writer, sheet_name='PSC算定結果', index=False, startrow=1, startcol=1)
