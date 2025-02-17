@@ -240,9 +240,9 @@ def export_to_excel():
         sf_final_inputs_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
         sf_final_inputs_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
 
-        sf_res_summ_df.set_column_width(columns='項目名', width=50)
+        sf_res_summ_df.set_column_width(columns='項目名', width=55)
         sf_res_summ_df.set_column_width(columns='値', width=20)
-        sf_final_inputs_df.set_column_width(columns='項目名', width=50)
+        sf_final_inputs_df.set_column_width(columns='項目名', width=55)
         sf_final_inputs_df.set_column_width(columns='値', width=20)
         sf_res_summ_df.set_row_height(rows=list(range(2, len_res_summ_df+2)), height=20)
         sf_final_inputs_df.set_row_height(rows=list(range(2, len_final_inputs_df+2)), height=20)
