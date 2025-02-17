@@ -260,9 +260,6 @@ def export_to_excel():
         sf_SPC_check_df.set_column_width(columns=['収入計', '借入元本返済', '支出計', '支出計(元本返済込)', '収支(キャッシュ・フロー)', '収支(元本返済込)', '元本返済充当可能額', '元本返済可否'], width=14)
         sf_SPC_check_df.apply_column_style(cols_to_style=['収入計', '借入元本返済', '支出計', '支出計(元本返済込)', '収支(キャッシュ・フロー)', '収支(元本返済込)', '元本返済充当可能額'], styler_obj=style_r_ali)
 
-        sf_SPC_res_df.
-        sf_SPC_check_df.
-
         sf_res_summ_df.to_excel(writer, sheet_name='算定結果概要', index=False, startrow=1, startcol=1)
         sf_PSC_res_df.to_excel(writer, sheet_name='PSC算定結果', index=False, startrow=1, startcol=1)
         sf_PSC_pv_df.to_excel(writer, sheet_name='PSC現在価値算定結果', index=False, startrow=1, startcol=1)
