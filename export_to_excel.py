@@ -129,7 +129,7 @@ def export_to_excel():
                 'kisai_shoukansumi_gaku':'(起債償還済額)', 
                 'kisai_risoku_gaku':'起債利息', 
                 'payments_total':'支出計',
-                'net_payments':'収支', 
+                'net_payments':'収支（キャッシュ・フロー）', 
             }
     )
     LCC_pv_df = LCC_pv_df.rename(
@@ -246,6 +246,22 @@ def export_to_excel():
         sf_final_inputs_df.set_column_width(columns='値', width=20)
         sf_res_summ_df.set_row_height(rows=list(range(2, len_res_summ_df+2)), height=20)
         sf_final_inputs_df.set_row_height(rows=list(range(2, len_final_inputs_df+2)), height=20)
+
+        sf_PSC_res_df.set_column_width(columns='スケジュール', width=17)
+        sf_PSC_res_df.set_column_width(columns=['補助金', '交付金', '起債発行額', '利用料金収入', '収入計', '施設整備費用', '維持管理運営費用', 'モニタリング等費用', '(起債残債)', '起債償還額', '(起債償還済額)', '起債利息', '支出計', '収支（キャッシュ・フロー）'], width=14)
+        sf_PSC_res_df.apply_column_style(cols_to_style=['補助金', '交付金', '起債発行額', '利用料金収入', '収入計', '施設整備費用', '維持管理運営費用', 'モニタリング等費用', '(起債残債)', '起債償還額', '(起債償還済額)', '起債利息', '支出計', '収支（キャッシュ・フロー）'], styler_obj=style_r_ali)
+        sf_LCC_res_df.set_column_width(columns='スケジュール', width=17)
+        sf_LCC_res_df.set_column_width(columns=['補助金', '交付金', '起債発行額', '税収', '収入計', '施設整備サービス対価(一括払)', '(施設整備サービス対価(割賦計）)', '施設整備サービス対価(割賦元本)', '施設整備サービス対価(割賦金利)', '維持管理費サービス対価', 'モニタリング等費用', 'SPC費用', '(起債残債)', '起債償還額', '(起債償還済額)', '起債利息', '支出計', '収支（キャッシュ・フロー）'], width=14)
+        sf_LCC_res_df.apply_column_style(cols_to_style=['補助金', '交付金', '起債発行額', '税収', '収入計', '施設整備サービス対価(一括払)', '(施設整備サービス対価(割賦計）)', '施設整備サービス対価(割賦元本)', '施設整備サービス対価(割賦金利)', '維持管理費サービス対価', 'モニタリング等費用', 'SPC費用', '(起債残債)', '起債償還額', '(起債償還済額)', '起債利息', '支出計', '収支（キャッシュ・フロー）'], styler_obj=style_r_ali)
+        sf_SPC_res_df.set_column_width(columns='スケジュール', width=17)
+        sf_SPC_res_df.set_column_width(columns=['施設整備サービス対価(一括払)', '施設整備サービス対価(割賦元本)', '施設整備サービス対価(割賦金利)', '維持管理費サービス対価', 'SPC費用サービス対価', '利用料金収入', '収入計', '施設整備費用', '維持管理費', '(借入元本返済)', '支払利息', 'SPC経費', 'SPC当初費用（設立費用、予備費）', '法人税・公租公課', '支出計（元本返済込）', '支出計', '収支(キャッシュ・フロー)'], width=14)
+        sf_SPC_res_df.apply_column_style(cols_to_style=['施設整備サービス対価(一括払)', '施設整備サービス対価(割賦元本)', '施設整備サービス対価(割賦金利)', '維持管理費サービス対価', 'SPC費用サービス対価', '利用料金収入', '収入計', '施設整備費用', '維持管理費', '(借入元本返済)', '支払利息', 'SPC経費', 'SPC当初費用（設立費用、予備費）', '法人税・公租公課', '支出計（元本返済込）', '支出計', '収支(キャッシュ・フロー)'], styler_obj=style_r_ali)
+        sf_SPC_check_df.set_column_width(columns='スケジュール', width=17)
+        sf_SPC_check_df.set_column_width(columns=['収入計', '借入元本返済', '支出計', '支出計(元本返済込)', '収支(キャッシュ・フロー)', '収支(元本返済込)', '元本返済充当可能額', '元本返済可否'], width=14)
+        sf_SPC_check_df.apply_column_style(cols_to_style=['収入計', '借入元本返済', '支出計', '支出計(元本返済込)', '収支(キャッシュ・フロー)', '収支(元本返済込)', '元本返済充当可能額'], styler_obj=style_r_ali)
+
+        sf_SPC_res_df.
+        sf_SPC_check_df.
 
         sf_res_summ_df.to_excel(writer, sheet_name='算定結果概要', index=False, startrow=1, startcol=1)
         sf_PSC_res_df.to_excel(writer, sheet_name='PSC算定結果', index=False, startrow=1, startcol=1)
