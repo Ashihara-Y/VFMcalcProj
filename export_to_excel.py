@@ -76,6 +76,11 @@ def export_to_excel():
     final_inputs_df = final_inputs_df.drop('datetime', axis=1)
     res_summ_df['discount_rate'] = res_summ_df['discount_rate'].apply(lambda x: round(float(x*100), 4))
 
+    PSC_res_df['year'] = PSC_res_df['yaer'].apply(lambda x: x.replace('00:00:00.000000',''))
+    LCC_res_df['year'] = LCC_res_df['yaer'].apply(lambda x: x.replace('00:00:00.000000',''))
+    SPC_res_df['year'] = SPC_res_df['yaer'].apply(lambda x: x.replace('00:00:00.000000',''))
+    SPC_check_df['year'] = SPC_check_df['yaer'].apply(lambda x: x.replace('00:00:00.000000',''))
+
     PSC_res_df = PSC_res_df.rename(
          columns={
                 'periods':'経過年度', 
@@ -224,6 +229,14 @@ def export_to_excel():
         sf_VFM_res_df = StyleFrame(VFM_res_df)
         sf_PIRR_res_df = StyleFrame(PIRR_res_df)
         sf_final_inputs_df = StyleFrame(final_inputs_df)
+
+        sf_res_summ_df.set_column_width(columns='項目名', width=50)
+        sf_res_summ_df.set_column_width(columns='値', width=20)
+        sf_final_inputs_df.set_column_width(columns='項目名', width=50)
+        sf_final_inputs_df.set_column_width(columns='値', width=20)
+        sf_res_summ_df.set_row_height(rows=list(range(2, len()+2)), height=12)
+        sf_final_inputs_df.set_row_height(rows='項目名', height=12)
+
     
         sf_res_summ_df.to_excel(writer, sheet_name='算定結果概要', index=False, startrow=1, startcol=1)
         sf_PSC_res_df.to_excel(writer, sheet_name='PSC算定結果', index=False, startrow=1, startcol=1)
