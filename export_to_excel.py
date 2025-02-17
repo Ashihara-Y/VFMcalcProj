@@ -7,7 +7,7 @@ from fastapi import FastAPI, Response
 from fastapi.responses import FileResponse
 import flet.fastapi as flet_fastapi
 import styleframe
-from styleframe import StyleFrame
+from styleframe import StyleFrame, Styler, utils
 
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
@@ -232,13 +232,21 @@ def export_to_excel():
         sf_PIRR_res_df = StyleFrame(PIRR_res_df)
         sf_final_inputs_df = StyleFrame(final_inputs_df)
 
+        style_l_ali = Styler(horizontal_alignment=utils.horizontal_alignments.left)
+        style_r_ali = Styler(horizontal_alignment=utils.horizontal_alignments.right)
+
+        sf_res_summ_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
+        sf_res_summ_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
+        sf_final_inputs_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
+        sf_final_inputs_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
+
         sf_res_summ_df.set_column_width(columns='項目名', width=50)
         sf_res_summ_df.set_column_width(columns='値', width=20)
         sf_final_inputs_df.set_column_width(columns='項目名', width=50)
         sf_final_inputs_df.set_column_width(columns='値', width=20)
-        sf_res_summ_df.set_row_height(rows=list(range(2, len_res_summ_df+2)), height=12)
-        sf_final_inputs_df.set_row_height(rows=list(range(2, len_final_inputs_df+2)), height=12)
-    
+        sf_res_summ_df.set_row_height(rows=list(range(2, len_res_summ_df+2)), height=20)
+        sf_final_inputs_df.set_row_height(rows=list(range(2, len_final_inputs_df+2)), height=20)
+
         sf_res_summ_df.to_excel(writer, sheet_name='算定結果概要', index=False, startrow=1, startcol=1)
         sf_PSC_res_df.to_excel(writer, sheet_name='PSC算定結果', index=False, startrow=1, startcol=1)
         sf_PSC_pv_df.to_excel(writer, sheet_name='PSC現在価値算定結果', index=False, startrow=1, startcol=1)
