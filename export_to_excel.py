@@ -103,6 +103,7 @@ def export_to_excel():
     )
     PSC_pv_df = PSC_pv_df.rename(
         columns={
+                'periods':'経過年度',
                 'net_payments':'収支（キャッシュ・フロー）', 
                 'discount_factor':'割引係数', 
                 'present_value':'収支（キャッシュ・フロー）現在価値', 
@@ -134,6 +135,7 @@ def export_to_excel():
     )
     LCC_pv_df = LCC_pv_df.rename(
         columns={
+                'periods':'経過年度', 
                 'net_payments':'収支(キャッシュ・フロー)', 
                 'discount_factor':'割引係数', 
                 'present_value':'収支(キャッシュ・フロー)現在価値',
@@ -246,6 +248,23 @@ def export_to_excel():
         sf_final_inputs_df.set_column_width(columns='値', width=20)
         sf_res_summ_df.set_row_height(rows=list(range(2, len_res_summ_df+2)), height=20)
         sf_final_inputs_df.set_row_height(rows=list(range(2, len_final_inputs_df+2)), height=20)
+
+        sf_res_summ_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
+        sf_res_summ_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
+        sf_final_inputs_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
+        sf_final_inputs_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
+
+        sf_PSC_pv_df.set_column_width(columns=['収支(キャッシュ・フロー)', '割引係数', '収支(キャッシュ・フロー)現在価値'], width=14)
+        sf_PSC_pv_df.apply_column_style(cols_to_style=['収支(キャッシュ・フロー)', '割引係数', '収支(キャッシュ・フロー)現在価値'], styler_obj=style_r_ali)
+        sf_LCC_pv_df.set_column_width(columns=['収支(キャッシュ・フロー)', '割引係数', '収支(キャッシュ・フロー)現在価値'], width=14)
+        sf_LCC_pv_df.apply_column_style(cols_to_style=['収支(キャッシュ・フロー)', '割引係数', '収支(キャッシュ・フロー)現在価値'], styler_obj=style_r_ali)
+
+        sf_Risk_res_df.set_column_width(columns=['リスク調整額'], width=15)
+        sf_Risk_res_df.apply_column_style(cols_to_style=['リスク調整額'], styler_obj=style_r_ali)
+        sf_VFM_res_df.set_column_width(columns=['VFM(金額)','VFM(％)'], width=15)
+        sf_VFM_res_df.apply_column_style(cols_to_style=['VFM(金額)','VFM(％)'], styler_obj=style_r_ali)
+        sf_PIRR_res_df.set_column_width(columns=['プロジェクト内部収益率','プロジェクト内部収益率(％)'], width=15)
+        sf_PIRR_res_df.apply_column_style(cols_to_style=['プロジェクト内部収益率','プロジェクト内部収益率(％)'], styler_obj=style_r_ali)
 
         sf_PSC_res_df.set_column_width(columns='スケジュール', width=17)
         sf_PSC_res_df.set_column_width(columns=['補助金', '交付金', '起債発行額', '利用料金収入', '収入計', '施設整備費用', '維持管理運営費用', 'モニタリング等費用', '(起債残債)', '起債償還額', '(起債償還済額)', '起債利息', '支出計', '収支（キャッシュ・フロー）'], width=14)
