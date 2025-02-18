@@ -7,6 +7,7 @@ from Resultview2 import Results
 from view_saved import View_saved
 import save_results
 import export_to_excel
+import download
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -52,6 +53,7 @@ def main(page: ft.Page):
                         Results(),
                         ft.ElevatedButton("結果リストへ戻る", on_click=open_saved_list),
                         ft.ElevatedButton("この結果をExcelに書き出す", on_click=result_to_excel),
+                        ft.ElevatedButton("出力したファイルをダウンロード", on_click=download_excel),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
@@ -65,6 +67,19 @@ def main(page: ft.Page):
                         ft.AppBar(title=ft.Text("算定結果一覧(要約表を長めにクリックすると詳細に遷移します)")),
                         View_saved(),
                         ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
+                    ],
+                    scroll=ft.ScrollMode.ALWAYS,
+                ),
+            )
+        elif page.route == "/download":
+            # page.views.clear()
+            page.views.append(
+                ft.View(
+                    "/download",
+                    [
+                        ft.AppBar(title=ft.Text("出力ファイルのダウンロード")),
+                        download.download(),
+                        #ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
@@ -95,6 +110,10 @@ def main(page: ft.Page):
     
     def result_to_excel(e):
         export_to_excel.export_to_excel()
+
+    def download_excel(e):  
+        page.go("/download")
+        download.download()
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
