@@ -254,8 +254,8 @@ def export_to_excel():
         sf_final_inputs_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
         sf_final_inputs_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
 
-        sf_PSC_pv_df.set_column_width(columns=['収支(キャッシュ・フロー)', '割引係数', '収支(キャッシュ・フロー)現在価値'], width=14)
-        sf_PSC_pv_df.apply_column_style(cols_to_style=['収支(キャッシュ・フロー)', '割引係数', '収支(キャッシュ・フロー)現在価値'], styler_obj=style_r_ali)
+        sf_PSC_pv_df.set_column_width(columns=['収支（キャッシュ・フロー）', '割引係数', '収支（キャッシュ・フロー）現在価値'], width=14)
+        sf_PSC_pv_df.apply_column_style(cols_to_style=['収支（キャッシュ・フロー）', '割引係数', '収支（キャッシュ・フロー）現在価値'], styler_obj=style_r_ali)
         sf_LCC_pv_df.set_column_width(columns=['収支(キャッシュ・フロー)', '割引係数', '収支(キャッシュ・フロー)現在価値'], width=14)
         sf_LCC_pv_df.apply_column_style(cols_to_style=['収支(キャッシュ・フロー)', '割引係数', '収支(キャッシュ・フロー)現在価値'], styler_obj=style_r_ali)
 
