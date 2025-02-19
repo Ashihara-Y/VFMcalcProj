@@ -294,6 +294,5 @@ def export_to_excel():
 
 
 
-# 上記をmok dataなしで動かすには、事業費用概算シートへの入力値用の入力画面とDB入力への統合が必要
 if __name__ == '__main__':
     export_to_excel()
