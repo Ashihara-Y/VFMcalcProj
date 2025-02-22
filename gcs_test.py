@@ -65,13 +65,14 @@ def main(page: ft.Page):
             )
             lv_01.controls.append(table)
 
-            return ft.View(
-                controls=ft.Column(
+            return ft.Card(
+                content=ft.Container(
+                    content=ft.Column(
                     controls=[
                         lv_01,
                     ],
                 ),
-            )
+            ))
 
 
 ft.app(target=main)
