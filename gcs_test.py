@@ -28,7 +28,7 @@ def main(page: ft.Page):
                     "/show_excel",
                     [
                         ft.AppBar(title=ft.Text("Excel読み込み")),
-                        read_excel("vfm_outputs/VFM_result_sheet_2025-02-09_01_06_39.xlsx"),
+                        read_excel("vfm_output/VFM_result_sheet_2025-02-09_01_06_39.xlsx"),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
