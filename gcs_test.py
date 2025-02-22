@@ -53,27 +53,28 @@ def main(page: ft.Page):
     page.on_view_pop = view_pop
     page.go(page.route)
 
+    def read_excel(path):
+        with open(path, 'rb') as s:
+            df = pd.read_excel(s)
+            simpledt_df = DataFrame(df)
+            simpledt_dt = simpledt_df.datatable
+            table = simpledt_dt
+
+            lv_01 = ft.ListView(
+                expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
+            )
+            lv_01.controls.append(table)
+
+            return ft.View(
+                content=ft.Column(
+                    controls=[
+                        lv_01,
+                    ],
+                ),
+            )
+
+
 ft.app(target=main)
-
-def read_excel(path):
-    with open(path, 'rb') as s:
-        df = pd.read_excel(s)
-        simpledt_df = DataFrame(df)
-        simpledt_dt = simpledt_df.datatable
-        table = simpledt_dt
-
-        lv_01 = ft.ListView(
-            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
-        )
-        lv_01.controls.append(table)
-
-        return ft.View(
-            content=ft.Column(
-                controls=[
-                    lv_01,
-                ],
-            ),
-        )
 
 
 #def excel_to_cs():
