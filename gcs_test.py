@@ -2,7 +2,6 @@ import pandas as pd
 import flet as ft
 from simpledt import DataFrame
 import openpyxl
-from styleframe import StyleFrame
 
 def main(page: ft.Page):
     page.title = "Excel読み込み"
@@ -28,7 +27,7 @@ def main(page: ft.Page):
                     "/show_excel",
                     [
                         ft.AppBar(title=ft.Text("Excel読み込み")),
-                        read_excel("vfm_output/VFM_result_sheet_2025-02-09_01_06_39.xlsx"),
+                        read_excel("/Users/yoshihiroashihara/VFMcalcProj/vfm_output/VFM_result_sheet_2025-02-09_01_06_39.xlsx"),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 ),
