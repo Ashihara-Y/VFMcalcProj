@@ -41,7 +41,7 @@ def export_to_excel():
 
     dtime_w = dtime.replace(' ', '_').replace(':', '_').replace('+09_00', '')
     file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
-    save_path = 'vfm_output/' + file_name
+    save_path = '/mnt/gcs/' + file_name
 
     wb = openpyxl.Workbook()
     ws = wb['Sheet']
@@ -294,6 +294,5 @@ def export_to_excel():
 
 
 
-# 上記をmok dataなしで動かすには、事業費用概算シートへの入力値用の入力画面とDB入力への統合が必要
 if __name__ == '__main__':
     export_to_excel()
