@@ -91,4 +91,4 @@ ft.app(target=main)
 #        sf_final_inputs_df.to_excel(writer, sheet_name='最終入力等', index=False, startrow=1, startcol=1)
 
 if __name__ == '__main__':
-    main()
+    main(page=ft.Page())
