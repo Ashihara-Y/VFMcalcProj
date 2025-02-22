@@ -41,7 +41,7 @@ def export_to_excel():
 
     dtime_w = dtime.replace(' ', '_').replace(':', '_').replace('+09_00', '')
     file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
-    save_path = 'vfm_output/' + file_name
+    save_path = '/mnt/gcs/' + file_name
 
     wb = openpyxl.Workbook()
     ws = wb['Sheet']
