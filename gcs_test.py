@@ -66,7 +66,7 @@ def main(page: ft.Page):
             lv_01.controls.append(table)
 
             return ft.View(
-                content=ft.Column(
+                controls=ft.Column(
                     controls=[
                         lv_01,
                     ],
