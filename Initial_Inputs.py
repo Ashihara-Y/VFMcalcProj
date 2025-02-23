@@ -19,6 +19,7 @@ class Initial_Inputs(ft.Column):
         self.width = 500
         self.height = 2000
         self.resizable = True
+
         self.slider_value00 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         self.slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         self.slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -86,86 +87,88 @@ class Initial_Inputs(ft.Column):
         self.slider_value12.value = str(sl_value)
         self.page.update()
 
+
     def build(self):
+        def get_options(list):
+            options=[]
+            for i in list:
+                options.append(ft.dropdown.Option(key=i['key']))
+            return options
+
+        options_1 = [
+                {'key':"国"},
+                {'key':"都道府県"},
+                {'key':"市町村"},
+            ]
+        options_2 = [
+                {'key':"サービス購入型"},
+                #{key:"独立採算型"},
+                #{key: "混合型"}
+            ]
+        options_3 = [
+                {'key':"BTO"},
+                {'key':"DBO(SPCなし)"},
+                {'key':"BOT/BOO"},
+                {'key':"BT/DB(いずれもSPCなし)"},
+            ]
+        options_4 = [
+                {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
+                {'key':"6"}, {'key':"7"}, {'key':"8"}, {'key':"9"}, {'key':"10"},
+                {'key':"11"},{'key':"12"},{'key':"13"},{'key':"14"},{'key':"15"},
+                {'key':"16"},{'key':"17"},{'key':"18"},{'key':"19"},{'key':"20"},
+                {'key':"21"},{'key':"22"},{'key':"23"},{'key':"24"},{'key':"25"},
+                {'key':"26"},{'key':"27"},{'key':"28"},{'key':"29"},{'key':"30"},
+            ]
+        options_5 = [
+                {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
+                {'key':"6"}, {'key':"7"}, {'key':"8"}, {'key':"9"}, {'key':"10"},
+                {'key':"11"},{'key':"12"},{'key':"13"},{'key':"14"},{'key':"15"},
+                {'key':"16"},{'key':"17"},{'key':"18"},{'key':"19"},{'key':"20"},
+                {'key':"21"},{'key':"22"},{'key':"23"},{'key':"24"},{'key':"25"},
+                {'key':"26"},
+            ]
+        options_6 = [
+                {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
+            ]
+
         self.dd1 = ft.Dropdown(
             label="管理者の種別",
             hint_text="管理者の種別を選択してください",
             width=400,
-            options=[
-                ft.dropdown.Option("国"),
-                ft.dropdown.Option("都道府県"),
-                ft.dropdown.Option("市町村"),
-            ],
+            options=get_options(options_1),
         )
         self.dd2 = ft.Dropdown(
             label="事業の方式",
             hint_text="事業の方式を選択してください",
             width=400,
-            options=[
-                ft.dropdown.Option("サービス購入型"),
-                # ft.dropdown.Option("独立採算型"),
-                # ft.dropdown.Option("混合型"),
-            ],
+            options=get_options(options_2),
         )
         self.dd3 = ft.Dropdown(
             label="事業の類型",
             hint_text="事業の類型を選択してください",
             width=400,
-            options=[
-                ft.dropdown.Option("BTO"),
-                ft.dropdown.Option("DBO(SPCなし)"),
-                ft.dropdown.Option("BOT/BOO"),
-                ft.dropdown.Option("BT/DB(いずれもSPCなし)"),
-            ],
+            options=get_options(options_3),
         )
         self.dd4 = ft.Dropdown(
             label="事業期間",
             hint_text="事業期間を選択してください(施設整備期間以上)",
             width=400,
             value="20",
-            options=[
-                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
-                ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
-                ft.dropdown.Option("7"),  ft.dropdown.Option("8"),  ft.dropdown.Option("9"),
-                ft.dropdown.Option("10"), ft.dropdown.Option("11"), ft.dropdown.Option("12"),
-                ft.dropdown.Option("13"), ft.dropdown.Option("14"), ft.dropdown.Option("15"),
-                ft.dropdown.Option("16"), ft.dropdown.Option("17"), ft.dropdown.Option("18"),
-                ft.dropdown.Option("19"), ft.dropdown.Option("20"), ft.dropdown.Option("21"),
-                ft.dropdown.Option("22"), ft.dropdown.Option("23"), ft.dropdown.Option("24"),
-                ft.dropdown.Option("25"), ft.dropdown.Option("26"), ft.dropdown.Option("27"),
-                ft.dropdown.Option("28"), ft.dropdown.Option("29"), ft.dropdown.Option("30"),
-            ],
+            options=get_options(options_4),
         )
         self.dd5 = ft.Dropdown(
             label="地方債償還期間",
             hint_text="地方債償還期間を選択してください",
             width=400,
             value="20",
-            options=[
-                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
-                ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
-                ft.dropdown.Option("7"),  ft.dropdown.Option("8"),  ft.dropdown.Option("9"),
-                ft.dropdown.Option("10"), ft.dropdown.Option("11"), ft.dropdown.Option("12"),
-                ft.dropdown.Option("13"), ft.dropdown.Option("14"), ft.dropdown.Option("15"),
-                ft.dropdown.Option("16"), ft.dropdown.Option("17"), ft.dropdown.Option("18"),
-                ft.dropdown.Option("19"), ft.dropdown.Option("20"), ft.dropdown.Option("21"),
-                ft.dropdown.Option("22"), ft.dropdown.Option("23"), ft.dropdown.Option("24"),
-                ft.dropdown.Option("25"), ft.dropdown.Option("26"),
-            ],
+            options=get_options(options_5),
         )
         self.dd6 = ft.Dropdown(
             label="施設整備期間",
             hint_text="施設整備期間を選択してください",
             width=400,
             value="1",
-            options=[
-                ft.dropdown.Option("0"),
-                ft.dropdown.Option("1"),
-                ft.dropdown.Option("2"),
-                ft.dropdown.Option("3"),
-                ft.dropdown.Option("4"),
-                ft.dropdown.Option("5"),
-            ],
+            options=get_options(options_6),
         )
         self.tx0 = ft.Text("施設整備費 落札価格ベース(百万円)")
         self.sl0 = ft.Slider(
