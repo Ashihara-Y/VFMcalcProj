@@ -25,7 +25,6 @@ def main(page: ft.Page):
                 [
                     ft.AppBar(title=ft.Text("初期入力")),
                     Initial_Inputs(),
-                    #ft.ElevatedButton("入力確認へ", on_click=open_final_inputs),
                 ],
                 scroll=ft.ScrollMode.ALWAYS,
             ),
