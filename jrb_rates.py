@@ -4,15 +4,17 @@ import requests
 import fitz
 import pandas as pd
 import numpy as np
+from io import BytesIO
 
 def main():
     url = 'https://www.jfm.go.jp/financing/rate/k87jfb00000002wt-att/beppyo-1-1.pdf'
-    res = requests.get(url)
-    myfile = open('./JRB.pdf', "wb")
-    myfile.write(res.content)
-    pdf = open('./JRB.pdf', "rb")
+    res = requests.get(url).content
+    contents = BytesIO(res)
+    #myfile = open(contents, "wb")
+    #myfile.write(res.content)
+    #pdf = open('./JRB.pdf', "rb")
 
-    doc = fitz.open('JRB.PDF', filetype="pdf")
+    doc = fitz.open(stream=contents.getvalue(), filetype="pdf")
     page = doc[0]
     tabs = page.find_tables()
     tab = tabs[0]
