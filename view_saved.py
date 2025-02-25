@@ -9,20 +9,21 @@ from simpledt import DataFrame
 #from flet.plotly_chart import PlotlyChart
 #import glob
 #import Resultview2
-#import duckdb
+import sqlite3
 from tinydb import TinyDB
 from sqlalchemy import create_engine
 
 class View_saved(ft.Column):
     def __init__(self):
         super().__init__()
-        self.title = "VFM算定結果リスト"
+        self.title = "VFM算定結果リスト(結果要約を長めにクリックすると詳細に遷移します)"
         self.width = 1800
         self.height = 3000
         self.resizable = True
 
         engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
-        #conn = duckdb.connect('VFM.duckdb')
+        self.engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
+        #conn = sqlite3.connect("":memory:")
         #c = conn.cursor()
         
         res_summ_df = pd.read_sql_table('res_summ_res_table', engine)
@@ -52,19 +53,13 @@ class View_saved(ft.Column):
 
     # 以下のメソッドは、選択された日時を、次の画面に渡すためのメソッド。
     # ListViewのセルを選択したときに呼び出される。
-    # 選択された日時を、selected_res.jsonに書き込む。次の画面に渡す。
-    # session storageに書き込む形も併設しておいた。
+    # 選択された日時を、SQLiteのテーブルsel_resに書き込んで、次の画面に渡す。
     def send_mess(self, e):
-        #ft.Page.pubsub.send_all(Message)
-        if os.path.exists("selected_res.json"):
-            os.remove("selected_res.json")
-        con = TinyDB('selected_res.json')
-        con.truncate()
         dtime = e.control.data
         #print(dtime)
         dtime_dic = {'selected_datetime': str(dtime)}
-        con.insert(dtime_dic)
-        con.close()
+        dtime_df = pd.DataFrame(dtime_dic, index=[0])
+        dtime_df.to_sql('sel_res', self.engine_m, if_exists='replace', index=False)
         #page.session.set("selected_datetime", str(dtime))
         self.page.go("/results_detail")
 
@@ -83,6 +78,7 @@ class View_saved(ft.Column):
             row_dic = row._asdict()
             row = pd.DataFrame(row_dic, index=[0])
             dtime = row['datetime'].iloc[0]
+            row['discount_rate'] = row['discount_rate'] * 100
             row = row.rename(
                 columns={
                     "datetime": "算定日時",
@@ -108,14 +104,14 @@ class View_saved(ft.Column):
                 i.data = dtime                
                 #i.color=ft.Colors.AMBER_50
                 i.selected=False
-                page = ft.Page
+                #page = ft.Page
                 i.on_long_press=self.send_mess
                 i.on_select_changed=self.send_mess
 
             #df_t  = df.tranpose().reset_index()
             table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
-            table.width=1500
+            table.width=500
             table.show_checkbox_column=False
             #table.checkbox_column_width=15
             #table.checkbox_horizontal_margin=10
@@ -130,9 +126,9 @@ class View_saved(ft.Column):
                         summ_lv,
                     ],
                     alignment=ft.MainAxisAlignment.START,
-                    horizontal_alignment=ft.CrossAxisAlignment.END,
+                    horizontal_alignment=ft.CrossAxisAlignment.START,
                 ),
-                width=1800,
+                width=800,
                 height=3000,
                 padding=5,
         )

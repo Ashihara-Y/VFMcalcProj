@@ -40,8 +40,11 @@ def check_cash():
         PIRR = 0
     else:
         PIRR = xirr(year, value)
-    
+
     PIRR_percent = PIRR * 100
+    #print(PIRR, PIRR_percent)
+
+    #print(SPC_df[['income_total','payments_total_full','net_income_full']])
 
     net_total_income_sum = float(SPC_df['net_income_full'].sum())
     SPC_shihon = float(inputs_pdt.SPC_shihon)
@@ -51,12 +54,12 @@ def check_cash():
 
     value_EIRR = SPC_df['net_income_full'].to_list()
 
-    if SPC_shihon == 0:
-        EIRR = 0
-    else:
-        EIRR = xirr(year, value_EIRR)
-   
-    EIRR_percent = EIRR * 100
+    #if SPC_shihon == 0:
+    #    EIRR = 0
+    #else:
+    #    EIRR = xirr(year, value_EIRR)
+
+    #EIRR_percent = EIRR * 100
     #print(EIRR, EIRR_percent)
 
     PIRR_df = pd.DataFrame({'PIRR': [PIRR], 'PIRR_percent': [PIRR_percent]})

@@ -138,8 +138,15 @@ def SPC_calc():
     SPC_shuushi_payments.loc[1:inputs_pdt.proj_years, 'SPC_keihi'] = SPC_keihi
     SPC_setsuritsuhi = inputs_pdt.SPC_shihon + inputs_pdt.SPC_yobihi
     SPC_shuushi_payments.loc[1, 'SPC_setsuritsuhi'] = SPC_setsuritsuhi
-    Houjinzei_etc = inputs_pdt.houjinjuminzei_kintou
-    SPC_shuushi_payments.loc[1:inputs_pdt.proj_years, 'houjinzei_etc'] = Houjinzei_etc
+    Fudousanshutokuzei = inputs_pdt.fudousanshutokuzei_hyoujun * inputs_pdt.fudousanshutokuzei_ritsu
+    Tourokumenkyozei = inputs_pdt.tourokumenkyozei_hyoujun * inputs_pdt.tourokumenkyozei_ritsu
+    Koteishisanzei = inputs_pdt.koteishisanzei_hyoujun * inputs_pdt.koteishisanzei_ritsu
+    Houjinzei_etc_01 = inputs_pdt.houjinjuminzei_kintou
+    Houjinzei_etc_02 = inputs_pdt.houjinjuminzei_kintou + Fudousanshutokuzei + Tourokumenkyozei
+    Houjinzei_etc_03 = inputs_pdt.houjinjuminzei_kintou + Koteishisanzei
+    SPC_shuushi_payments.loc[1:inputs_pdt.const_years-1, 'houjinzei_etc'] = Houjinzei_etc_01
+    SPC_shuushi_payments.loc[inputs_pdt.const_years, 'houjinzei_etc'] = Houjinzei_etc_02
+    SPC_shuushi_payments.loc[inputs_pdt.const_years+1:inputs_pdt.proj_years, 'houjinzei_etc'] = Houjinzei_etc_03
 
     #SPC_shuushi_payments.loc[const_years+1:proj_years, 'kariire_hensai_goukei'] = Kariire_hensai_goukei_deci
     SPC_shuushi_payments.loc[2:, 'kariire_ganpon_hensai'] = Kariire_hensai_ganpon_deci
