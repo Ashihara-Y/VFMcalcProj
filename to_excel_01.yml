@@ -1,0 +1,39 @@
+%YAML 1.2
+--- # 該当セルの座標と出力する変数名を指定、次に対象セルの場所出力する値を指定
+'file_sheet':
+    - 'book': 'VFM標準算定シート.xlsx'
+    - 'sheet': "事業費用概算"
+
+
+
+'cell-position_value':
+    - 'H5': 'shisetsu_seibi_kouritsusei_DBDBO' # 施設整備費へ期待される効率性（DB/DBOの場合）
+    - 'I5': 'shisetsu_seibi_kouritsusei_BTBTO' # 施設整備費へ期待される効率性（BT/BTO/BOTBOOの場合）
+    - 'G6': 'shisetsu_seibi_PSC_rakusatsu' # PSCの施設整備費積算で過去の落札価格を用いた部分の額
+    - 'G7': 'shisetsu_seibi_PSC_yosantanka' # PSCの施設整備費積算で予算単価を用いた部分の額
+    - 'H11': 'ijikanri_jinkenhi_kouritsusei_DBDBO' # 維持管理運営費の人件費へ期待される効率性（DB/DBOの場合）
+    - 'I11': 'ijikanri_jinkenhi_kouritsusei_BTBTO' # 維持管理運営費の人件費へ期待される効率性（BT/BTO/BOTBOOの場合）
+    - 'J11': 'ijikanri_jinkenhi_bukkajousyou' # 維持管理運営費の人件費へ予想される物価上昇率
+    - 'G12': 'ijikanri_jinkenhi_PSC_rakusatsu' # PSCの維持管理運営費の人件費の積算で過去の落札価格を用いた部分の額
+    - 'G13': 'ijikanri_jinkenhi_PSC_yosantanka' # PSCの維持管理運営費の人件費の積算で予算単価を用いた部分の額
+    - 'H14': 'ijikanri_shuzenhi_kouritsusei_DBDBO' # 維持管理運営費の修繕費へ期待される効率性（DB/DBOの場合）
+    - 'I14': 'ijikanri_shuzenhi_kouritsusei_BTBTO' # 維持管理運営費の修繕費へ期待される効率性（BT/BTO/BOTBOOの場合）
+    - 'J14': 'ijikanri_shuzenhi_bukkajousyou' # 維持管理運営費の修繕費へ予想される物価上昇率
+    - 'G15': 'ijikanri_shuzenhi_PSC_rakusatsu' # PSCの維持管理運営費の修繕費の積算で過去の落札価格を用いた部分の額
+    - 'G16': 'ijikanri_shuzenhi_PSC_yosantanka' # PSCの維持管理運営費の修繕費の積算で予算単価を用いた部分の額
+    - 'H17': 'ijikanri_douryokuhi_kouritsusei_DBDBO' # 維持管理運営費の動力費へ期待される効率性（DB/DBOの場合）
+    - 'I17': 'ijikanri_douryokuhi_kouritsusei_BTBTO' # 維持管理運営費の動力費へ期待される効率性（BT/BTO/BOTBOOの場合）
+    - 'J17': 'ijikanri_douryokuhi_bukkajousyou' # 維持管理運営費の動力費へ予想される物価上昇率
+    - 'G18': 'ijikanri_douryokuhi_PSC_rakusatsu' # PSCの維持管理運営費の動力費の積算で過去の落札価格を用いた部分の額
+    - 'G19': 'ijikanri_douryokuhi_PSC_yosantanka' # PSCの維持管理運営費の動力費の積算で予算単価を用いた部分の額
+    - 'H20': 'ijikanri_option01_kouritsusei_DBDBO' # 維持管理運営費の任意入力１へ期待される効率性（DB/DBOの場合）
+    - 'I20': 'ijikanri_option01_kouritsusei_BTBTO' # 維持管理運営費の任意入力１へ期待される効率性（BT/BTO/BOTBOOの場合）
+    - 'J20': 'ijikanri_option01_bukkajousyou' # 維持管理運営費の任意入力１へ予想される物価上昇率
+    - 'G21': 'ijikanri_option01_PSC_rakusatsu' # PSCの維持管理運営費の任意入力１の積算で過去の落札価格を用いた部分の額
+    - 'G22': 'ijikanri_option01_PSC_yosantanka' # PSCの維持管理運営費の任意入力１の積算で過去の予算単価を用いた部分の額
+    - 'H23': 'ijikanri_option02_kouritsusei_DBDBO' # 維持管理運営費の任意入力２へ期待される効率性（DB/DBOの場合）
+    - 'I23': 'ijikanri_option02_kouritsusei_BTBTO' # 維持管理運営費の任意入力２へ期待される効率性（BT/BTO/BOTBOOの場合）
+    - 'J23': 'ijikanri_option02_bukkajousyou' # 維持管理運営費の任意入力２へ予想される物価上昇率
+    - 'G24': 'ijikanri_option02_PSC_rakusatsu' # PSCの維持管理運営費の任意入力２の積算で過去の落札価格を用いた部分の額
+    - 'G25': 'ijikanri_option02_PSC_yosantanka' # PSCの維持管理運営費の任意入力２の積算で予算単価を用いた部分の額
+...

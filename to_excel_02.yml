@@ -1,0 +1,53 @@
+%YAML 1.2
+--- # bookファイル名とシート名を指
+'file_sheet':
+    - 'book': "VFM標準算定シート_copy.xlsx"
+    - 'sheet': 'proj_type'
+
+#--- # 該当セルの座標と出力する変数名を指定
+'cell-position_value':
+    - 'F13': 'mgmt_type' # 発注者区分
+    - 'F16': 'const_years' # 整備期間
+    - 'F17': 'ijikanri_unnei_years' # 維持管理運営期間
+    - 'F18': 'const_start_date' # 整備開始日
+    - 'F23': 'kijun_kinri' # 基準金利（期待物価上昇率は？）
+    - 'F32': 'shisetsu_seibi_paymentschedule_ikkatsu' # 施設整備費支払 一括割合
+    - 'F33': 'shisetsu_seibi_paymentschedule_kappu' # 施設整備費支払 割賦割合
+    - 'F35': 'kijun_kinri' # 基準金利(重複)
+    - 'F37': 'kappu_kinri_spread' # 割賦金利スプレッド
+    - 'F44': 'advisory_fee' # アドバイザリーフィー
+    - 'E45': 'monitoring_costs_PSC' # PSCの監理費
+    - 'F45': 'monitoring_costs_LCC' # LCCの監理費
+    - 'F56': 'riyouryoukin_shunyu' # 利用料金収入
+    - 'E60': 'hojo' # 補助率
+    - 'E61': 'kisai_koufu' # 起債への交付金率
+    - 'E62': 'kisai_jutou' # 起債充当率
+    - 'E63': 'chisai_sueoki_years' # 地方債据置年数
+    - 'E64': 'chisai_shoukan_kikan' # 地方債償還期間
+    - 'E65': 'chisai_kinri' # 地方債金利
+    - 'F60': 'hojo' # 補助率
+    - 'F61': 'kisai_koufu' # 起債への交付金率
+    - 'F62': 'kisai_jutou' # 起債充当率
+    - 'F63': 'chisai_sueoki_years' # 地方債据置年数
+    - 'F64': 'chisai_shoukan_kikan' # 地方債償還期間
+    - 'F65': 'chisai_kinri' # 地方債金利
+    - 'F70': 'lg_spread' # 民間借入スプレッド
+    - 'F75': 'houjinzei_ritsu' # 法人税率
+    - 'F77': 'houjinjuminzei_kintou' # 法人住民均等割
+    - 'F80': 'fudousanshutokuzei_hyoujun' # 不動産取得税 課税標準
+    - 'F81': 'fudousanshutokuzei_ritsu' # 不動産取得税 税率
+    - 'F83': 'koteishisanzei_hyoujun' # 固定資産税 課税標準
+    - 'F84': 'koteishisanzei_ritsu' # 固定資産税 税率
+    - 'F86': 'tourokumenkyozei_hyoujun' # 登録免許税 課税標準
+    - 'F87': 'tourokumenkyozei_ritsu' # 登録免許税 税率
+    - 'F94': 'houjinjuminzei_ritsu_todouhuken' # 法人住民税率(都道府県)
+    - 'F97': 'houjinjuminzei_ritsu_shikuchoson' # 法人住民税率(市区町村)
+    - 'F99': 'option_01'
+    - 'F100': 'option_02'
+    - 'F104': 'SPC_shihon' # SPCの資本金
+    - 'F105': 'SPC_keihi' # SPCの経費
+    - 'F106': 'SPC_yobihi' # SPCの予備費
+
+
+
+...
