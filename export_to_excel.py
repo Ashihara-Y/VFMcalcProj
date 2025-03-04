@@ -8,10 +8,16 @@ from fastapi.responses import FileResponse
 import flet.fastapi as flet_fastapi
 import styleframe
 from styleframe import StyleFrame, Styler, utils
+from google.cloud import storage
+import os
+from datetime import timedelta, datetime
+#from pytz impor
 
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
 engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
+
+gcloud_user_id = os.environ.get('USER_ID')
         
 def export_to_excel():
     df_res = pd.read_sql_table('sel_res', engine_m)
@@ -43,6 +49,15 @@ def export_to_excel():
     file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
     save_path = '/mnt/gcs/' + file_name
 
+    bucket_name = 'vfm-calc-output'
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(file_name)
+
+    expiration = timedelta(hours=1)
+    url = blob.generate_signed_url(version='v4',expiration=expiration, method='GET')
+    
     wb = openpyxl.Workbook()
     ws = wb['Sheet']
     ws.title = '算定結果概要'

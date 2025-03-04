@@ -10,7 +10,6 @@ def s_h(page: ft.Page):
 
 app = flet_fastapi.app(session_handler=s_h)
 
-@app.get("/download")
 def download():
     engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
     download_df = pd.read_sql_table('download_table', engine)
