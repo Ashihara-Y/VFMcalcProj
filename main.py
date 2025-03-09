@@ -13,11 +13,13 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 def main(page: ft.Page):
-    page.title = "VFM計算アプリ"
-    print("Initial Inputs", page.route)
 
-    def route_change(e):
-        print("Route changed to:", e.route)
+    page.adaptive = True
+    page.title = "VFM計算アプリ"
+    #print("Initial Inputs", page.route)
+
+    def route_change(route):
+        print("Route changed to:", route)
         page.views.clear()
         page.views.append(
             ft.View(
