@@ -10,7 +10,7 @@ import export_to_excel
 import download
 import logging
 
-#logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 def main(page: ft.Page):
     page.title = "VFM計算アプリ"
