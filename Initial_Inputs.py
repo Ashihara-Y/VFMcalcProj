@@ -11,7 +11,7 @@ from tinydb import TinyDB, Query
 from decimal import *
 from zoneinfo import ZoneInfo
 
-class Initial_Inputs(ft.Row):
+class Initial_Inputs(ft.Column):
 
     def __init__(self):
         super().__init__()
@@ -139,7 +139,7 @@ class Initial_Inputs(ft.Row):
         self.dd1 = ft.Dropdown(
             label="管理者の種別",
             #hint_text="管理者の種別を選択してください",
-            width=400,
+            #width=400,
             options=get_options(options_1),
         )
         self.dd2 = ft.Dropdown(

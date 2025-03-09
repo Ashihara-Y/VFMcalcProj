@@ -9,6 +9,7 @@ import save_results
 import export_to_excel
 import download
 import logging
+import Initial_Inputs2
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -25,7 +26,7 @@ def main(page: ft.Page):
                 "/",
                 [
                     ft.AppBar(title=ft.Text("初期入力")),
-                    Initial_Inputs(),
+                    Initial_Inputs2.Initial_Inputs(),
                 ],
                 scroll=ft.ScrollMode.AUTO,
             )
@@ -43,7 +44,7 @@ def main(page: ft.Page):
                     scroll=ft.ScrollMode.AUTO,
                 )
             )
-        elif page.route == "/results_detail":
+        if page.route == "/results_detail":
             # page.views.clear()
             page.views.append(
                 ft.View(
@@ -58,7 +59,7 @@ def main(page: ft.Page):
                     scroll=ft.ScrollMode.AUTO,
                 )
             )
-        elif page.route == "/view_saved":
+        if page.route == "/view_saved":
             # page.views.clear()
             page.views.append(
                 ft.View(
@@ -71,7 +72,7 @@ def main(page: ft.Page):
                     scroll=ft.ScrollMode.AUTO,
                 )
             )
-        elif page.route == "/download":
+        if page.route == "/download":
             # page.views.clear()
             page.views.append(
                 ft.View(
@@ -86,32 +87,32 @@ def main(page: ft.Page):
             )
         page.update()
 
-    def view_pop(view: ft.View):
+    def view_pop(e: ft.ViewPopEvent):
         #print("View popped:", e.view)
         page.views.pop()
         top_view = page.views[-1]
         page.go(top_view.route)
 
-    def open_final_inputs(view: ft.View):
+    def open_final_inputs(e):
         page.go("/final_inputs")
 
     #def open_results_summary(e):
     #    page.go("/results_summary")
 
-    def open_results_detail(view: ft.View):
+    def open_results_detail(e):
         #Results()        
         page.go("/results_detail")
 
-    def open_saved_list(view: ft.View):
+    def open_saved_list(e):
         page.go("/view_saved")
 
-    def open_initial_inputs(view: ft.View):
+    def open_initial_inputs(e):
         page.go("/")
     
-    def result_to_excel(view: ft.View):
+    def result_to_excel(e):
         export_to_excel.export_to_excel()
 
-    def download_excel(view: ft.View):  
+    def download_excel(e):  
         page.go("/download")
         download.download()
 
@@ -120,4 +121,4 @@ def main(page: ft.Page):
     page.go(page.route)
 
 
-ft.app(main, view=ft.AppView.WEB_BROWSER)
+ft.app(target=main, view=ft.AppView.WEB_BROWSER)
