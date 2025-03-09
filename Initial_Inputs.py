@@ -92,7 +92,7 @@ class Initial_Inputs(ft.Column):
         def get_options(list):
             options=[]
             for i in list:
-                options.append(ft.DropdownOption(key=i['key']))
+                options.append(ft.DropdownOption(key=i['key'], content = ft.Text(value=i['key'])))
             return options
 
         options_1 = [
@@ -102,8 +102,8 @@ class Initial_Inputs(ft.Column):
             ]
         options_2 = [
                 {'key':"サービス購入型"},
-                #{key:"独立採算型"},
-                #{key: "混合型"}
+                #{key:"コンセッション（スタジアム・アリーナタイプ）"},
+                #{key: "コンセッション（下水道タイプ）"},
             ]
         options_3 = [
                 {'key':"BTO"},
