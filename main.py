@@ -18,8 +18,7 @@ def main(page: ft.Page):
     page.title = "VFM計算アプリ"
     #print("Initial Inputs", page.route)
 
-    def route_change(route):
-        print("Route changed to:", route)
+    def route_change(e: ft.RouteChangeEvent):
         page.views.clear()
         page.views.append(
             ft.View(
@@ -87,8 +86,8 @@ def main(page: ft.Page):
             )
         page.update()
 
-    def view_pop(e):
-        print("View popped:", e.view)
+    def view_pop(view):
+        #print("View popped:", e.view)
         page.views.pop()
         top_view = page.views[-1]
         page.go(top_view.route)
@@ -121,4 +120,4 @@ def main(page: ft.Page):
     page.go(page.route)
 
 
-ft.app(main)
+ft.app(main, view=ft.AppView.WEB_BROWSER)
