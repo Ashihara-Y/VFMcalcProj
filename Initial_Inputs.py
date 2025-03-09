@@ -92,7 +92,7 @@ class Initial_Inputs(ft.Column):
         def get_options(list):
             options=[]
             for i in list:
-                options.append(ft.dropdown.Option(key=i['key']))
+                options.append(ft.DropdownOption(key=i['key']))
             return options
 
         options_1 = [
