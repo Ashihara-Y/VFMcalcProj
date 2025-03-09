@@ -37,55 +37,55 @@ class Initial_Inputs(ft.Column):
     def handle_change_00(self, e):
         sl_value = e.control.value
         self.slider_value00.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_01(self, e):
         sl_value = e.control.value
         self.slider_value01.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_02(self, e):
         sl_value = e.control.value
         self.slider_value02.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_03(self, e):
         sl_value = e.control.value
         self.slider_value03.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_04(self, e):
         sl_value = e.control.value
         self.slider_value04.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_05(self, e):
         sl_value = e.control.value
         self.slider_value05.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_06(self, e):
         sl_value = e.control.value
         self.slider_value06.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_07(self, e):
         sl_value = e.control.value
         self.slider_value07.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_08(self, e):
         sl_value = e.control.value
         self.slider_value08.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_09(self, e):
         sl_value = e.control.value
         self.slider_value09.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_10(self, e):
         sl_value = e.control.value
         self.slider_value10.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_11(self, e):
         sl_value = e.control.value
         self.slider_value11.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_12(self, e):
         sl_value = e.control.value
         self.slider_value12.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
 
 
     def build(self):
