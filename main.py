@@ -86,32 +86,32 @@ def main(page: ft.Page):
             )
         page.update()
 
-    def view_pop(view):
+    def view_pop(view: ft.View):
         #print("View popped:", e.view)
         page.views.pop()
         top_view = page.views[-1]
         page.go(top_view.route)
 
-    def open_final_inputs(e):
+    def open_final_inputs(view: ft.View):
         page.go("/final_inputs")
 
     #def open_results_summary(e):
     #    page.go("/results_summary")
 
-    def open_results_detail(e):
+    def open_results_detail(view: ft.View):
         #Results()        
         page.go("/results_detail")
 
-    def open_saved_list(e):
+    def open_saved_list(view: ft.View):
         page.go("/view_saved")
 
-    def open_initial_inputs(e):
+    def open_initial_inputs(view: ft.View):
         page.go("/")
     
-    def result_to_excel(e):
+    def result_to_excel(view: ft.View):
         export_to_excel.export_to_excel()
 
-    def download_excel(e):  
+    def download_excel(view: ft.View):  
         page.go("/download")
         download.download()
 
