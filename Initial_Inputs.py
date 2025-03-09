@@ -11,7 +11,7 @@ from tinydb import TinyDB, Query
 from decimal import *
 from zoneinfo import ZoneInfo
 
-class Initial_Inputs(ft.Column):
+class Initial_Inputs(ft.Row):
 
     def __init__(self):
         super().__init__()
