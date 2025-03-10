@@ -15,20 +15,17 @@ class Initial_Inputs(ft.Column):
     def __init__(self):
         super().__init__()
         self.title = "初期入力"
-        #self.width = 500
-        #self.height = 2000
+        self.width = 500
+        self.height = 2000
         self.resizable = True
 
-
-
-    def build(self):
         def get_options(op_list):
             options=[]
             for i in op_list:
                 options.append(
                     ft.DropdownOption(
-                        key=i, 
-                        content = ft.Text(i)
+                        i, 
+                        #content = ft.Text(i)
                     )
                 )
             return options
@@ -39,34 +36,34 @@ class Initial_Inputs(ft.Column):
             "市町村",
             ]
         options_2 = [
-                {'key':"サービス購入型"},
+                "サービス購入型",
                 #{key:"コンセッション（スタジアム・アリーナタイプ）"},
                 #{key: "コンセッション（下水道タイプ）"},
             ]
         options_3 = [
-                {'key':"BTO"},
-                {'key':"DBO(SPCなし)"},
-                {'key':"BOT/BOO"},
-                {'key':"BT/DB(いずれもSPCなし)"},
+                "BTO",
+                "DBO(SPCなし)",
+                "BOT/BOO",
+                "BT/DB(いずれもSPCなし)",
             ]
         options_4 = [
-                {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
-                {'key':"6"}, {'key':"7"}, {'key':"8"}, {'key':"9"}, {'key':"10"},
-                {'key':"11"},{'key':"12"},{'key':"13"},{'key':"14"},{'key':"15"},
-                {'key':"16"},{'key':"17"},{'key':"18"},{'key':"19"},{'key':"20"},
-                {'key':"21"},{'key':"22"},{'key':"23"},{'key':"24"},{'key':"25"},
-                {'key':"26"},{'key':"27"},{'key':"28"},{'key':"29"},{'key':"30"},
+                "1", "2", "3", "4", "5",
+                "6", "7", "8", "9", "10",
+                "11","12","13","14","15",
+                "16","17","18","19","20",
+                "21","22","23","24","25",
+                "26","27","28","29","30",
             ]
         options_5 = [
-                {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
-                {'key':"6"}, {'key':"7"}, {'key':"8"}, {'key':"9"}, {'key':"10"},
-                {'key':"11"},{'key':"12"},{'key':"13"},{'key':"14"},{'key':"15"},
-                {'key':"16"},{'key':"17"},{'key':"18"},{'key':"19"},{'key':"20"},
-                {'key':"21"},{'key':"22"},{'key':"23"},{'key':"24"},{'key':"25"},
-                {'key':"26"},
+                "1", "2", "3", "4", "5",
+                "6", "7", "8", "9", "10",
+                "11","12","13","14","15",
+                "16","17","18","19","20",
+                "21","22","23","24","25",
+                "26",
             ]
         options_6 = [
-                {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
+                "1", "2", "3", "4", "5",
             ]
 
         self.dd1 = ft.Dropdown(
@@ -109,23 +106,23 @@ class Initial_Inputs(ft.Column):
             options=get_options(options_6),
         )
         self.b = ft.ElevatedButton(text="初期値の入力", on_click=self.button_clicked)
-        return ft.Column(
-                    [
-                        self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
-                        self.b
-                    ],
-                    scroll=ft.ScrollMode.AUTO,
-                    height=1500,
-                )
 
+        self.controls = [
+            self.dd1,
+            self.dd2,
+            self.dd3,
+            self.dd4,
+            self.dd5,
+            self.dd6,
+            self.b,
+        ]
+
+        
     def button_clicked(self, e):
         # jgb_rates.JGB_rates_conv()
         if self.dd3.value == "BT/DB(いずれもSPCなし)":
             self.dd4.value = self.dd6.value
         
-        #if self.dd3.value == "O":
-        #    self.dd5.value = "0"
-
         proj_years = int(self.dd4.value)
         const_years = int(self.dd6.value)
         ijikanri_unnei_years = proj_years - const_years
@@ -135,9 +132,6 @@ class Initial_Inputs(ft.Column):
 
         calc_id = timeflake.random()
         dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
-        #dtime_year = dtime.year
-        #dtime_month = dtime.month
-        #dtime_day = dtime.day
         const_start_date = datetime.date(dtime.year, dtime.month, dtime.day).strftime('%Y-%m-%d')
         
         chisai_shoukan_kikan = int(self.dd5.value)
@@ -180,7 +174,6 @@ class Initial_Inputs(ft.Column):
             .iloc[-1, 1]
         )
         gonensai_rimawari = JGB_rates_df.loc["5年"].iloc[0]
-        # gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
         kitai_bukka = kitai_bukka_j - gonensai_rimawari
 
         if self.dd2.value == "サービス購入型" and self.dd3.value == "BTO":
@@ -206,20 +199,16 @@ class Initial_Inputs(ft.Column):
             tourokumenkyozei_ritsu = 0.0
             houjinjuminzei_ritsu_todouhuken = 0.0
             houjinjuminzei_ritsu_shikuchoson = 0.0
-            riyou_ryoukin = 0.0
 
         if self.dd1.value == "国":
-            zei_modori = 0.278
             hojo = 0.0
             kisai_jutou = 0.0
             kisai_koufu = 0.0
         elif self.dd1.value == "都道府県":
-            zei_modori = 0.0578
             hojo = 0.5
             kisai_jutou = 0.75
             kisai_koufu = 0.30
         elif self.dd1.value == "市町村":
-            zei_modori = 0.084
             hojo = 0.300
             kisai_jutou = 0.750
             kisai_koufu = 0.300
@@ -255,7 +244,6 @@ class Initial_Inputs(ft.Column):
             "kisai_jutou": str(Decimal(kisai_jutou)),
             "kisai_koufu": str(Decimal(kisai_koufu)),
             "hojo_ritsu": str(Decimal(hojo)),
-            "zeimae_rieki": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
             "SPC_keihi": str(Decimal(20.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
             "SPC_fee": str(SPC_fee),
             "SPC_shihon": str(SPC_shihon),
@@ -273,16 +261,18 @@ class Initial_Inputs(ft.Column):
             "houjinjuminzei_ritsu_shikuchoson": str(houjinjuminzei_ritsu_shikuchoson),
         }
 
-        #for item in list(initial_inputs.values()):
-        #    if not item:
-        #        self.page.go("/")
-        #    else:
-        #        pass
-
-
         if os.path.exists("ii_db2.json"):
             os.remove("ii_db2.json")
         db = TinyDB('ii_db2.json')
         db.insert(initial_inputs)
         db.close()
         self.page.go("/final_inputs")
+
+def main(page: ft.Page):
+    page.add(
+            Initial_Inputs()
+    )
+
+
+#ft.app(target=main, view=ft.AppView.WEB_BROWSER)
+ft.app(target=main)

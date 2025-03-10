@@ -1,7 +1,7 @@
 import sys
 sys.dont_write_bytecode = True
 import flet as ft
-from Initial_Inputs import Initial_Inputs
+#from Initial_Inputs import Initial_Inputs
 from Final_Inputs import Final_Inputs
 from Resultview2 import Results
 from view_saved import View_saved
@@ -10,6 +10,7 @@ import export_to_excel
 import download
 import logging
 import Initial_Inputs2
+import Final_Inputs2
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -26,7 +27,7 @@ def main(page: ft.Page):
                 "/",
                 [
                     ft.AppBar(title=ft.Text("初期入力")),
-                    Initial_Inputs2.Initial_Inputs(),
+                    Initial_Inputs2,
                 ],
                 scroll=ft.ScrollMode.AUTO,
             )
@@ -38,7 +39,7 @@ def main(page: ft.Page):
                     "/final_inputs",
                     [
                         ft.AppBar(title=ft.Text("入力確認と追加入力")),
-                        Final_Inputs(),
+                        Final_Inputs2,
                         #ft.ElevatedButton("計算", on_click=open_saved_list),
                     ],
                     scroll=ft.ScrollMode.AUTO,
@@ -121,4 +122,5 @@ def main(page: ft.Page):
     page.go(page.route)
 
 
-ft.app(target=main, view=ft.AppView.WEB_BROWSER)
+#ft.app(target=main, view=ft.AppView.WEB_BROWSER)
+ft.app(target=main)
