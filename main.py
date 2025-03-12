@@ -29,7 +29,7 @@ def main(page: ft.Page):
                     ft.AppBar(title=ft.Text("初期入力")),
                     Initial_Inputs2,
                 ],
-                scroll=ft.ScrollMode.AUTO,
+                scroll=ft.ScrollMode.ADAPTIVE,
             )
         )
         if page.route == "/final_inputs":

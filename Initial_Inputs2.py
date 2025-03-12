@@ -16,8 +16,10 @@ class Initial_Inputs(ft.Column):
         super().__init__()
         self.title = "初期入力"
         self.width = 500
-        self.height = 2000
+        self.height = 3000
         self.resizable = True
+        self.scroll=ft.ScrollMode.ADAPTIVE, 
+
 
         def get_options(op_list):
             options=[]
@@ -47,20 +49,14 @@ class Initial_Inputs(ft.Column):
                 "BT/DB(いずれもSPCなし)",
             ]
         options_4 = [
-                "1", "2", "3", "4", "5",
-                "6", "7", "8", "9", "10",
-                "11","12","13","14","15",
-                "16","17","18","19","20",
-                "21","22","23","24","25",
-                "26","27","28","29","30",
+                "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "11","12","13","14","15","16","17","18","19","20",
+                "21","22","23","24","25","26","27","28","29","30",
             ]
         options_5 = [
-                "1", "2", "3", "4", "5",
-                "6", "7", "8", "9", "10",
-                "11","12","13","14","15",
-                "16","17","18","19","20",
-                "21","22","23","24","25",
-                "26",
+                "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "11","12","13","14","15","16","17","18","19","20",
+                "21","22","23","24","25","26",
             ]
         options_6 = [
                 "1", "2", "3", "4", "5",
@@ -69,53 +65,266 @@ class Initial_Inputs(ft.Column):
         self.dd1 = ft.Dropdown(
             label="管理者の種別",
             #hint_text="管理者の種別を選択してください",
-            #width=400,
+            width=400,
             options=get_options(options_1),
         )
         self.dd2 = ft.Dropdown(
             label="事業の方式",
             #hint_text="事業の方式を選択してください",
-            #width=400,
+            width=400,
             options=get_options(options_2),
         )
         self.dd3 = ft.Dropdown(
             label="事業の類型",
             #hint_text="事業の類型を選択してください",
-            #width=400,
+            width=400,
             options=get_options(options_3),
         )
         self.dd4 = ft.Dropdown(
             label="事業期間",
             #hint_text="事業期間を選択してください(施設整備期間以上)",
-            #width=400,
-            #value="20",
+            width=400,
+            value="20",
             options=get_options(options_4),
         )
         self.dd5 = ft.Dropdown(
             label="地方債償還期間",
             #hint_text="地方債償還期間を選択してください",
-            #width=400,
-            #value="20",
+            width=400,
+            value="20",
             options=get_options(options_5),
         )
         self.dd6 = ft.Dropdown(
             label="施設整備期間",
             #hint_text="施設整備期間を選択してください",
-            #width=400,
-            #value="1",
+            width=400,
+            value="1",
             options=get_options(options_6),
         )
         self.b = ft.ElevatedButton(text="初期値の入力", on_click=self.button_clicked)
 
-        self.controls = [
-            self.dd1,
-            self.dd2,
-            self.dd3,
-            self.dd4,
-            self.dd5,
-            self.dd6,
-            self.b,
-        ]
+        self.slider_value00 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value05 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value06 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value07 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value08 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+    
+
+        self.tx0 = ft.Text("施設整備費 落札価格ベース(百万円)")
+        self.sl0 = ft.Slider(
+            value=0,
+            min=0,
+            max=50000,
+            divisions=50000,
+            label="{value}百万円",
+            round=0,
+            on_change=self.handle_change_00,
+        )
+        self.tx1 = ft.Text("施設整備費 予算単価ベース(百万円)")
+        self.sl1 = ft.Slider(
+            value=0,
+            min=0,
+            max=50000,
+            divisions=50000,
+            label="{value}百万円",
+            round=0,
+            on_change=self.handle_change_01,
+        )
+        self.tx2 = ft.Text("維持管理運営費(年額)人件費 落札価格ベース(百万円)")
+        self.sl2 = ft.Slider(
+            value=0,
+            min=0,
+            max=500,
+            divisions=500,
+            label="{value}百万円",
+            round=0,
+            on_change=self.handle_change_02,
+        )
+        self.tx3 = ft.Text("維持管理運営費(年額)人件費 予算単価ベース(百万円)")
+        self.sl3 = ft.Slider(
+            value=0,
+            min=0,
+            max=500,
+            divisions=500,
+            on_change=self.handle_change_03,
+            label="{value}百万円",
+            round=0,
+        )
+        self.tx4 = ft.Text("維持管理運営費(年額)修繕費 落札価格ベース(百万円)")
+        self.sl4 = ft.Slider(
+            value=0,
+            min=0,
+            max=100,
+            divisions=100,
+            label="{value}百万円",
+            round=0,
+            on_change=self.handle_change_04,
+        )
+        self.tx5 = ft.Text("維持管理運営費(年額)修繕費 予算単価ベース(百万円)")
+        self.sl5 = ft.Slider(
+            value=0,
+            min=0,
+            max=100,
+            divisions=100,
+            label="{value}百万円",
+            round=0,
+            on_change=self.handle_change_05,
+        )
+        self.tx6 = ft.Text("維持管理運営費(年額)動力費 落札価格ベース(百万円)")
+        self.sl6 = ft.Slider(
+            value=0,
+            min=0,
+            max=100,
+            divisions=100,
+            label="{value}百万円",
+            round=0,
+            on_change=self.handle_change_06,
+        )
+        self.tx7 = ft.Text("維持管理運営費(年額)動力費 予算単価ベース(百万円)")
+        self.sl7 = ft.Slider(
+            value=0,
+            min=0,
+            max=100,
+            divisions=100,
+            label="{value}百万円",
+            round=0,
+            on_change=self.handle_change_07,
+        )
+        self.tx8 = ft.Text("施設整備費の効率性(%)(推奨:5%")
+        self.sl8 = ft.Slider(
+            value=5,
+            min=0.0,
+            max=20,
+            divisions=200,
+            label="{value}%",
+            round=1,
+            on_change=self.handle_change_08,
+        )
+        self.tx9 = ft.Text("維持管理運営費の効率性(人件費,%)(推奨:5%)")
+        self.sl9 = ft.Slider(
+            value=5,
+            min=0.0,
+            max=20,
+            divisions=200,
+            label="{value}%",
+            round=1,
+            on_change=self.handle_change_09,
+        )
+        self.tx10 = ft.Text("維持管理運営費の効率性(修繕費,%)(推奨:5%)")
+        self.sl10 = ft.Slider(
+            value=5,
+            min=0.0,
+            max=20,
+            divisions=200,
+            label="{value}%",
+            round=1,
+            on_change=self.handle_change_10,
+        )
+        self.tx11 = ft.Text("維持管理運営費の効率性(動力費,%)(推奨:5%)")
+        self.sl11 = ft.Slider(
+            value=5,
+            min=0.0,
+            max=20,
+            divisions=200,
+            label="{value}%",
+            round=1,
+            on_change=self.handle_change_11,
+        )
+        self.tx12 = ft.Text("落札率(競争の効果反映,%)(推奨:95%)")
+        self.sl12 = ft.Slider(
+            value=95,
+            min=0,
+            max=100,
+            divisions=100,
+            label="{value}%",
+            on_change=self.handle_change_12,
+        )
+        col = ft.Column(
+                [
+                self.dd1,self.dd2,self.dd3,self.dd4,self.dd5,self.dd6,
+                ft.Divider(height=1, color="amber"),
+                self.tx0,  self.slider_value00, self.sl0, ft.Divider(height=1, color="amber"),
+                self.tx1,  self.slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
+                self.tx2,  self.slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
+                self.tx3,  self.slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
+                self.tx4,  self.slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
+                self.tx5,  self.slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
+                self.tx6,  self.slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
+                self.tx7,  self.slider_value07, self.sl7, ft.Divider(height=1, color="amber"), 
+                self.tx8,  self.slider_value08, self.sl8, ft.Divider(height=1, color="amber"),
+                self.tx9,  self.slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
+                self.tx10, self.slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
+                self.tx11, self.slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
+                self.tx12, self.slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
+                self.b,
+                ],
+                scroll=ft.ScrollMode.ALWAYS, 
+                #width=800,
+                height=1800,
+            )
+
+        self.controls = [col]
+            
+    def handle_change_00(self, e):
+        sl_value = e.control.value
+        self.slider_value00.value = str(sl_value)
+        self.page.update()
+    def handle_change_01(self, e):
+        sl_value = e.control.value
+        self.slider_value01.value = str(sl_value)
+        self.page.update()
+    def handle_change_02(self, e):
+        sl_value = e.control.value
+        self.slider_value02.value = str(sl_value)
+        self.page.update()
+    def handle_change_03(self, e):
+        sl_value = e.control.value
+        self.slider_value03.value = str(sl_value)
+        self.page.update()
+    def handle_change_04(self, e):
+        sl_value = e.control.value
+        self.slider_value04.value = str(sl_value)
+        self.page.update()
+    def handle_change_05(self, e):
+        sl_value = e.control.value
+        self.slider_value05.value = str(sl_value)
+        self.page.update()
+    def handle_change_06(self, e):
+        sl_value = e.control.value
+        self.slider_value06.value = str(sl_value)
+        self.page.update()
+    def handle_change_07(self, e):
+        sl_value = e.control.value
+        self.slider_value07.value = str(sl_value)
+        self.page.update()
+    def handle_change_08(self, e):
+        sl_value = e.control.value
+        self.slider_value08.value = str(sl_value)
+        self.page.update()
+    def handle_change_09(self, e):
+        sl_value = e.control.value
+        self.slider_value09.value = str(sl_value)
+        self.page.update()
+    def handle_change_10(self, e):
+        sl_value = e.control.value
+        self.slider_value10.value = str(sl_value)
+        self.page.update()
+    def handle_change_11(self, e):
+        sl_value = e.control.value
+        self.slider_value11.value = str(sl_value)
+        self.page.update()
+    def handle_change_12(self, e):
+        sl_value = e.control.value
+        self.slider_value12.value = str(sl_value)
+        self.page.update()
 
         
     def button_clicked(self, e):
