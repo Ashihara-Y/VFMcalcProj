@@ -269,6 +269,7 @@ class Initial_Inputs(ft.Column):
                 scroll=ft.ScrollMode.ALWAYS, 
                 #width=800,
                 height=1800,
+                expand=True,
             )
 
         self.controls = [col]
