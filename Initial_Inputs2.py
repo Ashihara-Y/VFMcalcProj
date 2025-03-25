@@ -15,10 +15,14 @@ class Initial_Inputs(ft.Column):
     def __init__(self):
         super().__init__()
         self.title = "初期入力"
-        self.width = 500
+        #self.width = 500
         self.height = 3000
         self.resizable = True
-        self.scroll=ft.ScrollMode.ADAPTIVE, 
+        self.scroll=ft.ScrollMode.AUTO 
+        self.expand=True
+        #self.auto_scroll=True
+
+
 
 
         def get_options(op_list):
@@ -248,7 +252,7 @@ class Initial_Inputs(ft.Column):
             on_change=self.handle_change_12,
         )
         col = ft.Column(
-                [
+                controls=[
                 self.dd1,self.dd2,self.dd3,self.dd4,self.dd5,self.dd6,
                 ft.Divider(height=1, color="amber"),
                 self.tx0,  self.slider_value00, self.sl0, ft.Divider(height=1, color="amber"),
@@ -266,10 +270,11 @@ class Initial_Inputs(ft.Column):
                 self.tx12, self.slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
                 self.b,
                 ],
-                scroll=ft.ScrollMode.ALWAYS, 
+                scroll=ft.ScrollMode.AUTO, 
                 #width=800,
-                height=1800,
+                #height=1800,
                 expand=True,
+                auto_scroll=True
             )
 
         self.controls = [col]
