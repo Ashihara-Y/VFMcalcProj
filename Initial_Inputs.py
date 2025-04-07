@@ -19,6 +19,7 @@ class Initial_Inputs(ft.Column):
         self.width = 500
         self.height = 2000
         self.resizable = True
+        self.expand=True
 
         self.slider_value00 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         self.slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
