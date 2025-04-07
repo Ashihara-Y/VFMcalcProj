@@ -26,7 +26,7 @@ def main(page: ft.Page):
                     ft.AppBar(title=ft.Text("初期入力")),
                     Initial_Inputs(),
                 ],
-                scroll=ft.ScrollMode.ALWAYS,
+                scroll=ft.ScrollMode.AUTO,
             ),
         )
         if page.route == "/final_inputs":
@@ -39,7 +39,7 @@ def main(page: ft.Page):
                         Final_Inputs(),
                         #ft.ElevatedButton("計算", on_click=open_saved_list),
                     ],
-                    scroll=ft.ScrollMode.ALWAYS,
+                    scroll=ft.ScrollMode.AUTO,
                 ),
             )
         elif page.route == "/results_detail":
@@ -54,7 +54,7 @@ def main(page: ft.Page):
                         ft.ElevatedButton("この結果をExcelに書き出す", on_click=result_to_excel),
                         ft.ElevatedButton("出力したファイルをダウンロード", on_click=download_excel),
                     ],
-                    scroll=ft.ScrollMode.ALWAYS,
+                    scroll=ft.ScrollMode.AUTO,
                 ),
             )
         elif page.route == "/view_saved":
@@ -67,7 +67,7 @@ def main(page: ft.Page):
                         View_saved(),
                         ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],
-                    scroll=ft.ScrollMode.ALWAYS,
+                    scroll=ft.ScrollMode.AUTO,
                 ),
             )
         elif page.route == "/download":
@@ -80,7 +80,7 @@ def main(page: ft.Page):
                         download.download(),
                         #ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],
-                    scroll=ft.ScrollMode.ALWAYS,
+                    scroll=ft.ScrollMode.AUTO,
                 ),
             )
         page.update()
