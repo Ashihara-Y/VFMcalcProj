@@ -17,9 +17,10 @@ class Initial_Inputs(ft.Column):
         super().__init__()
         self.title = "初期入力"
         self.width = 500
-        self.height = 2000
+        self.height = 3000
         self.resizable = True
         self.expand=True
+        self.scroll=ft.ScrollMode.AUTO
 
         self.slider_value00 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         self.slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
