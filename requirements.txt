@@ -1,5 +1,5 @@
 dateutils
-'flet[all]'
+flet[all]
 #flet-cli =< 0.27
 #flet-core =< 0.27
 #flet-desktop  < 0.27
