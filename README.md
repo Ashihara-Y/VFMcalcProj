@@ -1,8 +1,69 @@
-==Notice==
-- Please install prerequisit packages with requirements.txt.
-- To create rates-CSV files(jgbcm_all.csv, jrb_rates.csv, BOJ_ExpInflRate_down.csv), please refer such files in Build branch.
-- To evaluate the app, please run main.py (cf. "python main.py" or "flet main.py")
+# Vfmcalcproj app
 
-Please refer on the detail to the following link made by DeepWiki.
-[Detail by DeepWiki](https://deepwiki.com/Ashihara-Y/VFMcalcProj/1-overview)
-...
+## Run the app
+
+### uv
+
+Run as a desktop app:
+
+```bash
+uv run flet run
+```
+
+Run as a web app:
+
+```bash
+uv run flet run --web
+```
+
+For more details on running the app, refer to the [Getting Started Guide](https://docs.flet.dev/).
+
+## Build the app
+
+### Android
+
+```bash
+flet build apk -v
+```
+
+For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://docs.flet.dev/publish/android/).
+
+### iOS
+
+```bash
+flet build ipa -v
+```
+
+For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://docs.flet.dev/publish/ios/).
+
+### macOS
+
+```bash
+flet build macos -v
+```
+
+For more details on building macOS package, refer to the [macOS Packaging Guide](https://docs.flet.dev/publish/macos/).
+
+### Linux
+
+```bash
+flet build linux -v
+```
+
+For more details on building Linux package, refer to the [Linux Packaging Guide](https://docs.flet.dev/publish/linux/).
+
+### Windows
+
+```bash
+flet build windows -v
+```
+
+For more details on building Windows package, refer to the [Windows Packaging Guide](https://docs.flet.dev/publish/windows/).
+
+### Web
+
+```bash
+flet build web -v
+```
+
+For more details on building Web app, refer to the [Web Packaging Guide](https://docs.flet.dev/publish/web/).
