@@ -16,9 +16,72 @@ class Final_Inputs(ft.Column):
     def __init__(self):
         super().__init__()
         self.title = "最終入力・確認"
-        self.width = 500
+        #self.width = 500
         self.height = 3000
         self.resizable = True
+        self.scroll=ft.ScrollMode.AUTO
+        self.expand=True
+
+        db = TinyDB("ii_db.json")
+        self.initial_inputs = db.all()[0]        
+
+        date_format = '%Y-%m-%d'
+        date_dt = datetime.datetime.strptime(self.initial_inputs["const_start_date"], date_format)
+        const_start_year = date_dt.year
+        const_start_month = date_dt.month
+        const_start_day = date_dt.day
+
+        def get_options(op_list):
+            options = []
+            for i in op_list:
+                options.append(
+                    ft.DropdownOption(i,)
+                    )
+            return options
+
+        options_0 = [
+                str(const_start_year),  str(const_start_year+1), str(const_start_year+2), 
+                str(const_start_year+3),str(const_start_year+4), str(const_start_year+5), 
+                str(const_start_year+6),str(const_start_year+7), str(const_start_year+8), 
+                str(const_start_year+9),str(const_start_year+10),
+        ]
+        options_1 = [
+                "1", "2", "3", "4",  "5",  "6",
+                "7", "8", "9","10", "11", "12",
+        ]
+        options_2 = [
+                "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", 
+                "11","12","13","14","15","16","17","18","19","20", 
+                "21","22","23","24","25","26","27","28","29","30",
+                "31", 
+        ]
+        self.dd00 = ft.DropdownM2(
+            value=const_start_year,
+            label="施設整備開始年",
+            #hint_text="施設整備開始年を選択してください",
+            width=400,
+            options=get_options(options_0),
+        )
+        self.dd01 = ft.DropdownM2(
+            label="施設整備開始月",
+            #hint_text="施設整備開始月を選択してください",
+            width=400,
+            value=const_start_month,
+            options=get_options(options_1),
+        )
+        self.dd02 = ft.DropdownM2(
+            label="施設整備開始日",
+            #hint_text="施設整備開始日を選択してください",
+            width=400,
+            value=const_start_day,
+            options=get_options(options_2),
+        )
+        self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
+
+        self.sw01 = ft.Switch(
+            label="SPC経費の扱い（デフォルト：サービス対価で支払）",
+            value=1,
+        )
 
         self.slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         self.slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -40,202 +103,6 @@ class Final_Inputs(ft.Column):
         self.slider_value18 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         self.slider_value19 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         self.slider_value20 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-
-        db = TinyDB("ii_db.json")
-        self.initial_inputs = db.all()[0]        
-
-        def handle_change_01(self, e):
-            sl_value = e.control.value
-            self.slider_value01.value = str(sl_value)
-            #self.page.update()
-        def handle_change_02(self, e):
-            sl_value = e.control.value
-            self.slider_value02.value = str(sl_value)
-            #self.page.update()
-        def handle_change_03(self, e):
-            sl_value = e.control.value
-            self.slider_value03.value = str(sl_value)
-            #self.page.update()
-        def handle_change_04(self, e):
-            sl_value = e.control.value
-            self.slider_value04.value = str(sl_value)
-            #self.page.update()
-        def handle_change_05(self, e):
-            sl_value = e.control.value
-            self.slider_value05.value = str(sl_value)
-            #self.page.update()
-        def handle_change_06(self, e):
-            sl_value = e.control.value
-            self.slider_value06.value = str(sl_value)
-            #self.page.update()
-        def handle_change_07(self, e):
-            sl_value = e.control.value
-            self.slider_value07.value = str(sl_value)
-            #self.page.update()
-        def handle_change_08(self, e):
-            sl_value = e.control.value
-            self.slider_value08.value = str(sl_value)
-            #self.page.update()
-        def handle_change_09(self, e):
-            sl_value = e.control.value
-            self.slider_value09.value = str(sl_value)
-            #self.page.update()
-        def handle_change_10(self, e):
-            sl_value = e.control.value
-            self.slider_value10.value = str(sl_value)
-            #self.page.update()
-        def handle_change_11(self, e):
-            sl_value = e.control.value
-            self.slider_value11.value = str(sl_value)
-            #self.page.update()
-        def handle_change_12(self, e):
-            sl_value = e.control.value
-            self.slider_value12.value = str(sl_value)
-            #self.page.update()
-        def handle_change_13(self, e):
-            sl_value = e.control.value
-            self.slider_value13.value = str(sl_value)
-            #self.page.update()
-        def handle_change_14(self, e):
-            sl_value = e.control.value
-            self.slider_value14.value = str(sl_value)
-            #self.page.update()
-        def handle_change_15(self, e):
-            sl_value = e.control.value
-            self.slider_value15.value = str(sl_value)
-            #self.page.update()
-        def handle_change_16(self, e):
-            sl_value = e.control.value
-            self.slider_value16.value = str(sl_value)
-            #self.page.update()
-        def handle_change_17(self, e):
-            sl_value = e.control.value
-            self.slider_value17.value = str(sl_value)
-            #self.page.update()
-        def handle_change_18(self, e):
-            sl_value = e.control.value
-            self.slider_value18.value = str(sl_value)
-            #self.page.update()
-        def handle_change_19(self, e):
-            sl_value = e.control.value
-            self.slider_value19.value = str(sl_value)
-            #self.page.update()
-        def handle_change_20(self, e):
-            sl_value = e.control.value
-            self.slider_value20.value = str(sl_value)
-            #self.page.update()
-
-        date_format = '%Y-%m-%d'
-        date_dt = datetime.datetime.strptime(self.initial_inputs["const_start_date"], date_format)
-        const_start_year = date_dt.year
-        const_start_month = date_dt.month
-        const_start_day = date_dt.day
-
-        self.tx0 = ft.Text(str("＜＜初期データ＞＞"))
-        self.tx1 = ft.Text(str("発注者区分： " + str(self.initial_inputs["mgmt_type"])))
-        self.tx2 = ft.Text(str("事業タイプ： " + str(self.initial_inputs["proj_ctgry"])))
-        self.tx3 = ft.Text(str("事業方式： " + str(self.initial_inputs["proj_type"])))
-        self.tx4 = ft.Text(str("事業期間： " + str(self.initial_inputs["proj_years"]) + "年"))
-        self.tx5 = ft.Text(str("施設整備期間： " + str(self.initial_inputs["const_years"]) + "年"))
-        self.tx6 = ft.Text(str("地方債償還据置期間： " + str(self.initial_inputs["chisai_sueoki_kikan"]) + "年"))
-    
-        self.dt1 = ft.DataTable(
-            width=1800,
-            data_row_max_height=80,
-            heading_row_height=80,
-            columns=[
-                ft.DataColumn(ft.Text("事業費項目")),
-                ft.DataColumn(ft.Text("入力値"), numeric=True),
-                ft.DataColumn(ft.Text("競争の効果反映(PSC)"), numeric=True),
-                ft.DataColumn(ft.Text("効率性反映(PFI-LCC)"), numeric=True), 
-            ],         
-            rows=[
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("施設整備費")),
-                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org_LCC"])),                
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("維持管理運営費(人件費)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org_LCC"])),                
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("維持管理運営費(修繕費)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org_LCC"])),                
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("維持管理運営費(動力費)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org_LCC"])),                
-                        ],
-                ),
-            ],
-        )
-        self.dt2 = ft.DataTable(
-            width=1800,
-            columns=[
-                ft.DataColumn(ft.Text("税目")),
-                ft.DataColumn(ft.Text("標準／均等割"), numeric=True),
-                ft.DataColumn(ft.Text("税率"), numeric=True),
-            ],         
-            rows=[
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("法人税")),
-                        ft.DataCell(ft.Text("-")),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinzei_ritsu"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("法人住民税(都道府県)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("法人住民税(市区町村)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("不動産取得税")),
-                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_hyoujun"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_ritsu"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("固定資産税")),
-                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_hyoujun"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_ritsu"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("登録免許税")),
-                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_hyoujun"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_ritsu"])),
-                        ],
-                ),
-            ],
-        )
 
         self.tx7 = ft.Text("地方債償還期間(年)")
         self.sl1 = ft.Slider(
@@ -347,10 +214,6 @@ class Final_Inputs(ft.Column):
             round=1,
             on_change=self.handle_change_11,
         )
-        self.sw01 = ft.Switch(
-            label="SPC経費の扱い（デフォルト：サービス対価で支払）",
-            value=1,
-        )
         self.tx19 = ft.Text("アドバイザリー等経費(百万円)")
         self.sl13 = ft.Slider(
             value=0,
@@ -381,56 +244,6 @@ class Final_Inputs(ft.Column):
             round=2,
             on_change=self.handle_change_15,
         )
-        self.dd00 = ft.DropdownM2(
-            value=const_start_year,
-            label="施設整備開始年",
-            hint_text="施設整備開始年を選択してください",
-            width=400,
-            options=[
-                ft.dropdown.Option(str(const_start_year)), 
-                ft.dropdown.Option(str(const_start_year+1)), 
-                ft.dropdown.Option(str(const_start_year+2)), 
-                ft.dropdown.Option(str(const_start_year+3)),
-                ft.dropdown.Option(str(const_start_year+4)), 
-                ft.dropdown.Option(str(const_start_year+5)), 
-                ft.dropdown.Option(str(const_start_year+6)),
-                ft.dropdown.Option(str(const_start_year+7)), 
-                ft.dropdown.Option(str(const_start_year+8)), 
-                ft.dropdown.Option(str(const_start_year+9)),
-                ft.dropdown.Option(str(const_start_year+10)),
-            ],
-        )
-        self.dd01 = ft.DropdownM2(
-            label="施設整備開始月",
-            hint_text="施設整備開始月を選択してください",
-            width=400,
-            value=const_start_month,
-            options=[
-                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
-                ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
-                ft.dropdown.Option("7"),  ft.dropdown.Option("8"),  ft.dropdown.Option("9"),
-                ft.dropdown.Option("10"), ft.dropdown.Option("11"), ft.dropdown.Option("12"),
-            ],
-        )
-        self.dd02 = ft.DropdownM2(
-            label="施設整備開始日",
-            hint_text="施設整備開始日を選択してください",
-            width=400,
-            value=const_start_day,
-            options=[
-                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
-                ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
-                ft.dropdown.Option("7"),  ft.dropdown.Option("8"),  ft.dropdown.Option("9"),
-                ft.dropdown.Option("10"), ft.dropdown.Option("11"), ft.dropdown.Option("12"),
-                ft.dropdown.Option("13"), ft.dropdown.Option("14"), ft.dropdown.Option("15"),
-                ft.dropdown.Option("16"), ft.dropdown.Option("17"), ft.dropdown.Option("18"),
-                ft.dropdown.Option("19"), ft.dropdown.Option("20"), ft.dropdown.Option("21"),
-                ft.dropdown.Option("22"), ft.dropdown.Option("23"), ft.dropdown.Option("24"),
-                ft.dropdown.Option("25"), ft.dropdown.Option("26"), ft.dropdown.Option("27"),
-                ft.dropdown.Option("28"), ft.dropdown.Option("29"), ft.dropdown.Option("30"),
-                ft.dropdown.Option("31"), 
-            ],
-        )
         self.tx25 = ft.Text("地方債償還据置期間")
         self.sl19 = ft.Slider(
             value=self.initial_inputs['chisai_sueoki_kikan'],
@@ -449,7 +262,112 @@ class Final_Inputs(ft.Column):
             label="{value}",
             on_change=self.handle_change_20,
         )
-        self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
+
+        self.tx0 = ft.Text(str("＜＜初期データ＞＞"))
+        self.tx1 = ft.Text(str("発注者区分： " + str(self.initial_inputs["mgmt_type"])))
+        self.tx2 = ft.Text(str("事業タイプ： " + str(self.initial_inputs["proj_ctgry"])))
+        self.tx3 = ft.Text(str("事業方式： " + str(self.initial_inputs["proj_type"])))
+        self.tx4 = ft.Text(str("事業期間： " + str(self.initial_inputs["proj_years"]) + "年"))
+        self.tx5 = ft.Text(str("施設整備期間： " + str(self.initial_inputs["const_years"]) + "年"))
+        self.tx6 = ft.Text(str("地方債償還据置期間： " + str(self.initial_inputs["chisai_sueoki_kikan"]) + "年"))
+    
+        self.dt1 = ft.DataTable(
+            width=1800,
+            data_row_max_height=80,
+            heading_row_height=80,
+            columns=[
+                ft.DataColumn(ft.Text("事業費項目")),
+                ft.DataColumn(ft.Text("入力値"), numeric=True),
+                ft.DataColumn(ft.Text("競争の効果反映(PSC)"), numeric=True),
+                ft.DataColumn(ft.Text("効率性反映(PFI-LCC)"), numeric=True), 
+            ],         
+            rows=[
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("施設整備費")),
+                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org_LCC"])),                
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("維持管理運営費(人件費)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org_LCC"])),                
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("維持管理運営費(修繕費)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org_LCC"])),                
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("維持管理運営費(動力費)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org_LCC"])),                
+                        ],
+                ),
+            ],
+        )
+        self.dt2 = ft.DataTable(
+            width=1800,
+            columns=[
+                ft.DataColumn(ft.Text("税目")),
+                ft.DataColumn(ft.Text("標準／均等割"), numeric=True),
+                ft.DataColumn(ft.Text("税率"), numeric=True),
+            ],         
+            rows=[
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("法人税")),
+                        ft.DataCell(ft.Text("-")),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinzei_ritsu"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("法人住民税(都道府県)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("法人住民税(市区町村)")),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("不動産取得税")),
+                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_hyoujun"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_ritsu"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("固定資産税")),
+                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_hyoujun"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_ritsu"])),
+                        ],
+                ),
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text("登録免許税")),
+                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_hyoujun"])),
+                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_ritsu"])),
+                        ],
+                ),
+            ],
+        )
 
         fi_lv1 = ft.ListView(
             expand=True,
@@ -559,6 +477,89 @@ class Final_Inputs(ft.Column):
                     margin=10,
             )
 
+
+
+
+    def handle_change_01(self, e):
+            sl_value = e.control.value
+            self.slider_value01.value = str(sl_value)
+            #self.page.update()
+    def handle_change_02(self, e):
+            sl_value = e.control.value
+            self.slider_value02.value = str(sl_value)
+            #self.page.update()
+    def handle_change_03(self, e):
+            sl_value = e.control.value
+            self.slider_value03.value = str(sl_value)
+            #self.page.update()
+    def handle_change_04(self, e):
+            sl_value = e.control.value
+            self.slider_value04.value = str(sl_value)
+            #self.page.update()
+    def handle_change_05(self, e):
+            sl_value = e.control.value
+            self.slider_value05.value = str(sl_value)
+            #self.page.update()
+    def handle_change_06(self, e):
+            sl_value = e.control.value
+            self.slider_value06.value = str(sl_value)
+            #self.page.update()
+    def handle_change_07(self, e):
+            sl_value = e.control.value
+            self.slider_value07.value = str(sl_value)
+            #self.page.update()
+    def handle_change_08(self, e):
+            sl_value = e.control.value
+            self.slider_value08.value = str(sl_value)
+            #self.page.update()
+    def handle_change_09(self, e):
+            sl_value = e.control.value
+            self.slider_value09.value = str(sl_value)
+            #self.page.update()
+    def handle_change_10(self, e):
+            sl_value = e.control.value
+            self.slider_value10.value = str(sl_value)
+            #self.page.update()
+    def handle_change_11(self, e):
+            sl_value = e.control.value
+            self.slider_value11.value = str(sl_value)
+            #self.page.update()
+    def handle_change_12(self, e):
+            sl_value = e.control.value
+            self.slider_value12.value = str(sl_value)
+            #self.page.update()
+    def handle_change_13(self, e):
+            sl_value = e.control.value
+            self.slider_value13.value = str(sl_value)
+            #self.page.update()
+    def handle_change_14(self, e):
+            sl_value = e.control.value
+            self.slider_value14.value = str(sl_value)
+            #self.page.update()
+    def handle_change_15(self, e):
+            sl_value = e.control.value
+            self.slider_value15.value = str(sl_value)
+            #self.page.update()
+    def handle_change_16(self, e):
+            sl_value = e.control.value
+            self.slider_value16.value = str(sl_value)
+            #self.page.update()
+    def handle_change_17(self, e):
+            sl_value = e.control.value
+            self.slider_value17.value = str(sl_value)
+            #self.page.update()
+    def handle_change_18(self, e):
+            sl_value = e.control.value
+            self.slider_value18.value = str(sl_value)
+            #self.page.update()
+    def handle_change_19(self, e):
+            sl_value = e.control.value
+            self.slider_value19.value = str(sl_value)
+            #self.page.update()
+    def handle_change_20(self, e):
+            sl_value = e.control.value
+            self.slider_value20.value = str(sl_value)
+            #self.page.update()
 
 
     def button_clicked(self, e):
