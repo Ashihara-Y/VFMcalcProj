@@ -19,6 +19,7 @@ class Initial_Inputs(ft.Column):
         self.width = 500
         self.height = 2000
         self.resizable = True
+        self.expand=True
 
         self.slider_value00 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         self.slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -37,62 +38,67 @@ class Initial_Inputs(ft.Column):
     def handle_change_00(self, e):
         sl_value = e.control.value
         self.slider_value00.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_01(self, e):
         sl_value = e.control.value
         self.slider_value01.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_02(self, e):
         sl_value = e.control.value
         self.slider_value02.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_03(self, e):
         sl_value = e.control.value
         self.slider_value03.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_04(self, e):
         sl_value = e.control.value
         self.slider_value04.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_05(self, e):
         sl_value = e.control.value
         self.slider_value05.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_06(self, e):
         sl_value = e.control.value
         self.slider_value06.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_07(self, e):
         sl_value = e.control.value
         self.slider_value07.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_08(self, e):
         sl_value = e.control.value
         self.slider_value08.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_09(self, e):
         sl_value = e.control.value
         self.slider_value09.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_10(self, e):
         sl_value = e.control.value
         self.slider_value10.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_11(self, e):
         sl_value = e.control.value
         self.slider_value11.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
     def handle_change_12(self, e):
         sl_value = e.control.value
         self.slider_value12.value = str(sl_value)
-        self.page.update()
+        #self.page.update()
 
 
     def build(self):
         def get_options(list):
             options=[]
             for i in list:
-                options.append(ft.dropdown.Option(key=i['key']))
+                options.append(
+                    ft.DropdownOption(
+                        key=i['key'], 
+                        content = ft.Text(value=i['key'])
+                    )
+                )
             return options
 
         options_1 = [
@@ -102,8 +108,8 @@ class Initial_Inputs(ft.Column):
             ]
         options_2 = [
                 {'key':"サービス購入型"},
-                #{key:"独立採算型"},
-                #{key: "混合型"}
+                #{key:"コンセッション（スタジアム・アリーナタイプ）"},
+                #{key: "コンセッション（下水道タイプ）"},
             ]
         options_3 = [
                 {'key':"BTO"},
@@ -133,41 +139,41 @@ class Initial_Inputs(ft.Column):
 
         self.dd1 = ft.Dropdown(
             label="管理者の種別",
-            hint_text="管理者の種別を選択してください",
-            width=400,
+            #hint_text="管理者の種別を選択してください",
+            #width=400,
             options=get_options(options_1),
         )
         self.dd2 = ft.Dropdown(
             label="事業の方式",
-            hint_text="事業の方式を選択してください",
-            width=400,
+            #hint_text="事業の方式を選択してください",
+            #width=400,
             options=get_options(options_2),
         )
         self.dd3 = ft.Dropdown(
             label="事業の類型",
-            hint_text="事業の類型を選択してください",
-            width=400,
+            #hint_text="事業の類型を選択してください",
+            #width=400,
             options=get_options(options_3),
         )
         self.dd4 = ft.Dropdown(
             label="事業期間",
-            hint_text="事業期間を選択してください(施設整備期間以上)",
-            width=400,
-            value="20",
+            #hint_text="事業期間を選択してください(施設整備期間以上)",
+            #width=400,
+            #value="20",
             options=get_options(options_4),
         )
         self.dd5 = ft.Dropdown(
             label="地方債償還期間",
-            hint_text="地方債償還期間を選択してください",
-            width=400,
-            value="20",
+            #hint_text="地方債償還期間を選択してください",
+            #width=400,
+            #value="20",
             options=get_options(options_5),
         )
         self.dd6 = ft.Dropdown(
             label="施設整備期間",
-            hint_text="施設整備期間を選択してください",
-            width=400,
-            value="1",
+            #hint_text="施設整備期間を選択してください",
+            #width=400,
+            #value="1",
             options=get_options(options_6),
         )
         self.tx0 = ft.Text("施設整備費 落札価格ベース(百万円)")
@@ -299,7 +305,7 @@ class Initial_Inputs(ft.Column):
             label="{value}%",
             on_change=self.handle_change_12,
         )
-        self.b = ft.Button(content="初期値の入力", on_click=self.button_clicked)
+        self.b = ft.ElevatedButton(text="初期値の入力", on_click=self.button_clicked)
         return ft.Column(
                     [
                         self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
@@ -384,7 +390,7 @@ class Initial_Inputs(ft.Column):
         chisai_shoukan_kikan = int(self.dd5.value)
 
         JGB_rates_df = pd.read_csv(
-            "../JGB_rates.csv",
+            "JGB_rates.csv",
             sep="\t",
             encoding="utf-8",
             header=None,
@@ -392,7 +398,7 @@ class Initial_Inputs(ft.Column):
         ).set_index("year")
 
         JRB_rates_df = pd.read_csv(
-            "../JRB_rates.csv",
+            "JRB_rates.csv",
             encoding="utf-8",
             sep='\t', 
             names=[0,1,2,3,4,5], 
@@ -416,7 +422,7 @@ class Initial_Inputs(ft.Column):
         chisai_sueoki_kikan = const_years
 
         kitai_bukka_j = (
-            pd.read_csv("../BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
+            pd.read_csv("BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
             .dropna()
             .iloc[-1, 1]
         )
