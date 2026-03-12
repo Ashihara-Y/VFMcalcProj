@@ -295,246 +295,242 @@ class Initial_Inputs(ft.Column):
                     height=1500,
                 )
 
-    def button_clicked(self, e):
-        # jgb_rates.JGB_rates_conv()
-        if self.dd3.value == "BT/DB(いずれもSPCなし)":
-            self.dd4.value = self.dd6.value
-        
-        #if self.dd3.value == "O":
-        #    self.dd5.value = "0"
+    def _extract_inputs():
+        mgmt_type = self.dd1.value
+        proj_ctgry = self.dd2.value
+        proj_type = self.dd3.value
 
-        proj_years = int(self.dd4.value)
-        const_years = int(self.dd6.value)
-        ijikanri_unnei_years = proj_years - const_years
+        raw_proj_years = self.dd6.value if proj_type = "BT/DB(いずれもSPCなし)" else self.dd4.value
+
+        proj_years = int(raw_proj_years) if raw_proj_years else 0
+        const_years = int(seld.dd6.value) if self.dd6.value else 0
+        chisai_shoukan_kikan = int(self.dd5.value) if self.dd5.value else 0
 
         if proj_years < const_years:
-            ft.page.go("/")
+            raise ValueError("事業期間は施設整備期間より長い必要があります。")
+        ijikanri_unnei_years = proj_years - const_years
+
+        shisetsu_seibi_org_R = Decimal(self.sl0.value)
+        shisetsu_seibi_org_Y = Decimal(self.sl1.value)
+        ijikanri_unnei_1_org_R = Decimal(self.sl2.value)
+        ijikanri_unnei_1_org_Y = Decimal(self.sl3.value)
+        ijikanri_unnei_2_org_R= Decimal(self.sl4.value)
+        ijikanri_unnei_2_org_Y = Decimal(self.sl5.value)
+        ijikanri_unnei_3_org_R = Decimal(self.sl6.value)
+        ijikanri_unnei_3_org_Y = Decimal(self.sl7.value)
+
+        reduc_shisetsu = Decimal(self.sl8.value) / Decimal(100)
+        reduc_ijikanri_1 = Decimal(self.sl9.value) / Decimal(100)
+        reduc_ijikanri_2 = Decimal(self.sl10.value) / Decimal(100)
+        reduc_ijikanri_3 = Decimal(self.sl11.value) / Decimal(100)
+        rakusatsu_ritsu = Decimal(self.sl12.value) / Decimal(100)
+
+        return {
+            'mgmt_type': mgmt_type,
+            'proj_ctgry': proj_ctgry,
+            'proj_type': proj_type,
+
+            'proj_years': proj_years,
+            'const_years': const_years,
+            'chisai_shoukan_kikan': chisai_shoukan_kikan,
+            'ijikanri_unnei_years': ijikanri_unnei_years,
+
+            'shisetsu_seibi_org_R': shisetsu_seibi_org_R,
+            'shisetsu_seibi_org_Y': shisetsu_seibi_org_Y,
+            'ijikanri_unnei_1_org_R': ijikanri_unnei_1_org_R,
+            'ijikanri_unnei_1_org_Y': ijikanri_unnei_1_org_Y,
+            'ijikanri_unnei_2_org_R': ijikanri_unnei_2_org_R,
+            'ijikanri_unnei_2_org_Y': ijikanri_unnei_2_org_Y,
+            'ijikanri_unnei_3_org_R': ijikanri_unnei_3_org_R,
+            'ijikanri_unnei_3_org_Y': ijikanri_unnei_3_org_Y,
+
+            'reduc_shisetsu': reduc_shisetsu,
+            'reduc_ijikanri_1': reduc_ijikanri_1,
+            'reduc_ijikanri_2': reduc_ijikanri_2,
+            'reduc_ijikanri_3': reduc_ijikanri_3,
+            'rakusatsu_ritsu': rakusatsu_ritsu
+        }
+    
+    def _calculate_financials(self, inputs):
+        def to_dec(val):
+            return Decimal(val)..quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         calc_id = timeflake.random()
         dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
-        #dtime_year = dtime.year
-        #dtime_month = dtime.month
-        #dtime_day = dtime.day
         const_start_date = datetime.date(dtime.year, dtime.month, dtime.day).strftime('%Y-%m-%d')
-        
-        shisetsu_seibi_org_R = Decimal(self.sl0.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        shisetsu_seibi_org_Y = Decimal(self.sl1.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        shisetsu_seibi_org = Decimal(shisetsu_seibi_org_R + shisetsu_seibi_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_1_org_R = Decimal(self.sl2.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_1_org_Y = Decimal(self.sl3.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_1_org = Decimal(ijikanri_unnei_1_org_R + ijikanri_unnei_1_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_2_org_R= Decimal(self.sl4.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_2_org_Y = Decimal(self.sl5.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_2_org = Decimal(ijikanri_unnei_2_org_R + ijikanri_unnei_2_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_3_org_R = Decimal(self.sl6.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_3_org_Y = Decimal(self.sl7.value).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_3_org = Decimal(ijikanri_unnei_3_org_R + ijikanri_unnei_3_org_Y).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        reduc_shisetsu = Decimal(self.sl8.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        reduc_ijikanri_1 = Decimal(self.sl9.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        reduc_ijikanri_2 = Decimal(self.sl10.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        reduc_ijikanri_3 = Decimal(self.sl11.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        rakusatsu_ritsu = Decimal(self.sl12.value / 100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
-        shisetsu_seibi_org_LCC = Decimal(shisetsu_seibi_org * (1- reduc_shisetsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        shisetsu_seibi = Decimal(shisetsu_seibi_org_R + (shisetsu_seibi_org_Y * rakusatsu_ritsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        shisetsu_seibi_LCC = Decimal(shisetsu_seibi * (1- reduc_shisetsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_1_org_LCC = Decimal(ijikanri_unnei_1_org * (1-reduc_ijikanri_1)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_1 = Decimal(ijikanri_unnei_1_org_R + (ijikanri_unnei_1_org_Y * rakusatsu_ritsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_1_LCC = Decimal(ijikanri_unnei_1 * (1-reduc_ijikanri_1)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_2_org_LCC = Decimal(ijikanri_unnei_2_org * (1-reduc_ijikanri_2)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_2 = Decimal(ijikanri_unnei_2_org_R + (ijikanri_unnei_2_org_Y * rakusatsu_ritsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_2_LCC = Decimal(ijikanri_unnei_2 * (1-reduc_ijikanri_2)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_3_org_LCC = Decimal(ijikanri_unnei_3_org * (1-reduc_ijikanri_3)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_3 = Decimal(ijikanri_unnei_3_org_R + (ijikanri_unnei_3_org_Y * rakusatsu_ritsu)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        ijikanri_unnei_3_LCC = Decimal(ijikanri_unnei_3 * (1-reduc_ijikanri_3)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        shisetsu_seibi_org = to_dec(inputs['shisetsu_seibi_org_R'] + inputs['shisetsu_seibi_org_Y'])
+        shisetsu_seibi = to_dec(shisetsu_seibi_org * inputs['rakusatsu_ritsu'])
+        ijikanri_unnei_1_org = to_dec(inputs['ijikanri_unnei_1_org_R'] + inputs['ijikanri_unnei_1_org_Y'])
+        ijikanri_unnei_1 = to_dec(ijikanri_unnei_1_org * inputs['rakusatsu_ritsu'])
+        ijikanri_unnei_2_org = to_dec(inputs['ijikanri_unnei_2_org_R'] + inputs['ijikanri_unnei_2_org_Y'])
+        ijikanri_unnei_2 = to_dec(ijikanri_unnei_2_org * inputs['rakusatsu_ritsu'])        
+        ijikanri_unnei_3_org = to_dec(inputs['ijikanri_unnei_3_org_R'] + inputs['ijikanri_unnei_3_org_Y'])
+        ijikanri_unnei_3 = to_dec(ijikanri_unnei_3_org * inputs['rakusatsu_ritsu'])
 
-        yosantanka_hiritsu_shisetsu = Decimal(shisetsu_seibi_org_Y/shisetsu_seibi_org).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        yosantanka_hiritsu_ijikanri_1 = Decimal(ijikanri_unnei_1_org_Y/ijikanri_unnei_1_org).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        yosantanka_hiritsu_ijikanri_2 = Decimal(ijikanri_unnei_2_org_Y/ijikanri_unnei_2_org).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        yosantanka_hiritsu_ijikanri_3 = Decimal(ijikanri_unnei_3_org_Y/ijikanri_unnei_3_org).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        yosantanka_hiritsu_shisetsu = to_dec(inputs['shisetsu_seibi_org_Y']/shisetsu_seibi_org) if shisetsu_seibi_org else to_dec(0)
+        yosantanka_hiritsu_ijikanri_1 = to_dec(inputs['ijikanri_unnei_1_org_Y']/ijikanri_unnei_1_org) if ijikanri_unnei_1_org else to_dec(0)
+        yosantanka_hiritsu_ijikanri_2 = to_dec(inputs['ijikanri_unnei_2_org_Y']/ijikanri_unnei_2_org) if ijikanri_unnei_2_org else to_dec(0)
+        yosantanka_hiritsu_ijikanri_3 = to_dec(inputs['ijikanri_unnei_3_org_Y']/ijikanri_unnei_3_org) if ijikanri_unnei_3_org else to_dec(0)
 
-        chisai_shoukan_kikan = int(self.dd5.value)
+        shisetsu_seibi_org_LCC = to_dec(shisetsu_seibi_org * (Decimal(1.00) - inputs['reduc_shisetsu']))
+        shisetsu_seibi_LCC = to_dec(shisetsu_seibi * (Decimal(1.00) - inputs['reduc_shisetsu']))
+        ijikanri_unnei_1_org_LCC = to_dec(ijikanri_unnei_1_org * (Decimal(1.00) - inputs['reduc_ijikanri_1']))
+        ijikanri_unnei_1_LCC = to_dex(ijikanri_unnei_1 * (Decimal(1.00) - inputs['reduc_ijikanri_1']))
+        ijikanri_unnei_2_org_LCC = to_dec(ijikanri_unnei_2_org * (Decimal(1.00) - inputs['reduc_ijikanri_2']))
+        ijikanri_unnei_2_LCC = to_dec(ijikanri_unnei_2 * (Decimal(1.00) - inputs['reduc_ijikanri_2']))
+        ijikanri_unnei_3_org_LCC = to_dec(ijikanri_unnei_3_org * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
+        ijikanri_unnei_3_LCC = to_dec(ijikanri_unnei_3 * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
 
-        JGB_rates_df = pd.read_csv(
-            "JGB_rates.csv",
-            sep="\t",
-            encoding="utf-8",
-            header=None,
-            names=["year", "rate"],
-        ).set_index("year")
+        JGB_rates_df = pd.read_csv("../JGB_rates.csv", sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
+        JRB_rates_df = pd.read_csv("../JRB_rates.csv", sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
 
-        JRB_rates_df = pd.read_csv(
-            "JRB_rates.csv",
-            encoding="utf-8",
-            sep='\t', 
-            names=[0,1,2,3,4,5], 
-            index_col=0)
-
-        y, d = divmod(int(self.dd4.value), 5)
-
+        y, d = divmod(inputs['proj_years'], 5)
         if y >= 1:
-
-            if d > 2:
-                r_idx = str((y + 1) * 5) + "年"
-            elif d <= 2:
-                r_idx = str(y * 5) + "年"
+            r_idx = str((y + 1) * 5) + "年" if d > 2 else str(y * 5) + "年"
         else:
             r_idx = str(d) + "年"
 
         r1 = JGB_rates_df.loc[r_idx].iloc[0]
-
-        r2 = JRB_rates_df.loc[chisai_shoukan_kikan][const_years]
-
-        chisai_sueoki_kikan = const_years
-
-        kitai_bukka_j = (
-            pd.read_csv("BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
-            .dropna()
-            .iloc[-1, 1]
-        )
+        r2 = JRB_rates_df.loc[inputs['chisai_shoukan_kikan']][inputs['const_years']]
+        kitai_bukka_j = pd.read_csv("../BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1]
+        
+        chisai_sueoki_kikan = int(inputs['const_years']) if inputs['const_years'] else int(0)
         gonensai_rimawari = JGB_rates_df.loc["5年"].iloc[0]
-        # gonensai_rimawari = pd.read_csv('JGB_rates.csv', sep='\t', encoding='utf-8', header=None).iloc[0,-1]
-        kitai_bukka = kitai_bukka_j - gonensai_rimawari
+        kitai_bukka = to_dec(kitai_bukka_j - gonensai_rimawari)
 
-        if self.dd2.value == "サービス購入型" and self.dd3.value == "BTO":
-            houjinzei_ritsu = 0.0
-            houjinjuminzei_kintou = 0.18
-            hudousanshutokuzei_hyoujun = 0.0
-            hudousanshutokuzei_ritsu = 0.0
-            koteishisanzei_hyoujun = 0.0
-            koteishisanzei_ritsu = 0.0
-            tourokumenkyozei_hyoujun = 0.0
-            tourokumenkyozei_ritsu = 0.0
-            houjinjuminzei_ritsu_todouhuken = 0.0
-            houjinjuminzei_ritsu_shikuchoson = 0.0
-            riyou_ryoukin = 0.0
-        elif self.dd2.value == "サービス購入型" and self.dd3.value == "BOT/BOO":
-            houjinzei_ritsu = 0.0
-            houjinjuminzei_kintou = 0.18
-            hudousanshutokuzei_hyoujun = shisetsu_seibi_org_LCC
-            hudousanshutokuzei_ritsu = 0.04
-            koteishisanzei_hyoujun = shisetsu_seibi_org_LCC
-            koteishisanzei_ritsu = 0.014
-            tourokumenkyozei_hyoujun = shisetsu_seibi_org_LCC
-            tourokumenkyozei_ritsu = 0.004
-            houjinjuminzei_ritsu_todouhuken = 0.0
-            houjinjuminzei_ritsu_shikuchoson = 0.0
-            riyou_ryoukin = 0.0
-        else:
-            houjinzei_ritsu = 0.0
-            houjinjuminzei_kintou = 0.0
-            hudousanshutokuzei_hyoujun = 0.0
-            hudousanshutokuzei_ritsu = 0.0
-            koteishisanzei_hyoujun = 0.0
-            koteishisanzei_ritsu = 0.0
-            tourokumenkyozei_hyoujun = 0.0
-            tourokumenkyozei_ritsu = 0.0
-            houjinjuminzei_ritsu_todouhuken = 0.0
-            houjinjuminzei_ritsu_shikuchoson = 0.0
-            riyou_ryoukin = 0.0
-
-        if self.dd1.value == "国":
-            zei_modori = 0.278
-            hojo = 0.0
-            kisai_jutou = 0.0
-            kisai_koufu = 0.0
-        elif self.dd1.value == "都道府県":
-            zei_modori = 0.0578
-            hojo = 0.5
-            kisai_jutou = 0.75
-            kisai_koufu = 0.30
-        elif self.dd1.value == "市町村":
-            zei_modori = 0.084
-            hojo = 0.300
-            kisai_jutou = 0.750
-            kisai_koufu = 0.300
-        else:
-            pass
-
-        if self.dd3.value == "DBO(SPCなし)" or self.dd3.value == "BT/DB(いずれもSPCなし)":
-            SPC_fee = Decimal(0).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-            SPC_shihon = Decimal(0).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-            SPC_yobihi = Decimal(0).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-            SPC_hiyou_atsukai = int(1)
-        else:
-            SPC_fee = Decimal(20).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-            SPC_shihon = Decimal(100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-            SPC_yobihi = Decimal(456).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-            SPC_hiyou_atsukai = int(1)
-
-        initial_inputs = {
-            "mgmt_type": self.dd1.value,
-            "proj_ctgry": self.dd2.value,
-            "proj_type": self.dd3.value,
-            "proj_years": self.dd4.value,
-            "const_years": self.dd6.value,
-            "ijikanri_unnei_years": int(ijikanri_unnei_years),
-            "const_start_date": const_start_date,
-            "kijun_kinri": str(Decimal(r1).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-            "chisai_kinri": str(Decimal(r2).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-            "chisai_sueoki_kikan": int(chisai_sueoki_kikan),
-            "chisai_shoukan_kikan": int(chisai_shoukan_kikan),
-            "zei_modori": str(Decimal(zei_modori)),
-            "lg_spread": str(Decimal(0.01).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-            "zei_total": str(Decimal(0.18).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-            "riyou_ryoukin": riyou_ryoukin,
-            "growth": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-            "kitai_bukka": str(Decimal(kitai_bukka)),
-            "shisetsu_seibi": str(shisetsu_seibi),
-            "shisetsu_seibi_org": str(shisetsu_seibi_org),
-            "shisetsu_seibi_org_LCC": str(shisetsu_seibi_org_LCC),
-            "shisetsu_seibi_LCC": str(shisetsu_seibi_LCC),
-            "ijikanri_unnei_1": str(ijikanri_unnei_1),
-            "ijikanri_unnei_1_org": str(ijikanri_unnei_1_org),
-            "ijikanri_unnei_1_org_LCC": str(ijikanri_unnei_1_org_LCC),
-            "ijikanri_unnei_1_LCC": str(ijikanri_unnei_1_LCC),
-            "ijikanri_unnei_2": str(ijikanri_unnei_2),
-            "ijikanri_unnei_2_org": str(ijikanri_unnei_2_org),
-            "ijikanri_unnei_2_org_LCC": str(ijikanri_unnei_2_org_LCC),
-            "ijikanri_unnei_2_LCC": str(ijikanri_unnei_2_LCC),
-            "ijikanri_unnei_3": str(ijikanri_unnei_3),
-            "ijikanri_unnei_3_org": str(ijikanri_unnei_3_org),
-            "ijikanri_unnei_3_org_LCC": str(ijikanri_unnei_3_org_LCC),
-            "ijikanri_unnei_3_LCC": str(ijikanri_unnei_3_LCC),
-            "yosantanka_hiritsu_shisetsu": str(yosantanka_hiritsu_shisetsu),
-            "yosantanka_hiritsu_ijikanri_1": str(yosantanka_hiritsu_ijikanri_1),
-            "yosantanka_hiritsu_ijikanri_2": str(yosantanka_hiritsu_ijikanri_2),
-            "yosantanka_hiritsu_ijikanri_3": str(yosantanka_hiritsu_ijikanri_3),
-            "rakusatsu_ritsu": str(rakusatsu_ritsu),
-            "reduc_shisetsu": str(reduc_shisetsu),
-            "reduc_ijikanri_1": str(reduc_ijikanri_1),
-            "reduc_ijikanri_2": str(reduc_ijikanri_2),
-            "reduc_ijikanri_3": str(reduc_ijikanri_3),
-            "pre_kyoukouka": True,
-            "kisai_jutou": str(Decimal(kisai_jutou)),
-            "kisai_koufu": str(Decimal(kisai_koufu)),
-            "hojo_ritsu": str(Decimal(hojo)),
-            "zeimae_rieki": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-            "SPC_keihi": str(Decimal(20.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-            "SPC_fee": str(SPC_fee),
-            "SPC_shihon": str(SPC_shihon),
-            "SPC_yobihi": str(SPC_yobihi),
-            "SPC_hiyou_atsukai": SPC_hiyou_atsukai,
-            "houjinzei_ritsu": str(houjinzei_ritsu),
-            "houjinjuminzei_kintou": str(houjinjuminzei_kintou),
-            "hudousanshutokuzei_hyoujun": str(hudousanshutokuzei_hyoujun),
-            "hudousanshutokuzei_ritsu": str(hudousanshutokuzei_ritsu),
-            "koteishisanzei_hyoujun": str(koteishisanzei_hyoujun),
-            "koteishisanzei_ritsu": str(koteishisanzei_ritsu),
-            "tourokumenkyozei_hyoujun": str(tourokumenkyozei_hyoujun),
-            "tourokumenkyozei_ritsu": str(tourokumenkyozei_ritsu),
-            "houjinjuminzei_ritsu_todouhuken": str(houjinjuminzei_ritsu_todouhuken),
-            "houjinjuminzei_ritsu_shikuchoson": str(houjinjuminzei_ritsu_shikuchoson),
+        tax_rates = {
+            'houjinzei_ritsu': Decimal(0.0),
+            'houjinjuminzei_kintou': Decimal(0.0),
+            'hudousanshutokuzei_hyoujun': Decimal(0.0),
+            'hudousanshutokuzei_ritsu': Decimal(0.0),
+            'koteishisanzei_hyoujun': Decimal(0.0),
+            'koteishisanzei_ritsu': Decimal(0.0),
+            'tourokumenkyozei_hyoujun': Decimal(0.0),
+            'tourokumenkyozei_ritsu': Decimal(0.0),
+            'houjinjuminzei_ritsu_todouhuken': Decimal(0.0),
+            'houjinjuminzei_ritsu_shikuchoson': Decimal(0.0),
+            'riyou_ryoukin': 0.0
         }
 
+        if inputs['Proj_ctgry'] == "サービス購入型":
+            tax_rates['houjinjuminzei_kintou'] = Decimal(0.18)
+            if inputs['proj_type'] == "BOT/BOO":
+                tax_rates['houjinzei_ritsu'] = Decimal(0.0)
+                tax_rates['hudousanshutokuzei_hyoujun'] = shisetsu_seibi_org_LCC
+                tax_rates['hudousanshutokuzei_ritsu'] = Decimal(0.04)
+                tax_rates['koteishisanzei_hyoujun'] = shisetsu_seibi_org_LCC
+                tax_rates['koteishisanzei_ritsu'] = Decimal(0.014)
+                tax_rates['tourokumenkyozei_hyoujun'] = shisetsu_seibi_org_LCC
+                tax_rates['tourokumenkyozei_ritsu'] = Decimal(0.004)
+                tax_rates['houjinjuminzei_ritsu_todouhuken'] = Decimal(0.0)
+                tax_rates['houjinjuminzei_ritsu_shikuchoson'] = Decimal(0.0)
+                tax_rates['riyou_ryoukin'] = Decimal(0.0)
 
-  def _calculate_financials(self, data):_
+            financial_rules = {'zei_modori': Decimal(0.278), 'hojo': Decimal(0.0), 'kisai_jutou': Decimal(0.0), 'kisai_koufu': Decimal(0.0)}
+            if inputs['mgmt_type'] == "国":
+                financial_rules['zei_modori'] = Decimal(0.278)
+                financial_rules['hojo'] = Decimal(0.0)
+                financial_rules['kisai_jutou'] = Decimal(0.0)
+                financial_rules['kisai_koufu'] = Decimal(0.0)
+            elif inputs['mgmt_type']  == "都道府県":
+                financial_rules['zei_modori'] = Decimal(0.0578)
+                financial_rules['hojo'] = Decimal(0.5)
+                financial_rules['kisai_jutou'] = Decimal(0.75)
+                financial_rules['kisai_koufu'] = Decimal(0.30)
+            elif inputs['mgmt_type']  == "市町村":
+                financial_rules['zei_modori'] = Decimal(0.084)
+                financial_rules['hojo'] = Decimal(0.300)
+                financial_rules['kisai_jutou'] = Decimal(0.750)
+                financial_rules['kisai_koufu'] = Decimal(0.300)
+    
+            if inputs['proj_type'] in ["DBO(SPCなし)", "BT/DB(いずれもSPCなし)"]:
+                SPC_costs = {'fee':to_dec(0), 'shihon':to_dec(0), 'yobihi':to_dec(0)}
+                SPC_hiyou_atsukai = int(1)
+            else:
+                SPC_costs = {'fee':to_dec(20), 'shihon':to_dec(100), 'yobihi':to_dec(456)}
+                SPC_hiyou_atsukai = int(1)
 
-  def _save_to_db(self, data):
-      if os.path.exists("ii_db.json"):
-      os.remove("ii_db.json")
-      db = TinyDB('ii_db.json')
-      db.insert(data)
-      db.close()
-      self.page.session.store.set(data)
-      self.page.push_route("/final_inputs")
+            initial_inputs = {
+                "mgmt_type": self.dd1.value,
+                "proj_ctgry": self.dd2.value,
+                "proj_type": self.dd3.value,
+                "proj_years": self.dd4.value,
+                "const_years": self.dd6.value,
+                "ijikanri_unnei_years": int(ijikanri_unnei_years),
+                "const_start_date": const_start_date,
+                "kijun_kinri": str(Decimal(r1).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "chisai_kinri": str(Decimal(r2).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "chisai_sueoki_kikan": int(chisai_sueoki_kikan),
+                "chisai_shoukan_kikan": int(chisai_shoukan_kikan),
+                "zei_modori": str(Decimal(zei_modori)),
+                "lg_spread": str(Decimal(0.01).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "zei_total": str(Decimal(0.18).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "riyou_ryoukin": riyou_ryoukin,
+                "growth": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "kitai_bukka": str(Decimal(kitai_bukka)),
+                "shisetsu_seibi": str(shisetsu_seibi),
+                "shisetsu_seibi_org": str(shisetsu_seibi_org),
+                "shisetsu_seibi_org_LCC": str(shisetsu_seibi_org_LCC),
+                "shisetsu_seibi_LCC": str(shisetsu_seibi_LCC),
+                "ijikanri_unnei_1": str(ijikanri_unnei_1),
+                "ijikanri_unnei_1_org": str(ijikanri_unnei_1_org),
+                "ijikanri_unnei_1_org_LCC": str(ijikanri_unnei_1_org_LCC),
+                "ijikanri_unnei_1_LCC": str(ijikanri_unnei_1_LCC),
+                "ijikanri_unnei_2": str(ijikanri_unnei_2),
+                "ijikanri_unnei_2_org": str(ijikanri_unnei_2_org),
+                "ijikanri_unnei_2_org_LCC": str(ijikanri_unnei_2_org_LCC),
+                "ijikanri_unnei_2_LCC": str(ijikanri_unnei_2_LCC),
+                "ijikanri_unnei_3": str(ijikanri_unnei_3),
+                "ijikanri_unnei_3_org": str(ijikanri_unnei_3_org),
+                "ijikanri_unnei_3_org_LCC": str(ijikanri_unnei_3_org_LCC),
+                "ijikanri_unnei_3_LCC": str(ijikanri_unnei_3_LCC),
+                "yosantanka_hiritsu_shisetsu": str(yosantanka_hiritsu_shisetsu),
+                "yosantanka_hiritsu_ijikanri_1": str(yosantanka_hiritsu_ijikanri_1),
+                "yosantanka_hiritsu_ijikanri_2": str(yosantanka_hiritsu_ijikanri_2),
+                "yosantanka_hiritsu_ijikanri_3": str(yosantanka_hiritsu_ijikanri_3),
+                "rakusatsu_ritsu": str(rakusatsu_ritsu),
+                "reduc_shisetsu": str(reduc_shisetsu),
+                "reduc_ijikanri_1": str(reduc_ijikanri_1),
+                "reduc_ijikanri_2": str(reduc_ijikanri_2),
+                "reduc_ijikanri_3": str(reduc_ijikanri_3),
+                "pre_kyoukouka": True,
+                "kisai_jutou": str(Decimal(kisai_jutou)),
+                "kisai_koufu": str(Decimal(kisai_koufu)),
+                "hojo_ritsu": str(Decimal(hojo)),
+                "zeimae_rieki": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "SPC_keihi": str(Decimal(20.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "SPC_fee": str(SPC_fee),
+                "SPC_shihon": str(SPC_shihon),
+                "SPC_yobihi": str(SPC_yobihi),
+                "SPC_hiyou_atsukai": SPC_hiyou_atsukai,
+                "houjinzei_ritsu": str(houjinzei_ritsu),
+                "houjinjuminzei_kintou": str(houjinjuminzei_kintou),
+                "hudousanshutokuzei_hyoujun": str(hudousanshutokuzei_hyoujun),
+                "hudousanshutokuzei_ritsu": str(hudousanshutokuzei_ritsu),
+                "koteishisanzei_hyoujun": str(koteishisanzei_hyoujun),
+                "koteishisanzei_ritsu": str(koteishisanzei_ritsu),
+                "tourokumenkyozei_hyoujun": str(tourokumenkyozei_hyoujun),
+                "tourokumenkyozei_ritsu": str(tourokumenkyozei_ritsu),
+                "houjinjuminzei_ritsu_todouhuken": str(houjinjuminzei_ritsu_todouhuken),
+                "houjinjuminzei_ritsu_shikuchoson": str(houjinjuminzei_ritsu_shikuchoson),
+            }
+
+        return initial_inputs
+
+    def _save_to_db(self, data):
+        if os.path.exists("ii_db.json"):
+            os.remove("ii_db.json")
+        db = TinyDB('ii_db.json')
+        db.insert(data)
+        db.close()
+        self.page.session.store.set(data)
+        
+    def button_clicked(self, e):
+        input_data = self._extract_inputs()
+
+        calc_results = self._calculate_financials(input_data)
+        
+        self._save_to_db(calc_results)
+        self.page.push_route("/final_inputs")
+
