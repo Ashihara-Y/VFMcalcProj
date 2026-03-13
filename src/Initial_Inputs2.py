@@ -295,15 +295,15 @@ class Initial_Inputs(ft.Column):
                     height=1500,
                 )
 
-    def _extract_inputs():
+    def _extract_inputs(self):
         mgmt_type = self.dd1.value
         proj_ctgry = self.dd2.value
         proj_type = self.dd3.value
 
-        raw_proj_years = self.dd6.value if proj_type = "BT/DB(いずれもSPCなし)" else self.dd4.value
+        raw_proj_years = self.dd6.value if proj_type == "BT/DB(いずれもSPCなし)" else self.dd4.value
 
         proj_years = int(raw_proj_years) if raw_proj_years else 0
-        const_years = int(seld.dd6.value) if self.dd6.value else 0
+        const_years = int(self.dd6.value) if self.dd6.value else 0
         chisai_shoukan_kikan = int(self.dd5.value) if self.dd5.value else 0
 
         if proj_years < const_years:
@@ -353,7 +353,7 @@ class Initial_Inputs(ft.Column):
     
     def _calculate_financials(self, inputs):
         def to_dec(val):
-            return Decimal(val)..quantize(Decimal('0.000001'), ROUND_HALF_UP)
+            return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         calc_id = timeflake.random()
         dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
@@ -376,7 +376,7 @@ class Initial_Inputs(ft.Column):
         shisetsu_seibi_org_LCC = to_dec(shisetsu_seibi_org * (Decimal(1.00) - inputs['reduc_shisetsu']))
         shisetsu_seibi_LCC = to_dec(shisetsu_seibi * (Decimal(1.00) - inputs['reduc_shisetsu']))
         ijikanri_unnei_1_org_LCC = to_dec(ijikanri_unnei_1_org * (Decimal(1.00) - inputs['reduc_ijikanri_1']))
-        ijikanri_unnei_1_LCC = to_dex(ijikanri_unnei_1 * (Decimal(1.00) - inputs['reduc_ijikanri_1']))
+        ijikanri_unnei_1_LCC = to_dec(ijikanri_unnei_1 * (Decimal(1.00) - inputs['reduc_ijikanri_1']))
         ijikanri_unnei_2_org_LCC = to_dec(ijikanri_unnei_2_org * (Decimal(1.00) - inputs['reduc_ijikanri_2']))
         ijikanri_unnei_2_LCC = to_dec(ijikanri_unnei_2 * (Decimal(1.00) - inputs['reduc_ijikanri_2']))
         ijikanri_unnei_3_org_LCC = to_dec(ijikanri_unnei_3_org * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
@@ -452,12 +452,12 @@ class Initial_Inputs(ft.Column):
                 SPC_hiyou_atsukai = int(1)
 
             initial_inputs = {
-                "mgmt_type": self.dd1.value,
-                "proj_ctgry": self.dd2.value,
-                "proj_type": self.dd3.value,
-                "proj_years": self.dd4.value,
-                "const_years": self.dd6.value,
-                "ijikanri_unnei_years": int(ijikanri_unnei_years),
+                "mgmt_type": inputs['mgmt_type'],
+                "proj_ctgry": inputs['proj_ctgry'],
+                "proj_type": inputs['proj_type'],
+                "proj_years": inputs['proj_years'],
+                "const_years": inputs['const_years'],
+                "ijikanri_unnei_years": inputs['ijikanri_unnei_years'],
                 "const_start_date": const_start_date,
                 "kijun_kinri": str(Decimal(r1).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
                 "chisai_kinri": str(Decimal(r2).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
