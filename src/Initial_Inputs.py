@@ -305,7 +305,7 @@ class Initial_Inputs(ft.Column):
             label="{value}%",
             on_change=self.handle_change_12,
         )
-        self.b = ft.ElevatedButton(text="初期値の入力", on_click=self.button_clicked)
+        self.b = ft.Button(content="初期値の入力", on_click=self.button_clicked)
         return ft.Column(
                     [
                         self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
@@ -390,7 +390,7 @@ class Initial_Inputs(ft.Column):
         chisai_shoukan_kikan = int(self.dd5.value)
 
         JGB_rates_df = pd.read_csv(
-            "JGB_rates.csv",
+            "../JGB_rates.csv",
             sep="\t",
             encoding="utf-8",
             header=None,
@@ -398,7 +398,7 @@ class Initial_Inputs(ft.Column):
         ).set_index("year")
 
         JRB_rates_df = pd.read_csv(
-            "JRB_rates.csv",
+            "../JRB_rates.csv",
             encoding="utf-8",
             sep='\t', 
             names=[0,1,2,3,4,5], 
@@ -422,7 +422,7 @@ class Initial_Inputs(ft.Column):
         chisai_sueoki_kikan = const_years
 
         kitai_bukka_j = (
-            pd.read_csv("BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
+            pd.read_csv("../BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1)
             .dropna()
             .iloc[-1, 1]
         )
@@ -573,4 +573,4 @@ class Initial_Inputs(ft.Column):
         db = TinyDB('ii_db.json')
         db.insert(initial_inputs)
         db.close()
-        self.page.go("/final_inputs")
+        self.page.push_route("/final_inputs")
