@@ -52,23 +52,27 @@ class Initial_Inputs(ft.Column):
             )
         return options
 
-    options_1 = [
+
+
+    def build(self):
+
+        options_1 = [
             {'key':"国"},
             {'key':"都道府県"},
             {'key':"市町村"},
         ]
-    options_2 = [
+        options_2 = [
             {'key':"サービス購入型"},
             #{key:"コンセッション（スタジアム・アリーナタイプ）"},
             #{key: "コンセッション（下水道タイプ）"},
         ]
-    options_3 = [
+        options_3 = [
             {'key':"BTO"},
             {'key':"DBO(SPCなし)"},
             {'key':"BOT/BOO"},
             {'key':"BT/DB(いずれもSPCなし)"},
         ]
-    options_4 = [
+        options_4 = [
             {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
             {'key':"6"}, {'key':"7"}, {'key':"8"}, {'key':"9"}, {'key':"10"},
             {'key':"11"},{'key':"12"},{'key':"13"},{'key':"14"},{'key':"15"},
@@ -76,7 +80,7 @@ class Initial_Inputs(ft.Column):
             {'key':"21"},{'key':"22"},{'key':"23"},{'key':"24"},{'key':"25"},
             {'key':"26"},{'key':"27"},{'key':"28"},{'key':"29"},{'key':"30"},
         ]
-    options_5 = [
+        options_5 = [
             {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
             {'key':"6"}, {'key':"7"}, {'key':"8"}, {'key':"9"}, {'key':"10"},
             {'key':"11"},{'key':"12"},{'key':"13"},{'key':"14"},{'key':"15"},
@@ -84,12 +88,10 @@ class Initial_Inputs(ft.Column):
             {'key':"21"},{'key':"22"},{'key':"23"},{'key':"24"},{'key':"25"},
             {'key':"26"},
         ]
-    options_6 = [
+        options_6 = [
             {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
         ]
-
-    def build(self, options_1, options_2, options_3, options_4, options_5, options_6):
-
+    
         self.dd1 = ft.Dropdown(
             label="管理者の種別",
             #hint_text="管理者の種別を選択してください",
