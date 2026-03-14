@@ -11,10 +11,11 @@ from tinydb import TinyDB, Query
 from decimal import *
 from zoneinfo import ZoneInfo
 
+@ft.control
 class Initial_Inputs(ft.Column):
 
-    def __init__(self):
-        super().__init__()
+    def init(self):
+        #super().__init__()
         self.title = "初期入力"
         self.width = 500
         self.height = 2000
@@ -40,21 +41,20 @@ class Initial_Inputs(ft.Column):
         target_text_control = e.control.data
         target_text_control.value = str(sl_value)
         target_text_control.update()
-         
-    def get_options(list):
-        options=[]
-        for i in list:
-            options.append(
-                ft.DropdownOption(
-                    key=i['key'], 
-                    content = ft.Text(value=i['key'])
-                )
-            )
-        return options
-
 
 
     def build(self):
+
+        def get_options(list):
+            options=[]
+            for i in list:
+                options.append(
+                    ft.DropdownOption(
+                        key=i['key'], 
+                        content = ft.Text(value=i['key'])
+                    )
+                )
+            return options
 
         options_1 = [
             {'key':"国"},
@@ -96,40 +96,40 @@ class Initial_Inputs(ft.Column):
             label="管理者の種別",
             #hint_text="管理者の種別を選択してください",
             #width=400,
-            options=self.get_options(options_1),
+            options=get_options(options_1),
         )
         self.dd2 = ft.Dropdown(
             label="事業の方式",
             #hint_text="事業の方式を選択してください",
             #width=400,
-            options=self.get_options(options_2),
+            options=get_options(options_2),
         )
         self.dd3 = ft.Dropdown(
             label="事業の類型",
             #hint_text="事業の類型を選択してください",
             #width=400,
-            options=self.get_options(options_3),
+            options=get_options(options_3),
         )
         self.dd4 = ft.Dropdown(
             label="事業期間",
             #hint_text="事業期間を選択してください(施設整備期間以上)",
             #width=400,
             #value="20",
-            options=self.get_options(options_4),
+            options=get_options(options_4),
         )
         self.dd5 = ft.Dropdown(
             label="地方債償還期間",
             #hint_text="地方債償還期間を選択してください",
             #width=400,
             #value="20",
-            options=self.get_options(options_5),
+            options=get_options(options_5),
         )
         self.dd6 = ft.Dropdown(
             label="施設整備期間",
             #hint_text="施設整備期間を選択してください",
             #width=400,
             #value="1",
-            options=self.get_options(options_6),
+            options=get_options(options_6),
         )
         self.tx0 = ft.Text("施設整備費 落札価格ベース(百万円)")
         self.sl0 = ft.Slider(
@@ -273,7 +273,7 @@ class Initial_Inputs(ft.Column):
             on_change=self.handle_slider_change,
             data=self.slider_value12
         )
-        self.b = ft.ElevatedButton(text="初期値の入力", on_click=self.button_clicked)
+        self.b = ft.ElevatedButton(content="初期値の入力", on_click=self.button_clicked)
         return ft.Column(
                     [
                         self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
