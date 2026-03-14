@@ -88,7 +88,7 @@ class Initial_Inputs(ft.Column):
             {'key':"1"}, {'key':"2"}, {'key':"3"}, {'key':"4"}, {'key':"5"},
         ]
 
-    def build(self):
+    def build(self, options_1, options_2, options_3, options_4, options_5, options_6):
 
         self.dd1 = ft.Dropdown(
             label="管理者の種別",
@@ -391,13 +391,14 @@ class Initial_Inputs(ft.Column):
         else:
             r_idx = str(d) + "年"
 
-        r1 = JGB_rates_df.loc[r_idx].iloc[0]
-        r2 = JRB_rates_df.loc[inputs['chisai_shoukan_kikan']][inputs['const_years']]
-        kitai_bukka_j = pd.read_csv("../BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1]
+        r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
+        r2 = Decimal(JRB_rates_df.loc[inputs['chisai_shoukan_kikan']][inputs['const_years']])
+        kitai_bukka_j = Decimal(pd.read_csv("../BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
         
         chisai_sueoki_kikan = int(inputs['const_years']) if inputs['const_years'] else int(0)
-        gonensai_rimawari = JGB_rates_df.loc["5年"].iloc[0]
+        gonensai_rimawari = Decimal(JGB_rates_df.loc["5年"].iloc[0])
         kitai_bukka = to_dec(kitai_bukka_j - gonensai_rimawari)
+        lg_spread = to_dec(0.01)
 
         tax_rates = {
             'houjinzei_ritsu': Decimal(0.0),
@@ -410,8 +411,8 @@ class Initial_Inputs(ft.Column):
             'tourokumenkyozei_ritsu': Decimal(0.0),
             'houjinjuminzei_ritsu_todouhuken': Decimal(0.0),
             'houjinjuminzei_ritsu_shikuchoson': Decimal(0.0),
-            'riyou_ryoukin': 0.0
-        }
+            'riyou_ryoukin': Decimal(0.0),
+}
 
         if inputs['Proj_ctgry'] == "サービス購入型":
             tax_rates['houjinjuminzei_kintou'] = Decimal(0.18)
@@ -443,6 +444,8 @@ class Initial_Inputs(ft.Column):
                 financial_rules['hojo'] = Decimal(0.300)
                 financial_rules['kisai_jutou'] = Decimal(0.750)
                 financial_rules['kisai_koufu'] = Decimal(0.300)
+            
+            financial_rules['zei_total'] = Decimal(0.18) - financial_rules['houjinjuminzei_kintou'] + financial_rules['hojo'] * financial_rules['kisai_jutou'] * financial_rules['houjinjuminzei_kintou'] + financial_rules['kisai_koufu'] * financial_rules['houjinjuminzei_kintou'] 
     
             if inputs['proj_type'] in ["DBO(SPCなし)", "BT/DB(いずれもSPCなし)"]:
                 SPC_costs = {'fee':to_dec(0), 'shihon':to_dec(0), 'yobihi':to_dec(0)}
@@ -458,15 +461,15 @@ class Initial_Inputs(ft.Column):
                 "proj_years": inputs['proj_years'],
                 "const_years": inputs['const_years'],
                 "ijikanri_unnei_years": inputs['ijikanri_unnei_years'],
-                "const_start_date": const_start_date,
-                "kijun_kinri": str(Decimal(r1).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-                "chisai_kinri": str(Decimal(r2).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "const_start_date": str(const_start_date),
+                "kijun_kinri": str(r1),
+                "chisai_kinri": str(r2),
                 "chisai_sueoki_kikan": int(chisai_sueoki_kikan),
-                "chisai_shoukan_kikan": int(chisai_shoukan_kikan),
-                "zei_modori": str(Decimal(zei_modori)),
-                "lg_spread": str(Decimal(0.01).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "chisai_shoukan_kikan": inputs['chisai_shoukan_kikan'],
+                "lg_spread": str(lg_spread),
+                "zei_modori": str(financial_rules['zei_modori']),
                 "zei_total": str(Decimal(0.18).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-                "riyou_ryoukin": riyou_ryoukin,
+                "riyou_ryoukin": str(financial_rules['riyou_ryoukin']),
                 "growth": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
                 "kitai_bukka": str(Decimal(kitai_bukka)),
                 "shisetsu_seibi": str(shisetsu_seibi),
