@@ -17,7 +17,7 @@ def main(page: ft.Page):
     print("Initial Inputs", page.route)
 
     def route_change():
-        print("Route changed to:", page.route)
+        #print("Route changed to:", page.route)
         page.views.clear()
         page.views.append(
             ft.View(
@@ -26,7 +26,7 @@ def main(page: ft.Page):
                     ft.AppBar(title=ft.Text("初期入力")),
                     Initial_Inputs(),
                 ],
-                #scroll=ft.ScrollMode.ALWAYS,
+                scroll=ft.ScrollMode.ALWAYS,
             )
         )
         if page.route == "/final_inputs":

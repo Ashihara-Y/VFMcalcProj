@@ -393,8 +393,8 @@ class Initial_Inputs(ft.Column):
         ijikanri_unnei_3_org_LCC = to_dec(ijikanri_unnei_3_org * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
         ijikanri_unnei_3_LCC = to_dec(ijikanri_unnei_3 * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
 
-        JGB_rates_df = pd.read_csv('JGB_rates.csv', sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
-        JRB_rates_df = pd.read_csv('JRB_rates.csv', sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
+        JGB_rates_df = pd.read_csv("src/JGB_rates.csv", sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
+        JRB_rates_df = pd.read_csv("src/JRB_rates.csv", sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
 
         y, d = divmod(inputs['proj_years'], 5)
         if y >= 1:
@@ -404,7 +404,7 @@ class Initial_Inputs(ft.Column):
 
         r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
         r2 = Decimal(JRB_rates_df.loc[inputs['chisai_shoukan_kikan']][inputs['const_years']])
-        kitai_bukka_j = Decimal(pd.read_csv('BOJ_ExpInflRate_down.csv', encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
+        kitai_bukka_j = Decimal(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
         
         chisai_sueoki_kikan = int(inputs['const_years']) if inputs['const_years'] else int(0)
         gonensai_rimawari = Decimal(JGB_rates_df.loc["5年"].iloc[0])
@@ -425,7 +425,7 @@ class Initial_Inputs(ft.Column):
             'riyou_ryoukin': Decimal(0.0),
 }
 
-        if inputs['Proj_ctgry'] == "サービス購入型":
+        if inputs['proj_ctgry'] == "サービス購入型":
             tax_rates['houjinjuminzei_kintou'] = Decimal(0.18)
             if inputs['proj_type'] == "BOT/BOO":
                 tax_rates['houjinzei_ritsu'] = Decimal(0.0)
@@ -456,7 +456,8 @@ class Initial_Inputs(ft.Column):
                 financial_rules['kisai_jutou'] = Decimal(0.750)
                 financial_rules['kisai_koufu'] = Decimal(0.300)
             
-            financial_rules['zei_total'] = Decimal(0.18) - financial_rules['houjinjuminzei_kintou'] + financial_rules['hojo'] * financial_rules['kisai_jutou'] * financial_rules['houjinjuminzei_kintou'] + financial_rules['kisai_koufu'] * financial_rules['houjinjuminzei_kintou'] 
+            financial_rules['zei_total'] = tax_rates['houjinjuminzei_kintou'] + tax_rates['hudousanshutokuzei_hyoujun'] * tax_rates['hudousanshutokuzei_ritsu'] + tax_rates['koteishisanzei_hyoujun'] * tax_rates['koteishisanzei_ritsu'] + tax_rates['tourokumenkyozei_hyoujun'] * tax_rates['tourokumenkyozei_ritsu']
+
     
             if inputs['proj_type'] in ["DBO(SPCなし)", "BT/DB(いずれもSPCなし)"]:
                 SPC_costs = {'fee':to_dec(0), 'shihon':to_dec(0), 'yobihi':to_dec(0)}
@@ -538,7 +539,7 @@ class Initial_Inputs(ft.Column):
         db = TinyDB('ii_db.json')
         db.insert(data)
         db.close()
-        self.page.session.store.set(data)
+        self.page.session.store.set("initial_inputs",data)
 
        
 def main(page: ft.Page):
