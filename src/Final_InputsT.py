@@ -804,6 +804,132 @@ class Final_Inputs(ft.Column):
         #    os.remove("final_inputs.db")
         #con = sqlite3.connect('final_inputs.db')
         #con.close()
+
+    def _extract_inputs(self):
+        mgmt_type = self.dd1.value
+        proj_ctgry = self.dd2.value
+        proj_type = self.dd3.value
+
+        raw_proj_years = self.dd6.value if proj_type == "BT/DB(いずれもSPCなし)" else self.dd4.value
+
+        proj_years = int(raw_proj_years) if raw_proj_years else 0
+        const_years = int(self.dd6.value) if self.dd6.value else 0
+        chisai_shoukan_kikan = int(self.dd5.value) if self.dd5.value else 0
+
+        if proj_years < const_years:
+            raise ValueError("事業期間は施設整備期間より長い必要があります。")
+        ijikanri_unnei_years = proj_years - const_years
+
+        shisetsu_seibi_org_R = Decimal(self.sl0.value)
+        shisetsu_seibi_org_Y = Decimal(self.sl1.value)
+        ijikanri_unnei_1_org_R = Decimal(self.sl2.value)
+        ijikanri_unnei_1_org_Y = Decimal(self.sl3.value)
+        ijikanri_unnei_2_org_R= Decimal(self.sl4.value)
+        ijikanri_unnei_2_org_Y = Decimal(self.sl5.value)
+        ijikanri_unnei_3_org_R = Decimal(self.sl6.value)
+        ijikanri_unnei_3_org_Y = Decimal(self.sl7.value)
+
+        reduc_shisetsu = Decimal(self.sl8.value) / Decimal(100)
+        reduc_ijikanri_1 = Decimal(self.sl9.value) / Decimal(100)
+        reduc_ijikanri_2 = Decimal(self.sl10.value) / Decimal(100)
+        reduc_ijikanri_3 = Decimal(self.sl11.value) / Decimal(100)
+        rakusatsu_ritsu = Decimal(self.sl12.value) / Decimal(100)
+
+        return {
+            'mgmt_type': mgmt_type,
+            'proj_ctgry': proj_ctgry,
+            'proj_type': proj_type,
+
+            'proj_years': proj_years,
+            'const_years': const_years,
+            'chisai_shoukan_kikan': chisai_shoukan_kikan,
+            'ijikanri_unnei_years': ijikanri_unnei_years,
+
+            'shisetsu_seibi_org_R': shisetsu_seibi_org_R,
+            'shisetsu_seibi_org_Y': shisetsu_seibi_org_Y,
+            'ijikanri_unnei_1_org_R': ijikanri_unnei_1_org_R,
+            'ijikanri_unnei_1_org_Y': ijikanri_unnei_1_org_Y,
+            'ijikanri_unnei_2_org_R': ijikanri_unnei_2_org_R,
+            'ijikanri_unnei_2_org_Y': ijikanri_unnei_2_org_Y,
+            'ijikanri_unnei_3_org_R': ijikanri_unnei_3_org_R,
+            'ijikanri_unnei_3_org_Y': ijikanri_unnei_3_org_Y,
+
+            'reduc_shisetsu': reduc_shisetsu,
+            'reduc_ijikanri_1': reduc_ijikanri_1,
+            'reduc_ijikanri_2': reduc_ijikanri_2,
+            'reduc_ijikanri_3': reduc_ijikanri_3,
+            'rakusatsu_ritsu': rakusatsu_ritsu
+        }
+
+        self.controls = [
+            #ft.Page.title = "初期入力",
+
+            self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
+            ft.Divider(height=1, color="amber"),
+            tx0,  slider_value00, self.sl0, ft.Divider(height=1, color="amber"),
+            tx1,  slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
+            tx2,  slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
+            tx3,  slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
+            tx4,  slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
+            tx5,  slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
+            tx6,  slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
+            tx7,  slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
+            tx8,  slider_value08, self.sl8, ft.Divider(height=1, color="amber"),
+            tx9,  slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
+            tx10, slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
+            tx11, slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
+            tx12, slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
+            b
+        ]
+
+
+
+    def button_clicked(self, e):
+        input_data = self._extract_inputs()
+
+        calc_results = self._calculate_financials(input_data)
+        
+        self._save_to_db(calc_results)
+        self.page.push_route("/final_inputs")
+        
+
+
+    def _calculate_financials(self, inputs):
+        def to_dec(val):
+            return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+
+        calc_id = timeflake.random()
+        dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
+        const_start_date = datetime.date(dtime.year, dtime.month, dtime.day).strftime('%Y-%m-%d')
+
+        shisetsu_seibi_org = to_dec(inputs['shisetsu_seibi_org_R'] + inputs['shisetsu_seibi_org_Y'])
+
+
+    def _save_to_db(self, data):
+        if os.path.exists("ii_db.json"):
+            os.remove("ii_db.json")
+        db = TinyDB('ii_db.json')
+        db.insert(data)
+        db.close()
+        self.page.session.store.set("initial_inputs",data)
+
+       
+def main(page: ft.Page):
+    page.width = 500
+    page.height = 2000
+    page.title = "初期入力"
+    page.window_width = 500
+    page.window_height = 2000
+    page.window_resizable = True
+    page.expand=True
+    page.scroll=ft.ScrollMode.AUTO
+    #initial_inputs = Initial_Inputs()
+    page.add(
+            Initial_Inputs()
+    )
+
+
+ft.run(main)
         
         VFM_calc()
         self.page.go("/view_saved")
