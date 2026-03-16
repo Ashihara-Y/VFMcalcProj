@@ -11,6 +11,7 @@ from VFMcalc2 import VFM_calc
 #import save_results as sr
 from decimal import *
 import dateutil
+import timeflake
 
 @ft.control
 class Final_Inputs(ft.Column):
@@ -271,7 +272,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value09,
         )
-        self.tx16 = ft.Text("SPC資本金(百万円)")
+        tx16 = ft.Text("SPC資本金(百万円)")
         self.sl10 = ft.Slider(
             value:=Decimal(self.initial_inputs["SPC_shihon"]),
             min=0,
@@ -434,9 +435,9 @@ class Final_Inputs(ft.Column):
         ]
         fi_lv2.controls= [
                     tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx25, slider_value_19, self.sl19, ft.Divider(height=1, color="amber"),
-                    tx8, slider_value_02, self.sl2, ft.Divider(height=1, color="amber"),
-                    tx9, slider_value_03, self.sl3, ft.Divider(height=1, color="amber"),
+                    tx25, slider_value19, self.sl19, ft.Divider(height=1, color="amber"),
+                    tx8, slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
+                    tx9, slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
                     tx10,slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
                     tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
                     tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
@@ -636,7 +637,7 @@ class Final_Inputs(ft.Column):
         houjinjuminzei_kintou = Decimal(self.initial_inputs['houjinjuminzei_kintou'])
         SPC_hiyou_total = SPC_keihi * ijikanri_unnei_years + SPC_shihon
         SPC_hiyou_nen = SPC_fee + SPC_keihi #公共がSPCに毎年払うコスト
-        SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou　#SPCが払うコスト
+        SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou #SPCが払うコスト
         
         chisai_kinri = chisai_kinri / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
         #kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # 上記と重複　CSVの％表記を採取しているため、実数表記に切り替える。
@@ -671,7 +672,6 @@ class Final_Inputs(ft.Column):
             "const_start_date": const_start_date, 
             "const_years": int(const_years),
             "discount_rate": str(discount_rate),
-#20260316ここから作業を再開
             "first_end_fy": str(first_end_fy),
             "fudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
             "fudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
@@ -709,10 +709,10 @@ class Final_Inputs(ft.Column):
 
             "lg_spread": str(self.initial_inputs["lg_spread"]),
             "mgmt_type": self.initial_inputs["mgmt_type"],
-            "monitoring_costs_PSC": str(self.sl3.value),
-            "monitoring_costs_LCC": str(self.sl4.value),
+            "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
+            "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
 
-            "option_02": str(self.sl20.value),
+            "option_02": str(inputs['option_02']),
             "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.initial_inputs["proj_ctgry"],
             "proj_type": self.initial_inputs["proj_type"],
@@ -722,7 +722,7 @@ class Final_Inputs(ft.Column):
             "reduc_ijikanri_1": str(self.initial_inputs["reduc_ijikanri_1"]),
             "reduc_ijikanri_2": str(self.initial_inputs["reduc_ijikanri_2"]),
             "reduc_ijikanri_3": str(self.initial_inputs["reduc_ijikanri_3"]),
-            "riyouryoukin_shunyu": str(self.sl14.value),
+            "riyouryoukin_shunyu": str(inputs['riyouryoukin_shunyu']),
 
             "shisetsu_seibi": str(self.initial_inputs["shisetsu_seibi"]),
             "shisetsu_seibi_LCC": str(self.initial_inputs["shisetsu_seibi_LCC"]),
@@ -752,13 +752,13 @@ class Final_Inputs(ft.Column):
             }
         else:
             final_inputs = {
-            "advisory_fee": str(self.sl13.value),
+            "advisory_fee": str(inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(self.sl1.value),
             "chisai_sueoki_years": int(self.initial_inputs["chisai_sueoki_kikan"]),
-            "const_start_date_year": int(self.dd00.value),
-            "const_start_date_month": int(self.dd01.value),
-            "const_start_date_day": int(self.dd02.value),
+            "const_start_date_year": int(inputs['const_start_date_year']),
+            "const_start_date_month": int(inputs['const_start_date_month']),
+            "const_start_date_day": int(inputs['const_start_date_day']),
             "const_start_date": const_start_date, 
             "const_years": int(self.initial_inputs["const_years"]),
             "discount_rate": str(discount_rate),
@@ -800,10 +800,10 @@ class Final_Inputs(ft.Column):
 
             "lg_spread": str(self.initial_inputs["lg_spread"]),
             "mgmt_type": self.initial_inputs["mgmt_type"],
-            "monitoring_costs_PSC": str(self.sl3.value),
-            "monitoring_costs_LCC": str(self.sl4.value),
+            "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
+            "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
 
-            "option_02": str(self.sl20.value),
+            "option_02": str(inputs['option_02']),
             "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.initial_inputs["proj_ctgry"],
             "proj_type": self.initial_inputs["proj_type"],
@@ -813,7 +813,7 @@ class Final_Inputs(ft.Column):
             "reduc_ijikanri_1": str(self.initial_inputs["reduc_ijikanri_1"]),
             "reduc_ijikanri_2": str(self.initial_inputs["reduc_ijikanri_2"]),
             "reduc_ijikanri_3": str(self.initial_inputs["reduc_ijikanri_3"]),
-            "riyouryoukin_shunyu": str(self.sl14.value),
+            "riyouryoukin_shunyu": str(inputs['riyouryoukin_shunyu']),
 
             "shisetsu_seibi": str(self.initial_inputs["shisetsu_seibi"]),
             "shisetsu_seibi_LCC": str(self.initial_inputs["shisetsu_seibi_LCC"]),
@@ -855,26 +855,26 @@ class Final_Inputs(ft.Column):
 
     #def _extract_inputs(self):
 
-        self.controls = [
-            #ft.Page.title = "初期入力",
-
-            self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
-            ft.Divider(height=1, color="amber"),
-            tx0,  slider_value00, self.sl0, ft.Divider(height=1, color="amber"),
-            tx1,  slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
-            tx2,  slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
-            tx3,  slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
-            tx4,  slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
-            tx5,  slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
-            tx6,  slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
-            tx7,  slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
-            tx8,  slider_value08, self.sl8, ft.Divider(height=1, color="amber"),
-            tx9,  slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
-            tx10, slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
-            tx11, slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
-            tx12, slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
-            b
-        ]
+    #    self.controls = [
+    #       #ft.Page.title = "初期入力",
+    #
+    #        self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
+    #        ft.Divider(height=1, color="amber"),
+    #        tx0,  slider_value00, self.sl0, ft.Divider(height=1, color="amber"),
+    #        tx1,  slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
+    #        tx2,  slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
+    #        tx3,  slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
+    #        tx4,  slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
+    #        tx5,  slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
+    #        tx6,  slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
+    #        tx7,  slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
+    #        tx8,  slider_value08, self.sl8, ft.Divider(height=1, color="amber"),
+    #        tx9,  slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
+    #        tx10, slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
+    #        tx11, slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
+    #        tx12, slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
+    #        b
+    #    ]
 
 
 
@@ -884,28 +884,17 @@ class Final_Inputs(ft.Column):
         calc_results = self._calculate_financials(input_data)
         
         self._save_to_db(calc_results)
-        self.page.push_route("/final_inputs")
+        VFM_calc()
+        self.page.push_route("/view_saved")
         
 
-
-    def _calculate_financials(self, inputs):
-        def to_dec(val):
-            return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-
-        calc_id = timeflake.random()
-        dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
-        const_start_date = datetime.date(dtime.year, dtime.month, dtime.day).strftime('%Y-%m-%d')
-
-        shisetsu_seibi_org = to_dec(inputs['shisetsu_seibi_org_R'] + inputs['shisetsu_seibi_org_Y'])
-
-
     def _save_to_db(self, data):
-        if os.path.exists("ii_db.json"):
-            os.remove("ii_db.json")
-        db = TinyDB('ii_db.json')
+        if os.path.exists("fi_db.json"):
+            os.remove("fi_db.json")
+        db = TinyDB('fi_db.json')
         db.insert(data)
         db.close()
-        self.page.session.store.set("initial_inputs",data)
+        self.page.session.store.set("final_inputs",data)
 
        
 def main(page: ft.Page):
@@ -919,11 +908,8 @@ def main(page: ft.Page):
     page.scroll=ft.ScrollMode.AUTO
     #initial_inputs = Initial_Inputs()
     page.add(
-            Initial_Inputs()
+            Final_Inputs()
     )
 
 
 ft.run(main)
-        
-        VFM_calc()
-        self.page.go("/view_saved")
