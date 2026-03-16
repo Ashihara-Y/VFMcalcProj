@@ -591,7 +591,7 @@ class Final_Inputs(ft.Column):
         else:
             first_end_fy = datetime.date(start_year + 1, 3, 31)
 
-        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        #chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
         kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
         kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
 
@@ -619,7 +619,7 @@ class Final_Inputs(ft.Column):
         chisai_shoukan_kikan = inputs['chisai_shoukan_kikan']
         chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan]
         # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
-        first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
+        #first_end_fy = first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             SPC_keihi = Decimal(0)
@@ -627,20 +627,20 @@ class Final_Inputs(ft.Column):
             SPC_shihon = Decimal(0)
             SPC_yobihi = Decimal(0)
         else:
-            SPC_keihi = Decimal(self.sl8.value)
-            SPC_fee = Decimal(self.sl9.value)
-            SPC_shihon = Decimal(self.sl10.value)
-            SPC_yobihi = Decimal(self.sl11.value)
+            SPC_keihi = inputs['SPC_keihi']
+            SPC_fee = inputs['SPC_fee']
+            SPC_shihon = inputs['SPC_shihon']
+            SPC_yobihi = inputs['SPC_yobihi']
 
         ijikanri_unnei_years = int(self.initial_inputs['ijikanri_unnei_years'])
         houjinjuminzei_kintou = Decimal(self.initial_inputs['houjinjuminzei_kintou'])
         SPC_hiyou_total = SPC_keihi * ijikanri_unnei_years + SPC_shihon
-        SPC_hiyou_nen = SPC_fee + SPC_keihi
-        SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou
+        SPC_hiyou_nen = SPC_fee + SPC_keihi #公共がSPCに毎年払うコスト
+        SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou　#SPCが払うコスト
         
-        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / 100 # CSVの％表記を採取しているため、実数表記に切り替える。
-        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
-        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
+        chisai_kinri = chisai_kinri / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        #kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # 上記と重複　CSVの％表記を採取しているため、実数表記に切り替える。
+        #kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # 上記と重複　CSVの％表記を採取しているため、実数表記に切り替える。
 
         ijikanri_unnei = (
             Decimal(self.initial_inputs["ijikanri_unnei_1"]) + 
@@ -661,17 +661,17 @@ class Final_Inputs(ft.Column):
         
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":        
             final_inputs = {
-            "advisory_fee": str(self.sl13.value),
+            "advisory_fee": str(inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
-            "chisai_shoukan_kikan": int(self.sl1.value),
-            "chisai_sueoki_years": chisai_sueoki_kikan,
-            "const_start_date_year": int(self.dd00.value),
-            "const_start_date_month": int(self.dd01.value),
-            "const_start_date_day": int(self.dd02.value),
+            "chisai_shoukan_kikan": int(chisai_shoukan_kikan),
+            "chisai_sueoki_years": int(chisai_sueoki_kikan),
+            "const_start_date_year": int(const_start_date_year),
+            "const_start_date_month": int(const_start_date_month),
+            "const_start_date_day": int(const_start_date_day),
             "const_start_date": const_start_date, 
-            "const_years": int(self.initial_inputs["const_years"]),
+            "const_years": int(const_years),
             "discount_rate": str(discount_rate),
-
+#20260316ここから作業を再開
             "first_end_fy": str(first_end_fy),
             "fudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
             "fudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
