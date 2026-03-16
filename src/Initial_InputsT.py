@@ -297,13 +297,13 @@ class Initial_Inputs(ft.Column):
             b
         ]
 
-    def button_clicked(self, e):
+    async def button_clicked(self, e):
         input_data = self._extract_inputs()
 
         calc_results = self._calculate_financials(input_data)
         
         self._save_to_db(calc_results)
-        self.page.push_route("/final_inputs")
+        await self.page.go("/final_inputs")
         
 
     def _extract_inputs(self):
