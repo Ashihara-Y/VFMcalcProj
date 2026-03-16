@@ -843,40 +843,6 @@ class Final_Inputs(ft.Column):
             }
 
 
-#        if os.path.exists("fi_db.json"):
-#            os.remove("fi_db.json")
-#        db = TinyDB('fi_db.json')
-#        db.insert(final_inputs)
-#        db.close()
-        #if os.path.exists("final_inputs.db"):
-        #    os.remove("final_inputs.db")
-        #con = sqlite3.connect('final_inputs.db')
-        #con.close()
-
-    #def _extract_inputs(self):
-
-    #    self.controls = [
-    #       #ft.Page.title = "初期入力",
-    #
-    #        self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
-    #        ft.Divider(height=1, color="amber"),
-    #        tx0,  slider_value00, self.sl0, ft.Divider(height=1, color="amber"),
-    #        tx1,  slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
-    #        tx2,  slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
-    #        tx3,  slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
-    #        tx4,  slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
-    #        tx5,  slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
-    #        tx6,  slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
-    #        tx7,  slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
-    #        tx8,  slider_value08, self.sl8, ft.Divider(height=1, color="amber"),
-    #        tx9,  slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
-    #        tx10, slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
-    #        tx11, slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
-    #        tx12, slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
-    #        b
-    #    ]
-
-
 
     def button_clicked(self, e):
         input_data = self._extract_inputs()
