@@ -60,8 +60,6 @@ class Final_Inputs(ft.Column):
             target_text_control.update()
 
 
-    #def build(self):
-
         date_format = '%Y-%m-%d'
         date_dt = datetime.datetime.strptime(self.initial_inputs["const_start_date"], date_format)
         const_start_year = date_dt.year
@@ -541,8 +539,6 @@ class Final_Inputs(ft.Column):
         chisai_sueoki_kikan = int(self.sl19.value)
         option_02 = Decimal(self.sl20.value)
 
-
-
         return {
             'const_start_date_year': const_start_date_year,
             'const_start_date_month': const_start_date_month,
@@ -574,18 +570,18 @@ class Final_Inputs(ft.Column):
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             shisetsu_seibi_paymentschedule_ikkatsu = Decimal(1).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         else:         
-            shisetsu_seibi_paymentschedule_ikkatsu = Decimal(self.sl2.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+            shisetsu_seibi_paymentschedule_ikkatsu = inputs['shisetsu_seibi_ikkatsu_hiritsu']
 
-        shisetsu_seibi_paymentschedule_kappu = Decimal(1 - shisetsu_seibi_paymentschedule_ikkatsu).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        shisetsu_seibi_paymentschedule_kappu = to_dec(Decimal(1) - shisetsu_seibi_paymentschedule_ikkatsu)
         #kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
 
         kisai_jutou = str(kisai_jutou)
         kisai_koufu = str(kisai_koufu)
         hojo_ritsu = str(hojo_ritsu)
 
-        #const_start_date_year = self.initial_inputs['const_start_date_year']
-        #const_start_date_month = self.initial_inputs['const_start_date_month']
-        #const_start_date_day = self.initial_inputs['const_start_date_day']
+        const_start_date_year = inputs['const_start_date_year']
+        const_start_date_month = inputs['const_start_date_month']
+        const_start_date_day = inputs['const_start_date_day']
         const_start_date = str(datetime.date(const_start_date_year, const_start_date_month, const_start_date_day))
         start_year = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').year
         start_month = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').month
@@ -595,31 +591,32 @@ class Final_Inputs(ft.Column):
         else:
             first_end_fy = datetime.date(start_year + 1, 3, 31)
 
-        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / 100 # CSVの％表記を採取しているため、実数表記に切り替える。
-        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
-        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # CSVの％表記を採取しているため、実数表記に切り替える。
+        chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
 
         discount_rate = kijun_kinri + kitai_bukka
-        discount_rate = Decimal(discount_rate).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        discount_rate = to_dec(discount_rate)
 
         target_years = 45
         #proj_years = int(self.initial_inputs['proj_years'])
         const_years = int(self.initial_inputs['const_years'])
-
+        chisai_sueoki_kikan = inputs['chisai_sueoki_kikan']
         shoukan_kaishi_jiki = const_years + chisai_sueoki_kikan + 1
 
-        lg_spread = Decimal(self.initial_inputs['lg_spread']).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        lg_spread = to_dec(self.initial_inputs['lg_spread'])
+        kappu_kinri_spread = inputs['kappu_kinri_spread']
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
-        Kappu_kinri = Decimal(str(Kappu_kinri)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+        Kappu_kinri = to_dec(Kappu_kinri)
 
         JRB_rates_df = pd.read_csv(
-            "JRB_rates.csv",
+            "src/JRB_rates.csv",
             encoding="utf-8",
             sep='\t', 
             names=[0,1,2,3,4,5], 
             index_col=0)
 
-        chisai_shoukan_kikan = int(self.sl1.value)
+        chisai_shoukan_kikan = inputs['chisai_shoukan_kikan']
         chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan]
         # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
         first_end_fy, first_end_fy + dateutil.relativedelta.relativedelta(year=1)
