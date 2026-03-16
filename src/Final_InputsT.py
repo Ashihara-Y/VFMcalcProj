@@ -68,15 +68,15 @@ class Final_Inputs(ft.Column):
         const_start_month = date_dt.month
         const_start_day = date_dt.day
 
-        self.tx0 = ft.Text(str("＜＜初期データ＞＞"))
-        self.tx1 = ft.Text(str("発注者区分： " + str(self.initial_inputs["mgmt_type"])))
-        self.tx2 = ft.Text(str("事業タイプ： " + str(self.initial_inputs["proj_ctgry"])))
-        self.tx3 = ft.Text(str("事業方式： " + str(self.initial_inputs["proj_type"])))
-        self.tx4 = ft.Text(str("事業期間： " + str(self.initial_inputs["proj_years"]) + "年"))
-        self.tx5 = ft.Text(str("施設整備期間： " + str(self.initial_inputs["const_years"]) + "年"))
-        self.tx6 = ft.Text(str("地方債償還据置期間： " + str(self.initial_inputs["chisai_sueoki_kikan"]) + "年"))
+        tx0 = ft.Text(str("＜＜初期データ＞＞"))
+        tx1 = ft.Text(str("発注者区分： " + str(self.initial_inputs["mgmt_type"])))
+        tx2 = ft.Text(str("事業タイプ： " + str(self.initial_inputs["proj_ctgry"])))
+        tx3 = ft.Text(str("事業方式： " + str(self.initial_inputs["proj_type"])))
+        tx4 = ft.Text(str("事業期間： " + str(self.initial_inputs["proj_years"]) + "年"))
+        tx5 = ft.Text(str("施設整備期間： " + str(self.initial_inputs["const_years"]) + "年"))
+        tx6 = ft.Text(str("地方債償還据置期間： " + str(self.initial_inputs["chisai_sueoki_kikan"]) + "年"))
     
-        self.dt1 = ft.DataTable(
+        dt1 = ft.DataTable(
             width=1800,
             data_row_max_height=80,
             heading_row_height=80,
@@ -121,7 +121,7 @@ class Final_Inputs(ft.Column):
                 ),
             ],
         )
-        self.dt2 = ft.DataTable(
+        dt2 = ft.DataTable(
             width=1800,
             columns=[
                 ft.DataColumn(ft.Text("税目")),
@@ -174,7 +174,7 @@ class Final_Inputs(ft.Column):
             ],
         )
 
-        self.tx7 = ft.Text("地方債償還期間(年)")
+        tx7 = ft.Text("地方債償還期間(年)")
         self.sl1 = ft.Slider(
             value=int(self.initial_inputs["chisai_shoukan_kikan"]),
             min=0,
@@ -185,7 +185,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value01,
         )
-        self.tx8 = ft.Text("施設整備費支払 一括払の比率(%)")
+        tx8 = ft.Text("施設整備費支払 一括払の比率(%)")
         self.sl2 = ft.Slider(
             value=50,
             min=0.0,
@@ -196,7 +196,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value02,
         )
-        self.tx9 = ft.Text("モニタリング等費用(PSC)(百万円、BT/DB:5程度、その他:10程度)")
+        tx9 = ft.Text("モニタリング等費用(PSC)(百万円、BT/DB:5程度、その他:10程度)")
         self.sl3 = ft.Slider(
             value=0,
             min=0,
@@ -207,7 +207,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value03,
         )
-        self.tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、BT/DB:3程度、その他:6程度)")
+        tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、BT/DB:3程度、その他:6程度)")
         self.sl4 = ft.Slider(
             value=0,
             min=0,
@@ -218,7 +218,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value04,
         )
-        self.tx11 = ft.Text("起債充当率(%)")
+        tx11 = ft.Text("起債充当率(%)")
         self.sl5 = ft.Slider(
             value:=Decimal(self.initial_inputs["kisai_jutou"])*100,
             min=0.0,
@@ -229,7 +229,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value05,
         )
-        self.tx12 = ft.Text("起債への交付金カバー率(%)")
+        tx12 = ft.Text("起債への交付金カバー率(%)")
         self.sl6 = ft.Slider(
             value:=Decimal(self.initial_inputs["kisai_koufu"])*100,
             min=0.0,
@@ -240,7 +240,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value06,
         )
-        self.tx13 = ft.Text("補助率(%)")
+        tx13 = ft.Text("補助率(%)")
         self.sl7 = ft.Slider(
             value:=Decimal(self.initial_inputs["hojo_ritsu"])*100,
             min=0.0,
@@ -251,7 +251,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value07,
         )
-        self.tx14 = ft.Text("SPC経費年額(百万円)")
+        tx14 = ft.Text("SPC経費年額(百万円)")
         self.sl8 = ft.Slider(
             value:=Decimal(self.initial_inputs["SPC_keihi"]),
             min=0,
@@ -262,7 +262,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value08,
         )
-        self.tx15 = ft.Text("SPCへの手数料(百万円)")
+        tx15 = ft.Text("SPCへの手数料(百万円)")
         self.sl9 = ft.Slider(
             value:=Decimal(self.initial_inputs["SPC_fee"]),
             min=0,
@@ -284,7 +284,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value10,
         )
-        self.tx17 = ft.Text("SPC予備費(百万円)")
+        tx17 = ft.Text("SPC予備費(百万円)")
         self.sl11 = ft.Slider(
             value:=Decimal(self.initial_inputs["SPC_yobihi"]),
             min=0,
@@ -299,7 +299,7 @@ class Final_Inputs(ft.Column):
             label="SPC経費の扱い（デフォルト：サービス対価で支払）",
             value=1,
         )
-        self.tx19 = ft.Text("アドバイザリー等経費(百万円)")
+        tx19 = ft.Text("アドバイザリー等経費(百万円)")
         self.sl13 = ft.Slider(
             value=0,
             min=0,
@@ -309,7 +309,7 @@ class Final_Inputs(ft.Column):
             round=1,
             on_change=self.handle_change_13,
         )
-        self.tx20 = ft.Text("利用料金収入(百万円)")
+        tx20 = ft.Text("利用料金収入(百万円)")
         self.sl14 = ft.Slider(
             value:=self.initial_inputs["riyou_ryoukin"],
             min=0,
@@ -320,7 +320,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value14,
         )
-        self.tx21 = ft.Text("割賦金利へのスプレッド(%)")
+        tx21 = ft.Text("割賦金利へのスプレッド(%)")
         self.sl15 = ft.Slider(
             value=0.00,
             min=0.00,
@@ -381,7 +381,7 @@ class Final_Inputs(ft.Column):
                 ft.dropdown.Option("31"), 
             ],
         )
-        self.tx25 = ft.Text("地方債償還据置期間")
+        tx25 = ft.Text("地方債償還据置期間")
         self.sl19 = ft.Slider(
             value=self.initial_inputs['chisai_sueoki_kikan'],
             min=0,
@@ -391,7 +391,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value19,
         )
-        self.tx26 = ft.Text("予備入力")
+        tx26 = ft.Text("予備入力")
         self.sl20 = ft.Slider(
             value=0,
             min=0,
@@ -401,7 +401,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value20,
         )
-        self.b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
+        b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
 
         fi_lv1 = ft.ListView(
             expand=True,
@@ -430,32 +430,30 @@ class Final_Inputs(ft.Column):
             first_item_prototype=False,
             horizontal=False,
         )
-
         fi_lv1.controls= [
-                    self.tx0, self.tx1, self.tx2,
-                    self.tx3, self.tx4, self.tx5, self.tx6,
-                    self.dt1, self.dt2, ft.Divider(height=1, color="amber"),
+            tx0, tx1, tx2, tx3, tx4, tx5, tx6,
+            dt1, dt2, ft.Divider(height=1, color="amber"),
         ]
         fi_lv2.controls= [
-                    self.tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    self.tx25, slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
-                    self.tx8, slider_value02, self.sl2,  ft.Divider(height=1, color="amber"),
-                    self.tx9, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
-                    self.tx10,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                    self.tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    self.tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    self.tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    self.tx14,slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
-                    self.tx15,slider_value09, self.sl9,  ft.Divider(height=1, color="amber"),
-                    self.tx16,slider_value10, self.sl10, ft.Divider(height=1, color="amber"),
-                    self.tx17,slider_value11, self.sl11, ft.Divider(height=1, color="amber"),
+                    tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
+                    tx25, slider_value_19, self.sl19, ft.Divider(height=1, color="amber"),
+                    tx8, slider_value_02, self.sl2, ft.Divider(height=1, color="amber"),
+                    tx9, slider_value_03, self.sl3, ft.Divider(height=1, color="amber"),
+                    tx10,slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
+                    tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    tx14,slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
+                    tx15,slider_value09, self.sl9,  ft.Divider(height=1, color="amber"),
+                    tx16,slider_value10, self.sl10, ft.Divider(height=1, color="amber"),
+                    tx17,slider_value11, self.sl11, ft.Divider(height=1, color="amber"),
                     self.sw01,ft.Divider(height=1, color="amber"),
-                    self.tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
-                    self.tx20,slider_value14, self.sl14, ft.Divider(height=1, color="amber"),
-                    self.tx21,slider_value15, self.sl15, ft.Divider(height=1, color="amber"),
+                    tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
+                    tx20,slider_value14, self.sl14, ft.Divider(height=1, color="amber"),
+                    tx21,slider_value15, self.sl15, ft.Divider(height=1, color="amber"),
                     self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"),
-                    self.tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
-                    self.b,
+                    tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
+                    b,
 
         ]        
         fi_lv3.controls= [
@@ -469,11 +467,11 @@ class Final_Inputs(ft.Column):
                     self.tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
                     self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"), 
                     self.tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
-                    self.b,
+                    b,
 
         ]        
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
-            return ft.Container(
+            self.controls = [ft.Container(
                 content=ft.Column(controls=[
                         fi_lv1,
                         fi_lv3,
@@ -490,9 +488,9 @@ class Final_Inputs(ft.Column):
                     height=2100,
                     padding=10,
                     margin=10,
-            )
+            )]
         else:
-            return ft.Container(
+            self.controls = [ft.Container(
                 content=ft.Column(controls=[
                         fi_lv1,
                         fi_lv2,
@@ -509,27 +507,82 @@ class Final_Inputs(ft.Column):
                     height=2100,
                     padding=10,
                     margin=10,
-            )
+            )]
 
     def button_clicked(self, e):
+        input_data = self._extract_inputs()
+
+        calc_results = self._calculate_financials(input_data)
+        
+        self._save_to_db(calc_results)
+        self.page.push_route("/final_inputs")
+
+    def _extract_inputs(self):
+        const_start_date_year = int(self.dd00.value)
+        const_start_date_month = int(self.dd01.value)
+        const_start_date_day = int(self.dd02.value)
+
+        chisai_shoukan_kikan = int(self.sl1.value)
+        shisetsu_seibi_ikkatsu_hiritsu = Decimal(self.sl2.value)/Decimal(100)
+        monitoring_costs_PSC = Decimal(self.sl3.value)
+        monitoring_costs_LCC = Decimal(self.sl4.value)
+        kisai_jutou = Decimal(self.sl5.value)/Decimal(100)
+        kisai_koufu = Decimal(self.sl6.value)/Decimal(100)
+        hojo_ritsu = Decimal(self.sl7.value)/Decimal(100)
+        SPC_keihi = Decimal(self.sl8.value)
+        SPC_fee = Decimal(self.sl9.value)
+        SPC_shihon = Decimal(self.sl10.value)
+        SPC_yobihi = Decimal(self.sl11.value)
+
+        advisory_fee = Decimal(self.sl13.value)
+        riyouryoukin_shunyu = Decimal(self.sl14.value)
+        kappu_kinri_spread = Decimal(self.sl15.value)/Decimal(100)
+        
+        chisai_sueoki_kikan = int(self.sl19.value)
+        option_02 = Decimal(self.sl20.value)
+
+
+
+        return {
+            'const_start_date_year': const_start_date_year,
+            'const_start_date_month': const_start_date_month,
+            'const_start_date_day': const_start_date_day,
+
+            'chisai_shoukan_kikan': chisai_shoukan_kikan,
+            'shisetsu_seibi_ikkatsu_hiritsu': shisetsu_seibi_ikkatsu_hiritsu,
+            'monitoring_costs_PSC': monitoring_costs_PSC,
+            'monitoring_costs_LCC': monitoring_costs_LCC,
+            'kisai_jutou': kisai_jutou,
+            'kisai_koufu': kisai_koufu,
+            'hojo_ritsu': hojo_ritsu,
+            'SPC_keihi': SPC_keihi,
+            'SPC_fee': SPC_fee,
+            'SPC_shihon': SPC_shihon,
+            'SPC_yobihi': SPC_yobihi,
+
+            'advisory_fee': advisory_fee,
+            'riyouryoukin_shunyu': riyouryoukin_shunyu,
+            'kappu_kinri_spread': kappu_kinri_spread,
+            'chisai_sueoki_kikan': chisai_sueoki_kikan,
+            'option_02': option_02,
+            }
+        
+    def _calculate_financials(self,inputs):
+        def to_dec(val):
+            return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             shisetsu_seibi_paymentschedule_ikkatsu = Decimal(1).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         else:         
             shisetsu_seibi_paymentschedule_ikkatsu = Decimal(self.sl2.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         shisetsu_seibi_paymentschedule_kappu = Decimal(1 - shisetsu_seibi_paymentschedule_ikkatsu).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        kisai_jutou = Decimal(self.sl5.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        kisai_koufu = Decimal(self.sl6.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-        hojo_ritsu = Decimal(self.sl7.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         #kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
 
         kisai_jutou = str(kisai_jutou)
         kisai_koufu = str(kisai_koufu)
         hojo_ritsu = str(hojo_ritsu)
 
-        const_start_date_year = int(self.dd00.value)
-        const_start_date_month = int(self.dd01.value)
-        const_start_date_day = int(self.dd02.value)
         #const_start_date_year = self.initial_inputs['const_start_date_year']
         #const_start_date_month = self.initial_inputs['const_start_date_month']
         #const_start_date_day = self.initial_inputs['const_start_date_day']
@@ -553,10 +606,8 @@ class Final_Inputs(ft.Column):
         #proj_years = int(self.initial_inputs['proj_years'])
         const_years = int(self.initial_inputs['const_years'])
 
-        chisai_sueoki_kikan = int(self.sl19.value)
         shoukan_kaishi_jiki = const_years + chisai_sueoki_kikan + 1
 
-        kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         lg_spread = Decimal(self.initial_inputs['lg_spread']).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = Decimal(str(Kappu_kinri)).quantize(Decimal('0.000001'), ROUND_HALF_UP)
@@ -795,71 +846,17 @@ class Final_Inputs(ft.Column):
             }
 
 
-        if os.path.exists("fi_db.json"):
-            os.remove("fi_db.json")
-        db = TinyDB('fi_db.json')
-        db.insert(final_inputs)
-        db.close()
+#        if os.path.exists("fi_db.json"):
+#            os.remove("fi_db.json")
+#        db = TinyDB('fi_db.json')
+#        db.insert(final_inputs)
+#        db.close()
         #if os.path.exists("final_inputs.db"):
         #    os.remove("final_inputs.db")
         #con = sqlite3.connect('final_inputs.db')
         #con.close()
 
-    def _extract_inputs(self):
-        mgmt_type = self.dd1.value
-        proj_ctgry = self.dd2.value
-        proj_type = self.dd3.value
-
-        raw_proj_years = self.dd6.value if proj_type == "BT/DB(いずれもSPCなし)" else self.dd4.value
-
-        proj_years = int(raw_proj_years) if raw_proj_years else 0
-        const_years = int(self.dd6.value) if self.dd6.value else 0
-        chisai_shoukan_kikan = int(self.dd5.value) if self.dd5.value else 0
-
-        if proj_years < const_years:
-            raise ValueError("事業期間は施設整備期間より長い必要があります。")
-        ijikanri_unnei_years = proj_years - const_years
-
-        shisetsu_seibi_org_R = Decimal(self.sl0.value)
-        shisetsu_seibi_org_Y = Decimal(self.sl1.value)
-        ijikanri_unnei_1_org_R = Decimal(self.sl2.value)
-        ijikanri_unnei_1_org_Y = Decimal(self.sl3.value)
-        ijikanri_unnei_2_org_R= Decimal(self.sl4.value)
-        ijikanri_unnei_2_org_Y = Decimal(self.sl5.value)
-        ijikanri_unnei_3_org_R = Decimal(self.sl6.value)
-        ijikanri_unnei_3_org_Y = Decimal(self.sl7.value)
-
-        reduc_shisetsu = Decimal(self.sl8.value) / Decimal(100)
-        reduc_ijikanri_1 = Decimal(self.sl9.value) / Decimal(100)
-        reduc_ijikanri_2 = Decimal(self.sl10.value) / Decimal(100)
-        reduc_ijikanri_3 = Decimal(self.sl11.value) / Decimal(100)
-        rakusatsu_ritsu = Decimal(self.sl12.value) / Decimal(100)
-
-        return {
-            'mgmt_type': mgmt_type,
-            'proj_ctgry': proj_ctgry,
-            'proj_type': proj_type,
-
-            'proj_years': proj_years,
-            'const_years': const_years,
-            'chisai_shoukan_kikan': chisai_shoukan_kikan,
-            'ijikanri_unnei_years': ijikanri_unnei_years,
-
-            'shisetsu_seibi_org_R': shisetsu_seibi_org_R,
-            'shisetsu_seibi_org_Y': shisetsu_seibi_org_Y,
-            'ijikanri_unnei_1_org_R': ijikanri_unnei_1_org_R,
-            'ijikanri_unnei_1_org_Y': ijikanri_unnei_1_org_Y,
-            'ijikanri_unnei_2_org_R': ijikanri_unnei_2_org_R,
-            'ijikanri_unnei_2_org_Y': ijikanri_unnei_2_org_Y,
-            'ijikanri_unnei_3_org_R': ijikanri_unnei_3_org_R,
-            'ijikanri_unnei_3_org_Y': ijikanri_unnei_3_org_Y,
-
-            'reduc_shisetsu': reduc_shisetsu,
-            'reduc_ijikanri_1': reduc_ijikanri_1,
-            'reduc_ijikanri_2': reduc_ijikanri_2,
-            'reduc_ijikanri_3': reduc_ijikanri_3,
-            'rakusatsu_ritsu': rakusatsu_ritsu
-        }
+    #def _extract_inputs(self):
 
         self.controls = [
             #ft.Page.title = "初期入力",
