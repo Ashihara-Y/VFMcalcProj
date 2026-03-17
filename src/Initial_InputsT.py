@@ -21,7 +21,7 @@ class Initial_Inputs(ft.Column):
         self.height = 2000
         self.window_width = 500
         self.window_height = 2000
-        self.resizable = True
+        self.resizable = 1
         self.expand=True
         self.scroll=ft.ScrollMode.AUTO
 

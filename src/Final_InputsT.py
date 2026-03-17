@@ -24,7 +24,7 @@ class Final_Inputs(ft.Column):
         self.window_width = 500
         self.window_height = 2000
         self.resizable = True
-        self.expand=True
+        self.expand=1
         self.scroll=ft.ScrollMode.AUTO
         self.alignment=ft.MainAxisAlignment.START
         self.horizontal_alignment=ft.CrossAxisAlignment.START
