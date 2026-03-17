@@ -14,8 +14,8 @@ from zoneinfo import ZoneInfo
 @ft.control
 class Initial_Inputs(ft.Column):
 
-    def init(self):
-        #super().__init__()
+    def __init__(self):
+        super().__init__()
         self.title = "初期入力"
         self.width = 500
         self.height = 2000
@@ -303,7 +303,7 @@ class Initial_Inputs(ft.Column):
         calc_results = self._calculate_financials(input_data)
         
         self._save_to_db(calc_results)
-        await self.page.go("/final_inputs")
+        await self.page.push_route("/final_inputs")
         
 
     def _extract_inputs(self):

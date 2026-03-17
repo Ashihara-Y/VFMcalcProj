@@ -12,11 +12,11 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-def main(page: ft.Page):
+async def main(page: ft.Page):
     page.title = "VFM計算アプリ"
     print("Initial Inputs", page.route)
 
-    def route_change():
+    def route_change(e):
         #print("Route changed to:", page.route)
         page.views.clear()
         page.views.append(
@@ -114,7 +114,8 @@ def main(page: ft.Page):
     page.on_route_change = route_change
     page.on_view_pop = view_pop
 
-    route_change()
+    await page.push_route(page.route)
+    #route_change()
 
 
 ft.run(main)

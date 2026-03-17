@@ -15,8 +15,9 @@ import timeflake
 
 @ft.control
 class Final_Inputs(ft.Column):
-    def init(self):
-        #super().__init__()
+    
+    def __init__(self):
+        super().__init__()
         self.title = "最終入力・確認"
         self.width = 500
         self.height = 3000
@@ -508,14 +509,6 @@ class Final_Inputs(ft.Column):
                     margin=10,
             )]
 
-    def button_clicked(self, e):
-        input_data = self._extract_inputs()
-
-        calc_results = self._calculate_financials(input_data)
-        
-        self._save_to_db(calc_results)
-        self.page.push_route("/final_inputs")
-
     def _extract_inputs(self):
         const_start_date_year = int(self.dd00.value)
         const_start_date_month = int(self.dd01.value)
@@ -844,14 +837,14 @@ class Final_Inputs(ft.Column):
 
 
 
-    def button_clicked(self, e):
+    async def button_clicked(self, e):
         input_data = self._extract_inputs()
 
         calc_results = self._calculate_financials(input_data)
         
         self._save_to_db(calc_results)
         VFM_calc()
-        self.page.push_route("/view_saved")
+        await self.page.push_route("/view_saved")
         
 
     def _save_to_db(self, data):
