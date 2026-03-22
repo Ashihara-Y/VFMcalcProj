@@ -12,6 +12,11 @@ from VFMcalc2 import VFM_calc
 from decimal import *
 import dateutil
 import timeflake
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 @ft.control
 class Final_Inputs(ft.Column):
@@ -51,10 +56,16 @@ class Final_Inputs(ft.Column):
         slider_value19 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value20 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
 
-        db = TinyDB("ii_db.json")
-        self.initial_inputs = db.all()[0]   
-        #self.initial_inputs.update(page.session.get("initial_inputs", {}))
-
+        #db = TinyDB("ii_db.json")
+        #self.initial_inputs = db.all()[0]   
+        self.initial_inputs = self.page.session.store.get("initial_inputs", {})
+    
+        if not self.initial_inputs or len(self.initial_inputs) == 0:
+            self.result_text.value = "Error: No data in SessionStorage from Initial_Inputs."
+            self.update()
+            return
+            
+ 
         def handle_slider_change(e):
             sl_value = e.control.value
             target_text_control = e.control.data
@@ -401,7 +412,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value20,
         )
-        b = ft.ElevatedButton(text="入力確認・計算", on_click=self.button_clicked)
+        b = ft.Button(content="入力確認・計算", on_click=self.button_clicked)
 
         fi_lv1 = ft.ListView(
             expand=True,
@@ -471,43 +482,16 @@ class Final_Inputs(ft.Column):
 
         ]        
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
-            self.controls = [ft.Container(
-                content=ft.Column(controls=[
+            self.controls = [
                         fi_lv1,
                         fi_lv3,
-                    ],
-                    #scroll=ft.ScrollMode.HIDDEN,
-                    alignment=ft.MainAxisAlignment.START,
-                    horizontal_alignment=ft.CrossAxisAlignment.START,            #height=2000,
-                    width=float("inf"),
-                    height=2000,
-                    spacing=10,
-                    #expand=True,
-                ),
-                    width=float("inf"),
-                    height=2100,
-                    padding=10,
-                    margin=10,
-            )]
+            ]
         else:
-            self.controls = [ft.Container(
-                content=ft.Column(controls=[
+            self.controls = [
                         fi_lv1,
                         fi_lv2,
-                    ],
-                    #scroll=ft.ScrollMode.HIDDEN,
-                    alignment=ft.MainAxisAlignment.START,
-                    horizontal_alignment=ft.CrossAxisAlignment.START,            #height=2000,
-                    width=float("inf"),
-                    height=2000,
-                    spacing=10,
-                    #expand=True,
-                ),
-                    width=float("inf"),
-                    height=2100,
-                    padding=10,
-                    margin=10,
-            )]
+            ]
+        
 
     def _extract_inputs(self):
         const_start_date_year = int(self.dd00.value)
@@ -856,19 +840,19 @@ class Final_Inputs(ft.Column):
         self.page.session.store.set("final_inputs",data)
 
        
-def main(page: ft.Page):
-    page.width = 500
-    page.height = 2000
-    page.title = "初期入力"
-    page.window_width = 500
-    page.window_height = 2000
-    page.window_resizable = True
-    page.expand=True
-    page.scroll=ft.ScrollMode.AUTO
-    #initial_inputs = Initial_Inputs()
-    page.add(
-            Final_Inputs()
-    )
+#def main(page: ft.Page):
+#    page.width = 500
+#    page.height = 2000
+#    page.title = "初期入力"
+#    page.window_width = 500
+#    page.window_height = 2000
+#    page.window_resizable = True
+#    page.expand=True
+#    page.scroll=ft.ScrollMode.AUTO
+#    #initial_inputs = Initial_Inputs()
+#    page.add(
+#            Final_Inputs()
+#    )
 
 
-ft.run(main)
+#ft.run(main)

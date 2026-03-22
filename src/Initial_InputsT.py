@@ -10,6 +10,11 @@ import timeflake
 from tinydb import TinyDB, Query
 from decimal import *
 from zoneinfo import ZoneInfo
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 @ft.control
 class Initial_Inputs(ft.Column):
@@ -542,20 +547,20 @@ class Initial_Inputs(ft.Column):
         self.page.session.store.set("initial_inputs",data)
 
        
-def main(page: ft.Page):
-    page.width = 500
-    page.height = 2000
-    page.title = "初期入力"
-    page.window_width = 500
-    page.window_height = 2000
-    page.window_resizable = True
-    page.expand=True
-    page.scroll=ft.ScrollMode.AUTO
-    #initial_inputs = Initial_Inputs()
-    page.add(
-            Initial_Inputs()
-    )
+#def main(page: ft.Page):
+#    page.width = 500
+#    page.height = 2000
+#    page.title = "初期入力"
+#    page.window_width = 500
+#    page.window_height = 2000
+#    page.window_resizable = True
+#    page.expand=True
+#    page.scroll=ft.ScrollMode.AUTO
+#    #initial_inputs = Initial_Inputs()
+#    page.add(
+#            Initial_Inputs()
+#    )
 
 
-ft.run(main)
+#ft.run(main)
 

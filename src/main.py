@@ -11,12 +11,13 @@ import download
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 async def main(page: ft.Page):
     page.title = "VFM計算アプリ"
-    print("Initial Inputs", page.route)
+    page.vertical_alignment = ft.MainAxisAlignment.START
 
-    def route_change(e):
+    def route_change():
         #print("Route changed to:", page.route)
         page.views.clear()
         page.views.append(
@@ -35,10 +36,10 @@ async def main(page: ft.Page):
                     route="/final_inputs",
                     controls=[
                         ft.AppBar(title=ft.Text("入力確認と追加入力")),
-                        Final_Inputs(),
+                        Final_Inputs()
                         #ft.ElevatedButton("計算", on_click=open_saved_list),
                     ],
-                    #scroll=ft.ScrollMode.ALWAYS,
+                    scroll=ft.ScrollMode.ALWAYS,
                 )
             )
         if page.route == "/results_detail":
@@ -48,11 +49,11 @@ async def main(page: ft.Page):
                     controls=[
                         ft.AppBar(title=ft.Text("算定結果詳細")),
                         Results(),
-                        ft.ElevatedButton("結果リストへ戻る", on_click=open_saved_list),
-                        ft.ElevatedButton("この結果をExcelに書き出す", on_click=result_to_excel),
-                        ft.ElevatedButton("出力したファイルをダウンロード", on_click=download_excel),
+                        ft.Button(content="結果リストへ戻る", on_click=open_saved_list),
+                        ft.Button(content="この結果をExcelに書き出す", on_click=result_to_excel),
+                        ft.Button(content="出力したファイルをダウンロード", on_click=download_excel),
                     ],
-                    #scroll=ft.ScrollMode.ALWAYS,
+                    scroll=ft.ScrollMode.ALWAYS,
                 )
             )
         if page.route == "/view_saved":
@@ -62,9 +63,9 @@ async def main(page: ft.Page):
                     controls=[
                         ft.AppBar(title=ft.Text("算定結果一覧(要約表を長めにクリックすると詳細に遷移します)")),
                         View_saved(),
-                        ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
+                        ft.Button(content="詳細を見る", on_click=open_results_detail),
                     ],
-                    #scroll=ft.ScrollMode.ALWAYS,
+                    scroll=ft.ScrollMode.ALWAYS,
                 )
             )
         if page.route == "/download":
@@ -76,7 +77,7 @@ async def main(page: ft.Page):
                         download.download(),
                         #ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],
-                    #scroll=ft.ScrollMode.ALWAYS,
+                    scroll=ft.ScrollMode.ALWAYS,
                 )
             )
         page.update()
@@ -114,8 +115,8 @@ async def main(page: ft.Page):
     page.on_route_change = route_change
     page.on_view_pop = view_pop
 
-    await page.push_route(page.route)
-    #route_change()
+    #await page.push_route(page.route)
+    route_change()
 
 
 ft.run(main)
