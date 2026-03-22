@@ -14,8 +14,8 @@ from zoneinfo import ZoneInfo
 @ft.control
 class Initial_Inputs(ft.Column):
 
-    def __init__(self):
-        super().__init__()
+    def init(self):
+        #super().__init__()
         self.title = "初期入力"
         self.width = 500
         self.height = 2000

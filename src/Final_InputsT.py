@@ -16,8 +16,8 @@ import timeflake
 @ft.control
 class Final_Inputs(ft.Column):
     
-    def __init__(self):
-        super().__init__()
+    def init(self):
+        #super().__init__()
         self.title = "最終入力・確認"
         self.width = 500
         self.height = 3000
