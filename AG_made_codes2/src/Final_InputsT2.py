@@ -2,6 +2,8 @@ import sys
 sys.dont_write_bytecode = True
 import os
 import flet as ft
+from final_inputs_models import InitialInputsData, UIInputsData, CalculatedFinancialData
+import dataclasses
 import pandas as pd
 import datetime
 import tinydb
@@ -20,7 +22,11 @@ logger = logging.getLogger(__name__)
 @ft.control
 class Final_Inputs(ft.Column):
     
-    def init(self):
+    #def __init__(self, initial_data: 'InitialInputsData', *args, **kwargs):
+    #    super().__init__(*args, **kwargs)
+    #    self.initial_inputs = initial_data
+
+    def init(self, initial_data: 'InitialInputsData', *args, **kwargs):
         #super().__init__()
         #self.title = "最終入力・確認"
         #self.width = 500
@@ -32,6 +38,7 @@ class Final_Inputs(ft.Column):
         #self.scroll=ft.ScrollMode.AUTO
         #self.alignment=ft.MainAxisAlignment.START
         #self.horizontal_alignment=ft.CrossAxisAlignment.START
+        self.initial_inputs = initial_data
 
         slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -52,10 +59,7 @@ class Final_Inputs(ft.Column):
         slider_value17 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value18 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value19 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value20 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-
-        db = TinyDB("ii_db.json")
-        self.initial_inputs = db.all()[0]   
+        slider_value20 = ft.Text("", size=30, weight=ft.FontWeight.W_200)   
         #self.initial_inputs = self.page.session.store.get("initial_inputs", {})
     
         #if not self.initial_inputs or len(self.initial_inputs) == 0:
@@ -72,18 +76,18 @@ class Final_Inputs(ft.Column):
 
 
         date_format = '%Y-%m-%d'
-        date_dt = datetime.datetime.strptime(self.initial_inputs["const_start_date"], date_format)
+        date_dt = datetime.datetime.strptime(self.initial_inputs.const_start_date, date_format)
         const_start_year = date_dt.year
         const_start_month = date_dt.month
         const_start_day = date_dt.day
 
         tx0 = ft.Text(str("＜＜初期データ＞＞"))
-        tx1 = ft.Text(str("発注者区分： " + str(self.initial_inputs["mgmt_type"])))
-        tx2 = ft.Text(str("事業タイプ： " + str(self.initial_inputs["proj_ctgry"])))
-        tx3 = ft.Text(str("事業方式： " + str(self.initial_inputs["proj_type"])))
-        tx4 = ft.Text(str("事業期間： " + str(self.initial_inputs["proj_years"]) + "年"))
-        tx5 = ft.Text(str("施設整備期間： " + str(self.initial_inputs["const_years"]) + "年"))
-        tx6 = ft.Text(str("地方債償還据置期間： " + str(self.initial_inputs["chisai_sueoki_kikan"]) + "年"))
+        tx1 = ft.Text(str("発注者区分： " + str(self.initial_inputs.mgmt_type)))
+        tx2 = ft.Text(str("事業タイプ： " + str(self.initial_inputs.proj_ctgry)))
+        tx3 = ft.Text(str("事業方式： " + str(self.initial_inputs.proj_type)))
+        tx4 = ft.Text(str("事業期間： " + str(self.initial_inputs.proj_years) + "年"))
+        tx5 = ft.Text(str("施設整備期間： " + str(self.initial_inputs.const_years) + "年"))
+        tx6 = ft.Text(str("地方債償還据置期間： " + str(self.initial_inputs.chisai_sueoki_kikan) + "年"))
     
         dt1 = ft.DataTable(
             width=1800,
@@ -99,33 +103,33 @@ class Final_Inputs(ft.Column):
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text("施設整備費")),
-                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org_LCC"])),                
+                        ft.DataCell(ft.Text(self.initial_inputs.shisetsu_seibi_org)),
+                        ft.DataCell(ft.Text(self.initial_inputs.shisetsu_seibi)),
+                        ft.DataCell(ft.Text(self.initial_inputs.shisetsu_seibi_org_LCC)),                
                         ],
                 ),
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text("維持管理運営費(人件費)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org_LCC"])),                
+                        ft.DataCell(ft.Text(self.initial_inputs.ijikanri_unnei_1_org)),
+                        ft.DataCell(ft.Text(self.initial_inputs.ijikanri_unnei_1)),
+                        ft.DataCell(ft.Text(self.initial_inputs.ijikanri_unnei_1_org_LCC)),                
                         ],
                 ),
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text("維持管理運営費(修繕費)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org_LCC"])),                
+                        ft.DataCell(ft.Text(self.initial_inputs.ijikanri_unnei_2_org)),
+                        ft.DataCell(ft.Text(self.initial_inputs.ijikanri_unnei_2)),
+                        ft.DataCell(ft.Text(self.initial_inputs.ijikanri_unnei_2_org_LCC)),                
                         ],
                 ),
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text("維持管理運営費(動力費)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org_LCC"])),                
+                        ft.DataCell(ft.Text(self.initial_inputs.ijikanri_unnei_3_org)),
+                        ft.DataCell(ft.Text(self.initial_inputs.ijikanri_unnei_3)),
+                        ft.DataCell(ft.Text(self.initial_inputs.ijikanri_unnei_3_org_LCC)),                
                         ],
                 ),
             ],
@@ -142,42 +146,42 @@ class Final_Inputs(ft.Column):
                     cells=[
                         ft.DataCell(ft.Text("法人税")),
                         ft.DataCell(ft.Text("-")),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinzei_ritsu"])),
+                        ft.DataCell(ft.Text(self.initial_inputs.houjinzei_ritsu)),
                         ],
                 ),
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text("法人住民税(都道府県)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"])),
+                        ft.DataCell(ft.Text(self.initial_inputs.houjinjuminzei_kintou)),
+                        ft.DataCell(ft.Text(self.initial_inputs.houjinjuminzei_ritsu_todouhuken)),
                         ],
                 ),
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text("法人住民税(市区町村)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"])),
+                        ft.DataCell(ft.Text(self.initial_inputs.houjinjuminzei_kintou)),
+                        ft.DataCell(ft.Text(self.initial_inputs.houjinjuminzei_ritsu_shikuchoson)),
                         ],
                 ),
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text("不動産取得税")),
-                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_hyoujun"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_ritsu"])),
+                        ft.DataCell(ft.Text(self.initial_inputs.hudousanshutokuzei_hyoujun)),
+                        ft.DataCell(ft.Text(self.initial_inputs.hudousanshutokuzei_ritsu)),
                         ],
                 ),
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text("固定資産税")),
-                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_hyoujun"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_ritsu"])),
+                        ft.DataCell(ft.Text(self.initial_inputs.koteishisanzei_hyoujun)),
+                        ft.DataCell(ft.Text(self.initial_inputs.koteishisanzei_ritsu)),
                         ],
                 ),
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text("登録免許税")),
-                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_hyoujun"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_ritsu"])),
+                        ft.DataCell(ft.Text(self.initial_inputs.tourokumenkyozei_hyoujun)),
+                        ft.DataCell(ft.Text(self.initial_inputs.tourokumenkyozei_ritsu)),
                         ],
                 ),
             ],
@@ -185,7 +189,7 @@ class Final_Inputs(ft.Column):
 
         tx7 = ft.Text("地方債償還期間(年)")
         self.sl1 = ft.Slider(
-            value=int(self.initial_inputs["chisai_shoukan_kikan"]),
+            value=int(self.initial_inputs.chisai_shoukan_kikan),
             min=0,
             max=30,
             divisions=30,
@@ -229,7 +233,7 @@ class Final_Inputs(ft.Column):
         )
         tx11 = ft.Text("起債充当率(%)")
         self.sl5 = ft.Slider(
-            value=float(self.initial_inputs["kisai_jutou"])*100,
+            value:=float(self.initial_inputs.kisai_jutou)*100,
             min=0.0,
             max=100.0,
             divisions=100,
@@ -240,7 +244,7 @@ class Final_Inputs(ft.Column):
         )
         tx12 = ft.Text("起債への交付金カバー率(%)")
         self.sl6 = ft.Slider(
-            value:=float(self.initial_inputs["kisai_koufu"])*100,
+            value:=float(self.initial_inputs.kisai_koufu)*100,
             min=0.0,
             max=50.0,
             divisions=50,
@@ -251,7 +255,7 @@ class Final_Inputs(ft.Column):
         )
         tx13 = ft.Text("補助率(%)")
         self.sl7 = ft.Slider(
-            value:=float(self.initial_inputs["hojo_ritsu"])*100,
+            value:=float(self.initial_inputs.hojo_ritsu)*100,
             min=0.0,
             max=70.0,
             divisions=700,
@@ -262,7 +266,7 @@ class Final_Inputs(ft.Column):
         )
         tx14 = ft.Text("SPC経費年額(百万円)")
         self.sl8 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_keihi"]),
+            value:=float(self.initial_inputs.SPC_keihi),
             min=0,
             max=50,
             divisions=50,
@@ -273,7 +277,7 @@ class Final_Inputs(ft.Column):
         )
         tx15 = ft.Text("SPCへの手数料(百万円)")
         self.sl9 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_fee"]),
+            value:=float(self.initial_inputs.SPC_fee),
             min=0,
             max=50,
             divisions=50,
@@ -284,7 +288,7 @@ class Final_Inputs(ft.Column):
         )
         tx16 = ft.Text("SPC資本金(百万円)")
         self.sl10 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_shihon"]),
+            value:=float(self.initial_inputs.SPC_shihon),
             min=0,
             max=100,
             divisions=100,
@@ -295,7 +299,7 @@ class Final_Inputs(ft.Column):
         )
         tx17 = ft.Text("SPC予備費(百万円)")
         self.sl11 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_yobihi"]),
+            value:=float(self.initial_inputs.SPC_yobihi),
             min=0,
             max=1000,
             divisions=1000,
@@ -320,7 +324,7 @@ class Final_Inputs(ft.Column):
         )
         tx20 = ft.Text("利用料金収入(百万円)")
         self.sl14 = ft.Slider(
-            value:=float(self.initial_inputs["riyou_ryoukin"]),
+            value:=float(self.initial_inputs.riyou_ryoukin),
             min=0,
             max=100,
             divisions=100,
@@ -392,7 +396,7 @@ class Final_Inputs(ft.Column):
         )
         tx25 = ft.Text("地方債償還据置期間")
         self.sl19 = ft.Slider(
-            value=self.initial_inputs['chisai_sueoki_kikan'],
+            value=int(self.initial_inputs.chisai_sueoki_kikan),
             min=0,
             max=5,
             divisions=5,
@@ -477,7 +481,7 @@ class Final_Inputs(ft.Column):
                     tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
                     b,
         ]        
-        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
+        if self.initial_inputs.proj_type == "DBO(SPCなし)" or self.initial_inputs.proj_type == "BT/DB(いずれもSPCなし)":
             self.controls = [
                     tx0, tx1, tx2, tx3, tx4, tx5, tx6,
                     dt1, dt2, ft.Divider(height=1, color="amber"),
@@ -547,7 +551,7 @@ class Final_Inputs(ft.Column):
         chisai_sueoki_kikan = int(self.sl19.value)
         option_02 = Decimal(self.sl20.value)
 
-        return {
+        return UIInputsData(**{
             'const_start_date_year': const_start_date_year,
             'const_start_date_month': const_start_date_month,
             'const_start_date_day': const_start_date_day,
@@ -569,16 +573,16 @@ class Final_Inputs(ft.Column):
             'kappu_kinri_spread': kappu_kinri_spread,
             'chisai_sueoki_kikan': chisai_sueoki_kikan,
             'option_02': option_02,
-            }
+            })
         
     def _calculate_financials(self,inputs):
         def to_dec(val):
             return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
-        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
+        if self.initial_inputs.proj_type == "DBO(SPCなし)" or self.initial_inputs.proj_type == "BT/DB(いずれもSPCなし)":
             shisetsu_seibi_paymentschedule_ikkatsu = to_dec(1)
         else:         
-            shisetsu_seibi_paymentschedule_ikkatsu = inputs['shisetsu_seibi_ikkatsu_hiritsu']
+            shisetsu_seibi_paymentschedule_ikkatsu = inputs.shisetsu_seibi_ikkatsu_hiritsu
 
         shisetsu_seibi_paymentschedule_kappu = to_dec(Decimal(1) - shisetsu_seibi_paymentschedule_ikkatsu)
         #kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
@@ -587,9 +591,9 @@ class Final_Inputs(ft.Column):
         kisai_koufu = str(kisai_koufu)
         hojo_ritsu = str(hojo_ritsu)
 
-        const_start_date_year = inputs['const_start_date_year']
-        const_start_date_month = inputs['const_start_date_month']
-        const_start_date_day = inputs['const_start_date_day']
+        const_start_date_year = inputs.const_start_date_year
+        const_start_date_month = inputs.const_start_date_month
+        const_start_date_day = inputs.const_start_date_day
         const_start_date = str(datetime.date(const_start_date_year, const_start_date_month, const_start_date_day))
         start_year = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').year
         start_month = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').month
@@ -599,21 +603,21 @@ class Final_Inputs(ft.Column):
         else:
             first_end_fy = datetime.date(start_year + 1, 3, 31)
 
-        #chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        #chisai_kinri = Decimal(self.initial_inputs.chisai_kinri) / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        kijun_kinri = Decimal(self.initial_inputs.kijun_kinri) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        kitai_bukka = Decimal(self.initial_inputs.kitai_bukka) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
 
         discount_rate = kijun_kinri + kitai_bukka
         discount_rate = to_dec(discount_rate)
 
         target_years = 45
-        #proj_years = int(self.initial_inputs['proj_years'])
-        const_years = int(self.initial_inputs['const_years'])
-        chisai_sueoki_kikan = inputs['chisai_sueoki_kikan']
+        #proj_years = int(self.initial_inputs.proj_years)
+        const_years = int(self.initial_inputs.const_years)
+        chisai_sueoki_kikan = inputs.chisai_sueoki_kikan
         shoukan_kaishi_jiki = const_years + chisai_sueoki_kikan + 1
 
-        lg_spread = to_dec(self.initial_inputs['lg_spread'])
-        kappu_kinri_spread = inputs['kappu_kinri_spread']
+        lg_spread = to_dec(self.initial_inputs.lg_spread)
+        kappu_kinri_spread = inputs.kappu_kinri_spread
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = to_dec(Kappu_kinri)
 
@@ -624,52 +628,52 @@ class Final_Inputs(ft.Column):
             names=[0,1,2,3,4,5], 
             index_col=0)
 
-        chisai_shoukan_kikan = inputs['chisai_shoukan_kikan']
+        chisai_shoukan_kikan = inputs.chisai_shoukan_kikan
         chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan]
         # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
         #first_end_fy = first_end_fy + dateutil.relativedelta.relativedelta(year=1)
 
-        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
+        if self.initial_inputs.proj_type == "DBO(SPCなし)" or self.initial_inputs.proj_type == "BT/DB(いずれもSPCなし)":
             SPC_keihi = Decimal(0)
             SPC_fee = Decimal(0)
             SPC_shihon = Decimal(0)
             SPC_yobihi = Decimal(0)
         else:
-            SPC_keihi = inputs['SPC_keihi']
-            SPC_fee = inputs['SPC_fee']
-            SPC_shihon = inputs['SPC_shihon']
-            SPC_yobihi = inputs['SPC_yobihi']
+            SPC_keihi = inputs.SPC_keihi
+            SPC_fee = inputs.SPC_fee
+            SPC_shihon = inputs.SPC_shihon
+            SPC_yobihi = inputs.SPC_yobihi
 
-        ijikanri_unnei_years = int(self.initial_inputs['ijikanri_unnei_years'])
-        houjinjuminzei_kintou = Decimal(self.initial_inputs['houjinjuminzei_kintou'])
+        ijikanri_unnei_years = int(self.initial_inputs.ijikanri_unnei_years)
+        houjinjuminzei_kintou = Decimal(self.initial_inputs.houjinjuminzei_kintou)
         SPC_hiyou_total = SPC_keihi * ijikanri_unnei_years + SPC_shihon
         SPC_hiyou_nen = SPC_fee + SPC_keihi #公共がSPCに毎年払うコスト
         SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou #SPCが払うコスト
         
         chisai_kinri = chisai_kinri / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-        #kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # 上記と重複　CSVの％表記を採取しているため、実数表記に切り替える。
-        #kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # 上記と重複　CSVの％表記を採取しているため、実数表記に切り替える。
+        #kijun_kinri = Decimal(self.initial_inputs.kijun_kinri) /100 # 上記と重複　CSVの％表記を採取しているため、実数表記に切り替える。
+        #kitai_bukka = Decimal(self.initial_inputs.kitai_bukka) /100 # 上記と重複　CSVの％表記を採取しているため、実数表記に切り替える。
 
         ijikanri_unnei = (
-            Decimal(self.initial_inputs["ijikanri_unnei_1"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_2"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_3"]))
+            Decimal(self.initial_inputs.ijikanri_unnei_1) + 
+            Decimal(self.initial_inputs.ijikanri_unnei_2) + 
+            Decimal(self.initial_inputs.ijikanri_unnei_3))
         ijikanri_unnei_LCC = (
-            Decimal(self.initial_inputs["ijikanri_unnei_1_LCC"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_2_LCC"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_3_LCC"]))
+            Decimal(self.initial_inputs.ijikanri_unnei_1_LCC) + 
+            Decimal(self.initial_inputs.ijikanri_unnei_2_LCC) + 
+            Decimal(self.initial_inputs.ijikanri_unnei_3_LCC))
         ijikanri_unnei_org = (
-            Decimal(self.initial_inputs["ijikanri_unnei_1_org"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_2_org"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_3_org"]))
+            Decimal(self.initial_inputs.ijikanri_unnei_1_org) + 
+            Decimal(self.initial_inputs.ijikanri_unnei_2_org) + 
+            Decimal(self.initial_inputs.ijikanri_unnei_3_org))
         ijikanri_unnei_org_LCC = (
-            Decimal(self.initial_inputs["ijikanri_unnei_1_org_LCC"]) +
-            Decimal(self.initial_inputs["ijikanri_unnei_2_org_LCC"]) +
-            Decimal(self.initial_inputs["ijikanri_unnei_3_org_LCC"]))
+            Decimal(self.initial_inputs.ijikanri_unnei_1_org_LCC) +
+            Decimal(self.initial_inputs.ijikanri_unnei_2_org_LCC) +
+            Decimal(self.initial_inputs.ijikanri_unnei_3_org_LCC))
         
-        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":        
-            final_inputs = {
-            "advisory_fee": str(inputs['advisory_fee']),
+        if self.initial_inputs.proj_type == "DBO(SPCなし)" or self.initial_inputs.proj_type == "BT/DB(いずれもSPCなし)":        
+            final_inputs = CalculatedFinancialData(**{
+            "advisory_fee": str(inputs.advisory_fee),
             "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(chisai_shoukan_kikan),
             "chisai_sueoki_years": int(chisai_sueoki_kikan),
@@ -680,30 +684,30 @@ class Final_Inputs(ft.Column):
             "const_years": int(const_years),
             "discount_rate": str(discount_rate),
             "first_end_fy": str(first_end_fy),
-            "fudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
-            "fudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
-            "growth": str(self.initial_inputs["growth"]),
+            "fudousanshutokuzei_hyoujun": str(self.initial_inputs.hudousanshutokuzei_hyoujun),
+            "fudousanshutokuzei_ritsu": str(self.initial_inputs.hudousanshutokuzei_ritsu),
+            "growth": str(self.initial_inputs.growth),
             "hojo_ritsu": hojo_ritsu,
-            "houjinzei_ritsu": str(self.initial_inputs["houjinzei_ritsu"]),
-            "houjinjuminzei_kintou": str(self.initial_inputs["houjinjuminzei_kintou"]),
-            "houjinjuminzei_ritsu_todouhuken": str(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
-            "houjinjuminzei_ritsu_shikuchoson": str(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
+            "houjinzei_ritsu": str(self.initial_inputs.houjinzei_ritsu),
+            "houjinjuminzei_kintou": str(self.initial_inputs.houjinjuminzei_kintou),
+            "houjinjuminzei_ritsu_todouhuken": str(self.initial_inputs.houjinjuminzei_ritsu_todouhuken),
+            "houjinjuminzei_ritsu_shikuchoson": str(self.initial_inputs.houjinjuminzei_ritsu_shikuchoson),
             "ijikanri_unnei": str(ijikanri_unnei),
             "ijikanri_unnei_LCC": str(ijikanri_unnei_LCC),
             "ijikanri_unnei_org": str(ijikanri_unnei_org),
             "ijikanri_unnei_org_LCC": str(ijikanri_unnei_org_LCC),
-            "ijikanri_unnei_1": str(self.initial_inputs["ijikanri_unnei_1"]),
-            "ijikanri_unnei_1_LCC": str(self.initial_inputs["ijikanri_unnei_1_LCC"]),
-            "ijikanri_unnei_1_org": str(self.initial_inputs["ijikanri_unnei_1_org"]),
-            "ijikanri_unnei_1_org_LCC": str(self.initial_inputs["ijikanri_unnei_1_org_LCC"]),
-            "ijikanri_unnei_2": str(self.initial_inputs["ijikanri_unnei_2"]),
-            "ijikanri_unnei_2_LCC": str(self.initial_inputs["ijikanri_unnei_2_LCC"]),
-            "ijikanri_unnei_2_org": str(self.initial_inputs["ijikanri_unnei_2_org"]),
-            "ijikanri_unnei_2_org_LCC": str(self.initial_inputs["ijikanri_unnei_2_org_LCC"]),
-            "ijikanri_unnei_3": str(self.initial_inputs["ijikanri_unnei_3"]),
-            "ijikanri_unnei_3_LCC": str(self.initial_inputs["ijikanri_unnei_3_LCC"]),
-            "ijikanri_unnei_3_org": str(self.initial_inputs["ijikanri_unnei_3_org"]),
-            "ijikanri_unnei_3_org_LCC": str(self.initial_inputs["ijikanri_unnei_3_org_LCC"]),
+            "ijikanri_unnei_1": str(self.initial_inputs.ijikanri_unnei_1),
+            "ijikanri_unnei_1_LCC": str(self.initial_inputs.ijikanri_unnei_1_LCC),
+            "ijikanri_unnei_1_org": str(self.initial_inputs.ijikanri_unnei_1_org),
+            "ijikanri_unnei_1_org_LCC": str(self.initial_inputs.ijikanri_unnei_1_org_LCC),
+            "ijikanri_unnei_2": str(self.initial_inputs.ijikanri_unnei_2),
+            "ijikanri_unnei_2_LCC": str(self.initial_inputs.ijikanri_unnei_2_LCC),
+            "ijikanri_unnei_2_org": str(self.initial_inputs.ijikanri_unnei_2_org),
+            "ijikanri_unnei_2_org_LCC": str(self.initial_inputs.ijikanri_unnei_2_org_LCC),
+            "ijikanri_unnei_3": str(self.initial_inputs.ijikanri_unnei_3),
+            "ijikanri_unnei_3_LCC": str(self.initial_inputs.ijikanri_unnei_3_LCC),
+            "ijikanri_unnei_3_org": str(self.initial_inputs.ijikanri_unnei_3_org),
+            "ijikanri_unnei_3_org_LCC": str(self.initial_inputs.ijikanri_unnei_3_org_LCC),
             "ijikanri_unnei_years": int(ijikanri_unnei_years),
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
@@ -711,30 +715,30 @@ class Final_Inputs(ft.Column):
             "kisai_jutou": kisai_jutou,
             "kisai_koufu": kisai_koufu,
             "kitai_bukka": str(kitai_bukka), 
-            "koteishisanzei_hyoujun": str(self.initial_inputs["koteishisanzei_hyoujun"]),
-            "koteishisanzei_ritsu": str(self.initial_inputs["koteishisanzei_ritsu"]),
+            "koteishisanzei_hyoujun": str(self.initial_inputs.koteishisanzei_hyoujun),
+            "koteishisanzei_ritsu": str(self.initial_inputs.koteishisanzei_ritsu),
 
-            "lg_spread": str(self.initial_inputs["lg_spread"]),
-            "mgmt_type": self.initial_inputs["mgmt_type"],
-            "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
-            "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
+            "lg_spread": str(self.initial_inputs.lg_spread),
+            "mgmt_type": self.initial_inputs.mgmt_type,
+            "monitoring_costs_PSC": str(inputs.monitoring_costs_PSC),
+            "monitoring_costs_LCC": str(inputs.monitoring_costs_LCC),
 
-            "option_02": str(inputs['option_02']),
-            "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
-            "proj_ctgry": self.initial_inputs["proj_ctgry"],
-            "proj_type": self.initial_inputs["proj_type"],
-            "proj_years": int(self.initial_inputs["proj_years"]),
-            "rakusatsu_ritsu": str(self.initial_inputs["rakusatsu_ritsu"]),
-            "reduc_shisetsu": str(self.initial_inputs["reduc_shisetsu"]),
-            "reduc_ijikanri_1": str(self.initial_inputs["reduc_ijikanri_1"]),
-            "reduc_ijikanri_2": str(self.initial_inputs["reduc_ijikanri_2"]),
-            "reduc_ijikanri_3": str(self.initial_inputs["reduc_ijikanri_3"]),
-            "riyouryoukin_shunyu": str(inputs['riyouryoukin_shunyu']),
+            "option_02": str(inputs.option_02),
+            "pre_kyoukouka": bool(self.initial_inputs.pre_kyoukouka),
+            "proj_ctgry": self.initial_inputs.proj_ctgry,
+            "proj_type": self.initial_inputs.proj_type,
+            "proj_years": int(self.initial_inputs.proj_years),
+            "rakusatsu_ritsu": str(self.initial_inputs.rakusatsu_ritsu),
+            "reduc_shisetsu": str(self.initial_inputs.reduc_shisetsu),
+            "reduc_ijikanri_1": str(self.initial_inputs.reduc_ijikanri_1),
+            "reduc_ijikanri_2": str(self.initial_inputs.reduc_ijikanri_2),
+            "reduc_ijikanri_3": str(self.initial_inputs.reduc_ijikanri_3),
+            "riyouryoukin_shunyu": str(inputs.riyouryoukin_shunyu),
 
-            "shisetsu_seibi": str(self.initial_inputs["shisetsu_seibi"]),
-            "shisetsu_seibi_LCC": str(self.initial_inputs["shisetsu_seibi_LCC"]),
-            "shisetsu_seibi_org": str(self.initial_inputs["shisetsu_seibi_org"]),
-            "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
+            "shisetsu_seibi": str(self.initial_inputs.shisetsu_seibi),
+            "shisetsu_seibi_LCC": str(self.initial_inputs.shisetsu_seibi_LCC),
+            "shisetsu_seibi_org": str(self.initial_inputs.shisetsu_seibi_org),
+            "shisetsu_seibi_org_LCC": str(self.initial_inputs.shisetsu_seibi_org_LCC),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
             "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
@@ -748,53 +752,53 @@ class Final_Inputs(ft.Column):
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
 
             "target_years": int(target_years),
-            "tourokumenkyozei_hyoujun": str(self.initial_inputs["tourokumenkyozei_hyoujun"]),
-            "tourokumenkyozei_ritsu": str(self.initial_inputs["tourokumenkyozei_ritsu"]),
-            "yosantanka_hiritsu_shisetsu": str(self.initial_inputs["yosantanka_hiritsu_shisetsu"]),
-            "yosantanka_hiritsu_ijikanri_1": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
-            "yosantanka_hiritsu_ijikanri_2": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
-            "yosantanka_hiritsu_ijikanri_3": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
-            "zei_total": str(self.initial_inputs["zei_total"]),
+            "tourokumenkyozei_hyoujun": str(self.initial_inputs.tourokumenkyozei_hyoujun),
+            "tourokumenkyozei_ritsu": str(self.initial_inputs.tourokumenkyozei_ritsu),
+            "yosantanka_hiritsu_shisetsu": str(self.initial_inputs.yosantanka_hiritsu_shisetsu),
+            "yosantanka_hiritsu_ijikanri_1": str(self.initial_inputs.yosantanka_hiritsu_ijikanri_1),
+            "yosantanka_hiritsu_ijikanri_2": str(self.initial_inputs.yosantanka_hiritsu_ijikanri_2),
+            "yosantanka_hiritsu_ijikanri_3": str(self.initial_inputs.yosantanka_hiritsu_ijikanri_3),
+            "zei_total": str(self.initial_inputs.zei_total),
 
-            }
+            })
         else:
-            final_inputs = {
-            "advisory_fee": str(inputs['advisory_fee']),
+            final_inputs = CalculatedFinancialData(**{
+            "advisory_fee": str(inputs.advisory_fee),
             "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(self.sl1.value),
-            "chisai_sueoki_years": int(self.initial_inputs["chisai_sueoki_kikan"]),
-            "const_start_date_year": int(inputs['const_start_date_year']),
-            "const_start_date_month": int(inputs['const_start_date_month']),
-            "const_start_date_day": int(inputs['const_start_date_day']),
+            "chisai_sueoki_years": int(self.initial_inputs.chisai_sueoki_kikan),
+            "const_start_date_year": int(inputs.const_start_date_year),
+            "const_start_date_month": int(inputs.const_start_date_month),
+            "const_start_date_day": int(inputs.const_start_date_day),
             "const_start_date": const_start_date, 
-            "const_years": int(self.initial_inputs["const_years"]),
+            "const_years": int(self.initial_inputs.const_years),
             "discount_rate": str(discount_rate),
 
             "first_end_fy": str(first_end_fy),
-            "fudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
-            "fudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
-            "growth": str(self.initial_inputs["growth"]),
+            "fudousanshutokuzei_hyoujun": str(self.initial_inputs.hudousanshutokuzei_hyoujun),
+            "fudousanshutokuzei_ritsu": str(self.initial_inputs.hudousanshutokuzei_ritsu),
+            "growth": str(self.initial_inputs.growth),
             "hojo_ritsu": hojo_ritsu,
-            "houjinzei_ritsu": str(self.initial_inputs["houjinzei_ritsu"]),
-            "houjinjuminzei_kintou": str(self.initial_inputs["houjinjuminzei_kintou"]),
-            "houjinjuminzei_ritsu_todouhuken": str(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
-            "houjinjuminzei_ritsu_shikuchoson": str(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
+            "houjinzei_ritsu": str(self.initial_inputs.houjinzei_ritsu),
+            "houjinjuminzei_kintou": str(self.initial_inputs.houjinjuminzei_kintou),
+            "houjinjuminzei_ritsu_todouhuken": str(self.initial_inputs.houjinjuminzei_ritsu_todouhuken),
+            "houjinjuminzei_ritsu_shikuchoson": str(self.initial_inputs.houjinjuminzei_ritsu_shikuchoson),
             "ijikanri_unnei": str(ijikanri_unnei),
             "ijikanri_unnei_LCC": str(ijikanri_unnei_LCC),
             "ijikanri_unnei_org": str(ijikanri_unnei_org),
             "ijikanri_unnei_org_LCC": str(ijikanri_unnei_org_LCC),
-            "ijikanri_unnei_1": str(self.initial_inputs["ijikanri_unnei_1"]),
-            "ijikanri_unnei_1_LCC": str(self.initial_inputs["ijikanri_unnei_1_LCC"]),
-            "ijikanri_unnei_1_org": str(self.initial_inputs["ijikanri_unnei_1_org"]),
-            "ijikanri_unnei_1_org_LCC": str(self.initial_inputs["ijikanri_unnei_1_org_LCC"]),
-            "ijikanri_unnei_2": str(self.initial_inputs["ijikanri_unnei_2"]),
-            "ijikanri_unnei_2_LCC": str(self.initial_inputs["ijikanri_unnei_2_LCC"]),
-            "ijikanri_unnei_2_org": str(self.initial_inputs["ijikanri_unnei_2_org"]),
-            "ijikanri_unnei_2_org_LCC": str(self.initial_inputs["ijikanri_unnei_2_org_LCC"]),
-            "ijikanri_unnei_3": str(self.initial_inputs["ijikanri_unnei_3"]),
-            "ijikanri_unnei_3_LCC": str(self.initial_inputs["ijikanri_unnei_3_LCC"]),
-            "ijikanri_unnei_3_org": str(self.initial_inputs["ijikanri_unnei_3_org"]),
-            "ijikanri_unnei_3_org_LCC": str(self.initial_inputs["ijikanri_unnei_3_org_LCC"]),
+            "ijikanri_unnei_1": str(self.initial_inputs.ijikanri_unnei_1),
+            "ijikanri_unnei_1_LCC": str(self.initial_inputs.ijikanri_unnei_1_LCC),
+            "ijikanri_unnei_1_org": str(self.initial_inputs.ijikanri_unnei_1_org),
+            "ijikanri_unnei_1_org_LCC": str(self.initial_inputs.ijikanri_unnei_1_org_LCC),
+            "ijikanri_unnei_2": str(self.initial_inputs.ijikanri_unnei_2),
+            "ijikanri_unnei_2_LCC": str(self.initial_inputs.ijikanri_unnei_2_LCC),
+            "ijikanri_unnei_2_org": str(self.initial_inputs.ijikanri_unnei_2_org),
+            "ijikanri_unnei_2_org_LCC": str(self.initial_inputs.ijikanri_unnei_2_org_LCC),
+            "ijikanri_unnei_3": str(self.initial_inputs.ijikanri_unnei_3),
+            "ijikanri_unnei_3_LCC": str(self.initial_inputs.ijikanri_unnei_3_LCC),
+            "ijikanri_unnei_3_org": str(self.initial_inputs.ijikanri_unnei_3_org),
+            "ijikanri_unnei_3_org_LCC": str(self.initial_inputs.ijikanri_unnei_3_org_LCC),
             "ijikanri_unnei_years": int(ijikanri_unnei_years),
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
@@ -802,30 +806,30 @@ class Final_Inputs(ft.Column):
             "kisai_jutou": kisai_jutou,
             "kisai_koufu": kisai_koufu,
             "kitai_bukka": str(kitai_bukka), 
-            "koteishisanzei_hyoujun": str(self.initial_inputs["koteishisanzei_hyoujun"]),
-            "koteishisanzei_ritsu": str(self.initial_inputs["koteishisanzei_ritsu"]),
+            "koteishisanzei_hyoujun": str(self.initial_inputs.koteishisanzei_hyoujun),
+            "koteishisanzei_ritsu": str(self.initial_inputs.koteishisanzei_ritsu),
 
-            "lg_spread": str(self.initial_inputs["lg_spread"]),
-            "mgmt_type": self.initial_inputs["mgmt_type"],
-            "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
-            "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
+            "lg_spread": str(self.initial_inputs.lg_spread),
+            "mgmt_type": self.initial_inputs.mgmt_type,
+            "monitoring_costs_PSC": str(inputs.monitoring_costs_PSC),
+            "monitoring_costs_LCC": str(inputs.monitoring_costs_LCC),
 
-            "option_02": str(inputs['option_02']),
-            "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
-            "proj_ctgry": self.initial_inputs["proj_ctgry"],
-            "proj_type": self.initial_inputs["proj_type"],
-            "proj_years": int(self.initial_inputs["proj_years"]),
-            "rakusatsu_ritsu": str(self.initial_inputs["rakusatsu_ritsu"]),
-            "reduc_shisetsu": str(self.initial_inputs["reduc_shisetsu"]),
-            "reduc_ijikanri_1": str(self.initial_inputs["reduc_ijikanri_1"]),
-            "reduc_ijikanri_2": str(self.initial_inputs["reduc_ijikanri_2"]),
-            "reduc_ijikanri_3": str(self.initial_inputs["reduc_ijikanri_3"]),
-            "riyouryoukin_shunyu": str(inputs['riyouryoukin_shunyu']),
+            "option_02": str(inputs.option_02),
+            "pre_kyoukouka": bool(self.initial_inputs.pre_kyoukouka),
+            "proj_ctgry": self.initial_inputs.proj_ctgry,
+            "proj_type": self.initial_inputs.proj_type,
+            "proj_years": int(self.initial_inputs.proj_years),
+            "rakusatsu_ritsu": str(self.initial_inputs.rakusatsu_ritsu),
+            "reduc_shisetsu": str(self.initial_inputs.reduc_shisetsu),
+            "reduc_ijikanri_1": str(self.initial_inputs.reduc_ijikanri_1),
+            "reduc_ijikanri_2": str(self.initial_inputs.reduc_ijikanri_2),
+            "reduc_ijikanri_3": str(self.initial_inputs.reduc_ijikanri_3),
+            "riyouryoukin_shunyu": str(inputs.riyouryoukin_shunyu),
 
-            "shisetsu_seibi": str(self.initial_inputs["shisetsu_seibi"]),
-            "shisetsu_seibi_LCC": str(self.initial_inputs["shisetsu_seibi_LCC"]),
-            "shisetsu_seibi_org": str(self.initial_inputs["shisetsu_seibi_org"]),
-            "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
+            "shisetsu_seibi": str(self.initial_inputs.shisetsu_seibi),
+            "shisetsu_seibi_LCC": str(self.initial_inputs.shisetsu_seibi_LCC),
+            "shisetsu_seibi_org": str(self.initial_inputs.shisetsu_seibi_org),
+            "shisetsu_seibi_org_LCC": str(self.initial_inputs.shisetsu_seibi_org_LCC),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
             "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
@@ -839,23 +843,17 @@ class Final_Inputs(ft.Column):
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
 
             "target_years": int(target_years),
-            "tourokumenkyozei_hyoujun": str(self.initial_inputs["tourokumenkyozei_hyoujun"]),
-            "tourokumenkyozei_ritsu": str(self.initial_inputs["tourokumenkyozei_ritsu"]),
-            "yosantanka_hiritsu_shisetsu": str(self.initial_inputs["yosantanka_hiritsu_shisetsu"]),
-            "yosantanka_hiritsu_ijikanri_1": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
-            "yosantanka_hiritsu_ijikanri_2": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
-            "yosantanka_hiritsu_ijikanri_3": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
-            "zei_total": str(self.initial_inputs["zei_total"]),
+            "tourokumenkyozei_hyoujun": str(self.initial_inputs.tourokumenkyozei_hyoujun),
+            "tourokumenkyozei_ritsu": str(self.initial_inputs.tourokumenkyozei_ritsu),
+            "yosantanka_hiritsu_shisetsu": str(self.initial_inputs.yosantanka_hiritsu_shisetsu),
+            "yosantanka_hiritsu_ijikanri_1": str(self.initial_inputs.yosantanka_hiritsu_ijikanri_1),
+            "yosantanka_hiritsu_ijikanri_2": str(self.initial_inputs.yosantanka_hiritsu_ijikanri_2),
+            "yosantanka_hiritsu_ijikanri_3": str(self.initial_inputs.yosantanka_hiritsu_ijikanri_3),
+            "zei_total": str(self.initial_inputs.zei_total),
 
-            }
+            })
 
 
     def _save_to_db(self, data):
-        if os.path.exists("fi_db.json"):
-            os.remove("fi_db.json")
-        db = TinyDB('fi_db.json')
-        db.insert(data)
-        db.close()
-        #self.page.session.store.set("final_inputs",data)
-
-
+        data_dict = dataclasses.asdict(data)
+        self.page.session.store.set("final_inputs", data_dict)

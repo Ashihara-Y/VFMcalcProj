@@ -14,6 +14,7 @@ import dateutil
 import timeflake
 import logging
 
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -22,16 +23,17 @@ class Final_Inputs(ft.Column):
     
     def init(self):
         #super().__init__()
-        #self.title = "最終入力・確認"
-        #self.width = 500
-        #self.height = 3000
-        #self.window_width = 500
-        #self.window_height = 2000
-        #self.resizable = True
-        #self.expand=1
-        #self.scroll=ft.ScrollMode.AUTO
-        #self.alignment=ft.MainAxisAlignment.START
-        #self.horizontal_alignment=ft.CrossAxisAlignment.START
+        self.title = "最終入力・確認"
+        self.width = 500
+        self.height = 3000
+        self.window_width = 500
+        self.window_height = 2000
+        self.resizable = True
+        self.expand=1
+        self.scroll=ft.ScrollMode.AUTO
+        self.alignment=ft.MainAxisAlignment.START
+        self.horizontal_alignment=ft.CrossAxisAlignment.START
+
 
         slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -54,14 +56,14 @@ class Final_Inputs(ft.Column):
         slider_value19 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value20 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
 
-        db = TinyDB("ii_db.json")
-        self.initial_inputs = db.all()[0]   
-        #self.initial_inputs = self.page.session.store.get("initial_inputs", {})
+        #db = TinyDB("ii_db.json")
+        #self.initial_inputs = db.all()[0]   
+        self.initial_inputs = self.page.session.store.get("initial_inputs", {})
     
-        #if not self.initial_inputs or len(self.initial_inputs) == 0:
-        #    self.result_text.value = "Error: No data in SessionStorage from Initial_Inputs."
-        #    self.update()
-        #   return
+        if not self.initial_inputs or len(self.initial_inputs) == 0:
+            self.result_text.value = "Error: No data in SessionStorage from Initial_Inputs."
+            self.update()
+            return
             
  
         def handle_slider_change(e):
@@ -229,7 +231,7 @@ class Final_Inputs(ft.Column):
         )
         tx11 = ft.Text("起債充当率(%)")
         self.sl5 = ft.Slider(
-            value=float(self.initial_inputs["kisai_jutou"])*100,
+            value:=Decimal(self.initial_inputs["kisai_jutou"])*100,
             min=0.0,
             max=100.0,
             divisions=100,
@@ -240,7 +242,7 @@ class Final_Inputs(ft.Column):
         )
         tx12 = ft.Text("起債への交付金カバー率(%)")
         self.sl6 = ft.Slider(
-            value:=float(self.initial_inputs["kisai_koufu"])*100,
+            value:=Decimal(self.initial_inputs["kisai_koufu"])*100,
             min=0.0,
             max=50.0,
             divisions=50,
@@ -251,7 +253,7 @@ class Final_Inputs(ft.Column):
         )
         tx13 = ft.Text("補助率(%)")
         self.sl7 = ft.Slider(
-            value:=float(self.initial_inputs["hojo_ritsu"])*100,
+            value:=Decimal(self.initial_inputs["hojo_ritsu"])*100,
             min=0.0,
             max=70.0,
             divisions=700,
@@ -262,7 +264,7 @@ class Final_Inputs(ft.Column):
         )
         tx14 = ft.Text("SPC経費年額(百万円)")
         self.sl8 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_keihi"]),
+            value:=Decimal(self.initial_inputs["SPC_keihi"]),
             min=0,
             max=50,
             divisions=50,
@@ -273,7 +275,7 @@ class Final_Inputs(ft.Column):
         )
         tx15 = ft.Text("SPCへの手数料(百万円)")
         self.sl9 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_fee"]),
+            value:=Decimal(self.initial_inputs["SPC_fee"]),
             min=0,
             max=50,
             divisions=50,
@@ -284,7 +286,7 @@ class Final_Inputs(ft.Column):
         )
         tx16 = ft.Text("SPC資本金(百万円)")
         self.sl10 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_shihon"]),
+            value:=Decimal(self.initial_inputs["SPC_shihon"]),
             min=0,
             max=100,
             divisions=100,
@@ -295,7 +297,7 @@ class Final_Inputs(ft.Column):
         )
         tx17 = ft.Text("SPC予備費(百万円)")
         self.sl11 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_yobihi"]),
+            value:=Decimal(self.initial_inputs["SPC_yobihi"]),
             min=0,
             max=1000,
             divisions=1000,
@@ -316,11 +318,11 @@ class Final_Inputs(ft.Column):
             divisions=50,
             label="{value}百万円",
             round=1,
-            on_change=handle_slider_change,
+            on_change=self.handle_change_13,
         )
         tx20 = ft.Text("利用料金収入(百万円)")
         self.sl14 = ft.Slider(
-            value:=float(self.initial_inputs["riyou_ryoukin"]),
+            value:=self.initial_inputs["riyou_ryoukin"],
             min=0,
             max=100,
             divisions=100,
@@ -463,65 +465,33 @@ class Final_Inputs(ft.Column):
                     self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"),
                     tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
                     b,
+
         ]        
         fi_lv3.controls= [
-                    tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx25, slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
-                    tx9, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
-                    tx10,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                    tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
+                    self.tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
+                    self.tx25, slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
+                    self.tx9, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
+                    self.tx10,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
+                    self.tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    self.tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    self.tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    self.tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
                     self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"), 
-                    tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
+                    self.tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
                     b,
+
         ]        
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             self.controls = [
-                    tx0, tx1, tx2, tx3, tx4, tx5, tx6,
-                    dt1, dt2, ft.Divider(height=1, color="amber"),
-                    tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx25, slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
-                    tx9, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
-                    tx10,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                    tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
-                    self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"), 
-                    tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
-                    b,
+                        fi_lv1,
+                        fi_lv3,
             ]
         else:
             self.controls = [
-                    tx0, tx1, tx2, tx3, tx4, tx5, tx6,
-                    dt1, dt2, ft.Divider(height=1, color="amber"),
-                    tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx25, slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
-                    tx9, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
-                    tx10,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                    tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
-                    self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"), 
-                    tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
-                    b,
+                        fi_lv1,
+                        fi_lv2,
             ]
-
-        #self.update()
-
-    async def button_clicked(self, e):
-        input_data = self._extract_inputs()
-
-        calc_results = self._calculate_financials(input_data)
         
-        self._save_to_db(calc_results)
-        VFM_calc()
-        await self.page.push_route("/view_saved")
-        
-       
 
     def _extract_inputs(self):
         const_start_date_year = int(self.dd00.value)
@@ -576,7 +546,7 @@ class Final_Inputs(ft.Column):
             return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
-            shisetsu_seibi_paymentschedule_ikkatsu = to_dec(1)
+            shisetsu_seibi_paymentschedule_ikkatsu = Decimal(1).quantize(Decimal('0.000001'), ROUND_HALF_UP)
         else:         
             shisetsu_seibi_paymentschedule_ikkatsu = inputs['shisetsu_seibi_ikkatsu_hiritsu']
 
@@ -850,12 +820,39 @@ class Final_Inputs(ft.Column):
             }
 
 
+
+    async def button_clicked(self, e):
+        input_data = self._extract_inputs()
+
+        calc_results = self._calculate_financials(input_data)
+        
+        self._save_to_db(calc_results)
+        VFM_calc()
+        await self.page.push_route("/view_saved")
+        
+
     def _save_to_db(self, data):
         if os.path.exists("fi_db.json"):
             os.remove("fi_db.json")
         db = TinyDB('fi_db.json')
         db.insert(data)
         db.close()
-        #self.page.session.store.set("final_inputs",data)
+        self.page.session.store.set("final_inputs",data)
+
+       
+#def main(page: ft.Page):
+#    page.width = 500
+#    page.height = 2000
+#    page.title = "初期入力"
+#    page.window_width = 500
+#    page.window_height = 2000
+#    page.window_resizable = True
+#    page.expand=True
+#    page.scroll=ft.ScrollMode.AUTO
+#    #initial_inputs = Initial_Inputs()
+#    page.add(
+#            Final_Inputs()
+#    )
 
 
+#ft.run(main)

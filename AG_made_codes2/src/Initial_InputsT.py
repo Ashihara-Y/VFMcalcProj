@@ -539,12 +539,7 @@ class Initial_Inputs(ft.Column):
         return initial_inputs
 
     def _save_to_db(self, data):
-        if os.path.exists("ii_db.json"):
-            os.remove("ii_db.json")
-        db = TinyDB('ii_db.json')
-        db.insert(data)
-        db.close()
-        self.page.session.store.set("initial_inputs",data)
+        self.page.session.store.set("initial_inputs", data)
 
        
 #def main(page: ft.Page):

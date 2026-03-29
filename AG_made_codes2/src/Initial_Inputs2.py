@@ -10,11 +10,6 @@ import timeflake
 from tinydb import TinyDB, Query
 from decimal import *
 from zoneinfo import ZoneInfo
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
 
 @ft.control
 class Initial_Inputs(ft.Column):
@@ -24,25 +19,31 @@ class Initial_Inputs(ft.Column):
         self.title = "初期入力"
         self.width = 500
         self.height = 2000
-        self.window_width = 500
-        self.window_height = 2000
-        self.resizable = 1
+        self.resizable = True
         self.expand=True
-        self.scroll=ft.ScrollMode.AUTO
 
-        slider_value00 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value05 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value06 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value07 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value08 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value00 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value05 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value06 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value07 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value08 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        self.slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+
+    def handle_slider_change(self,e):
+        sl_value = e.control.value
+        target_text_control = e.control.data
+        target_text_control.value = str(sl_value)
+        target_text_control.update()
+
+
+    def build(self):
 
         def get_options(list):
             options=[]
@@ -54,13 +55,6 @@ class Initial_Inputs(ft.Column):
                     )
                 )
             return options
-
-        def handle_slider_change(e):
-            sl_value = e.control.value
-            target_text_control = e.control.data
-            target_text_control.value = str(sl_value)
-            target_text_control.update()
-
 
         options_1 = [
             {'key':"国"},
@@ -137,7 +131,7 @@ class Initial_Inputs(ft.Column):
             #value="1",
             options=get_options(options_6),
         )
-        tx0 = ft.Text("施設整備費 落札価格ベース(百万円)")
+        self.tx0 = ft.Text("施設整備費 落札価格ベース(百万円)")
         self.sl0 = ft.Slider(
             value=0,
             min=0,
@@ -145,10 +139,10 @@ class Initial_Inputs(ft.Column):
             divisions=50000,
             label="{value}百万円",
             round=0,
-            on_change=handle_slider_change,
-            data=slider_value00
+            on_change=self.handle_slider_change,
+            data=self.slider_value00
         )
-        tx1 = ft.Text("施設整備費 予算単価ベース(百万円)")
+        self.tx1 = ft.Text("施設整備費 予算単価ベース(百万円)")
         self.sl1 = ft.Slider(
             value=0,
             min=0,
@@ -156,10 +150,10 @@ class Initial_Inputs(ft.Column):
             divisions=50000,
             label="{value}百万円",
             round=0,
-            on_change=handle_slider_change,
-            data=slider_value01
+            on_change=self.handle_slider_change,
+            data=self.slider_value01
         )
-        tx2 = ft.Text("維持管理運営費(年額)人件費 落札価格ベース(百万円)")
+        self.tx2 = ft.Text("維持管理運営費(年額)人件費 落札価格ベース(百万円)")
         self.sl2 = ft.Slider(
             value=0,
             min=0,
@@ -167,21 +161,21 @@ class Initial_Inputs(ft.Column):
             divisions=500,
             label="{value}百万円",
             round=0,
-            on_change=handle_slider_change,
-            data=slider_value02
+            on_change=self.handle_slider_change,
+            data=self.slider_value02
         )
-        tx3 = ft.Text("維持管理運営費(年額)人件費 予算単価ベース(百万円)")
+        self.tx3 = ft.Text("維持管理運営費(年額)人件費 予算単価ベース(百万円)")
         self.sl3 = ft.Slider(
             value=0,
             min=0,
             max=500,
             divisions=500,
-            on_change=handle_slider_change,
-            data=slider_value03,
+            on_change=self.handle_slider_change,
+            data=self.slider_value03,
             label="{value}百万円",
             round=0,
         )
-        tx4 = ft.Text("維持管理運営費(年額)修繕費 落札価格ベース(百万円)")
+        self.tx4 = ft.Text("維持管理運営費(年額)修繕費 落札価格ベース(百万円)")
         self.sl4 = ft.Slider(
             value=0,
             min=0,
@@ -189,10 +183,10 @@ class Initial_Inputs(ft.Column):
             divisions=100,
             label="{value}百万円",
             round=0,
-            on_change=handle_slider_change,
-            data=slider_value04
+            on_change=self.handle_slider_change,
+            data=self.slider_value04
         )
-        tx5 = ft.Text("維持管理運営費(年額)修繕費 予算単価ベース(百万円)")
+        self.tx5 = ft.Text("維持管理運営費(年額)修繕費 予算単価ベース(百万円)")
         self.sl5 = ft.Slider(
             value=0,
             min=0,
@@ -200,10 +194,10 @@ class Initial_Inputs(ft.Column):
             divisions=100,
             label="{value}百万円",
             round=0,
-            on_change=handle_slider_change,
-            data=slider_value05
+            on_change=self.handle_slider_change,
+            data=self.slider_value05
         )
-        tx6 = ft.Text("維持管理運営費(年額)動力費 落札価格ベース(百万円)")
+        self.tx6 = ft.Text("維持管理運営費(年額)動力費 落札価格ベース(百万円)")
         self.sl6 = ft.Slider(
             value=0,
             min=0,
@@ -211,10 +205,10 @@ class Initial_Inputs(ft.Column):
             divisions=100,
             label="{value}百万円",
             round=0,
-            on_change=handle_slider_change,
-            data=slider_value06
+            on_change=self.handle_slider_change,
+            data=self.slider_value06
         )
-        tx7 = ft.Text("維持管理運営費(年額)動力費 予算単価ベース(百万円)")
+        self.tx7 = ft.Text("維持管理運営費(年額)動力費 予算単価ベース(百万円)")
         self.sl7 = ft.Slider(
             value=0,
             min=0,
@@ -222,10 +216,10 @@ class Initial_Inputs(ft.Column):
             divisions=100,
             label="{value}百万円",
             round=0,
-            on_change=handle_slider_change,
-            data=slider_value07
+            on_change=self.handle_slider_change,
+            data=self.slider_value07
         )
-        tx8 = ft.Text("施設整備費の効率性(%)(推奨:5%")
+        self.tx8 = ft.Text("施設整備費の効率性(%)(推奨:5%")
         self.sl8 = ft.Slider(
             value=5,
             min=0.0,
@@ -233,10 +227,10 @@ class Initial_Inputs(ft.Column):
             divisions=200,
             label="{value}%",
             round=1,
-            on_change=handle_slider_change,
-            data=slider_value08
+            on_change=self.handle_slider_change,
+            data=self.slider_value08
         )
-        tx9 = ft.Text("維持管理運営費の効率性(人件費,%)(推奨:5%)")
+        self.tx9 = ft.Text("維持管理運営費の効率性(人件費,%)(推奨:5%)")
         self.sl9 = ft.Slider(
             value=5,
             min=0.0,
@@ -244,10 +238,10 @@ class Initial_Inputs(ft.Column):
             divisions=200,
             label="{value}%",
             round=1,
-            on_change=handle_slider_change,
-            data=slider_value09
+            on_change=self.handle_slider_change,
+            data=self.slider_value09
         )
-        tx10 = ft.Text("維持管理運営費の効率性(修繕費,%)(推奨:5%)")
+        self.tx10 = ft.Text("維持管理運営費の効率性(修繕費,%)(推奨:5%)")
         self.sl10 = ft.Slider(
             value=5,
             min=0.0,
@@ -255,10 +249,10 @@ class Initial_Inputs(ft.Column):
             divisions=200,
             label="{value}%",
             round=1,
-            on_change=handle_slider_change,
-            data=slider_value10
+            on_change=self.handle_slider_change,
+            data=self.slider_value10
         )
-        tx11 = ft.Text("維持管理運営費の効率性(動力費,%)(推奨:5%)")
+        self.tx11 = ft.Text("維持管理運営費の効率性(動力費,%)(推奨:5%)")
         self.sl11 = ft.Slider(
             value=5,
             min=0.0,
@@ -266,50 +260,42 @@ class Initial_Inputs(ft.Column):
             divisions=200,
             label="{value}%",
             round=1,
-            on_change=handle_slider_change,
-            data=slider_value11
+            on_change=self.handle_slider_change,
+            data=self.slider_value11
         )
-        tx12 = ft.Text("落札率(競争の効果反映,%)(推奨:95%)")
+        self.tx12 = ft.Text("落札率(競争の効果反映,%)(推奨:95%)")
         self.sl12 = ft.Slider(
             value=95,
             min=0,
             max=100,
             divisions=100,
             label="{value}%",
-            on_change=handle_slider_change,
-            data=slider_value12
+            on_change=self.handle_slider_change,
+            data=self.slider_value12
         )
-        b = ft.Button(content="初期値の入力", on_click=self.button_clicked)
-
-        self.controls = [
-            #ft.Page.title = "初期入力",
-
-            self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
-            ft.Divider(height=1, color="amber"),
-            tx0,  slider_value00, self.sl0, ft.Divider(height=1, color="amber"),
-            tx1,  slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
-            tx2,  slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
-            tx3,  slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
-            tx4,  slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
-            tx5,  slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
-            tx6,  slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
-            tx7,  slider_value07, self.sl7, ft.Divider(height=1, color="amber"),
-            tx8,  slider_value08, self.sl8, ft.Divider(height=1, color="amber"),
-            tx9,  slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
-            tx10, slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
-            tx11, slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
-            tx12, slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
-            b
-        ]
-
-    async def button_clicked(self, e):
-        input_data = self._extract_inputs()
-
-        calc_results = self._calculate_financials(input_data)
-        
-        self._save_to_db(calc_results)
-        await self.page.push_route("/final_inputs")
-        
+        self.b = ft.ElevatedButton(content="初期値の入力", on_click=self.button_clicked)
+        return ft.Column(
+                    [
+                        self.dd1,  self.dd2, self.dd3,  self.dd4,  self.dd5,  self.dd6, 
+                        ft.Divider(height=1, color="amber"),
+                        self.tx0,  self.slider_value00, self.sl0, ft.Divider(height=1, color="amber"),
+                        self.tx1,  self.slider_value01, self.sl1, ft.Divider(height=1, color="amber"), 
+                        self.tx2,  self.slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
+                        self.tx3,  self.slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
+                        self.tx4,  self.slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
+                        self.tx5,  self.slider_value05, self.sl5, ft.Divider(height=1, color="amber"),
+                        self.tx6,  self.slider_value06, self.sl6, ft.Divider(height=1, color="amber"),
+                        self.tx7,  self.slider_value07, self.sl7, ft.Divider(height=1, color="amber"), 
+                        self.tx8,  self.slider_value08, self.sl8, ft.Divider(height=1, color="amber"),
+                        self.tx9,  self.slider_value09, self.sl9, ft.Divider(height=1, color="amber"),
+                        self.tx10, self.slider_value10, self.sl10,ft.Divider(height=1, color="amber"),
+                        self.tx11, self.slider_value11, self.sl11,ft.Divider(height=1, color="amber"),
+                        self.tx12, self.slider_value12, self.sl12,ft.Divider(height=1, color="amber"),
+                        self.b
+                    ],
+                    scroll=ft.ScrollMode.AUTO,
+                    height=1500,
+                )
 
     def _extract_inputs(self):
         mgmt_type = self.dd1.value
@@ -398,8 +384,8 @@ class Initial_Inputs(ft.Column):
         ijikanri_unnei_3_org_LCC = to_dec(ijikanri_unnei_3_org * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
         ijikanri_unnei_3_LCC = to_dec(ijikanri_unnei_3 * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
 
-        JGB_rates_df = pd.read_csv("src/JGB_rates.csv", sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
-        JRB_rates_df = pd.read_csv("src/JRB_rates.csv", sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
+        JGB_rates_df = pd.read_csv("../JGB_rates.csv", sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
+        JRB_rates_df = pd.read_csv("../JRB_rates.csv", sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
 
         y, d = divmod(inputs['proj_years'], 5)
         if y >= 1:
@@ -409,7 +395,7 @@ class Initial_Inputs(ft.Column):
 
         r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
         r2 = Decimal(JRB_rates_df.loc[inputs['chisai_shoukan_kikan']][inputs['const_years']])
-        kitai_bukka_j = Decimal(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
+        kitai_bukka_j = Decimal(pd.read_csv("../BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
         
         chisai_sueoki_kikan = int(inputs['const_years']) if inputs['const_years'] else int(0)
         gonensai_rimawari = Decimal(JGB_rates_df.loc["5年"].iloc[0])
@@ -430,7 +416,7 @@ class Initial_Inputs(ft.Column):
             'riyou_ryoukin': Decimal(0.0),
 }
 
-        if inputs['proj_ctgry'] == "サービス購入型":
+        if inputs['Proj_ctgry'] == "サービス購入型":
             tax_rates['houjinjuminzei_kintou'] = Decimal(0.18)
             if inputs['proj_type'] == "BOT/BOO":
                 tax_rates['houjinzei_ritsu'] = Decimal(0.0)
@@ -461,8 +447,7 @@ class Initial_Inputs(ft.Column):
                 financial_rules['kisai_jutou'] = Decimal(0.750)
                 financial_rules['kisai_koufu'] = Decimal(0.300)
             
-            financial_rules['zei_total'] = tax_rates['houjinjuminzei_kintou'] + tax_rates['hudousanshutokuzei_hyoujun'] * tax_rates['hudousanshutokuzei_ritsu'] + tax_rates['koteishisanzei_hyoujun'] * tax_rates['koteishisanzei_ritsu'] + tax_rates['tourokumenkyozei_hyoujun'] * tax_rates['tourokumenkyozei_ritsu']
-
+            financial_rules['zei_total'] = Decimal(0.18) - financial_rules['houjinjuminzei_kintou'] + financial_rules['hojo'] * financial_rules['kisai_jutou'] * financial_rules['houjinjuminzei_kintou'] + financial_rules['kisai_koufu'] * financial_rules['houjinjuminzei_kintou'] 
     
             if inputs['proj_type'] in ["DBO(SPCなし)", "BT/DB(いずれもSPCなし)"]:
                 SPC_costs = {'fee':to_dec(0), 'shihon':to_dec(0), 'yobihi':to_dec(0)}
@@ -544,23 +529,13 @@ class Initial_Inputs(ft.Column):
         db = TinyDB('ii_db.json')
         db.insert(data)
         db.close()
-        self.page.session.store.set("initial_inputs",data)
+        self.page.session.store.set(data)
+        
+    def button_clicked(self, e):
+        input_data = self._extract_inputs()
 
-       
-#def main(page: ft.Page):
-#    page.width = 500
-#    page.height = 2000
-#    page.title = "初期入力"
-#    page.window_width = 500
-#    page.window_height = 2000
-#    page.window_resizable = True
-#    page.expand=True
-#    page.scroll=ft.ScrollMode.AUTO
-#    #initial_inputs = Initial_Inputs()
-#    page.add(
-#            Initial_Inputs()
-#    )
-
-
-#ft.run(main)
+        calc_results = self._calculate_financials(input_data)
+        
+        self._save_to_db(calc_results)
+        self.page.push_route("/final_inputs")
 
