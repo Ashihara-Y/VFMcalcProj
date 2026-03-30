@@ -240,7 +240,7 @@ class Final_Inputs(ft.Column):
         )
         tx12 = ft.Text("起債への交付金カバー率(%)")
         self.sl6 = ft.Slider(
-            value:=float(self.initial_inputs["kisai_koufu"])*100,
+            value=float(self.initial_inputs["kisai_koufu"])*100,
             min=0.0,
             max=50.0,
             divisions=50,
@@ -251,7 +251,7 @@ class Final_Inputs(ft.Column):
         )
         tx13 = ft.Text("補助率(%)")
         self.sl7 = ft.Slider(
-            value:=float(self.initial_inputs["hojo_ritsu"])*100,
+            value=float(self.initial_inputs["hojo_ritsu"])*100,
             min=0.0,
             max=70.0,
             divisions=700,
@@ -262,7 +262,7 @@ class Final_Inputs(ft.Column):
         )
         tx14 = ft.Text("SPC経費年額(百万円)")
         self.sl8 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_keihi"]),
+            value=float(self.initial_inputs["SPC_keihi"]),
             min=0,
             max=50,
             divisions=50,
@@ -273,7 +273,7 @@ class Final_Inputs(ft.Column):
         )
         tx15 = ft.Text("SPCへの手数料(百万円)")
         self.sl9 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_fee"]),
+            value=float(self.initial_inputs["SPC_fee"]),
             min=0,
             max=50,
             divisions=50,
@@ -284,7 +284,7 @@ class Final_Inputs(ft.Column):
         )
         tx16 = ft.Text("SPC資本金(百万円)")
         self.sl10 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_shihon"]),
+            value=float(self.initial_inputs["SPC_shihon"]),
             min=0,
             max=100,
             divisions=100,
@@ -295,7 +295,7 @@ class Final_Inputs(ft.Column):
         )
         tx17 = ft.Text("SPC予備費(百万円)")
         self.sl11 = ft.Slider(
-            value:=float(self.initial_inputs["SPC_yobihi"]),
+            value=float(self.initial_inputs["SPC_yobihi"]),
             min=0,
             max=1000,
             divisions=1000,
@@ -306,7 +306,7 @@ class Final_Inputs(ft.Column):
         )
         self.sw01 = ft.Switch(
             label="SPC経費の扱い（デフォルト：サービス対価で支払）",
-            value=1,
+            value=True,
         )
         tx19 = ft.Text("アドバイザリー等経費(百万円)")
         self.sl13 = ft.Slider(
@@ -320,7 +320,7 @@ class Final_Inputs(ft.Column):
         )
         tx20 = ft.Text("利用料金収入(百万円)")
         self.sl14 = ft.Slider(
-            value:=float(self.initial_inputs["riyou_ryoukin"]),
+            value=float(self.initial_inputs["riyou_ryoukin"]),
             min=0,
             max=100,
             divisions=100,
