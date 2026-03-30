@@ -468,7 +468,7 @@ class Initial_Inputs(ft.Column):
                 SPC_costs = {'fee':to_dec(0), 'shihon':to_dec(0), 'yobihi':to_dec(0)}
                 SPC_hiyou_atsukai = int(1)
             else:
-                SPC_costs = {'fee':to_dec(20), 'shihon':to_dec(100), 'yobihi':to_dec(456)}
+                SPC_costs = {'keihi':to_dec(20), 'fee':to_dec(20), 'shihon':to_dec(100), 'yobihi':to_dec(456)}
                 SPC_hiyou_atsukai = int(1)
 
             initial_inputs = {
@@ -519,7 +519,7 @@ class Initial_Inputs(ft.Column):
                 "kisai_koufu": str(financial_rules['kisai_koufu']),
                 "hojo_ritsu": str(financial_rules['hojo']),
                 "zeimae_rieki": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-                "SPC_keihi": str(SPC_costs['fee'] + SPC_costs['shihon'] + SPC_costs['yobihi']),
+                "SPC_keihi": str(SPC_costs['keihi']),
                 "SPC_fee": str(SPC_costs['fee']),
                 "SPC_shihon": str(SPC_costs['shihon']),
                 "SPC_yobihi": str(SPC_costs['yobihi']),
