@@ -317,6 +317,7 @@ class Final_Inputs(ft.Column):
             label="{value}百万円",
             round=1,
             on_change=handle_slider_change,
+            data=slider_value13,
         )
         tx20 = ft.Text("利用料金収入(百万円)")
         self.sl14 = ft.Slider(
