@@ -10,9 +10,10 @@ import make_inputs_df
 import decimal
 
 # savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
+@ft.control
 class Results(ft.Stack):
-    def __init__(self):
-        super().__init__()
+    def init(self):
+        #super().__init__()
         self.title = "結果 詳細"
         self.width = 2100
         self.height = 1000
@@ -234,7 +235,7 @@ class Results(ft.Stack):
             table_name = pd.read_sql_query(query, engine)
             self.selected_res_list.append(table_name)
 
-    def build(self):
+    #def build(self):
         PSC_res_df = self.selected_res_list[0]
         PSC_pv_df = self.selected_res_list[1]
         LCC_res_df = self.selected_res_list[2]
@@ -505,74 +506,79 @@ class Results(ft.Stack):
         lv_04.controls.append(ft.Text('入力値・パラメータ等一覧'))
         lv_04.controls.append(self.table_finalinputs)
 
-        return ft.Tabs(
+        self.controls = [
+            ft.Tabs(
                 selected_index=1,
+                length=4,
                 animation_duration=300,
-                tabs=[
-                    ft.Tab(
-                        text="結果・入力の要約",
-                        content=ft.Card(
-                            content=ft.Container(
-                                content=ft.Column(
-                                    controls=[
-                                        #self.graph,
-                                        lv_01,
-                                    ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                content = ft.Column(
+                    expand=True,    
+                    controls=[
+                        ft.TabBar(
+                            tabs=[
+                                ft.Tab(
+                                    label="結果・入力の要約",
                                 ),
-                                width=2100,
-                                padding=10,
-                            )
+                                ft.Tab(
+                                    label="PSCでの公共側収支等",
+                                ),
+                                ft.Tab(
+                                    label="PFI-LCCでの公共側収支等",
+                                ),
+                                ft.Tab(
+                                    label="SPC収支等",
+                                ),
+                                ft.Tab(
+                                    label="入力値等一覧",
+                                ),
+                            ],
                         ),
-                    ),
-                    ft.Tab(
-                        text="PSC,LCCでの公共側収支等",
-                        content=ft.Card(
-                            content=ft.Container(
-                                content=ft.Column(
-                                    controls=[
-                                        #self.graph,
-                                        lv_02,
-                                    ],
+                        ft.TabBarView(
+                            expand=True,
+                            controls=[
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls=[
+                                            lv_01,
+                                        ],
                                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
                                 ),
-                                width=2100,
-                                padding=10,
-                            )
-                        )
-                    ),
-                    ft.Tab(
-                        text="SPC収支等",
-                        content=ft.Card(
-                            content=ft.Container(
-                                content=ft.Column(
-                                    controls=[
-                                        #self.graph,
-                                        lv_03,
-                                    ],
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls=[
+                                            lv_02,
+                                        ],
                                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
                                 ),
-                                width=2100,
-                                padding=10,
-                            )
-                        )
-                    ),
-                    ft.Tab(
-                        text="入力値等一覧",
-                        content=ft.Card(
-                            content=ft.Container(
-                                content=ft.Column(
-                                    controls=[
-                                        #self.graph,
-                                        lv_04,
-                                    ],
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls=[
+                                            lv_03,
+                                        ],
                                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
                                 ),
-                                width=2100,
-                                padding=10,
-                            )
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls=[
+                                            lv_04,
+                                        ],
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
+                                ),
+                            ],       
                         )
-                    ),
-                ],
+                    ],
+                ),
             )
- 
+        ]

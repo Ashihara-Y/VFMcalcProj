@@ -44,13 +44,13 @@ class Final_Inputs(ft.Column):
         slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value13 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value14 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value15 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value17 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value18 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value17 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value18 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value19 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value20 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
 
@@ -480,37 +480,11 @@ class Final_Inputs(ft.Column):
         ]        
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             self.controls = [
-                   # tx0, tx1, tx2, tx3, tx4, tx5, tx6,
-                   # dt1, dt2, ft.Divider(height=1, color="amber"),
-                   # tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                   # tx25, slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
-                   # tx9, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
-                   # tx10,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                   # tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                   # tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                   # tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                   # tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
-                   # self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"), 
-                   # tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
-                   # b,
                    fi_lv1,
                    fi_lv3,
             ]
         else:
             self.controls = [
-                   # tx0, tx1, tx2, tx3, tx4, tx5, tx6,
-                   # dt1, dt2, ft.Divider(height=1, color="amber"),
-                   # tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                   # tx25, slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
-                   # tx9, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
-                   # tx10,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                   # tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                   # tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                   # tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                   # tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
-                   # self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"), 
-                   # tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
-                   # b,
                     fi_lv1,
                     fi_lv2,
             ]
@@ -588,9 +562,9 @@ class Final_Inputs(ft.Column):
         shisetsu_seibi_paymentschedule_kappu = to_dec(Decimal(1) - shisetsu_seibi_paymentschedule_ikkatsu)
         #kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
 
-        kisai_jutou = str(kisai_jutou)
-        kisai_koufu = str(kisai_koufu)
-        hojo_ritsu = str(hojo_ritsu)
+        kisai_jutou = str(inputs['kisai_jutou'])
+        kisai_koufu = str(inputs['kisai_koufu'])
+        hojo_ritsu = str(inputs['hojo_ritsu'])
 
         const_start_date_year = inputs['const_start_date_year']
         const_start_date_month = inputs['const_start_date_month']
@@ -630,9 +604,7 @@ class Final_Inputs(ft.Column):
             index_col=0)
 
         chisai_shoukan_kikan = inputs['chisai_shoukan_kikan']
-        chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan]
-        # First_end_fyを1年追加する必要があるのか、算定シートを確認する必要がある。
-        #first_end_fy = first_end_fy + dateutil.relativedelta.relativedelta(year=1)
+        chisai_kinri = to_dec(JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan])
 
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             SPC_keihi = Decimal(0)
@@ -652,8 +624,6 @@ class Final_Inputs(ft.Column):
         SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou #SPCが払うコスト
         
         chisai_kinri = chisai_kinri / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-        #kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /100 # 上記と重複　CSVの％表記を採取しているため、実数表記に切り替える。
-        #kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /100 # 上記と重複　CSVの％表記を採取しているため、実数表記に切り替える。
 
         ijikanri_unnei = (
             Decimal(self.initial_inputs["ijikanri_unnei_1"]) + 
@@ -674,6 +644,7 @@ class Final_Inputs(ft.Column):
         
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":        
             final_inputs = {
+            #return   {
             "advisory_fee": str(inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(chisai_shoukan_kikan),
@@ -764,6 +735,7 @@ class Final_Inputs(ft.Column):
             }
         else:
             final_inputs = {
+            #return   {
             "advisory_fee": str(inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(self.sl1.value),
@@ -853,6 +825,7 @@ class Final_Inputs(ft.Column):
             "zei_total": str(self.initial_inputs["zei_total"]),
 
             }
+        return final_inputs
 
 
     def _save_to_db(self, data):
