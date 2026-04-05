@@ -98,7 +98,7 @@ class View_saved(ft.Column):
             table.on_select_all=True
             
             summ_lv.controls.append(table)
-            summ_lv.controls.append(ft.Divider())
+            summ_lv.controls.append(ft.Divider(height=1, color="amber"))
 
         self.controls=[
                         summ_lv,
