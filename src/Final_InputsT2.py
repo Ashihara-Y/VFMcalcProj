@@ -207,7 +207,7 @@ class Final_Inputs(ft.Column):
         )
         tx9 = ft.Text("モニタリング等費用(PSC)(百万円、BT/DB:5程度、その他:10程度)")
         self.sl3 = ft.Slider(
-            value=0,
+            value=10,
             min=0,
             max=50,
             divisions=50,
@@ -218,7 +218,7 @@ class Final_Inputs(ft.Column):
         )
         tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、BT/DB:3程度、その他:6程度)")
         self.sl4 = ft.Slider(
-            value=0,
+            value=6,
             min=0,
             max=50,
             divisions=50,

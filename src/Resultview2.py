@@ -520,10 +520,7 @@ class Results(ft.Stack):
                                     label="結果・入力の要約",
                                 ),
                                 ft.Tab(
-                                    label="PSCでの公共側収支等",
-                                ),
-                                ft.Tab(
-                                    label="PFI-LCCでの公共側収支等",
+                                    label="PSC, LCCでの公共側収支等",
                                 ),
                                 ft.Tab(
                                     label="SPC収支等",
