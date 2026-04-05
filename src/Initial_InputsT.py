@@ -431,7 +431,7 @@ class Initial_Inputs(ft.Column):
 }
 
         if inputs['proj_ctgry'] == "サービス購入型":
-            tax_rates['houjinjuminzei_kintou'] = Decimal(0.18)
+            tax_rates['houjinjuminzei_kintou'] = to_dec(0.18)
             if inputs['proj_type'] == "BOT/BOO":
                 tax_rates['houjinzei_ritsu'] = Decimal(0.0)
                 tax_rates['hudousanshutokuzei_hyoujun'] = shisetsu_seibi_org_LCC
@@ -518,7 +518,7 @@ class Initial_Inputs(ft.Column):
                 "kisai_jutou": str(financial_rules['kisai_jutou']),
                 "kisai_koufu": str(financial_rules['kisai_koufu']),
                 "hojo_ritsu": str(financial_rules['hojo']),
-                "zeimae_rieki": str(Decimal(0.0).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
+                "zeimae_rieki": str(to_dec(0.0)),
                 "SPC_keihi": str(SPC_costs['keihi']),
                 "SPC_fee": str(SPC_costs['fee']),
                 "SPC_shihon": str(SPC_costs['shihon']),
