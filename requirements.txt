@@ -5,6 +5,7 @@ flet[all]
 #flet-desktop  < 0.27
 #flet-runtime < 0.27
 #flet-web < 0.27
+flet-datatable2
 pydantic
 numpy
 pandas
