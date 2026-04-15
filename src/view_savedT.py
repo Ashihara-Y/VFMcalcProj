@@ -2,6 +2,7 @@ import sys
 sys.dont_write_bytecode = True
 import pandas as pd
 import flet as ft
+import flet_datatable2 as ftd
 from simpledt import DataFrame
 from tinydb import TinyDB
 from sqlalchemy import create_engine
