@@ -508,7 +508,7 @@ class Results(ft.Stack):
 
         self.controls = [
             ft.Tabs(
-                selected_index=1,
+                selected_index=0,
                 length=4,
                 animation_duration=300,
                 content = ft.Column(

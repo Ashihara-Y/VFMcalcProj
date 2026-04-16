@@ -80,20 +80,21 @@ class View_saved(ft.Column):
             row = row.T.reset_index()
             row = row.rename(columns={"index":"項目名", 0:"値"}).drop(0, axis=0)
             df = DataFrame(row)
-            dr = df.datarows
-            for i in dr:
+            #dr = df.datarows
+            for i in df.datarows:
                 i.data = dtime                
                 #i.color=ft.Colors.AMBER_50
                 i.selected=False
+                i.selectable=True
                 #page = ft.Page
                 i.on_long_press=self.send_mess
-                i.on_select_changed=self.send_mess
+                i.on_select_change=self.handle_row_selection
 
             #df_t  = df.tranpose().reset_index()
             table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
             table.width=500
-            table.show_checkbox_column=False
+            table.show_checkbox_column=True
             #table.checkbox_column_width=15
             #table.checkbox_horizontal_margin=10
             table.on_select_all=True
@@ -123,5 +124,9 @@ class View_saved(ft.Column):
         dtime_df.to_sql('sel_res', self.engine_m, if_exists='replace', index=False)
         #page.session.set("selected_datetime", str(dtime))
         await self.page.push_route("/results_detail")
+    
+    def handle_row_selection(self, e):
+        e.control.selected = not e.control.selected
+        e.control.update()
 
 
