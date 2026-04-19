@@ -6,6 +6,9 @@ import flet_datatable2 as ftd
 from simpledt import DataFrame
 #from tinydb import TinyDB
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Integer, String, Float, DateTime
 import datetime
 
 @ft.control
@@ -17,10 +20,10 @@ class View_saved(ft.Column):
         self.resizable = True
         self.sel_list = []
 
-        engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
+        self.engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         #self.engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
         
-        res_summ_df = pd.read_sql_table('res_summ_res_table', engine)
+        res_summ_df = pd.read_sql_table('res_summ_res_table', self.engine)
         res_summ_df_len = len(res_summ_df)
         self.height = 1000+(100*res_summ_df_len)
 
@@ -101,6 +104,7 @@ class View_saved(ft.Column):
                             bgcolor=ft.Colors.SURFACE_CONTAINER,
                             actions=[
                                 ft.Button(content="詳細を見る", on_click=self.send_mess),
+                                ft.Button(content="選択した結果を削除", on_click=self.del_selected),
                             ]
                         ),
                         summ_lv,
@@ -127,6 +131,27 @@ class View_saved(ft.Column):
             )
             self.page.update()
     
+    async def del_selected(self, e):
+            Base = declarative_base()
+            #engine = create_engine('sqlite:///your_database.db') # データベース名
+            Session = sessionmaker(bind=self.engine)
+            session = Session()
+            class ResSummTable(Base):
+                __tablename__ = 'res_summ_res_table'
+                id = Column(Integer, primary_key=True)
+                datetime = Column(String)
+
+            try:
+                session.query(ResSummTable)\
+                .filter(ResSummTable.datetime.in_(self.sel_list))\
+                .delete(synchronize_session=False)
+                session.commit()
+            except Exception as e:
+                session.rollback()
+            finally:
+                session.close()
+            await self.page.push_route("/view_saved")
+
     def handle_row_selection(self, e):
         e.control.selected = not e.control.selected
         self.add_to_sel_list(e)

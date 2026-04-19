@@ -46,13 +46,13 @@ def PSC_calc():
 
     ## PSC_payments
     PSC_shuushi_payments.loc[1:inputs_pdt.proj_years, 'monitoring_costs'] = inputs_pdt.monitoring_costs_PSC
-    kisai_ganpon_shoukan_gaku = Kisai_gaku / inputs_pdt.chisai_shoukan_kikan
+    kisai_ganpon_shoukan_gaku = Decimal(Kisai_gaku / inputs_pdt.chisai_shoukan_kikan)
     PSC_shuushi_payments.loc[inputs_pdt.const_years, 'shisetsu_seibihi'] = inputs_pdt.shisetsu_seibi
     PSC_shuushi_payments.loc[inputs_pdt.const_years+1:inputs_pdt.proj_years, 'ijikanri_unneihi'] = inputs_pdt.ijikanri_unnei
     # chisai_shoukan_kikan:23, shoukan_kaishi_jiki:(3+3+1)=7 7期目を含めて23年後は、29期目。次の30期目からは償還額はゼロにする必要がある。
     PSC_shuushi_payments.loc[shoukan_kaishi_jiki:shoukan_kaishi_jiki+inputs_pdt.chisai_shoukan_kikan-1, 'kisai_shoukan_gaku'] = kisai_ganpon_shoukan_gaku
     PSC_shuushi_payments.loc[shoukan_kaishi_jiki+inputs_pdt.chisai_shoukan_kikan:target_years, 'kisai_shoukan_gaku'] = Decimal('0.000000')
-
+    PSC_shuushi_payments['kisai_shoukan_gaku'] = PSC_shuushi_payments['kisai_shoukan_gaku'].apply(lambda x: Decimal(x))
     PSC_shuushi_payments['kisai_shoukansumi_gaku'] = PSC_shuushi_payments['kisai_shoukan_gaku'].cumsum()
     PSC_shuushi_payments.loc[
         inputs_pdt.const_years:target_years,

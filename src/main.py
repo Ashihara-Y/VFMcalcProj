@@ -27,7 +27,12 @@ async def main(page: ft.Page):
             ft.View(
                 route="/",
                 controls=[
-                    ft.AppBar(title=ft.Text("初期入力")),
+                    ft.AppBar(title=ft.Text("初期入力"),
+                            bgcolor=ft.Colors.SURFACE_CONTAINER,
+                            actions=[
+                                ft.Button(content="既存の算定結果を見る", on_click=open_saved_list),
+                            ],
+                    ),
                     Initial_Inputs(),
                 ],
                 scroll=ft.ScrollMode.ALWAYS,
@@ -66,7 +71,7 @@ async def main(page: ft.Page):
                 ft.View(
                     route="/view_saved",
                     controls=[
-                        ft.AppBar(title=ft.Text("算定結果一覧(結果を１つ選択して「詳細を見る」をクリックすると詳細画面に移ります)")),
+                        #ft.AppBar(title=ft.Text("算定結果一覧(結果を１つ選択して「詳細を見る」をクリックすると詳細画面に移ります)")),
                         View_saved(),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
@@ -96,17 +101,7 @@ async def main(page: ft.Page):
     async def open_final_inputs(e):
         await page.push_route("/final_inputs")
 
-    #def open_results_summary(e):
-    #    page.go("/results_summary")
-
     async def open_results_detail(e):
-        #dtime = e.control.data
-        #print(dtime)
-        #dtime_dic = {'selected_datetime': str(dtime)}
-        #dtime_df = pd.DataFrame(dtime_dic, index=[0])
-        #dtime_df.to_sql('sel_res', self.engine_m, if_exists='replace', index=False)
-        #page.session.store.set("selected_datetime", str(dtime))
-        #Results()        
         await page.push_route("/results_detail")
 
     async def open_saved_list(e):
