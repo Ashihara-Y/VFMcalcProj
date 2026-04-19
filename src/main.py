@@ -9,6 +9,9 @@ import save_results
 import export_to_excel
 import download
 import logging
+import pandas as pd
+from sqlalchemy import create_engine
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -42,13 +45,15 @@ async def main(page: ft.Page):
                     scroll=ft.ScrollMode.ALWAYS,
                 )
             )
-        if page.route == "/results_detail":
+        elif page.route == "/results_detail":
+            sel_dtimes = page.session.store.get("selected_datetime") # セッションストレージからselected_datetimeを取得
+            sel_dtime = sel_dtimes[0] if sel_dtimes is not None else "No datetime selected" # 取得できない場合のデフォルト値
             page.views.append(
                 ft.View(
                     route="/results_detail",
                     controls=[
                         ft.AppBar(title=ft.Text("算定結果詳細")),
-                        Results(),
+                        Results(selected_datetime=sel_dtime), # Resultsクラスにselected_datetimeを渡す
                         ft.Button(content="結果リストへ戻る", on_click=open_saved_list),
                         ft.Button(content="この結果をExcelに書き出す", on_click=result_to_excel),
                         ft.Button(content="出力したファイルをダウンロード", on_click=download_excel),
@@ -56,19 +61,18 @@ async def main(page: ft.Page):
                     scroll=ft.ScrollMode.ALWAYS,
                 )
             )
-        if page.route == "/view_saved":
+        elif page.route == "/view_saved":
             page.views.append(
                 ft.View(
                     route="/view_saved",
                     controls=[
                         ft.AppBar(title=ft.Text("算定結果一覧(要約表を長めにクリックすると詳細に遷移します)")),
                         View_saved(),
-                        ft.Button(content="詳細を見る", on_click=open_results_detail),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 )
             )
-        if page.route == "/download":
+        elif page.route == "/download":
             page.views.append(
                 ft.View(
                     route="/download",
@@ -96,6 +100,12 @@ async def main(page: ft.Page):
     #    page.go("/results_summary")
 
     async def open_results_detail(e):
+        dtime = e.control.data
+        #print(dtime)
+        #dtime_dic = {'selected_datetime': str(dtime)}
+        #dtime_df = pd.DataFrame(dtime_dic, index=[0])
+        #dtime_df.to_sql('sel_res', self.engine_m, if_exists='replace', index=False)
+        page.session.store.set("selected_datetime", str(dtime))
         #Results()        
         await page.push_route("/results_detail")
 

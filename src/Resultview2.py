@@ -12,18 +12,19 @@ import decimal
 # savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
 @ft.control
 class Results(ft.Stack):
-    def init(self):
-        #super().__init__()
-        self.title = "結果 詳細"
+    def __init__(self, selected_datetime):
+        super().__init__()
+        #self.title = "結果 詳細"
         self.width = 2100
         self.height = 1000
-        self.resizable = True
+        #self.resizable = True
 
+        self.dtime = selected_datetime # コンストラクタでselected_datetimeを受け取るように変更
         engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         #con = TinyDB("selected_res.json")
-        engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
-        df_res = pd.read_sql_table('sel_res', engine_m)
-        self.dtime = df_res['selected_datetime'].iloc[0]
+        #engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
+        #df_res = pd.read_sql_table('sel_res', engine_m)
+        #self.dtime = df_res['selected_datetime'].iloc[0]
         #con.close()
 
         inputs_pdt = make_inputs_df.main()
