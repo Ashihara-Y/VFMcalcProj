@@ -66,7 +66,7 @@ async def main(page: ft.Page):
                 ft.View(
                     route="/view_saved",
                     controls=[
-                        ft.AppBar(title=ft.Text("算定結果一覧(要約表を長めにクリックすると詳細に遷移します)")),
+                        ft.AppBar(title=ft.Text("算定結果一覧(結果を１つ選択して「詳細を見る」をクリックすると詳細画面に移ります)")),
                         View_saved(),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
@@ -100,16 +100,18 @@ async def main(page: ft.Page):
     #    page.go("/results_summary")
 
     async def open_results_detail(e):
-        dtime = e.control.data
+        #dtime = e.control.data
         #print(dtime)
         #dtime_dic = {'selected_datetime': str(dtime)}
         #dtime_df = pd.DataFrame(dtime_dic, index=[0])
         #dtime_df.to_sql('sel_res', self.engine_m, if_exists='replace', index=False)
-        page.session.store.set("selected_datetime", str(dtime))
+        #page.session.store.set("selected_datetime", str(dtime))
         #Results()        
         await page.push_route("/results_detail")
 
     async def open_saved_list(e):
+        emp_list=[]
+        page.session.store.set("selected_datetime", emp_list) #initialization
         await page.push_route("/view_saved")
 
     async def open_initial_inputs(e):

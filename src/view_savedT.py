@@ -15,9 +15,10 @@ class View_saved(ft.Column):
         self.title = "VFM算定結果リスト(結果要約を長めにクリックすると詳細に遷移します)"
         self.width = 1800
         self.resizable = True
+        self.sel_list = []
 
         engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
-        self.engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
+        #self.engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
         
         res_summ_df = pd.read_sql_table('res_summ_res_table', engine)
         res_summ_df_len = len(res_summ_df)
@@ -78,26 +79,17 @@ class View_saved(ft.Column):
                     "const_years": "施設整備期間",
                 },
             )
-            #row = row.T.reset_index()
-            #row = row.rename(columns={"index":"項目名", 0:"値"}).drop(0, axis=0)
             df = DataFrame(row)
-            #dr = df.datarows
             for i in df.datarows:
                 i.data = dtime                
-                #i.color=ft.Colors.AMBER_50
                 i.selected=False
                 i.selectable=True
-                #page = ft.Page
-                #i.on_long_press=self.send_mess
                 i.on_select_change=self.handle_row_selection
 
-            #df_t  = df.tranpose().reset_index()
             table = df.datatable
             # ここで、DTに修飾を追加する。チェックボックス、色、テキストスタイル
             table.width=500
             table.show_checkbox_column=True
-            #table.checkbox_column_width=15
-            #table.checkbox_horizontal_margin=10
             table.on_select_all=True
             
             summ_lv.controls.append(table)
@@ -115,25 +107,25 @@ class View_saved(ft.Column):
                         ft.Button(content="詳細を見る", on_click=self.send_mess),
 
                     ]
-        #            alignment=ft.MainAxisAlignment.START,
-        #            horizontal_alignment=ft.CrossAxisAlignment.START,
-        #        ),
-        #        width=800,
-        #        height=3000,
-        #        padding=5,
-        #)
 
-    # 以下のメソッドは、選択された日時を、次の画面に渡すためのメソッド。
-    # ListViewのセルを選択したときに呼び出される。
-    # 選択された日時を、SQLiteのテーブルsel_resに書き込んで、次の画面に渡す。
+    # 以下の3メソッドは、選択された日時を、次の画面に渡すためのメソッド。
+    # 各算定結果のチェックボックスを選択した時と「詳細を見る」ボタンをクリックした時に呼び出される。
+    # 選択された日時を、セッションストレージに書き込んで、次の画面に渡す。
     async def send_mess(self, e):
-        #dtime = e.control.data
-        #print(dtime)
-        #dtime_dic = {'selected_datetime': str(dtime)}
-        #dtime_df = pd.DataFrame(dtime_dic, index=[0])
-        #dtime_df.to_sql('sel_res', self.engine_m, if_exists='replace', index=False)
+        emp_list=[]
+        self.page.session.store.set("selected_datetime", emp_list) #initialization
         self.page.session.store.set("selected_datetime", self.sel_list)
-        await self.page.push_route("/results_detail")
+        if self.sel_list:
+            await self.page.push_route("/results_detail")
+        else:
+            self.page.add(
+                ft.AlertDialog(
+                    title=ft.Text("エラー"),
+                    content=ft.Text("詳細を見たい算定結果を選択してください。"),
+                    actions=[ft.Button("OK", on_click=lambda e: self.page.dialog(None))],
+                )
+            )
+            self.page.update()
     
     def handle_row_selection(self, e):
         e.control.selected = not e.control.selected
