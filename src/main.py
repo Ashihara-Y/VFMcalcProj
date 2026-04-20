@@ -5,6 +5,7 @@ from Initial_InputsT import Initial_Inputs
 from Final_InputsT2 import Final_Inputs
 from Resultview2 import Results
 from view_savedT import View_saved
+from Edit_result import Edit_result
 import save_results
 import export_to_excel
 import download
@@ -43,7 +44,9 @@ async def main(page: ft.Page):
                 ft.View(
                     route="/final_inputs",
                     controls=[
-                        ft.AppBar(title=ft.Text("入力確認と追加入力")),
+                        ft.AppBar(title=ft.Text("入力確認と追加入力"),
+                                bgcolor=ft.Colors.SURFACE_CONTAINER,
+                        ),
                         Final_Inputs()
                         #ft.ElevatedButton("計算", on_click=open_saved_list),
                     ],
@@ -57,7 +60,13 @@ async def main(page: ft.Page):
                 ft.View(
                     route="/results_detail",
                     controls=[
-                        ft.AppBar(title=ft.Text("算定結果詳細")),
+                        ft.AppBar(title=ft.Text("算定結果詳細"),
+                                bgcolor=ft.Colors.SURFACE_CONTAINER,
+                                actions=[
+                                    ft.Button(content="複製して調整", on_click=open_edit_result),
+                                    ft.Button(content="結果リストに戻る", on_click=open_saved_list),
+                                ],
+                        ),
                         Results(selected_datetime=sel_dtime), # Resultsクラスにselected_datetimeを渡す
                         ft.Button(content="結果リストへ戻る", on_click=open_saved_list),
                         ft.Button(content="この結果をExcelに書き出す", on_click=result_to_excel),
@@ -71,19 +80,20 @@ async def main(page: ft.Page):
                 ft.View(
                     route="/view_saved",
                     controls=[
-                        #ft.AppBar(title=ft.Text("算定結果一覧(結果を１つ選択して「詳細を見る」をクリックすると詳細画面に移ります)")),
+                        #ft.AppBar(title=ft.Text("算定結果一覧")),
                         View_saved(),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 )
             )
-        elif page.route == "/download":
+        elif page.route == "/edit_saved":
             page.views.append(
                 ft.View(
-                    route="/download",
+                    route="/edit_saved",
                     controls=[
-                        ft.AppBar(title=ft.Text("出力ファイルのダウンロード")),
-                        download.download(),
+                        ft.AppBar(title=ft.Text("算定結果調整")),
+                        Edit_result(),
+                        #download.download(),
                         #ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
@@ -108,6 +118,11 @@ async def main(page: ft.Page):
         emp_list=[]
         page.session.store.set("selected_datetime", emp_list) #initialization
         await page.push_route("/view_saved")
+
+    async def open_edit_result(e):
+        emp_list=[]
+        page.session.store.set("selected_datetime", emp_list) #initialization
+        await page.push_route("/edit_saved")
 
     async def open_initial_inputs(e):
         await page.push_route("/")

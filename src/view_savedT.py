@@ -131,7 +131,7 @@ class View_saved(ft.Column):
             )
             self.page.update()
     
-    async def del_selected(self, e):
+    def del_selected(self, e):
             Base = declarative_base()
             #engine = create_engine('sqlite:///your_database.db') # データベース名
             Session = sessionmaker(bind=self.engine)
@@ -150,7 +150,7 @@ class View_saved(ft.Column):
                 session.rollback()
             finally:
                 session.close()
-            await self.page.push_route("/view_saved")
+            self.page.update()
 
     def handle_row_selection(self, e):
         e.control.selected = not e.control.selected
