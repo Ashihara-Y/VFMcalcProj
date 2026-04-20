@@ -39,12 +39,13 @@ async def main(page: ft.Page):
             )
         )
         if page.route == "/final_inputs":
+            initial_inputs = page.session.store.get("initial_inputs") 
             page.views.append(
                 ft.View(
                     route="/final_inputs",
                     controls=[
                         ft.AppBar(title=ft.Text("入力確認と追加入力")),
-                        Final_Inputs()
+                        Final_Inputs(initial_inputs=initial_inputs), # Final_Inputsクラスにinitial_inputsを渡す
                         #ft.ElevatedButton("計算", on_click=open_saved_list),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,

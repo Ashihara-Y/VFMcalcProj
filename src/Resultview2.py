@@ -16,7 +16,7 @@ class Results(ft.Stack):
         super().__init__()
         #self.title = "結果 詳細"
         self.width = 2100
-        self.height = 1000
+        self.height = 2000
         #self.resizable = True
 
         self.dtime = selected_datetime # コンストラクタでselected_datetimeを受け取るように変更

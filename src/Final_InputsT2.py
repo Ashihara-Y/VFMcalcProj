@@ -20,8 +20,8 @@ logger = logging.getLogger(__name__)
 @ft.control
 class Final_Inputs(ft.Column):
     
-    def init(self):
-        #super().__init__()
+    def __init__(self, initial_inputs):
+        super().__init__()
         #self.title = "最終入力・確認"
         #self.width = 500
         #self.height = 3000
@@ -54,9 +54,9 @@ class Final_Inputs(ft.Column):
         slider_value19 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value20 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
 
-        db = TinyDB("ii_db.json")
-        self.initial_inputs = db.all()[0]   
-        #self.initial_inputs = self.page.session.store.get("initial_inputs", {})
+        #db = TinyDB("ii_db.json")
+        #self.initial_inputs = db.all()[0]   
+        self.initial_inputs = initial_inputs
     
         #if not self.initial_inputs or len(self.initial_inputs) == 0:
         #    self.result_text.value = "Error: No data in SessionStorage from Initial_Inputs."
@@ -829,11 +829,13 @@ class Final_Inputs(ft.Column):
 
 
     def _save_to_db(self, data):
+        if self.page.session.store.contains_key("final_inputs"):
+            self.page.session.store.remove("final_inputs")
         if os.path.exists("fi_db.json"):
             os.remove("fi_db.json")
         db = TinyDB('fi_db.json')
         db.insert(data)
         db.close()
-        #self.page.session.store.set("final_inputs",data)
+        self.page.session.store.set("final_inputs",data)
 
 

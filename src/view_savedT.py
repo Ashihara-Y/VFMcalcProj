@@ -150,7 +150,7 @@ class View_saved(ft.Column):
                 session.rollback()
             finally:
                 session.close()
-            await self.page.push_route("/view_saved")
+                await self.page.push_route("/view_saved")
 
     def handle_row_selection(self, e):
         e.control.selected = not e.control.selected
