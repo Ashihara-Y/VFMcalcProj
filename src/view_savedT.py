@@ -151,9 +151,9 @@ class View_saved(ft.Column):
             finally:
                 session.close()
 <<<<<<< HEAD
-                await self.page.push_route("/view_saved")
+                #await self.page.push_route("/view_saved")
 =======
-            self.page.update()
+            
 >>>>>>> 24d238d3d6274d928fd8886a151420b093ed0602
 
     def handle_row_selection(self, e):
