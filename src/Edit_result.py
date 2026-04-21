@@ -4,11 +4,15 @@ import pandas as pd
 import flet as ft
 from simpledt import DataFrame
 from tinydb import TinyDB, Query
-import openpyxl
+#import openpyxl
 from sqlalchemy import create_engine
 import make_inputs_df
-import decimal
-
+#import decimal
+from decimal import Decimal, ROUND_HALF_UP
+import timeflake
+import datetime
+from zoneinfo import ZoneInfo
+from VFMcalc2 import VFM_calc
 
 @ft.control
 class Edit_result(ft.Stack):
@@ -45,26 +49,12 @@ class Edit_result(ft.Stack):
         slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value13 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value14 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value15 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value17 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value18 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value19 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value20 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-
-        #db = TinyDB("ii_db.json")
-        #self.initial_inputs = db.all()[0]   
-        self.initial_inputs = initial_inputs
-    
-        #if not self.initial_inputs or len(self.initial_inputs) == 0:
-        #    self.result_text.value = "Error: No data in SessionStorage from Initial_Inputs."
-        #    self.update()
-        #   return
+        slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
             
- 
         def handle_slider_change(e):
             sl_value = e.control.value
             target_text_control = e.control.data
@@ -78,113 +68,7 @@ class Edit_result(ft.Stack):
         const_start_month = date_dt.month
         const_start_day = date_dt.day
 
-        tx0 = ft.Text(str("＜＜初期データ＞＞"))
-        tx1 = ft.Text(str("発注者区分： " + str(self.initial_inputs["mgmt_type"])))
-        tx2 = ft.Text(str("事業タイプ： " + str(self.initial_inputs["proj_ctgry"])))
-        tx3 = ft.Text(str("事業方式： " + str(self.initial_inputs["proj_type"])))
-        tx4 = ft.Text(str("事業期間： " + str(self.initial_inputs["proj_years"]) + "年"))
-        tx5 = ft.Text(str("施設整備期間： " + str(self.initial_inputs["const_years"]) + "年"))
-        tx6 = ft.Text(str("地方債償還据置期間： " + str(self.initial_inputs["chisai_sueoki_kikan"]) + "年"))
-    
-        dt1 = ft.DataTable(
-            width=1800,
-            data_row_max_height=80,
-            heading_row_height=80,
-            columns=[
-                ft.DataColumn(ft.Text("事業費項目")),
-                ft.DataColumn(ft.Text("入力値"), numeric=True),
-                ft.DataColumn(ft.Text("競争の効果反映(PSC)"), numeric=True),
-                ft.DataColumn(ft.Text("効率性反映(PFI-LCC)"), numeric=True), 
-            ],         
-            rows=[
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("施設整備費")),
-                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["shisetsu_seibi_org_LCC"])),                
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("維持管理運営費(人件費)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_1_org_LCC"])),                
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("維持管理運営費(修繕費)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_2_org_LCC"])),                
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("維持管理運営費(動力費)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["ijikanri_unnei_3_org_LCC"])),                
-                        ],
-                ),
-            ],
-        )
-        dt2 = ft.DataTable(
-            width=1800,
-            columns=[
-                ft.DataColumn(ft.Text("税目")),
-                ft.DataColumn(ft.Text("標準／均等割"), numeric=True),
-                ft.DataColumn(ft.Text("税率"), numeric=True),
-            ],         
-            rows=[
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("法人税")),
-                        ft.DataCell(ft.Text("-")),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinzei_ritsu"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("法人住民税(都道府県)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("法人住民税(市区町村)")),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_kintou"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("不動産取得税")),
-                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_hyoujun"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["hudousanshutokuzei_ritsu"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("固定資産税")),
-                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_hyoujun"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["koteishisanzei_ritsu"])),
-                        ],
-                ),
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text("登録免許税")),
-                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_hyoujun"])),
-                        ft.DataCell(ft.Text(self.initial_inputs["tourokumenkyozei_ritsu"])),
-                        ],
-                ),
-            ],
-        )
-
-        tx7 = ft.Text("地方債償還期間(年)")
+        tx1 = ft.Text("地方債償還期間(年)")
         self.sl1 = ft.Slider(
             value=int(self.initial_inputs["chisai_shoukan_kikan"]),
             min=0,
@@ -195,7 +79,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value01,
         )
-        tx8 = ft.Text("施設整備費支払 一括払の比率(%)")
+        tx2 = ft.Text("施設整備費支払 一括払の比率(%)")
         self.sl2 = ft.Slider(
             value=50,
             min=0.0,
@@ -206,7 +90,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value02,
         )
-        tx9 = ft.Text("モニタリング等費用(PSC)(百万円、BT/DB:5程度、その他:10程度)")
+        tx3 = ft.Text("モニタリング等費用(PSC)(百万円、BT/DB:5程度、その他:10程度)")
         self.sl3 = ft.Slider(
             value=10,
             min=0,
@@ -217,7 +101,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value03,
         )
-        tx10 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、BT/DB:3程度、その他:6程度)")
+        tx4 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、BT/DB:3程度、その他:6程度)")
         self.sl4 = ft.Slider(
             value=6,
             min=0,
@@ -228,7 +112,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value04,
         )
-        tx11 = ft.Text("起債充当率(%)")
+        tx5 = ft.Text("起債充当率(%)")
         self.sl5 = ft.Slider(
             value=float(self.initial_inputs["kisai_jutou"])*100,
             min=0.0,
@@ -239,7 +123,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value05,
         )
-        tx12 = ft.Text("起債への交付金カバー率(%)")
+        tx6 = ft.Text("起債への交付金カバー率(%)")
         self.sl6 = ft.Slider(
             value=float(self.initial_inputs["kisai_koufu"])*100,
             min=0.0,
@@ -250,7 +134,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value06,
         )
-        tx13 = ft.Text("補助率(%)")
+        tx7 = ft.Text("補助率(%)")
         self.sl7 = ft.Slider(
             value=float(self.initial_inputs["hojo_ritsu"])*100,
             min=0.0,
@@ -261,7 +145,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value07,
         )
-        tx14 = ft.Text("SPC経費年額(百万円)")
+        tx8 = ft.Text("SPC経費年額(百万円)")
         self.sl8 = ft.Slider(
             value=float(self.initial_inputs["SPC_keihi"]),
             min=0,
@@ -272,7 +156,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value08,
         )
-        tx15 = ft.Text("SPCへの手数料(百万円)")
+        tx9 = ft.Text("SPCへの手数料(百万円)")
         self.sl9 = ft.Slider(
             value=float(self.initial_inputs["SPC_fee"]),
             min=0,
@@ -283,7 +167,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value09,
         )
-        tx16 = ft.Text("SPC資本金(百万円)")
+        tx10 = ft.Text("SPC資本金(百万円)")
         self.sl10 = ft.Slider(
             value=float(self.initial_inputs["SPC_shihon"]),
             min=0,
@@ -294,7 +178,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value10,
         )
-        tx17 = ft.Text("SPC予備費(百万円)")
+        tx11 = ft.Text("SPC予備費(百万円)")
         self.sl11 = ft.Slider(
             value=float(self.initial_inputs["SPC_yobihi"]),
             min=0,
@@ -305,11 +189,18 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value11,
         )
-        self.sw01 = ft.Switch(
-            label="SPC経費の扱い（デフォルト：サービス対価で支払）",
-            value=True,
+        tx12 = ft.Text("SPC予備費(百万円)")
+        self.sl12 = ft.Slider(
+            value=float(self.initial_inputs["SPC_yobihi"]),
+            min=0,
+            max=1000,
+            divisions=1000,
+            label="{value}百万円",
+            round=1,
+            on_change=handle_slider_change,
+            data=slider_value12,
         )
-        tx19 = ft.Text("アドバイザリー等経費(百万円)")
+        tx13 = ft.Text("アドバイザリー等経費(百万円)")
         self.sl13 = ft.Slider(
             value=0,
             min=0,
@@ -320,7 +211,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value13,
         )
-        tx20 = ft.Text("利用料金収入(百万円)")
+        tx14 = ft.Text("利用料金収入(百万円)")
         self.sl14 = ft.Slider(
             value=float(self.initial_inputs["riyou_ryoukin"]),
             min=0,
@@ -331,7 +222,7 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value14,
         )
-        tx21 = ft.Text("割賦金利へのスプレッド(%)")
+        tx15 = ft.Text("割賦金利へのスプレッド(%)")
         self.sl15 = ft.Slider(
             value=0.00,
             min=0.00,
@@ -342,75 +233,16 @@ class Edit_result(ft.Stack):
             on_change=handle_slider_change,
             data=slider_value15,
         )
-        self.dd00 = ft.Dropdown(
-            value=const_start_year,
-            label="施設整備開始年",
-            hint_text="施設整備開始年を選択してください",
-            width=400,
-            options=[
-                ft.dropdown.Option(str(const_start_year)), 
-                ft.dropdown.Option(str(const_start_year+1)), 
-                ft.dropdown.Option(str(const_start_year+2)), 
-                ft.dropdown.Option(str(const_start_year+3)),
-                ft.dropdown.Option(str(const_start_year+4)), 
-                ft.dropdown.Option(str(const_start_year+5)), 
-                ft.dropdown.Option(str(const_start_year+6)),
-                ft.dropdown.Option(str(const_start_year+7)), 
-                ft.dropdown.Option(str(const_start_year+8)), 
-                ft.dropdown.Option(str(const_start_year+9)),
-                ft.dropdown.Option(str(const_start_year+10)),
-            ],
-        )
-        self.dd01 = ft.Dropdown(
-            label="施設整備開始月",
-            hint_text="施設整備開始月を選択してください",
-            width=400,
-            value=const_start_month,
-            options=[
-                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
-                ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
-                ft.dropdown.Option("7"),  ft.dropdown.Option("8"),  ft.dropdown.Option("9"),
-                ft.dropdown.Option("10"), ft.dropdown.Option("11"), ft.dropdown.Option("12"),
-            ],
-        )
-        self.dd02 = ft.Dropdown(
-            label="施設整備開始日",
-            hint_text="施設整備開始日を選択してください",
-            width=400,
-            value=const_start_day,
-            options=[
-                ft.dropdown.Option("1"),  ft.dropdown.Option("2"),  ft.dropdown.Option("3"),
-                ft.dropdown.Option("4"),  ft.dropdown.Option("5"),  ft.dropdown.Option("6"),
-                ft.dropdown.Option("7"),  ft.dropdown.Option("8"),  ft.dropdown.Option("9"),
-                ft.dropdown.Option("10"), ft.dropdown.Option("11"), ft.dropdown.Option("12"),
-                ft.dropdown.Option("13"), ft.dropdown.Option("14"), ft.dropdown.Option("15"),
-                ft.dropdown.Option("16"), ft.dropdown.Option("17"), ft.dropdown.Option("18"),
-                ft.dropdown.Option("19"), ft.dropdown.Option("20"), ft.dropdown.Option("21"),
-                ft.dropdown.Option("22"), ft.dropdown.Option("23"), ft.dropdown.Option("24"),
-                ft.dropdown.Option("25"), ft.dropdown.Option("26"), ft.dropdown.Option("27"),
-                ft.dropdown.Option("28"), ft.dropdown.Option("29"), ft.dropdown.Option("30"),
-                ft.dropdown.Option("31"), 
-            ],
-        )
-        tx25 = ft.Text("地方債償還据置期間")
-        self.sl19 = ft.Slider(
-            value=self.initial_inputs['chisai_sueoki_kikan'],
-            min=0,
-            max=5,
-            divisions=5,
-            label="{value}年",
+        tx16 = ft.Text("割賦金利へのスプレッド(%)")
+        self.sl16 = ft.Slider(
+            value=0.00,
+            min=0.00,
+            max=2.00,
+            divisions=200,
+            label="{value}％",
+            round=2,
             on_change=handle_slider_change,
-            data=slider_value19,
-        )
-        tx26 = ft.Text("予備入力")
-        self.sl20 = ft.Slider(
-            value=0,
-            min=0,
-            max=1,
-            divisions=100,
-            label="{value}",
-            on_change=handle_slider_change,
-            data=slider_value20,
+            data=slider_value16,
         )
         b = ft.Button(content="入力確認・計算", on_click=self.button_clicked)
 
@@ -442,41 +274,37 @@ class Edit_result(ft.Stack):
             horizontal=False,
         )
         fi_lv1.controls= [
-            tx0, tx1, tx2, tx3, tx4, tx5, tx6,
-            dt1, dt2, ft.Divider(height=1, color="amber"),
+            tx1, tx2, tx3, tx4, tx5, tx6,
+            ft.Divider(height=1, color="amber"),
         ]
         fi_lv2.controls= [
-                    tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx25, slider_value19, self.sl19, ft.Divider(height=1, color="amber"),
-                    tx8, slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
-                    tx9, slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
-                    tx10,slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
-                    tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    tx14,slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
-                    tx15,slider_value09, self.sl9,  ft.Divider(height=1, color="amber"),
-                    tx16,slider_value10, self.sl10, ft.Divider(height=1, color="amber"),
-                    tx17,slider_value11, self.sl11, ft.Divider(height=1, color="amber"),
-                    self.sw01,ft.Divider(height=1, color="amber"),
-                    tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
-                    tx20,slider_value14, self.sl14, ft.Divider(height=1, color="amber"),
-                    tx21,slider_value15, self.sl15, ft.Divider(height=1, color="amber"),
-                    self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"),
-                    tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
+                    tx1, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
+                    tx2, slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
+                    tx3, slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
+                    tx4,slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
+                    tx5,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    tx6,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    tx7,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    tx8,slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
+                    tx9,slider_value09, self.sl9,  ft.Divider(height=1, color="amber"),
+                    tx10,slider_value10, self.sl10, ft.Divider(height=1, color="amber"),
+                    tx11,slider_value11, self.sl11, ft.Divider(height=1, color="amber"),
+                    tx12,slider_value12, self.sl12, ft.Divider(height=1, color="amber"),
+                    tx13,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
+                    tx14,slider_value14, self.sl14, ft.Divider(height=1, color="amber"),
+                    tx15,slider_value15, self.sl15, ft.Divider(height=1, color="amber"),
+                    tx16,slider_value16, self.sl16, ft.Divider(height=1, color="amber"),
                     b,
         ]        
         fi_lv3.controls= [
-                    tx7, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx25, slider_value19,self.sl19, ft.Divider(height=1, color="amber"), 
-                    tx9, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
-                    tx10,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                    tx11,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    tx12,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    tx13,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
-                    self.dd00,self.dd01,self.dd02, ft.Divider(height=1, color="amber"), 
-                    tx26,slider_value20, self.sl20, ft.Divider(height=1, color="amber"),
+                    tx1, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
+                    tx2, slider_value02, self.sl2,  ft.Divider(height=1, color="amber"), 
+                    tx3, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
+                    tx4,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
+                    tx5,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    tx6,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    tx7,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    tx8,slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
                     b,
         ]        
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
@@ -1074,11 +902,6 @@ class Edit_result(ft.Stack):
 
 # IIからの_save_to_db
     def _save_to_db(self, data):
-        if os.path.exists("ii_db.json"):
-            os.remove("ii_db.json")
-        db = TinyDB('ii_db.json')
-        db.insert(data)
-        db.close()
         if self.page.session.store.contains_key("initial_inputs"):
             self.page.session.store.remove("initial_inputs")
         self.page.session.store.set("initial_inputs",data)
@@ -1088,164 +911,20 @@ class Edit_result(ft.Stack):
     def _save_to_db(self, data):
         if self.page.session.store.contains_key("final_inputs"):
             self.page.session.store.remove("final_inputs")
-        if os.path.exists("fi_db.json"):
-            os.remove("fi_db.json")
-        db = TinyDB('fi_db.json')
-        db.insert(data)
-        db.close()
         self.page.session.store.set("final_inputs",data)
 
 
 #「要約」カラムと「入力値等」カラムの材料
     #def build(self):
-        PSC_res_df = self.selected_res_list[0]
-        PSC_pv_df = self.selected_res_list[1]
-        LCC_res_df = self.selected_res_list[2]
-        LCC_pv_df = self.selected_res_list[3]
-        SPC_res_df = self.selected_res_list[4]
-        SPC_check_df = self.selected_res_list[5]
-        Risk_res_df = self.selected_res_list[6]
-        VFM_res_df = self.selected_res_list[7]
-        PIRR_res_df = self.selected_res_list[8]
         res_summ_df = self.selected_res_list[9]
         final_inputs_df = self.selected_res_list[10]
 
-        PSC_res_df['year'] = PSC_res_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
-        LCC_res_df['year'] = LCC_res_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
-        SPC_res_df['year'] = SPC_res_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
-        SPC_check_df['year'] = SPC_check_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
         res_summ_df['discount_rate'] = res_summ_df['discount_rate'] * 100
 
-        PSC_res_df = PSC_res_df.drop(['chisai_zansai', 'kisai_shoukansumi_gaku', 'datetime', 'user_id', 'calc_id'], axis=1)
-        PSC_pv_df =  PSC_pv_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
-        LCC_res_df = LCC_res_df.drop(['shisetsu_seibihi_kappugoukei', 'chisai_zansai', 'kisai_shoukansumi_gaku', 'datetime', 'user_id', 'calc_id'], axis=1)
-        LCC_pv_df = LCC_pv_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
-        SPC_res_df = SPC_res_df.drop(['payments_total_full', 'datetime', 'user_id', 'calc_id'], axis=1)
-        SPC_check_df = SPC_check_df.drop(['payments_total_full', 'net_income_full',  'datetime', 'user_id', 'calc_id'], axis=1)
-        Risk_res_df = Risk_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
-        VFM_res_df = VFM_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
-        PIRR_res_df = PIRR_res_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
         res_summ_df = res_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
         final_inputs_df = final_inputs_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
 
-        PSC_res_income_df = PSC_res_df[['periods','year','hojokin', 'kouhukin', 'kisai_gaku', 'riyou_ryoukin', 'income_total']]
-        PSC_res_payments_df = PSC_res_df[['periods','year','shisetsu_seibihi', 'ijikanri_unneihi', 'monitoring_costs', 'kisai_shoukan_gaku', 'kisai_risoku_gaku', 'payments_total', 'net_payments']]
-        LCC_res_income_df = LCC_res_df[['periods','year','hojokin', 'kouhukin', 'kisai_gaku', 'zeishu', 'income_total']]
-        LCC_res_payments_df = LCC_res_df[['periods','year','shisetsu_seibihi_ikkatsu', 'shisetsu_seibihi_kappuganpon', 'shisetsu_seibihi_kappukinri', 'ijikanri_unneihi', 'monitoring_costs', 'SPC_keihi', 'kisai_shoukan_gaku', 'kisai_risoku_gaku', 'payments_total', 'net_payments']]
-        SPC_res_income_df = SPC_res_df[['periods','year','shisetsu_seibihi_taika_ikkatsu', 'shisetsu_seibihi_taika_kappuganpon', 'shisetsu_seibihi_taika_kappukinri', 'ijikanri_unneihi_taika', 'SPC_hiyou_taika', 'riyou_ryoukin', 'income_total']]
-        SPC_res_payments_df = SPC_res_df[['periods','year','shisetsu_seibihi', 'ijikanri_unneihi', 'shiharai_risoku', 'SPC_keihi', 'SPC_setsuritsuhi', 'houjinzei_etc', 'payments_total', 'net_income']]
 
-        PSC_res_income_df = PSC_res_income_df.rename(
-            columns={
-                'periods':'経過年度', 
-                'year':'スケジュール', 
-                'hojokin':'補助金', 
-                'kouhukin':'交付金', 
-                'kisai_gaku':'起債発行額', 
-                'riyou_ryoukin':'利用料金収入',
-                'income_total':'収入計', 
-            }
-        )
-        PSC_res_payments_df = PSC_res_payments_df.rename(
-            columns={
-                'periods':'経過年度', 
-                'year':'スケジュール', 
-                'shisetsu_seibihi':'施設整備費用', 
-                'ijikanri_unneihi':'維持管理運営費用',
-                'monitoring_costs':'モニタリング等費用', 
-                'kisai_shoukan_gaku':'起債償還額',
-                'kisai_risoku_gaku':'起債利息', 
-                'payments_total':'支出計',
-                'net_payments':'収支（キャッシュ・フロー）', 
-            }
-        )
-        PSC_pv_df = PSC_pv_df.rename(
-            columns={
-                'period':'経過年数',
-                'net_payments':'収支（キャッシュ・フロー）', 
-                'discount_factor':'割引係数', 
-                'present_value':'収支（キャッシュ・フロー）現在価値', 
-            }
-        )
-        LCC_res_income_df = LCC_res_income_df.rename(
-            columns={
-                'periods':'経過年度', 
-                'year':'スケジュール', 
-                'hojokin':'補助金', 
-                'kouhukin':'交付金', 
-                'kisai_gaku':'起債発行額', 
-                'zeishu':'税収',
-                'income_total':'収入計', 
-            }
-        )
-        LCC_res_payments_df = LCC_res_payments_df.rename(
-            columns={
-                'periods':'経過年度', 
-                'year':'スケジュール', 
-                'shisetsu_seibihi_ikkatsu':'施設整備対価(一括払)',
-                'shisetsu_seibihi_kappuganpon':'施設整備対価(割賦元本)',
-                'shisetsu_seibihi_kappukinri':'施設整備対価(割賦金利)', 
-                'ijikanri_unneihi':'維持管理費対価', 
-                'monitoring_costs':'モニタリング等費用',
-                'SPC_keihi':'SPC費用', 
-                'kisai_shoukan_gaku':'起債償還額',
-                'kisai_risoku_gaku':'起債利息', 
-                'payments_total':'支出計',
-                'net_payments':'収支', 
-            }
-        )
-        LCC_pv_df = LCC_pv_df.rename(
-            columns={
-                'period':'経過年数',
-                'net_payments':'収支(キャッシュ・フロー)', 
-                'discount_factor':'割引係数', 
-                'present_value':'収支(キャッシュ・フロー)現在価値',
-            }
-        )
-        SPC_res_income_df = SPC_res_income_df.rename(
-            columns={
-                'periods':'経過年度', 
-                'year':'スケジュール', 
-                'shisetsu_seibihi_taika_ikkatsu':'施設整備対価(一括払)',
-                'shisetsu_seibihi_taika_kappuganpon':'施設整備対価(割賦元本)',
-                'shisetsu_seibihi_taika_kappukinri':'施設整備対価(割賦金利)', 
-                'ijikanri_unneihi_taika':'維持管理費対価',
-                'SPC_hiyou_taika':'SPC費用対価', 
-                'riyou_ryoukin':'利用料金収入', 
-                'income_total':'収入計', 
-            }
-        )
-        SPC_res_payments_df = SPC_res_payments_df.rename(
-            columns={
-                'periods':'経過年度', 
-                'year':'スケジュール', 
-                'shisetsu_seibihi':'施設整備費用',
-                'ijikanri_unneihi':'維持管理費', 
-                'kariire_ganpon_hensai':'(借入元本返済)', 
-                'shiharai_risoku':'支払利息',
-                'SPC_keihi':'SPC経費', 
-                'SPC_setsuritsuhi':'SPC当初費用（設立費用、予備費）', 
-                'houjinzei_etc':'法人税・公租公課', 
-                'payments_total':'支出計', 
-                'net_income':'収支(キャッシュ・フロー)', 
-            }
-        )
-        SPC_check_df = SPC_check_df.rename(
-            columns={
-                'year':'スケジュール', 
-                'income_total':'収入計', 
-                'kariire_ganpon_hensai':'借入元本返済', 
-                'payments_total':'支出計',
-                'net_income':'収支(キャッシュ・フロー)', 
-                'Cash_for_P_payment':'元本返済充当可能額', 
-                'P_payment_check':'元本返済可否', 
-            }
-        )
-        Risk_res_df = Risk_res_df.rename(
-            columns={
-                'risk_adjust_gaku':'リスク調整額', 
-            }
-        )
         res_summ_df = res_summ_df.rename(
             columns={
                 'VFM_percent':'VFM(％)', 
@@ -1271,48 +950,6 @@ class Edit_result(ft.Stack):
         simpledt_finalinputs_dt = simpledt_finalinputs_df.datatable
         self.table_finalinputs = simpledt_finalinputs_dt
 
-        simpledt_PSC_income_df = DataFrame(PSC_res_income_df)
-        simpledt_PSC_income_dt = simpledt_PSC_income_df.datatable
-        self.table_PSC_income = simpledt_PSC_income_dt
-        simpledt_PSC_payments_df = DataFrame(PSC_res_payments_df)
-        simpledt_PSC_payments_dt = simpledt_PSC_payments_df.datatable
-        simpledt_PSC_payments_dt.column_spacing = 10
-        simpledt_PSC_payments_dt.headline_row_height =30 
-        self.table_PSC_payments = simpledt_PSC_payments_dt
-
-        PSC_pv_df['経過年数'] = PSC_pv_df['経過年数'].apply(lambda i: int(i))
-        simpledt_PSC_pv_df = DataFrame(PSC_pv_df)
-        simpledt_PSC_pv_dt = simpledt_PSC_pv_df.datatable
-        self.table_PSC_pv = simpledt_PSC_pv_dt
-
-        LCC_pv_df['経過年数'] = LCC_pv_df['経過年数'].apply(lambda i: int(i))
-        simpledt_LCC_income_df = DataFrame(LCC_res_income_df)
-        simpledt_LCC_income_dt = simpledt_LCC_income_df.datatable
-        self.table_LCC_income = simpledt_LCC_income_dt
-        simpledt_LCC_payments_df = DataFrame(LCC_res_payments_df)
-        simpledt_LCC_payments_dt = simpledt_LCC_payments_df.datatable
-        simpledt_LCC_payments_dt.column_spacing = 10
-        simpledt_LCC_payments_dt.headline_row_height =30 
-        self.table_LCC_payments = simpledt_LCC_payments_dt
-
-        simpledt_LCC_pv_df = DataFrame(LCC_pv_df)
-        simpledt_LCC_pv_dt = simpledt_LCC_pv_df.datatable
-        self.table_LCC_pv = simpledt_LCC_pv_dt
-
-        simpledt_SPC_income_df = DataFrame(SPC_res_income_df)
-        simpledt_SPC_income_dt = simpledt_SPC_income_df.datatable
-        self.table_SPC_income = simpledt_SPC_income_dt
-        simpledt_SPC_payments_df = DataFrame(SPC_res_payments_df)
-        simpledt_SPC_payments_dt = simpledt_SPC_payments_df.datatable
-        self.table_SPC_payments = simpledt_SPC_payments_dt
-
-        simpledt_SPC_check_df = DataFrame(SPC_check_df)
-        simpledt_SPC_check_dt = simpledt_SPC_check_df.datatable
-        self.table_SPC_check = simpledt_SPC_check_dt
-
-        simpledt_Risk_df = DataFrame(Risk_res_df)
-        simpledt_Risk_dt = simpledt_Risk_df.datatable
-        self.table_Risk = simpledt_Risk_dt
 
         res_summ_df_t = res_summ_df.transpose().reset_index()
         res_summ_df_t = res_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
@@ -1325,39 +962,6 @@ class Edit_result(ft.Stack):
         )
         lv_01.controls.append(ft.Text('算定結果要約'))
         lv_01.controls.append(self.table_res_summ)
-
-        lv_02 = ft.ListView(
-            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
-        )
-        lv_02.controls.append(ft.Text('PSCでの公共側収支（収入）'))
-        lv_02.controls.append(self.table_PSC_income)
-        lv_02.controls.append(ft.Text('PSCでの公共側収支（支出）'))
-        lv_02.controls.append(self.table_PSC_payments)
-        lv_02.controls.append(ft.Divider())
-        lv_02.controls.append(ft.Text('PSCでの公共側キャッシュ・フローとその現在価値'))
-        lv_02.controls.append(self.table_PSC_pv)
-        lv_02.controls.append(ft.Divider())
-        lv_02.controls.append(ft.Text('PFI-LCCでの公共側収支（収入）'))
-        lv_02.controls.append(self.table_LCC_income)
-        lv_02.controls.append(ft.Text('PFI-LCCでの公共側収支（支出）'))
-        lv_02.controls.append(self.table_LCC_payments)
-        lv_02.controls.append(ft.Divider())
-        lv_02.controls.append(ft.Text('PFI-LCCでの公共側キャッシュ・フローとその現在価値'))
-        lv_02.controls.append(self.table_LCC_pv)
-        lv_02.controls.append(ft.Divider())
-        lv_02.controls.append(ft.Text('PSCへのリスク調整'))
-        lv_02.controls.append(self.table_Risk)
-
-        lv_03 = ft.ListView(
-            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
-        )
-        lv_03.controls.append(ft.Text('PFI-LCCでのSPC側収支（収入）'))
-        lv_03.controls.append(self.table_SPC_income)
-        lv_03.controls.append(ft.Text('PFI-LCCでのSPC側収支（支出）'))
-        lv_03.controls.append(self.table_SPC_payments)
-        lv_03.controls.append(ft.Divider())
-        lv_03.controls.append(ft.Text('PFI-LCCでのSPCの返済資金確認結果'))
-        lv_03.controls.append(self.table_SPC_check)
 
         lv_04 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
@@ -1379,12 +983,6 @@ class Edit_result(ft.Stack):
                                     label="結果・入力の要約",
                                 ),
                                 ft.Tab(
-                                    label="PSC, LCCでの公共側収支等",
-                                ),
-                                ft.Tab(
-                                    label="SPC収支等",
-                                ),
-                                ft.Tab(
                                     label="入力値等一覧",
                                 ),
                             ],
@@ -1403,30 +1001,6 @@ class Edit_result(ft.Stack):
                                     padding=10,
                                     margin=10,
                                     height=1000,
-                                ),
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls=[
-                                            lv_02,
-                                        ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    height=4000,
-                                    margin=10,
-                                ),
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls=[
-                                            lv_03,
-                                        ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    height=2000,
-                                    margin=10,
                                 ),
                                 ft.Container(
                                     content=ft.Column(
