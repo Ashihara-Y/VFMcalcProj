@@ -11,7 +11,7 @@ import decimal
 
 
 @ft.control
-class Edit_esult(ft.Stack):
+class Edit_result(ft.Stack):
     def __init__(self, selected_datetime):
         super().__init__()
         #self.title = "結果 詳細"
