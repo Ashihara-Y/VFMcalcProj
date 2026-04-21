@@ -353,7 +353,7 @@ class Initial_Inputs(ft.Column):
         r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
         r2 = Decimal(JRB_rates_df.loc[chisai_shoukan_kikan][const_years])
         kitai_bukka_j = Decimal(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
-        gonensai_rimawari = Decimal(self.JGB_rates_df.loc["5年"].iloc[0])
+        gonensai_rimawari = Decimal(JGB_rates_df.loc["5年"].iloc[0])
         
         return {
             'mgmt_type': mgmt_type,
