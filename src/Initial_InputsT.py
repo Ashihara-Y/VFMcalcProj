@@ -341,6 +341,20 @@ class Initial_Inputs(ft.Column):
         reduc_ijikanri_3 = Decimal(self.sl11.value) / Decimal(100)
         rakusatsu_ritsu = Decimal(self.sl12.value) / Decimal(100)
 
+        JGB_rates_df = pd.read_csv("src/JGB_rates.csv", sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
+        JRB_rates_df = pd.read_csv("src/JRB_rates.csv", sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
+
+        y, d = divmod(proj_years, 5)
+        if y >= 1:
+            r_idx = str((y + 1) * 5) + "年" if d > 2 else str(y * 5) + "年"
+        else:
+            r_idx = str(d) + "年"
+
+        r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
+        r2 = Decimal(JRB_rates_df.loc[chisai_shoukan_kikan][const_years])
+        kitai_bukka_j = Decimal(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
+        gonensai_rimawari = Decimal(self.JGB_rates_df.loc["5年"].iloc[0])
+        
         return {
             'mgmt_type': mgmt_type,
             'proj_ctgry': proj_ctgry,
@@ -364,7 +378,12 @@ class Initial_Inputs(ft.Column):
             'reduc_ijikanri_1': reduc_ijikanri_1,
             'reduc_ijikanri_2': reduc_ijikanri_2,
             'reduc_ijikanri_3': reduc_ijikanri_3,
-            'rakusatsu_ritsu': rakusatsu_ritsu
+            'rakusatsu_ritsu': rakusatsu_ritsu,
+
+            'r1': r1,
+            'r2': r2,
+            'kitai_bukka_j': kitai_bukka_j,
+            'gonensai_rimawari': gonensai_rimawari,
         }
     
     def _calculate_financials(self, inputs):
@@ -398,22 +417,8 @@ class Initial_Inputs(ft.Column):
         ijikanri_unnei_3_org_LCC = to_dec(ijikanri_unnei_3_org * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
         ijikanri_unnei_3_LCC = to_dec(ijikanri_unnei_3 * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
 
-        JGB_rates_df = pd.read_csv("src/JGB_rates.csv", sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
-        JRB_rates_df = pd.read_csv("src/JRB_rates.csv", sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
-
-        y, d = divmod(inputs['proj_years'], 5)
-        if y >= 1:
-            r_idx = str((y + 1) * 5) + "年" if d > 2 else str(y * 5) + "年"
-        else:
-            r_idx = str(d) + "年"
-
-        r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
-        r2 = Decimal(JRB_rates_df.loc[inputs['chisai_shoukan_kikan']][inputs['const_years']])
-        kitai_bukka_j = Decimal(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
-        
         chisai_sueoki_kikan = int(inputs['const_years']) if inputs['const_years'] else int(0)
-        gonensai_rimawari = Decimal(JGB_rates_df.loc["5年"].iloc[0])
-        kitai_bukka = to_dec(kitai_bukka_j - gonensai_rimawari)
+        kitai_bukka = to_dec(inputs['kitai_bukka_j'] - inputs['gonensai_rimawari'])
         lg_spread = to_dec(0.01)
 
         tax_rates = {
@@ -479,8 +484,8 @@ class Initial_Inputs(ft.Column):
                 "const_years": inputs['const_years'],
                 "ijikanri_unnei_years": inputs['ijikanri_unnei_years'],
                 "const_start_date": str(const_start_date),
-                "kijun_kinri": str(r1),
-                "chisai_kinri": str(r2),
+                "kijun_kinri": str(inputs['r1']),
+                "chisai_kinri": str(inputs['r2']),
                 "chisai_sueoki_kikan": int(chisai_sueoki_kikan),
                 "chisai_shoukan_kikan": inputs['chisai_shoukan_kikan'],
                 "lg_spread": str(lg_spread),
@@ -544,23 +549,8 @@ class Initial_Inputs(ft.Column):
         db = TinyDB('ii_db.json')
         db.insert(data)
         db.close()
+        if self.page.session.store.contains_key("initial_inputs"):
+            self.page.session.store.remove("initial_inputs")
         self.page.session.store.set("initial_inputs",data)
 
        
-#def main(page: ft.Page):
-#    page.width = 500
-#    page.height = 2000
-#    page.title = "初期入力"
-#    page.window_width = 500
-#    page.window_height = 2000
-#    page.window_resizable = True
-#    page.expand=True
-#    page.scroll=ft.ScrollMode.AUTO
-#    #initial_inputs = Initial_Inputs()
-#    page.add(
-#            Initial_Inputs()
-#    )
-
-
-#ft.run(main)
-
