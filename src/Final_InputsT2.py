@@ -526,12 +526,22 @@ class Final_Inputs(ft.Column):
         chisai_sueoki_kikan = int(self.sl19.value)
         option_02 = Decimal(self.sl20.value)
 
+        JRB_rates_df = pd.read_csv(
+            "src/JRB_rates.csv",
+            encoding="utf-8",
+            sep='\t', 
+            names=[0,1,2,3,4,5], 
+            index_col=0)
+
+        chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan]
+
         return {
             'const_start_date_year': const_start_date_year,
             'const_start_date_month': const_start_date_month,
             'const_start_date_day': const_start_date_day,
 
             'chisai_shoukan_kikan': chisai_shoukan_kikan,
+            'chisai_kinri': chisai_kinri,
             'shisetsu_seibi_ikkatsu_hiritsu': shisetsu_seibi_ikkatsu_hiritsu,
             'monitoring_costs_PSC': monitoring_costs_PSC,
             'monitoring_costs_LCC': monitoring_costs_LCC,
@@ -578,12 +588,12 @@ class Final_Inputs(ft.Column):
         else:
             first_end_fy = datetime.date(start_year + 1, 3, 31)
 
-        #chisai_kinri = Decimal(self.initial_inputs['chisai_kinri']) / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        chisai_kinri = Decimal(inputs['chisai_kinri'])/Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
         kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
         kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
 
-        discount_rate = kijun_kinri + kitai_bukka
-        discount_rate = to_dec(discount_rate)
+        discount_rate = to_dec(kijun_kinri + kitai_bukka)
+        #discount_rate = to_dec(discount_rate)
 
         target_years = 45
         #proj_years = int(self.initial_inputs['proj_years'])
@@ -596,15 +606,6 @@ class Final_Inputs(ft.Column):
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = to_dec(Kappu_kinri)
 
-        JRB_rates_df = pd.read_csv(
-            "src/JRB_rates.csv",
-            encoding="utf-8",
-            sep='\t', 
-            names=[0,1,2,3,4,5], 
-            index_col=0)
-
-        chisai_shoukan_kikan = inputs['chisai_shoukan_kikan']
-        chisai_kinri = to_dec(JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan])
 
         if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             SPC_keihi = Decimal(0)
@@ -621,10 +622,8 @@ class Final_Inputs(ft.Column):
         houjinjuminzei_kintou = Decimal(self.initial_inputs['houjinjuminzei_kintou'])
         SPC_hiyou_total = SPC_keihi * ijikanri_unnei_years + SPC_shihon
         SPC_hiyou_nen = SPC_fee + SPC_keihi #公共がSPCに毎年払うコスト
-        SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou #SPCが払うコスト
+        SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou #SPCが払うコスト(経費、手数料とも全て何かの使途に支払う前提)
         
-        chisai_kinri = chisai_kinri / Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-
         ijikanri_unnei = (
             Decimal(self.initial_inputs["ijikanri_unnei_1"]) + 
             Decimal(self.initial_inputs["ijikanri_unnei_2"]) + 
@@ -647,8 +646,8 @@ class Final_Inputs(ft.Column):
             #return   {
             "advisory_fee": str(inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
-            "chisai_shoukan_kikan": int(chisai_shoukan_kikan),
-            "chisai_sueoki_years": int(chisai_sueoki_kikan),
+            "chisai_shoukan_kikan": int(inputs['chisai_shoukan_kikan']),
+            "chisai_sueoki_years": int(inputs['chisai_sueoki_kikan']),
             "const_start_date_year": int(const_start_date_year),
             "const_start_date_month": int(const_start_date_month),
             "const_start_date_day": int(const_start_date_day),
