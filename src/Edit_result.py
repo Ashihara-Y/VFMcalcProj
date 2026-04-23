@@ -36,6 +36,260 @@ class Edit_result(ft.Stack):
             table_name = pd.read_sql_query(query, engine)
             self.selected_res_list.append(table_name)
 # この２つのテーブルからDFを作成して表示。
+# final_inputs_res_tableの方は、編集前後の入力値等を算定過程も通じて作成するための材料
+# res_summ_res_tableの方は、結果要約の表を作るための材料。
+        target_summ_df = self.selected_res_list[0]
+        target_inputs_df = self.selected_res_list[1]
+        self.target_inputs = target_inputs_df.rename(columns={
+                'datetime':'datetime',
+                '施設管理者区分':'mgmt_type',
+                '事業形態':'proj_ctgry',
+                '事業方式':'proj_type',
+                '事業期間':'proj_years',
+                '施設整備期間':'const_years',
+                '施設整備開始日':'const_start_date',
+                '維持管理運営費期間':'ijikanri_unnei_years',
+                '落札率(%)':'rakusatsu_ritsu',
+                '施設整備削減率(%)':'reduc_shisetsu',
+                '維持管理運営費（人件費）削減率(%)':'reduc_ijikanri_1',
+                '維持管理運営費（修繕費）削減率(%)':'reduc_ijikanri_2',
+                '維持管理運営費（動力費）削減率(%)':'reduc_ijikanri_3',
+                '施設整備費(競争効果反映後)(百万円)':'shisetsu_seibi',
+                '施設整備費原額(百万円)':'shisetsu_seibi_org',
+                'LCC施設整備費（削減率適用）(百万円)':'shisetsu_seibi_org_LCC',
+                '維持管理運営費総額(競争効果反映後)(百万円)':'ijikanri_unnei',
+                '維持管理運営費総額原額(百万円)':'ijikanri_unnei_org',
+                'LCC維持管理運営費総額（削減率適用）(百万円)':'ijikanri_unnei_org_LCC',
+                '維持管理運営費(人件費)(競争効果反映後)(百万円)':'ijikanri_unnei_1',
+                '維持管理運営費(人件費)原額(百万円)':'ijikanri_unnei_1_org',
+                'LCC維持管理運営費(人件費)（削減率適用）(百万円)':'ijikanri_unnei_1_org_LCC',
+                '維持管理運営費(修繕費)(競争効果反映後)(百万円)':'ijikanri_unnei_2',
+                '維持管理運営費(修繕費)原額(百万円)':'ijikanri_unnei_2_org',
+                'LCC維持管理運営費(修繕費)（削減率適用）(百万円)':'ijikanri_unnei_2_org_LCC',
+                '維持管理運営費(動力費)(競争効果反映後)(百万円)':'ijikanri_unnei_3',
+                '維持管理運営費(動力費)原額(百万円)':'ijikanri_unnei_3_org',
+                'LCC維持管理運営費(動力費)（削減率適用）(百万円)':'ijikanri_unnei_3_org_LCC',
+                '補助率(%)':'hojo_ritsu',
+                '起債充当率(%)':'kisai_jutou',
+                '起債交付金カバー率(%)':'kisai_koufu',
+                'アドバイザリー手数料(百万円)':'advisory_fee',
+                'PFI-LCCでのモニタリング等費用(百万円)':'monitoring_costs_LCC',
+                'PSCでのモニタリング等費用(百万円)':'monitoring_costs_PSC',
+                'SPC費用の処理（デフォルト：サービス対価に含める）':'SPC_hiyou_atsukai',
+                'SPC手数料(百万円)':'SPC_fee',
+                'SPC経費(百万円)':'SPC_keihi',
+                'SPC設立費用(百万円)':'SPC_setsuritsuhi',
+                'SPC費用総額(百万円)':'SPC_hiyou_total',
+                'SPC費用年額(百万円)':'SPC_hiyou_nen',
+                'LCCでのSPC経費(百万円)':'SPC_keihi_LCC',
+                'SPC資本金(百万円)':'SPC_shihon',
+                'SPC予備費(百万円)':'SPC_yobihi',
+                '利用料金収入(百万円)':'riyouryoukin_shunyu',
+                '施設整備対価一括払比率(%)':'shisetsu_seibi_paymentschedule_ikkatsu',
+                '施設整備対価割賦払比率(%)':'shisetsu_seibi_paymentschedule_kappu',
+                '基準金利(%)':'kijun_kinri',
+                '官民スプレッド(%)':'lg_spread',
+                '期待物価上昇率(%)':'kitai_bukka',
+                '割引率(%)':'discount_rate',
+                '割賦金利(%)':'Kappu_kinri',
+                '割賦スプレッド(%)':'kappu_kinri_spread',
+                '地方債金利(%)':'chisai_kinri',
+                '地方債償還期間':'chisai_shoukan_kikan',
+                '地方債償還据置期間':'chisai_sueoki_years',
+                '法人税率(%)':'houjinzei_ritsu',
+                '法人住民税均等割(百万円)':'houjinjuminzei_kintou',
+                '不動産取得税課税標準(百万円)':'fudousanshutokuzei_hyoujun',
+                '不動産取得税率(%)':'fudousanshutokuzei_ritsu',
+                '固定資産税課税標準(百万円)':'koteishisanzei_hyoujun',
+                '固定資産税率(%)':'koteishisanzei_ritsu',
+                '登録免許税課税標準(百万円)':'tourokumenkyozei_hyoujun',
+                '登録免許税率(%)':'tourokumenkyozei_ritsu',
+                }
+        ).set_index('項目名')['値'].to_dict()
+
+        target_summ_df['discount_rate'] = target_summ_df['discount_rate'] * 100
+
+        target_summ_df = target_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
+        target_inputs_df = target_inputs_df.drop(['datetime'], axis=1)
+
+        target_summ_df_J = target_summ_df.rename(
+            columns={
+                'VFM_percent':'VFM(％)', 
+                'PSC_present_value':'PSCでの公共キャッシュ・フロー現在価値', 
+                'LCC_present_value':'PFI-LCCでの公共キャッシュ・フロー現在価値', 
+                'PIRR':'プロジェクト内部収益率(％)',
+                'SPC_payment_cash':'SPCの元本返済可否', 
+                'mgmt_type':'発注者区分', 
+                'proj_ctgry':'事業形態', 
+                'proj_type':'事業方式',
+                'const_years':'施設整備期間', 
+                'proj_years':'事業期間', 
+                'discount_rate':'割引率(％)', 
+                'kariire_kinri':'借入コスト(％)',
+                'Kappu_kinri':'割賦金利(％)',
+                'kappu_kinri_spread':'割賦スプレッド(％)',
+                'SPC_fee':'SPCへの手数料(百万円)',
+            }
+        )
+        # 最終入力・パラメータの表を作成
+        self.target_inputs_df = target_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
+        simpledt_targetinputs_df = DataFrame(self.target_inputs_df)
+        simpledt_targetinputs_dt = simpledt_targetinputs_df.datatable
+        self.table_targetinputs = simpledt_targetinputs_dt
+
+
+        target_summ_df_t = target_summ_df.transpose().reset_index()
+        target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
+        simpledt_target_summ_df = DataFrame(target_summ_df_t)
+        simpledt_target_summ_dt = simpledt_target_summ_df.datatable
+        self.table_target_summ = simpledt_target_summ_dt
+
+        lv_01 = ft.ListView(
+            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
+        )
+        lv_01.controls.append(ft.Text('算定結果要約'))
+        lv_01.controls.append(self.table_target_summ)
+
+        lv_04 = ft.ListView(
+            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
+        )
+        lv_04.controls.append(ft.Text('入力値・パラメータ等一覧'))
+        lv_04.controls.append(self.table_targetinputs)
+
+        if self.target_inputs["proj_type"] == "DBO(SPCなし)" or self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
+            self.controls = [
+                ft.Tabs(
+                    selected_index=0,
+                    length=4,
+                    animation_duration=300,
+                    content = ft.Column(
+                        expand=True,    
+                        controls=[
+                            ft.TabBar(
+                                tabs=[
+                                    ft.Tab(
+                                        label="結果・入力の要約",
+                                    ),
+                                    ft.Tab(
+                                        label="入力値等一覧",
+                                    ),
+                                    ft.Tab(
+                                        label="入力値の修正と再計算",
+                                    ),
+                                ],
+                            ),
+                        ft.TabBarView(
+                            expand=True,
+                            controls=[
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls=[
+                                            lv_01,
+                                        ],
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
+                                    margin=10,
+                                    height=1000,
+                                ),
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls=[
+                                            lv_04,
+                                        ],
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
+                                    height=3000,
+                                    margin=10,
+                                ),
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls = [
+                                            fi_lv2,
+                                        ],
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
+                                    height=3000,
+                                    margin=10,
+                                ),
+                            ],
+                        )
+                    ],
+                ),
+            )
+        ]
+        else:
+           self.controls = [
+                ft.Tabs(
+                    selected_index=0,
+                    length=4,
+                    animation_duration=300,
+                    content = ft.Column(
+                        expand=True,    
+                        controls=[
+                            ft.TabBar(
+                                tabs=[
+                                    ft.Tab(
+                                        label="結果・入力の要約",
+                                    ),
+                                    ft.Tab(
+                                        label="入力値等一覧",
+                                    ),
+                                    ft.Tab(
+                                        label="入力値の修正と再計算",
+                                    ),
+                                ],
+                            ),
+                        ft.TabBarView(
+                            expand=True,
+                            controls=[
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls=[
+                                            lv_01,
+                                        ],
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
+                                    margin=10,
+                                    height=1000,
+                                ),
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls=[
+                                            lv_04,
+                                        ],
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
+                                    height=3000,
+                                    margin=10,
+                                ),
+                                ft.Container(
+                                    content=ft.Column(
+                                        controls = [
+                                            fi_lv1,
+                                        ],   
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    width=2100,
+                                    padding=10,
+                                    height=3000,
+                                    margin=10,
+                                ),
+                            ],       
+                        )
+                    ],
+                ),
+            )
+        ]
 
 #FIからのUIの材料⇒主にスライダと、上記表、そしてそれらのレイアウトの材料
         slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -61,190 +315,187 @@ class Edit_result(ft.Stack):
             target_text_control.value = str(sl_value)
             target_text_control.update()
 
-
-        date_format = '%Y-%m-%d'
-        date_dt = datetime.datetime.strptime(self.initial_inputs["const_start_date"], date_format)
-        const_start_year = date_dt.year
-        const_start_month = date_dt.month
-        const_start_day = date_dt.day
-
         tx1 = ft.Text("地方債償還期間(年)")
         self.sl1 = ft.Slider(
-            value=int(self.initial_inputs["chisai_shoukan_kikan"]),
-            min=0,
-            max=30,
-            divisions=30,
+            value=int(self.target_inputs["chisai_shoukan_kikan"]),
+            min=-2+int(self.target_inputs["chisai_shoukan_kikan"]),
+            max=2+int(self.target_inputs["chisai_shoukan_kikan"]),
+            divisions=5,
             label="{value}年",
             round=0,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value01,
         )
-        tx2 = ft.Text("施設整備費支払 一括払の比率(%)")
+        tx2 = ft.Text("地方債元本返済据置期間(年)")
         self.sl2 = ft.Slider(
-            value=50,
-            min=0.0,
-            max=100,
-            divisions=100,
-            label="{value}%",
-            round=1,
+            value=float(self.target_inputs["chisai_sueoki_kikan"]),
+            min=-2+float(self.target_inputs["chisai_sueoki_kikan"]),
+            max=2+float(self.target_inputs["chisai_sueoki_kikan"]),
+            divisions=5,
+            label="{value}年",
+            round=0,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value02,
         )
-        tx3 = ft.Text("モニタリング等費用(PSC)(百万円、BT/DB:5程度、その他:10程度)")
+        tx3 = ft.Text("施設整備費支払 一括払の比率(%)")
         self.sl3 = ft.Slider(
-            value=10,
-            min=0,
-            max=50,
-            divisions=50,
-            label="{value}百万円",
-            round=1,
+            value=float(self.target_inputs["shisetsu_seibi_ikkatsu_hiritsu"])*100,
+            min=0.975*float(self.target_inputs["shisetsu_seibi_ikkatsu_hiritsu"])*100,
+            max=100.00,
+            divisions=1000,
+            label="{value}％",
+            round=2,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value03,
         )
-        tx4 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、BT/DB:3程度、その他:6程度)")
+        tx4 = ft.Text("施設整備費の削減率(%)")
         self.sl4 = ft.Slider(
-            value=6,
-            min=0,
-            max=50,
+            value=float(self.target_inputs["reduc_shisetsu"])*100,
+            min=0.0,
+            max=5.0,
             divisions=50,
-            label="{value}百万円",
+            label="{value}%",
             round=1,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value04,
         )
-        tx5 = ft.Text("起債充当率(%)")
+        tx5 = ft.Text("維持管理運営費（人件費）の削減率(%)")
         self.sl5 = ft.Slider(
-            value=float(self.initial_inputs["kisai_jutou"])*100,
+            value=float(self.target_inputs["reduc_ijikanri_1"])*100,
             min=0.0,
-            max=100.0,
-            divisions=100,
-            label="{value}%",
-            round=1,
-            on_change=handle_slider_change,
-            data=slider_value05,
-        )
-        tx6 = ft.Text("起債への交付金カバー率(%)")
-        self.sl6 = ft.Slider(
-            value=float(self.initial_inputs["kisai_koufu"])*100,
-            min=0.0,
-            max=50.0,
+            max=5.0,
             divisions=50,
             label="{value}%",
             round=1,
+            width=100,
+            on_change=handle_slider_change,
+            data=slider_value05,
+        ) 
+        tx6 = ft.Text("維持管理運営費（修繕費）の削減率(%)")
+        self.sl6 = ft.Slider(
+            value=float(self.target_inputs["reduc_ijikanri_2"])*100,
+            min=0.0,
+            max=5.0,
+            divisions=50,
+            label="{value}%",
+            round=1,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value06,
         )
-        tx7 = ft.Text("補助率(%)")
+        tx7 = ft.Text("維持管理運営費(動力費)の削減率(%)")
         self.sl7 = ft.Slider(
-            value=float(self.initial_inputs["hojo_ritsu"])*100,
+            value=float(self.target_inputs["reduc_ijikanri_3"])*100,
             min=0.0,
-            max=70.0,
-            divisions=700,
+            max=5.0,
+            divisions=50,
             label="{value}%",
             round=1,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value07,
         )
-        tx8 = ft.Text("SPC経費年額(百万円)")
+        tx8 = ft.Text("モニタリング等費用(PSC)(百万円、BT/DB:5程度、その他:10程度)")
         self.sl8 = ft.Slider(
-            value=float(self.initial_inputs["SPC_keihi"]),
-            min=0,
-            max=50,
-            divisions=50,
+            value=float(self.target_inputs["monitoring_costs_PSC"]),
+            min=0.975*float(self.target_inputs["monitoring_costs_PSC"]),
+            max=1.025*float(self.target_inputs["monitoring_costs_PSC"]),
+            divisions=500,
             label="{value}百万円",
             round=1,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value08,
         )
-        tx9 = ft.Text("SPCへの手数料(百万円)")
+        tx9 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、BT/DB:3程度、その他:6程度)")
         self.sl9 = ft.Slider(
-            value=float(self.initial_inputs["SPC_fee"]),
-            min=0,
-            max=50,
-            divisions=50,
+            value=float(self.target_inputs["monitoring_costs_PFI_LCC"]),
+            min=0.975*float(self.target_inputs["monitoring_costs_PFI_LCC"]),
+            max=1.025*float(self.target_inputs["monitoring_costs_PFI_LCC"]),
+            divisions=500,
             label="{value}百万円",
             round=1,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value09,
         )
-        tx10 = ft.Text("SPC資本金(百万円)")
+        tx10 = ft.Text("SPC経費年額(百万円)")
         self.sl10 = ft.Slider(
-            value=float(self.initial_inputs["SPC_shihon"]),
-            min=0,
-            max=100,
-            divisions=100,
+            value=float(self.target_inputs["SPC_keihi"]),
+            min=0.95*float(self.target_inputs["SPC_keihi"]),
+            max=1.05*float(self.target_inputs["SPC_keihi"]),
+            divisions=1000,
             label="{value}百万円",
             round=1,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value10,
         )
-        tx11 = ft.Text("SPC予備費(百万円)")
+        tx11 = ft.Text("SPCへの手数料(百万円)")
         self.sl11 = ft.Slider(
-            value=float(self.initial_inputs["SPC_yobihi"]),
-            min=0,
-            max=1000,
-            divisions=1000,
-            label="{value}百万円",
-            round=1,
-            on_change=handle_slider_change,
-            data=slider_value11,
-        )
-        tx12 = ft.Text("SPC予備費(百万円)")
-        self.sl12 = ft.Slider(
-            value=float(self.initial_inputs["SPC_yobihi"]),
-            min=0,
-            max=1000,
-            divisions=1000,
-            label="{value}百万円",
-            round=1,
-            on_change=handle_slider_change,
-            data=slider_value12,
-        )
-        tx13 = ft.Text("アドバイザリー等経費(百万円)")
-        self.sl13 = ft.Slider(
-            value=0,
+            value=float(self.target_inputs["SPC_fee"]),
             min=0,
             max=50,
             divisions=50,
             label="{value}百万円",
             round=1,
+            width=100,
             on_change=handle_slider_change,
-            data=slider_value13,
+            data=slider_value11,
         )
-        tx14 = ft.Text("利用料金収入(百万円)")
-        self.sl14 = ft.Slider(
-            value=float(self.initial_inputs["riyou_ryoukin"]),
-            min=0,
-            max=100,
+        tx12 = ft.Text("SPC資本金(百万円)")
+        self.sl12 = ft.Slider(
+            value=float(self.target_inputs["SPC_shihon"]),
+            min=0.95*float(self.target_inputs["SPC_shihon"]),
+            max=1.05*float(self.target_inputs["SPC_shihon"]),
+            divisions=1000,
+            label="{value}百万円",
+            round=1,
+            width=100,
+            on_change=handle_slider_change,
+            data=slider_value12,
+        )
+        tx13 = ft.Text("SPC予備費(百万円)")
+        self.sl13 = ft.Slider(
+            value=float(self.target_inputs["SPC_yobihi"]),
+            min=0.95*float(self.target_inputs["SPC_yobihi"]),
+            max=1.05*float(self.target_inputs["SPC_yobihi"]),
             divisions=100,
             label="{value}百万円",
             round=1,
+            width=100,
+            on_change=handle_slider_change,
+            data=slider_value13,
+        )
+        tx14 = ft.Text("アドバイザリー等経費(百万円)")
+        self.sl14 = ft.Slider(
+            value=float(self.target_inputs["advisory_fee"]),
+            min=0.95*float(self.target_inputs["advisory_fee"]),
+            max=1.05*float(self.target_inputs["advisory_fee"]),
+            divisions=10,
+            label="{value}百万円",
+            round=1,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value14,
         )
         tx15 = ft.Text("割賦金利へのスプレッド(%)")
         self.sl15 = ft.Slider(
-            value=0.00,
-            min=0.00,
-            max=2.00,
-            divisions=200,
+            value=float(self.target_inputs["kappu_kinri_spread"])*100,
+            min=0.95*float(self.target_inputs["kappu_kinri_spread"])*100,
+            max=1.05*float(self.target_inputs["kappu_kinri_spread"])*100,
+            divisions=100,
             label="{value}％",
             round=2,
+            width=100,
             on_change=handle_slider_change,
             data=slider_value15,
         )
-        tx16 = ft.Text("割賦金利へのスプレッド(%)")
-        self.sl16 = ft.Slider(
-            value=0.00,
-            min=0.00,
-            max=2.00,
-            divisions=200,
-            label="{value}％",
-            round=2,
-            on_change=handle_slider_change,
-            data=slider_value16,
-        )
-        b = ft.Button(content="入力確認・計算", on_click=self.button_clicked)
+        b = ft.Button(content="修正再計算", on_click=self.button_clicked)
 
         fi_lv1 = ft.ListView(
             expand=True,
@@ -260,73 +511,41 @@ class Edit_result(ft.Stack):
             spacing=10,
             padding=5,
             #auto_scroll=True,
-            item_extent=1500,
-            first_item_prototype=False,
-            horizontal=False,
-        )
-        fi_lv3 = ft.ListView(
-            expand=True,
-            spacing=10,
-            padding=5,
-            #auto_scroll=True,
-            item_extent=1500,
+            item_extent=500,
             first_item_prototype=False,
             horizontal=False,
         )
         fi_lv1.controls= [
-            tx1, tx2, tx3, tx4, tx5, tx6,
-            ft.Divider(height=1, color="amber"),
-        ]
-        fi_lv2.controls= [
                     tx1, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx2, slider_value02, self.sl2, ft.Divider(height=1, color="amber"),
-                    tx3, slider_value03, self.sl3, ft.Divider(height=1, color="amber"),
-                    tx4,slider_value04, self.sl4, ft.Divider(height=1, color="amber"),
-                    tx5,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    tx6,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    tx7,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    tx8,slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
-                    tx9,slider_value09, self.sl9,  ft.Divider(height=1, color="amber"),
+                    tx2, slider_value02, self.sl2,  ft.Divider(height=1, color="amber"),
+                    tx3, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
+                    tx4, slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
+                    tx5, slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    tx6, slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    tx7, slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    tx8, slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
+                    tx9, slider_value09, self.sl9,  ft.Divider(height=1, color="amber"),
                     tx10,slider_value10, self.sl10, ft.Divider(height=1, color="amber"),
                     tx11,slider_value11, self.sl11, ft.Divider(height=1, color="amber"),
                     tx12,slider_value12, self.sl12, ft.Divider(height=1, color="amber"),
                     tx13,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
                     tx14,slider_value14, self.sl14, ft.Divider(height=1, color="amber"),
                     tx15,slider_value15, self.sl15, ft.Divider(height=1, color="amber"),
-                    tx16,slider_value16, self.sl16, ft.Divider(height=1, color="amber"),
                     b,
         ]        
-        fi_lv3.controls= [
+        fi_lv2.controls= [
                     tx1, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx2, slider_value02, self.sl2,  ft.Divider(height=1, color="amber"), 
-                    tx3, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
-                    tx4,slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                    tx5,slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    tx6,slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    tx7,slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    tx8,slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
+                    tx2, slider_value02, self.sl2,  ft.Divider(height=1, color="amber"),
+                    tx4, slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
+                    tx5, slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    tx6, slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    tx7, slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    tx9, slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
+                    tx14,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
                     b,
         ]        
-        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
-            self.controls = [
-                   fi_lv1,
-                   fi_lv3,
-            ]
-        else:
-            self.controls = [
-                    fi_lv1,
-                    fi_lv2,
-            ]
-
 
 # IIからのbutton_clicked
-    async def button_clicked(self, e):
-        input_data = self._extract_inputs()
-
-        calc_results = self._calculate_financials(input_data)
-        
-        self._save_to_db(calc_results)
-        await self.page.push_route("/final_inputs")
         
 # FIからのbutton_clicked
     async def button_clicked(self, e):
@@ -341,34 +560,22 @@ class Edit_result(ft.Stack):
 
 # IIからの_extract_inputs
     def _extract_inputs(self):
-        mgmt_type = self.dd1.value
-        proj_ctgry = self.dd2.value
-        proj_type = self.dd3.value
 
-        raw_proj_years = self.dd6.value if proj_type == "BT/DB(いずれもSPCなし)" else self.dd4.value
+        #raw_proj_years = self.dd6.value if self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)" else self.dd4.value
 
-        proj_years = int(raw_proj_years) if raw_proj_years else 0
-        const_years = int(self.dd6.value) if self.dd6.value else 0
-        chisai_shoukan_kikan = int(self.dd5.value) if self.dd5.value else 0
+        proj_years = int(self.target_inputs["proj_years"])
+        const_years = int(self.target_inputs["const_years"])
+        chisai_shoukan_kikan = int(self.target_inputs["chisai_shoukan_kikan"])
 
         if proj_years < const_years:
             raise ValueError("事業期間は施設整備期間より長い必要があります。")
         ijikanri_unnei_years = proj_years - const_years
 
-        shisetsu_seibi_org_R = Decimal(self.sl0.value)
-        shisetsu_seibi_org_Y = Decimal(self.sl1.value)
-        ijikanri_unnei_1_org_R = Decimal(self.sl2.value)
-        ijikanri_unnei_1_org_Y = Decimal(self.sl3.value)
-        ijikanri_unnei_2_org_R= Decimal(self.sl4.value)
-        ijikanri_unnei_2_org_Y = Decimal(self.sl5.value)
-        ijikanri_unnei_3_org_R = Decimal(self.sl6.value)
-        ijikanri_unnei_3_org_Y = Decimal(self.sl7.value)
-
-        reduc_shisetsu = Decimal(self.sl8.value) / Decimal(100)
-        reduc_ijikanri_1 = Decimal(self.sl9.value) / Decimal(100)
-        reduc_ijikanri_2 = Decimal(self.sl10.value) / Decimal(100)
-        reduc_ijikanri_3 = Decimal(self.sl11.value) / Decimal(100)
-        rakusatsu_ritsu = Decimal(self.sl12.value) / Decimal(100)
+        reduc_shisetsu = Decimal(self.sl4.value) / Decimal(100)
+        reduc_ijikanri_1 = Decimal(self.sl5.value) / Decimal(100)
+        reduc_ijikanri_2 = Decimal(self.sl6.value) / Decimal(100)
+        reduc_ijikanri_3 = Decimal(self.sl7.value) / Decimal(100)
+        rakusatsu_ritsu = Decimal(self.target_inputs["rakusatsu_ritsu"]) / Decimal(100)
 
         JGB_rates_df = pd.read_csv("src/JGB_rates.csv", sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
         JRB_rates_df = pd.read_csv("src/JRB_rates.csv", sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
@@ -385,23 +592,14 @@ class Edit_result(ft.Stack):
         gonensai_rimawari = Decimal(JGB_rates_df.loc["5年"].iloc[0])
         
         return {
-            'mgmt_type': mgmt_type,
-            'proj_ctgry': proj_ctgry,
-            'proj_type': proj_type,
+            'mgmt_type': self.target_inputs['mgmt_type'],
+            'proj_ctgry': self.target_inputs['proj_ctgry'],
+            'proj_type': self.target_inputs['proj_type'],
 
             'proj_years': proj_years,
             'const_years': const_years,
             'chisai_shoukan_kikan': chisai_shoukan_kikan,
             'ijikanri_unnei_years': ijikanri_unnei_years,
-
-            'shisetsu_seibi_org_R': shisetsu_seibi_org_R,
-            'shisetsu_seibi_org_Y': shisetsu_seibi_org_Y,
-            'ijikanri_unnei_1_org_R': ijikanri_unnei_1_org_R,
-            'ijikanri_unnei_1_org_Y': ijikanri_unnei_1_org_Y,
-            'ijikanri_unnei_2_org_R': ijikanri_unnei_2_org_R,
-            'ijikanri_unnei_2_org_Y': ijikanri_unnei_2_org_Y,
-            'ijikanri_unnei_3_org_R': ijikanri_unnei_3_org_R,
-            'ijikanri_unnei_3_org_Y': ijikanri_unnei_3_org_Y,
 
             'reduc_shisetsu': reduc_shisetsu,
             'reduc_ijikanri_1': reduc_ijikanri_1,
@@ -522,7 +720,7 @@ class Edit_result(ft.Stack):
             'houjinjuminzei_ritsu_todouhuken': Decimal(0.0),
             'houjinjuminzei_ritsu_shikuchoson': Decimal(0.0),
             'riyou_ryoukin': Decimal(0.0),
-}
+        }
 
         if inputs['proj_ctgry'] == "サービス購入型":
             tax_rates['houjinjuminzei_kintou'] = to_dec(0.18)
@@ -630,15 +828,15 @@ class Edit_result(ft.Stack):
                 "houjinjuminzei_ritsu_shikuchoson": str(tax_rates['houjinjuminzei_ritsu_shikuchoson']),
             }
 
-        return initial_inputs
+        #return initial_inputs
        
 
 # FIからの_calculate_financials    
-    def _calculate_financials(self,inputs):
-        def to_dec(val):
-            return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+    #def _calculate_financials(self,inputs):
+        #def to_dec(val):
+        #    return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
-        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
+        if initial_inputs["proj_type"] == "DBO(SPCなし)" or initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             shisetsu_seibi_paymentschedule_ikkatsu = to_dec(1)
         else:         
             shisetsu_seibi_paymentschedule_ikkatsu = inputs['shisetsu_seibi_ikkatsu_hiritsu']
@@ -663,25 +861,25 @@ class Edit_result(ft.Stack):
             first_end_fy = datetime.date(start_year + 1, 3, 31)
 
         chisai_kinri = Decimal(inputs['chisai_kinri'])/Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-        kijun_kinri = Decimal(self.initial_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-        kitai_bukka = Decimal(self.initial_inputs["kitai_bukka"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        kijun_kinri = Decimal(initial_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        kitai_bukka = Decimal(initial_inputs["kitai_bukka"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
 
         discount_rate = to_dec(kijun_kinri + kitai_bukka)
         #discount_rate = to_dec(discount_rate)
 
         target_years = 45
-        #proj_years = int(self.initial_inputs['proj_years'])
-        const_years = int(self.initial_inputs['const_years'])
+        #proj_years = int(self.target_inputs['proj_years'])
+        const_years = int(initial_inputs['const_years'])
         chisai_sueoki_kikan = inputs['chisai_sueoki_kikan']
         shoukan_kaishi_jiki = const_years + chisai_sueoki_kikan + 1
 
-        lg_spread = to_dec(self.initial_inputs['lg_spread'])
+        lg_spread = to_dec(initial_inputs['lg_spread'])
         kappu_kinri_spread = inputs['kappu_kinri_spread']
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = to_dec(Kappu_kinri)
 
 
-        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
+        if initial_inputs["proj_type"] == "DBO(SPCなし)" or initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
             SPC_keihi = Decimal(0)
             SPC_fee = Decimal(0)
             SPC_shihon = Decimal(0)
@@ -692,30 +890,30 @@ class Edit_result(ft.Stack):
             SPC_shihon = inputs['SPC_shihon']
             SPC_yobihi = inputs['SPC_yobihi']
 
-        ijikanri_unnei_years = int(self.initial_inputs['ijikanri_unnei_years'])
-        houjinjuminzei_kintou = Decimal(self.initial_inputs['houjinjuminzei_kintou'])
+        ijikanri_unnei_years = int(initial_inputs['ijikanri_unnei_years'])
+        houjinjuminzei_kintou = Decimal(initial_inputs['houjinjuminzei_kintou'])
         SPC_hiyou_total = SPC_keihi * ijikanri_unnei_years + SPC_shihon
         SPC_hiyou_nen = SPC_fee + SPC_keihi #公共がSPCに毎年払うコスト
         SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou #SPCが払うコスト(経費、手数料とも全て何かの使途に支払う前提)
         
         ijikanri_unnei = (
-            Decimal(self.initial_inputs["ijikanri_unnei_1"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_2"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_3"]))
+            Decimal(initial_inputs["ijikanri_unnei_1"]) + 
+            Decimal(initial_inputs["ijikanri_unnei_2"]) + 
+            Decimal(initial_inputs["ijikanri_unnei_3"]))
         ijikanri_unnei_LCC = (
-            Decimal(self.initial_inputs["ijikanri_unnei_1_LCC"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_2_LCC"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_3_LCC"]))
+            Decimal(initial_inputs["ijikanri_unnei_1_LCC"]) + 
+            Decimal(initial_inputs["ijikanri_unnei_2_LCC"]) + 
+            Decimal(initial_inputs["ijikanri_unnei_3_LCC"]))
         ijikanri_unnei_org = (
-            Decimal(self.initial_inputs["ijikanri_unnei_1_org"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_2_org"]) + 
-            Decimal(self.initial_inputs["ijikanri_unnei_3_org"]))
+            Decimal(initial_inputs["ijikanri_unnei_1_org"]) + 
+            Decimal(initial_inputs["ijikanri_unnei_2_org"]) + 
+            Decimal(initial_inputs["ijikanri_unnei_3_org"]))
         ijikanri_unnei_org_LCC = (
-            Decimal(self.initial_inputs["ijikanri_unnei_1_org_LCC"]) +
-            Decimal(self.initial_inputs["ijikanri_unnei_2_org_LCC"]) +
-            Decimal(self.initial_inputs["ijikanri_unnei_3_org_LCC"]))
+            Decimal(initial_inputs["ijikanri_unnei_1_org_LCC"]) +
+            Decimal(initial_inputs["ijikanri_unnei_2_org_LCC"]) +
+            Decimal(initial_inputs["ijikanri_unnei_3_org_LCC"]))
         
-        if self.initial_inputs["proj_type"] == "DBO(SPCなし)" or self.initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":        
+        if initial_inputs["proj_type"] == "DBO(SPCなし)" or initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":        
             final_inputs = {
             #return   {
             "advisory_fee": str(inputs['advisory_fee']),
@@ -729,30 +927,30 @@ class Edit_result(ft.Stack):
             "const_years": int(const_years),
             "discount_rate": str(discount_rate),
             "first_end_fy": str(first_end_fy),
-            "fudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
-            "fudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
-            "growth": str(self.initial_inputs["growth"]),
+            "fudousanshutokuzei_hyoujun": str(initial_inputs["hudousanshutokuzei_hyoujun"]),
+            "fudousanshutokuzei_ritsu": str(initial_inputs["hudousanshutokuzei_ritsu"]),
+            "growth": str(initial_inputs["growth"]),
             "hojo_ritsu": hojo_ritsu,
-            "houjinzei_ritsu": str(self.initial_inputs["houjinzei_ritsu"]),
-            "houjinjuminzei_kintou": str(self.initial_inputs["houjinjuminzei_kintou"]),
-            "houjinjuminzei_ritsu_todouhuken": str(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
-            "houjinjuminzei_ritsu_shikuchoson": str(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
+            "houjinzei_ritsu": str(initial_inputs["houjinzei_ritsu"]),
+            "houjinjuminzei_kintou": str(initial_inputs["houjinjuminzei_kintou"]),
+            "houjinjuminzei_ritsu_todouhuken": str(initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
+            "houjinjuminzei_ritsu_shikuchoson": str(initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
             "ijikanri_unnei": str(ijikanri_unnei),
             "ijikanri_unnei_LCC": str(ijikanri_unnei_LCC),
             "ijikanri_unnei_org": str(ijikanri_unnei_org),
             "ijikanri_unnei_org_LCC": str(ijikanri_unnei_org_LCC),
-            "ijikanri_unnei_1": str(self.initial_inputs["ijikanri_unnei_1"]),
-            "ijikanri_unnei_1_LCC": str(self.initial_inputs["ijikanri_unnei_1_LCC"]),
-            "ijikanri_unnei_1_org": str(self.initial_inputs["ijikanri_unnei_1_org"]),
-            "ijikanri_unnei_1_org_LCC": str(self.initial_inputs["ijikanri_unnei_1_org_LCC"]),
-            "ijikanri_unnei_2": str(self.initial_inputs["ijikanri_unnei_2"]),
-            "ijikanri_unnei_2_LCC": str(self.initial_inputs["ijikanri_unnei_2_LCC"]),
-            "ijikanri_unnei_2_org": str(self.initial_inputs["ijikanri_unnei_2_org"]),
-            "ijikanri_unnei_2_org_LCC": str(self.initial_inputs["ijikanri_unnei_2_org_LCC"]),
-            "ijikanri_unnei_3": str(self.initial_inputs["ijikanri_unnei_3"]),
-            "ijikanri_unnei_3_LCC": str(self.initial_inputs["ijikanri_unnei_3_LCC"]),
-            "ijikanri_unnei_3_org": str(self.initial_inputs["ijikanri_unnei_3_org"]),
-            "ijikanri_unnei_3_org_LCC": str(self.initial_inputs["ijikanri_unnei_3_org_LCC"]),
+            "ijikanri_unnei_1": str(initial_inputs["ijikanri_unnei_1"]),
+            "ijikanri_unnei_1_LCC": str(initial_inputs["ijikanri_unnei_1_LCC"]),
+            "ijikanri_unnei_1_org": str(initial_inputs["ijikanri_unnei_1_org"]),
+            "ijikanri_unnei_1_org_LCC": str(initial_inputs["ijikanri_unnei_1_org_LCC"]),
+            "ijikanri_unnei_2": str(initial_inputs["ijikanri_unnei_2"]),
+            "ijikanri_unnei_2_LCC": str(initial_inputs["ijikanri_unnei_2_LCC"]),
+            "ijikanri_unnei_2_org": str(initial_inputs["ijikanri_unnei_2_org"]),
+            "ijikanri_unnei_2_org_LCC": str(initial_inputs["ijikanri_unnei_2_org_LCC"]),
+            "ijikanri_unnei_3": str(initial_inputs["ijikanri_unnei_3"]),
+            "ijikanri_unnei_3_LCC": str(initial_inputs["ijikanri_unnei_3_LCC"]),
+            "ijikanri_unnei_3_org": str(initial_inputs["ijikanri_unnei_3_org"]),
+            "ijikanri_unnei_3_org_LCC": str(initial_inputs["ijikanri_unnei_3_org_LCC"]),
             "ijikanri_unnei_years": int(ijikanri_unnei_years),
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
@@ -760,30 +958,30 @@ class Edit_result(ft.Stack):
             "kisai_jutou": kisai_jutou,
             "kisai_koufu": kisai_koufu,
             "kitai_bukka": str(kitai_bukka), 
-            "koteishisanzei_hyoujun": str(self.initial_inputs["koteishisanzei_hyoujun"]),
-            "koteishisanzei_ritsu": str(self.initial_inputs["koteishisanzei_ritsu"]),
+            "koteishisanzei_hyoujun": str(initial_inputs["koteishisanzei_hyoujun"]),
+            "koteishisanzei_ritsu": str(initial_inputs["koteishisanzei_ritsu"]),
 
-            "lg_spread": str(self.initial_inputs["lg_spread"]),
-            "mgmt_type": self.initial_inputs["mgmt_type"],
+            "lg_spread": str(initial_inputs["lg_spread"]),
+            "mgmt_type": initial_inputs["mgmt_type"],
             "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
             "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
 
             "option_02": str(inputs['option_02']),
-            "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
-            "proj_ctgry": self.initial_inputs["proj_ctgry"],
-            "proj_type": self.initial_inputs["proj_type"],
-            "proj_years": int(self.initial_inputs["proj_years"]),
-            "rakusatsu_ritsu": str(self.initial_inputs["rakusatsu_ritsu"]),
-            "reduc_shisetsu": str(self.initial_inputs["reduc_shisetsu"]),
-            "reduc_ijikanri_1": str(self.initial_inputs["reduc_ijikanri_1"]),
-            "reduc_ijikanri_2": str(self.initial_inputs["reduc_ijikanri_2"]),
-            "reduc_ijikanri_3": str(self.initial_inputs["reduc_ijikanri_3"]),
+            "pre_kyoukouka": bool(initial_inputs["pre_kyoukouka"]),
+            "proj_ctgry": initial_inputs["proj_ctgry"],
+            "proj_type": initial_inputs["proj_type"],
+            "proj_years": int(initial_inputs["proj_years"]),
+            "rakusatsu_ritsu": str(initial_inputs["rakusatsu_ritsu"]),
+            "reduc_shisetsu": str(initial_inputs["reduc_shisetsu"]),
+            "reduc_ijikanri_1": str(initial_inputs["reduc_ijikanri_1"]),
+            "reduc_ijikanri_2": str(initial_inputs["reduc_ijikanri_2"]),
+            "reduc_ijikanri_3": str(initial_inputs["reduc_ijikanri_3"]),
             "riyouryoukin_shunyu": str(inputs['riyouryoukin_shunyu']),
 
-            "shisetsu_seibi": str(self.initial_inputs["shisetsu_seibi"]),
-            "shisetsu_seibi_LCC": str(self.initial_inputs["shisetsu_seibi_LCC"]),
-            "shisetsu_seibi_org": str(self.initial_inputs["shisetsu_seibi_org"]),
-            "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
+            "shisetsu_seibi": str(initial_inputs["shisetsu_seibi"]),
+            "shisetsu_seibi_LCC": str(initial_inputs["shisetsu_seibi_LCC"]),
+            "shisetsu_seibi_org": str(initial_inputs["shisetsu_seibi_org"]),
+            "shisetsu_seibi_org_LCC": str(initial_inputs["shisetsu_seibi_org_LCC"]),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
             "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
@@ -797,13 +995,13 @@ class Edit_result(ft.Stack):
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
 
             "target_years": int(target_years),
-            "tourokumenkyozei_hyoujun": str(self.initial_inputs["tourokumenkyozei_hyoujun"]),
-            "tourokumenkyozei_ritsu": str(self.initial_inputs["tourokumenkyozei_ritsu"]),
-            "yosantanka_hiritsu_shisetsu": str(self.initial_inputs["yosantanka_hiritsu_shisetsu"]),
-            "yosantanka_hiritsu_ijikanri_1": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
-            "yosantanka_hiritsu_ijikanri_2": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
-            "yosantanka_hiritsu_ijikanri_3": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
-            "zei_total": str(self.initial_inputs["zei_total"]),
+            "tourokumenkyozei_hyoujun": str(initial_inputs["tourokumenkyozei_hyoujun"]),
+            "tourokumenkyozei_ritsu": str(initial_inputs["tourokumenkyozei_ritsu"]),
+            "yosantanka_hiritsu_shisetsu": str(initial_inputs["yosantanka_hiritsu_shisetsu"]),
+            "yosantanka_hiritsu_ijikanri_1": str(initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
+            "yosantanka_hiritsu_ijikanri_2": str(initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
+            "yosantanka_hiritsu_ijikanri_3": str(initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
+            "zei_total": str(initial_inputs["zei_total"]),
 
             }
         else:
@@ -812,39 +1010,39 @@ class Edit_result(ft.Stack):
             "advisory_fee": str(inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
             "chisai_shoukan_kikan": int(self.sl1.value),
-            "chisai_sueoki_years": int(self.initial_inputs["chisai_sueoki_kikan"]),
+            "chisai_sueoki_years": int(initial_inputs["chisai_sueoki_kikan"]),
             "const_start_date_year": int(inputs['const_start_date_year']),
             "const_start_date_month": int(inputs['const_start_date_month']),
             "const_start_date_day": int(inputs['const_start_date_day']),
             "const_start_date": const_start_date, 
-            "const_years": int(self.initial_inputs["const_years"]),
+            "const_years": int(initial_inputs["const_years"]),
             "discount_rate": str(discount_rate),
 
             "first_end_fy": str(first_end_fy),
-            "fudousanshutokuzei_hyoujun": str(self.initial_inputs["hudousanshutokuzei_hyoujun"]),
-            "fudousanshutokuzei_ritsu": str(self.initial_inputs["hudousanshutokuzei_ritsu"]),
-            "growth": str(self.initial_inputs["growth"]),
+            "fudousanshutokuzei_hyoujun": str(initial_inputs["hudousanshutokuzei_hyoujun"]),
+            "fudousanshutokuzei_ritsu": str(initial_inputs["hudousanshutokuzei_ritsu"]),
+            "growth": str(initial_inputs["growth"]),
             "hojo_ritsu": hojo_ritsu,
-            "houjinzei_ritsu": str(self.initial_inputs["houjinzei_ritsu"]),
-            "houjinjuminzei_kintou": str(self.initial_inputs["houjinjuminzei_kintou"]),
-            "houjinjuminzei_ritsu_todouhuken": str(self.initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
-            "houjinjuminzei_ritsu_shikuchoson": str(self.initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
+            "houjinzei_ritsu": str(initial_inputs["houjinzei_ritsu"]),
+            "houjinjuminzei_kintou": str(initial_inputs["houjinjuminzei_kintou"]),
+            "houjinjuminzei_ritsu_todouhuken": str(initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
+            "houjinjuminzei_ritsu_shikuchoson": str(initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
             "ijikanri_unnei": str(ijikanri_unnei),
             "ijikanri_unnei_LCC": str(ijikanri_unnei_LCC),
             "ijikanri_unnei_org": str(ijikanri_unnei_org),
             "ijikanri_unnei_org_LCC": str(ijikanri_unnei_org_LCC),
-            "ijikanri_unnei_1": str(self.initial_inputs["ijikanri_unnei_1"]),
-            "ijikanri_unnei_1_LCC": str(self.initial_inputs["ijikanri_unnei_1_LCC"]),
-            "ijikanri_unnei_1_org": str(self.initial_inputs["ijikanri_unnei_1_org"]),
-            "ijikanri_unnei_1_org_LCC": str(self.initial_inputs["ijikanri_unnei_1_org_LCC"]),
-            "ijikanri_unnei_2": str(self.initial_inputs["ijikanri_unnei_2"]),
-            "ijikanri_unnei_2_LCC": str(self.initial_inputs["ijikanri_unnei_2_LCC"]),
-            "ijikanri_unnei_2_org": str(self.initial_inputs["ijikanri_unnei_2_org"]),
-            "ijikanri_unnei_2_org_LCC": str(self.initial_inputs["ijikanri_unnei_2_org_LCC"]),
-            "ijikanri_unnei_3": str(self.initial_inputs["ijikanri_unnei_3"]),
-            "ijikanri_unnei_3_LCC": str(self.initial_inputs["ijikanri_unnei_3_LCC"]),
-            "ijikanri_unnei_3_org": str(self.initial_inputs["ijikanri_unnei_3_org"]),
-            "ijikanri_unnei_3_org_LCC": str(self.initial_inputs["ijikanri_unnei_3_org_LCC"]),
+            "ijikanri_unnei_1": str(initial_inputs["ijikanri_unnei_1"]),
+            "ijikanri_unnei_1_LCC": str(initial_inputs["ijikanri_unnei_1_LCC"]),
+            "ijikanri_unnei_1_org": str(initial_inputs["ijikanri_unnei_1_org"]),
+            "ijikanri_unnei_1_org_LCC": str(initial_inputs["ijikanri_unnei_1_org_LCC"]),
+            "ijikanri_unnei_2": str(initial_inputs["ijikanri_unnei_2"]),
+            "ijikanri_unnei_2_LCC": str(initial_inputs["ijikanri_unnei_2_LCC"]),
+            "ijikanri_unnei_2_org": str(initial_inputs["ijikanri_unnei_2_org"]),
+            "ijikanri_unnei_2_org_LCC": str(initial_inputs["ijikanri_unnei_2_org_LCC"]),
+            "ijikanri_unnei_3": str(initial_inputs["ijikanri_unnei_3"]),
+            "ijikanri_unnei_3_LCC": str(initial_inputs["ijikanri_unnei_3_LCC"]),
+            "ijikanri_unnei_3_org": str(initial_inputs["ijikanri_unnei_3_org"]),
+            "ijikanri_unnei_3_org_LCC": str(initial_inputs["ijikanri_unnei_3_org_LCC"]),
             "ijikanri_unnei_years": int(ijikanri_unnei_years),
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
@@ -852,30 +1050,30 @@ class Edit_result(ft.Stack):
             "kisai_jutou": kisai_jutou,
             "kisai_koufu": kisai_koufu,
             "kitai_bukka": str(kitai_bukka), 
-            "koteishisanzei_hyoujun": str(self.initial_inputs["koteishisanzei_hyoujun"]),
-            "koteishisanzei_ritsu": str(self.initial_inputs["koteishisanzei_ritsu"]),
+            "koteishisanzei_hyoujun": str(initial_inputs["koteishisanzei_hyoujun"]),
+            "koteishisanzei_ritsu": str(initial_inputs["koteishisanzei_ritsu"]),
 
-            "lg_spread": str(self.initial_inputs["lg_spread"]),
-            "mgmt_type": self.initial_inputs["mgmt_type"],
+            "lg_spread": str(initial_inputs["lg_spread"]),
+            "mgmt_type": initial_inputs["mgmt_type"],
             "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
             "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
 
             "option_02": str(inputs['option_02']),
-            "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
-            "proj_ctgry": self.initial_inputs["proj_ctgry"],
-            "proj_type": self.initial_inputs["proj_type"],
-            "proj_years": int(self.initial_inputs["proj_years"]),
-            "rakusatsu_ritsu": str(self.initial_inputs["rakusatsu_ritsu"]),
-            "reduc_shisetsu": str(self.initial_inputs["reduc_shisetsu"]),
-            "reduc_ijikanri_1": str(self.initial_inputs["reduc_ijikanri_1"]),
-            "reduc_ijikanri_2": str(self.initial_inputs["reduc_ijikanri_2"]),
-            "reduc_ijikanri_3": str(self.initial_inputs["reduc_ijikanri_3"]),
+            "pre_kyoukouka": bool(initial_inputs["pre_kyoukouka"]),
+            "proj_ctgry": initial_inputs["proj_ctgry"],
+            "proj_type": initial_inputs["proj_type"],
+            "proj_years": int(initial_inputs["proj_years"]),
+            "rakusatsu_ritsu": str(initial_inputs["rakusatsu_ritsu"]),
+            "reduc_shisetsu": str(initial_inputs["reduc_shisetsu"]),
+            "reduc_ijikanri_1": str(initial_inputs["reduc_ijikanri_1"]),
+            "reduc_ijikanri_2": str(initial_inputs["reduc_ijikanri_2"]),
+            "reduc_ijikanri_3": str(initial_inputs["reduc_ijikanri_3"]),
             "riyouryoukin_shunyu": str(inputs['riyouryoukin_shunyu']),
 
-            "shisetsu_seibi": str(self.initial_inputs["shisetsu_seibi"]),
-            "shisetsu_seibi_LCC": str(self.initial_inputs["shisetsu_seibi_LCC"]),
-            "shisetsu_seibi_org": str(self.initial_inputs["shisetsu_seibi_org"]),
-            "shisetsu_seibi_org_LCC": str(self.initial_inputs["shisetsu_seibi_org_LCC"]),
+            "shisetsu_seibi": str(initial_inputs["shisetsu_seibi"]),
+            "shisetsu_seibi_LCC": str(initial_inputs["shisetsu_seibi_LCC"]),
+            "shisetsu_seibi_org": str(initial_inputs["shisetsu_seibi_org"]),
+            "shisetsu_seibi_org_LCC": str(initial_inputs["shisetsu_seibi_org_LCC"]),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
             "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
@@ -889,22 +1087,22 @@ class Edit_result(ft.Stack):
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
 
             "target_years": int(target_years),
-            "tourokumenkyozei_hyoujun": str(self.initial_inputs["tourokumenkyozei_hyoujun"]),
-            "tourokumenkyozei_ritsu": str(self.initial_inputs["tourokumenkyozei_ritsu"]),
-            "yosantanka_hiritsu_shisetsu": str(self.initial_inputs["yosantanka_hiritsu_shisetsu"]),
-            "yosantanka_hiritsu_ijikanri_1": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
-            "yosantanka_hiritsu_ijikanri_2": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
-            "yosantanka_hiritsu_ijikanri_3": str(self.initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
-            "zei_total": str(self.initial_inputs["zei_total"]),
+            "tourokumenkyozei_hyoujun": str(initial_inputs["tourokumenkyozei_hyoujun"]),
+            "tourokumenkyozei_ritsu": str(initial_inputs["tourokumenkyozei_ritsu"]),
+            "yosantanka_hiritsu_shisetsu": str(initial_inputs["yosantanka_hiritsu_shisetsu"]),
+            "yosantanka_hiritsu_ijikanri_1": str(initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
+            "yosantanka_hiritsu_ijikanri_2": str(initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
+            "yosantanka_hiritsu_ijikanri_3": str(initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
+            "zei_total": str(initial_inputs["zei_total"]),
 
             }
         return final_inputs
 
 # IIからの_save_to_db
-    def _save_to_db(self, data):
-        if self.page.session.store.contains_key("initial_inputs"):
-            self.page.session.store.remove("initial_inputs")
-        self.page.session.store.set("initial_inputs",data)
+    #def _save_to_db(self, data):
+    #    if self.page.session.store.contains_key("initial_inputs"):
+    #        self.page.session.store.remove("initial_inputs")
+    #    self.page.session.store.set("initial_inputs",data)
 
 
 # FIからの_save_to_db
@@ -914,110 +1112,4 @@ class Edit_result(ft.Stack):
         self.page.session.store.set("final_inputs",data)
 
 
-#「要約」カラムと「入力値等」カラムの材料
-    #def build(self):
-        res_summ_df = self.selected_res_list[9]
-        final_inputs_df = self.selected_res_list[10]
-
-        res_summ_df['discount_rate'] = res_summ_df['discount_rate'] * 100
-
-        res_summ_df = res_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
-        final_inputs_df = final_inputs_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
-
-
-        res_summ_df = res_summ_df.rename(
-            columns={
-                'VFM_percent':'VFM(％)', 
-                'PSC_present_value':'PSCでの公共キャッシュ・フロー現在価値', 
-                'LCC_present_value':'PFI-LCCでの公共キャッシュ・フロー現在価値', 
-                'PIRR':'プロジェクト内部収益率(％)',
-                'SPC_payment_cash':'SPCの元本返済可否', 
-                'mgmt_type':'発注者区分', 
-                'proj_ctgry':'事業形態', 
-                'proj_type':'事業方式',
-                'const_years':'施設整備期間', 
-                'proj_years':'事業期間', 
-                'discount_rate':'割引率(％)', 
-                'kariire_kinri':'借入コスト(％)',
-                'Kappu_kinri':'割賦金利(％)',
-                'kappu_kinri_spread':'割賦スプレッド(％)',
-                'SPC_fee':'SPCへの手数料(百万円)',
-            }
-        )
-        # 最終入力・パラメータの表を作成
-        self.final_inputs_df = final_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
-        simpledt_finalinputs_df = DataFrame(self.final_inputs_df)
-        simpledt_finalinputs_dt = simpledt_finalinputs_df.datatable
-        self.table_finalinputs = simpledt_finalinputs_dt
-
-
-        res_summ_df_t = res_summ_df.transpose().reset_index()
-        res_summ_df_t = res_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
-        simpledt_res_summ_df = DataFrame(res_summ_df_t)
-        simpledt_res_summ_dt = simpledt_res_summ_df.datatable
-        self.table_res_summ = simpledt_res_summ_dt
-
-        lv_01 = ft.ListView(
-            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
-        )
-        lv_01.controls.append(ft.Text('算定結果要約'))
-        lv_01.controls.append(self.table_res_summ)
-
-        lv_04 = ft.ListView(
-            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
-        )
-        lv_04.controls.append(ft.Text('入力値・パラメータ等一覧'))
-        lv_04.controls.append(self.table_finalinputs)
-
-        self.controls = [
-            ft.Tabs(
-                selected_index=0,
-                length=4,
-                animation_duration=300,
-                content = ft.Column(
-                    expand=True,    
-                    controls=[
-                        ft.TabBar(
-                            tabs=[
-                                ft.Tab(
-                                    label="結果・入力の要約",
-                                ),
-                                ft.Tab(
-                                    label="入力値等一覧",
-                                ),
-                            ],
-                        ),
-                        ft.TabBarView(
-                            expand=True,
-                            controls=[
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls=[
-                                            lv_01,
-                                        ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    margin=10,
-                                    height=1000,
-                                ),
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls=[
-                                            lv_04,
-                                        ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    height=3000,
-                                    margin=10,
-                                ),
-                            ],       
-                        )
-                    ],
-                ),
-            )
-        ]
 
