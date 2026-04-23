@@ -137,7 +137,7 @@ class Edit_result(ft.Stack):
         simpledt_targetinputs_dt = simpledt_targetinputs_df.datatable
         self.table_targetinputs = simpledt_targetinputs_dt
 
-
+        # 編集対象算定結果要約の表を作成
         target_summ_df_t = target_summ_df.transpose().reset_index()
         target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
         simpledt_target_summ_df = DataFrame(target_summ_df_t)
@@ -147,13 +147,13 @@ class Edit_result(ft.Stack):
         lv_01 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
         )
-        lv_01.controls.append(ft.Text('算定結果要約'))
+        lv_01.controls.append(ft.Text('編集対象算定結果の要約'))
         lv_01.controls.append(self.table_target_summ)
 
         lv_04 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
         )
-        lv_04.controls.append(ft.Text('入力値・パラメータ等一覧'))
+        lv_04.controls.append(ft.Text('編集対象入力値・パラメータ等一覧'))
         lv_04.controls.append(self.table_targetinputs)
 
         if self.target_inputs["proj_type"] == "DBO(SPCなし)" or self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
@@ -168,10 +168,10 @@ class Edit_result(ft.Stack):
                             ft.TabBar(
                                 tabs=[
                                     ft.Tab(
-                                        label="結果・入力の要約",
+                                        label="編集対象結果・入力の要約",
                                     ),
                                     ft.Tab(
-                                        label="入力値等一覧",
+                                        label="編集対象入力値等一覧",
                                     ),
                                     ft.Tab(
                                         label="入力値の修正と再計算",
@@ -235,10 +235,10 @@ class Edit_result(ft.Stack):
                             ft.TabBar(
                                 tabs=[
                                     ft.Tab(
-                                        label="結果・入力の要約",
+                                        label="編集対象結果・入力の要約",
                                     ),
                                     ft.Tab(
-                                        label="入力値等一覧",
+                                        label="編集対象入力値等一覧",
                                     ),
                                     ft.Tab(
                                         label="入力値の修正と再計算",
@@ -558,24 +558,30 @@ class Edit_result(ft.Stack):
         await self.page.push_route("/view_saved")
         
 
-# IIからの_extract_inputs
+    def to_dec(val):
+            return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
+
+
+# 編集画面からの_extract_inputs
     def _extract_inputs(self):
 
-        #raw_proj_years = self.dd6.value if self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)" else self.dd4.value
-
         proj_years = int(self.target_inputs["proj_years"])
-        const_years = int(self.target_inputs["const_years"])
-        chisai_shoukan_kikan = int(self.target_inputs["chisai_shoukan_kikan"])
 
-        if proj_years < const_years:
-            raise ValueError("事業期間は施設整備期間より長い必要があります。")
-        ijikanri_unnei_years = proj_years - const_years
-
-        reduc_shisetsu = Decimal(self.sl4.value) / Decimal(100)
-        reduc_ijikanri_1 = Decimal(self.sl5.value) / Decimal(100)
-        reduc_ijikanri_2 = Decimal(self.sl6.value) / Decimal(100)
-        reduc_ijikanri_3 = Decimal(self.sl7.value) / Decimal(100)
-        rakusatsu_ritsu = Decimal(self.target_inputs["rakusatsu_ritsu"]) / Decimal(100)
+        chisai_shoukan_kikan = int(self.sl1.value)
+        chisai_sueoki_kikan = int(self.sl2.value)
+        shisetsu_seibi_ikkatsu_hiritsu = self.to_dec(self.sl3.value)/self.to_dec(100)
+        reduc_shisetsu = self.to_dec(self.sl4.value) / self.to_dec(100)
+        reduc_ijikanri_1 = self.to_dec(self.sl5.value) / self.to_dec(100)
+        reduc_ijikanri_2 = self.to_dec(self.sl6.value) / self.to_dec(100)
+        reduc_ijikanri_3 = self.to_dec(self.sl7.value) / self.to_dec(100)
+        monitoring_costs_PSC = self.to_dec(self.sl8.value)
+        monitoring_costs_LCC = self.to_dec(self.sl9.value)
+        SPC_keihi = self.to_dec(self.sl10.value)
+        SPC_fee = self.to_dec(self.sl11.value)
+        SPC_shihon = self.to_dec(self.sl12.value)
+        SPC_yobihi = self.to_dec(self.sl13.value)    
+        advisory_fee = self.to_dec(self.sl14.value)
+        kappu_kinri_spread = self.to_dec(self.sl15.value)/self.to_dec(100)
 
         JGB_rates_df = pd.read_csv("src/JGB_rates.csv", sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
         JRB_rates_df = pd.read_csv("src/JRB_rates.csv", sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
@@ -586,402 +592,186 @@ class Edit_result(ft.Stack):
         else:
             r_idx = str(d) + "年"
 
-        r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
-        r2 = Decimal(JRB_rates_df.loc[chisai_shoukan_kikan][const_years])
-        kitai_bukka_j = Decimal(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
-        gonensai_rimawari = Decimal(JGB_rates_df.loc["5年"].iloc[0])
-        
-        return {
-            'mgmt_type': self.target_inputs['mgmt_type'],
-            'proj_ctgry': self.target_inputs['proj_ctgry'],
-            'proj_type': self.target_inputs['proj_type'],
+        kijun_kinri = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
+        chisai_kinri = self.to_dec(JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan])
+        kitai_bukka_j = self.to_dec(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
+        gonensai_rimawari = self.to_dec(JGB_rates_df.loc["5年"].iloc[0])
 
-            'proj_years': proj_years,
-            'const_years': const_years,
+        self.edit_inputs = {        
             'chisai_shoukan_kikan': chisai_shoukan_kikan,
-            'ijikanri_unnei_years': ijikanri_unnei_years,
-
+            'chisai_sueoki_kikan': chisai_sueoki_kikan,
+            'chisai_kinri': chisai_kinri,
+            'kijun_kinri': kijun_kinri,
+            'kitai_bukka_j': kitai_bukka_j,
+            'gonensai_rimawari': gonensai_rimawari,
+            'shisetsu_seibi_ikkatsu_hiritsu': shisetsu_seibi_ikkatsu_hiritsu,
             'reduc_shisetsu': reduc_shisetsu,
             'reduc_ijikanri_1': reduc_ijikanri_1,
             'reduc_ijikanri_2': reduc_ijikanri_2,
             'reduc_ijikanri_3': reduc_ijikanri_3,
-            'rakusatsu_ritsu': rakusatsu_ritsu,
-
-            'r1': r1,
-            'r2': r2,
-            'kitai_bukka_j': kitai_bukka_j,
-            'gonensai_rimawari': gonensai_rimawari,
-        }
-
-# FIからのExtract_inputs
-    def _extract_inputs(self):
-        const_start_date_year = int(self.dd00.value)
-        const_start_date_month = int(self.dd01.value)
-        const_start_date_day = int(self.dd02.value)
-
-        chisai_shoukan_kikan = int(self.sl1.value)
-        shisetsu_seibi_ikkatsu_hiritsu = Decimal(self.sl2.value)/Decimal(100)
-        monitoring_costs_PSC = Decimal(self.sl3.value)
-        monitoring_costs_LCC = Decimal(self.sl4.value)
-        kisai_jutou = Decimal(self.sl5.value)/Decimal(100)
-        kisai_koufu = Decimal(self.sl6.value)/Decimal(100)
-        hojo_ritsu = Decimal(self.sl7.value)/Decimal(100)
-        SPC_keihi = Decimal(self.sl8.value)
-        SPC_fee = Decimal(self.sl9.value)
-        SPC_shihon = Decimal(self.sl10.value)
-        SPC_yobihi = Decimal(self.sl11.value)
-
-        advisory_fee = Decimal(self.sl13.value)
-        riyouryoukin_shunyu = Decimal(self.sl14.value)
-        kappu_kinri_spread = Decimal(self.sl15.value)/Decimal(100)
-        
-        chisai_sueoki_kikan = int(self.sl19.value)
-        option_02 = Decimal(self.sl20.value)
-
-        JRB_rates_df = pd.read_csv(
-            "src/JRB_rates.csv",
-            encoding="utf-8",
-            sep='\t', 
-            names=[0,1,2,3,4,5], 
-            index_col=0)
-
-        chisai_kinri = JRB_rates_df.loc[chisai_shoukan_kikan][chisai_sueoki_kikan]
-
-        return {
-            'const_start_date_year': const_start_date_year,
-            'const_start_date_month': const_start_date_month,
-            'const_start_date_day': const_start_date_day,
-
-            'chisai_shoukan_kikan': chisai_shoukan_kikan,
-            'chisai_kinri': chisai_kinri,
-            'shisetsu_seibi_ikkatsu_hiritsu': shisetsu_seibi_ikkatsu_hiritsu,
             'monitoring_costs_PSC': monitoring_costs_PSC,
             'monitoring_costs_LCC': monitoring_costs_LCC,
-            'kisai_jutou': kisai_jutou,
-            'kisai_koufu': kisai_koufu,
-            'hojo_ritsu': hojo_ritsu,
             'SPC_keihi': SPC_keihi,
             'SPC_fee': SPC_fee,
             'SPC_shihon': SPC_shihon,
             'SPC_yobihi': SPC_yobihi,
-
             'advisory_fee': advisory_fee,
-            'riyouryoukin_shunyu': riyouryoukin_shunyu,
             'kappu_kinri_spread': kappu_kinri_spread,
-            'chisai_sueoki_kikan': chisai_sueoki_kikan,
-            'option_02': option_02,
-            }
-    
-# IIからの_calculate_financials
-    def _calculate_financials(self, inputs):
-        def to_dec(val):
-            return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-
-        calc_id = timeflake.random()
-        dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
-        const_start_date = datetime.date(dtime.year, dtime.month, dtime.day).strftime('%Y-%m-%d')
-
-        shisetsu_seibi_org = to_dec(inputs['shisetsu_seibi_org_R'] + inputs['shisetsu_seibi_org_Y'])
-        shisetsu_seibi = to_dec(shisetsu_seibi_org * inputs['rakusatsu_ritsu'])
-        ijikanri_unnei_1_org = to_dec(inputs['ijikanri_unnei_1_org_R'] + inputs['ijikanri_unnei_1_org_Y'])
-        ijikanri_unnei_1 = to_dec(ijikanri_unnei_1_org * inputs['rakusatsu_ritsu'])
-        ijikanri_unnei_2_org = to_dec(inputs['ijikanri_unnei_2_org_R'] + inputs['ijikanri_unnei_2_org_Y'])
-        ijikanri_unnei_2 = to_dec(ijikanri_unnei_2_org * inputs['rakusatsu_ritsu'])        
-        ijikanri_unnei_3_org = to_dec(inputs['ijikanri_unnei_3_org_R'] + inputs['ijikanri_unnei_3_org_Y'])
-        ijikanri_unnei_3 = to_dec(ijikanri_unnei_3_org * inputs['rakusatsu_ritsu'])
-
-        yosantanka_hiritsu_shisetsu = to_dec(inputs['shisetsu_seibi_org_Y']/shisetsu_seibi_org) if shisetsu_seibi_org else to_dec(0)
-        yosantanka_hiritsu_ijikanri_1 = to_dec(inputs['ijikanri_unnei_1_org_Y']/ijikanri_unnei_1_org) if ijikanri_unnei_1_org else to_dec(0)
-        yosantanka_hiritsu_ijikanri_2 = to_dec(inputs['ijikanri_unnei_2_org_Y']/ijikanri_unnei_2_org) if ijikanri_unnei_2_org else to_dec(0)
-        yosantanka_hiritsu_ijikanri_3 = to_dec(inputs['ijikanri_unnei_3_org_Y']/ijikanri_unnei_3_org) if ijikanri_unnei_3_org else to_dec(0)
-
-        shisetsu_seibi_org_LCC = to_dec(shisetsu_seibi_org * (Decimal(1.00) - inputs['reduc_shisetsu']))
-        shisetsu_seibi_LCC = to_dec(shisetsu_seibi * (Decimal(1.00) - inputs['reduc_shisetsu']))
-        ijikanri_unnei_1_org_LCC = to_dec(ijikanri_unnei_1_org * (Decimal(1.00) - inputs['reduc_ijikanri_1']))
-        ijikanri_unnei_1_LCC = to_dec(ijikanri_unnei_1 * (Decimal(1.00) - inputs['reduc_ijikanri_1']))
-        ijikanri_unnei_2_org_LCC = to_dec(ijikanri_unnei_2_org * (Decimal(1.00) - inputs['reduc_ijikanri_2']))
-        ijikanri_unnei_2_LCC = to_dec(ijikanri_unnei_2 * (Decimal(1.00) - inputs['reduc_ijikanri_2']))
-        ijikanri_unnei_3_org_LCC = to_dec(ijikanri_unnei_3_org * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
-        ijikanri_unnei_3_LCC = to_dec(ijikanri_unnei_3 * (Decimal(1.00) - inputs['reduc_ijikanri_3']))
-
-        chisai_sueoki_kikan = int(inputs['const_years']) if inputs['const_years'] else int(0)
-        kitai_bukka = to_dec(inputs['kitai_bukka_j'] - inputs['gonensai_rimawari'])
-        lg_spread = to_dec(0.01)
-
-        tax_rates = {
-            'houjinzei_ritsu': Decimal(0.0),
-            'houjinjuminzei_kintou': Decimal(0.0),
-            'hudousanshutokuzei_hyoujun': Decimal(0.0),
-            'hudousanshutokuzei_ritsu': Decimal(0.0),
-            'koteishisanzei_hyoujun': Decimal(0.0),
-            'koteishisanzei_ritsu': Decimal(0.0),
-            'tourokumenkyozei_hyoujun': Decimal(0.0),
-            'tourokumenkyozei_ritsu': Decimal(0.0),
-            'houjinjuminzei_ritsu_todouhuken': Decimal(0.0),
-            'houjinjuminzei_ritsu_shikuchoson': Decimal(0.0),
-            'riyou_ryoukin': Decimal(0.0),
         }
 
-        if inputs['proj_ctgry'] == "サービス購入型":
-            tax_rates['houjinjuminzei_kintou'] = to_dec(0.18)
-            if inputs['proj_type'] == "BOT/BOO":
-                tax_rates['houjinzei_ritsu'] = Decimal(0.0)
-                tax_rates['hudousanshutokuzei_hyoujun'] = shisetsu_seibi_org_LCC
-                tax_rates['hudousanshutokuzei_ritsu'] = Decimal(0.04)
-                tax_rates['koteishisanzei_hyoujun'] = shisetsu_seibi_org_LCC
-                tax_rates['koteishisanzei_ritsu'] = Decimal(0.014)
-                tax_rates['tourokumenkyozei_hyoujun'] = shisetsu_seibi_org_LCC
-                tax_rates['tourokumenkyozei_ritsu'] = Decimal(0.004)
-                tax_rates['houjinjuminzei_ritsu_todouhuken'] = Decimal(0.0)
-                tax_rates['houjinjuminzei_ritsu_shikuchoson'] = Decimal(0.0)
-                tax_rates['riyou_ryoukin'] = Decimal(0.0)
+# 編集画面からの_calculate_financials
+    def _calculate_financials(self, inputs):
+        
+        const_start_date = self.target_inputs['const_start_date']
+        proj_ctgry = self.target_inputs['proj_ctgry']
+        proj_type = self.target_inputs['proj_type']
 
-            financial_rules = {'zei_modori': Decimal(0.278), 'hojo': Decimal(0.0), 'kisai_jutou': Decimal(0.0), 'kisai_koufu': Decimal(0.0)}
-            if inputs['mgmt_type'] == "国":
-                financial_rules['zei_modori'] = Decimal(0.278)
-                financial_rules['hojo'] = Decimal(0.0)
-                financial_rules['kisai_jutou'] = Decimal(0.0)
-                financial_rules['kisai_koufu'] = Decimal(0.0)
-            elif inputs['mgmt_type']  == "都道府県":
-                financial_rules['zei_modori'] = Decimal(0.0578)
-                financial_rules['hojo'] = Decimal(0.5)
-                financial_rules['kisai_jutou'] = Decimal(0.75)
-                financial_rules['kisai_koufu'] = Decimal(0.30)
-            elif inputs['mgmt_type']  == "市町村":
-                financial_rules['zei_modori'] = Decimal(0.084)
-                financial_rules['hojo'] = Decimal(0.300)
-                financial_rules['kisai_jutou'] = Decimal(0.750)
-                financial_rules['kisai_koufu'] = Decimal(0.300)
-            
-            financial_rules['zei_total'] = tax_rates['houjinjuminzei_kintou'] + tax_rates['hudousanshutokuzei_hyoujun'] * tax_rates['hudousanshutokuzei_ritsu'] + tax_rates['koteishisanzei_hyoujun'] * tax_rates['koteishisanzei_ritsu'] + tax_rates['tourokumenkyozei_hyoujun'] * tax_rates['tourokumenkyozei_ritsu']
-
+        shisetsu_seibi_org = self.to_dec(self.target_inputs['shisetsu_seibi_org'])
+        shisetsu_seibi = self.to_dec(self.target_inputs['shisetsu_seibi'])
+        ijikanri_unnei_1_org = self.to_dec(self.target_inputs['ijikanri_unnei_1_org'])
+        ijikanri_unnei_1 = self.to_dec(self.target_inputs['ijikanri_unnei_1'])
+        ijikanri_unnei_2_org = self.to_dec(self.target_inputs['ijikanri_unnei_2_org'])
+        ijikanri_unnei_2 = self.to_dec(self.target_inputs['ijikanri_unnei_2'])
+        ijikanri_unnei_3_org = self.to_dec(self.target_inputs['ijikanri_unnei_3_org'])
+        ijikanri_unnei_3 = self.to_dec(self.target_inputs['ijikanri_unnei_3'])
     
-            if inputs['proj_type'] in ["DBO(SPCなし)", "BT/DB(いずれもSPCなし)"]:
-                SPC_costs = {'fee':to_dec(0), 'shihon':to_dec(0), 'yobihi':to_dec(0)}
-                SPC_hiyou_atsukai = int(1)
-            else:
-                SPC_costs = {'keihi':to_dec(20), 'fee':to_dec(20), 'shihon':to_dec(100), 'yobihi':to_dec(456)}
-                SPC_hiyou_atsukai = int(1)
+        shisetsu_seibi_org_LCC = self.to_dec(shisetsu_seibi_org * (Decimal(1.00) - self.edit_inputs['reduc_shisetsu']))
+        shisetsu_seibi_LCC = self.to_dec(shisetsu_seibi * (Decimal(1.00) - self.edit_inputs['reduc_shisetsu']))
+        ijikanri_unnei_1_org_LCC = self.to_dec(ijikanri_unnei_1_org * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_1']))
+        ijikanri_unnei_1_LCC = self.to_dec(ijikanri_unnei_1 * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_1']))
+        ijikanri_unnei_2_org_LCC = self.to_dec(ijikanri_unnei_2_org * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_2']))
+        ijikanri_unnei_2_LCC = self.to_dec(ijikanri_unnei_2 * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_2']))
+        ijikanri_unnei_3_org_LCC = self.to_dec(ijikanri_unnei_3_org * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_3']))
+        ijikanri_unnei_3_LCC = self.to_dec(ijikanri_unnei_3 * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_3']))
 
-            initial_inputs = {
-                "mgmt_type": inputs['mgmt_type'],
-                "proj_ctgry": inputs['proj_ctgry'],
-                "proj_type": inputs['proj_type'],
-                "proj_years": inputs['proj_years'],
-                "const_years": inputs['const_years'],
-                "ijikanri_unnei_years": inputs['ijikanri_unnei_years'],
-                "const_start_date": str(const_start_date),
-                "kijun_kinri": str(inputs['r1']),
-                "chisai_kinri": str(inputs['r2']),
-                "chisai_sueoki_kikan": int(chisai_sueoki_kikan),
-                "chisai_shoukan_kikan": inputs['chisai_shoukan_kikan'],
-                "lg_spread": str(lg_spread),
-                "zei_modori": str(financial_rules['zei_modori']),
-                "zei_total": str(Decimal(0.18).quantize(Decimal('0.000001'), ROUND_HALF_UP)),
-                "riyou_ryoukin": str(tax_rates['riyou_ryoukin']),
-                "growth": str(to_dec(0.0)),
-                "kitai_bukka": str(Decimal(kitai_bukka)),
-                "shisetsu_seibi": str(shisetsu_seibi),
-                "shisetsu_seibi_org": str(shisetsu_seibi_org),
-                "shisetsu_seibi_org_LCC": str(shisetsu_seibi_org_LCC),
-                "shisetsu_seibi_LCC": str(shisetsu_seibi_LCC),
-                "ijikanri_unnei_1": str(ijikanri_unnei_1),
-                "ijikanri_unnei_1_org": str(ijikanri_unnei_1_org),
-                "ijikanri_unnei_1_org_LCC": str(ijikanri_unnei_1_org_LCC),
-                "ijikanri_unnei_1_LCC": str(ijikanri_unnei_1_LCC),
-                "ijikanri_unnei_2": str(ijikanri_unnei_2),
-                "ijikanri_unnei_2_org": str(ijikanri_unnei_2_org),
-                "ijikanri_unnei_2_org_LCC": str(ijikanri_unnei_2_org_LCC),
-                "ijikanri_unnei_2_LCC": str(ijikanri_unnei_2_LCC),
-                "ijikanri_unnei_3": str(ijikanri_unnei_3),
-                "ijikanri_unnei_3_org": str(ijikanri_unnei_3_org),
-                "ijikanri_unnei_3_org_LCC": str(ijikanri_unnei_3_org_LCC),
-                "ijikanri_unnei_3_LCC": str(ijikanri_unnei_3_LCC),
-                "yosantanka_hiritsu_shisetsu": str(yosantanka_hiritsu_shisetsu),
-                "yosantanka_hiritsu_ijikanri_1": str(yosantanka_hiritsu_ijikanri_1),
-                "yosantanka_hiritsu_ijikanri_2": str(yosantanka_hiritsu_ijikanri_2),
-                "yosantanka_hiritsu_ijikanri_3": str(yosantanka_hiritsu_ijikanri_3),
-                "rakusatsu_ritsu": str(inputs['rakusatsu_ritsu']),
-                "reduc_shisetsu": str(inputs['reduc_shisetsu']),
-                "reduc_ijikanri_1": str(inputs['reduc_ijikanri_1']),
-                "reduc_ijikanri_2": str(inputs['reduc_ijikanri_2']),
-                "reduc_ijikanri_3": str(inputs['reduc_ijikanri_3']),
-                "pre_kyoukouka": True,
-                "kisai_jutou": str(financial_rules['kisai_jutou']),
-                "kisai_koufu": str(financial_rules['kisai_koufu']),
-                "hojo_ritsu": str(financial_rules['hojo']),
-                "zeimae_rieki": str(to_dec(0.0)),
-                "SPC_keihi": str(SPC_costs['keihi']),
-                "SPC_fee": str(SPC_costs['fee']),
-                "SPC_shihon": str(SPC_costs['shihon']),
-                "SPC_yobihi": str(SPC_costs['yobihi']),
-                "SPC_hiyou_atsukai": SPC_hiyou_atsukai,
-                "houjinzei_ritsu": str(tax_rates['houjinzei_ritsu']),
-                "houjinjuminzei_kintou": str(tax_rates['houjinjuminzei_kintou']),
-                "hudousanshutokuzei_hyoujun": str(tax_rates['hudousanshutokuzei_hyoujun']),
-                "hudousanshutokuzei_ritsu": str(tax_rates['hudousanshutokuzei_ritsu']),
-                "koteishisanzei_hyoujun": str(tax_rates['koteishisanzei_hyoujun']),
-                "koteishisanzei_ritsu": str(tax_rates['koteishisanzei_ritsu']),
-                "tourokumenkyozei_hyoujun": str(tax_rates['tourokumenkyozei_hyoujun']),
-                "tourokumenkyozei_ritsu": str(tax_rates['tourokumenkyozei_ritsu']),
-                "houjinjuminzei_ritsu_todouhuken": str(tax_rates['houjinjuminzei_ritsu_todouhuken']),
-                "houjinjuminzei_ritsu_shikuchoson": str(tax_rates['houjinjuminzei_ritsu_shikuchoson']),
-            }
+        chisai_sueoki_kikan = int(self.edit_inputs['chisai_sueoki_kikan']) if self.edit_inputs['chisai_sueoki_kikan'] else int(0)
+        kitai_bukka = self.to_dec(self.edit_inputs['kitai_bukka_j'] - self.edit_inputs['gonensai_rimawari'])
+        lg_spread = self.to_dec(0.01)
 
-        #return initial_inputs
-       
 
-# FIからの_calculate_financials    
-    #def _calculate_financials(self,inputs):
-        #def to_dec(val):
-        #    return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
-
-        if initial_inputs["proj_type"] == "DBO(SPCなし)" or initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
-            shisetsu_seibi_paymentschedule_ikkatsu = to_dec(1)
+        if proj_type == "DBO(SPCなし)" or proj_type == "BT/DB(いずれもSPCなし)":
+            shisetsu_seibi_paymentschedule_ikkatsu = self.to_dec(1)
         else:         
-            shisetsu_seibi_paymentschedule_ikkatsu = inputs['shisetsu_seibi_ikkatsu_hiritsu']
+            shisetsu_seibi_paymentschedule_ikkatsu = self.to_dec(self.edit_inputs['shisetsu_seibi_ikkatsu_hiritsu'])
 
-        shisetsu_seibi_paymentschedule_kappu = to_dec(Decimal(1) - shisetsu_seibi_paymentschedule_ikkatsu)
-        #kappu_kinri_spread = Decimal(self.sl15.value/100).quantize(Decimal('0.000001'), ROUND_HALF_UP),
+        shisetsu_seibi_paymentschedule_kappu = self.to_dec(Decimal(1) - shisetsu_seibi_paymentschedule_ikkatsu)
 
-        kisai_jutou = str(inputs['kisai_jutou'])
-        kisai_koufu = str(inputs['kisai_koufu'])
-        hojo_ritsu = str(inputs['hojo_ritsu'])
+        chisai_kinri = Decimal(self.edit_inputs['chisai_kinri'])/Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        kijun_kinri = Decimal(self.edit_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        kitai_bukka = Decimal(self.edit_inputs["kitai_bukka"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
 
-        const_start_date_year = inputs['const_start_date_year']
-        const_start_date_month = inputs['const_start_date_month']
-        const_start_date_day = inputs['const_start_date_day']
-        const_start_date = str(datetime.date(const_start_date_year, const_start_date_month, const_start_date_day))
-        start_year = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').year
-        start_month = datetime.datetime.strptime(str(const_start_date), '%Y-%m-%d').month
+        discount_rate = self.to_dec(kijun_kinri + kitai_bukka)
 
-        if start_month < 4:
-            first_end_fy = datetime.date(start_year, 3, 31)
-        else:
-            first_end_fy = datetime.date(start_year + 1, 3, 31)
-
-        chisai_kinri = Decimal(inputs['chisai_kinri'])/Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-        kijun_kinri = Decimal(initial_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-        kitai_bukka = Decimal(initial_inputs["kitai_bukka"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-
-        discount_rate = to_dec(kijun_kinri + kitai_bukka)
-        #discount_rate = to_dec(discount_rate)
-
-        target_years = 45
-        #proj_years = int(self.target_inputs['proj_years'])
-        const_years = int(initial_inputs['const_years'])
-        chisai_sueoki_kikan = inputs['chisai_sueoki_kikan']
+        const_years = int(self.target_inputs['const_years'])
         shoukan_kaishi_jiki = const_years + chisai_sueoki_kikan + 1
+        ijikanri_unnei_years = self.target_inputs['ijikanri_unnei_years']
 
-        lg_spread = to_dec(initial_inputs['lg_spread'])
-        kappu_kinri_spread = inputs['kappu_kinri_spread']
+        lg_spread = self.to_dec(self.target_inputs['lg_spread'])
+        kappu_kinri_spread = self.edit_inputs['kappu_kinri_spread']
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
-        Kappu_kinri = to_dec(Kappu_kinri)
+        Kappu_kinri = self.to_dec(Kappu_kinri)
 
-
-        if initial_inputs["proj_type"] == "DBO(SPCなし)" or initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
+        if proj_type == "DBO(SPCなし)" or proj_type == "BT/DB(いずれもSPCなし)":
             SPC_keihi = Decimal(0)
             SPC_fee = Decimal(0)
             SPC_shihon = Decimal(0)
             SPC_yobihi = Decimal(0)
         else:
-            SPC_keihi = inputs['SPC_keihi']
-            SPC_fee = inputs['SPC_fee']
-            SPC_shihon = inputs['SPC_shihon']
-            SPC_yobihi = inputs['SPC_yobihi']
+            SPC_keihi = self.to_dec(self.edit_inputs['SPC_keihi'])
+            SPC_fee = self.to_dec(self.edit_inputs['SPC_fee'])
+            SPC_shihon = self.to_dec(self.edit_inputs['SPC_shihon'])
+            SPC_yobihi = self.to_dec(self.edit_inputs['SPC_yobihi'])
 
-        ijikanri_unnei_years = int(initial_inputs['ijikanri_unnei_years'])
-        houjinjuminzei_kintou = Decimal(initial_inputs['houjinjuminzei_kintou'])
         SPC_hiyou_total = SPC_keihi * ijikanri_unnei_years + SPC_shihon
         SPC_hiyou_nen = SPC_fee + SPC_keihi #公共がSPCに毎年払うコスト
-        SPC_keihi_LCC = SPC_keihi + SPC_fee + houjinjuminzei_kintou #SPCが払うコスト(経費、手数料とも全て何かの使途に支払う前提)
+        SPC_keihi_LCC = SPC_keihi + SPC_fee + self.target_inputs['houjinjuminzei_kintou'] #SPCが払うコスト(経費、手数料とも全て何かの使途に支払う前提)
         
         ijikanri_unnei = (
-            Decimal(initial_inputs["ijikanri_unnei_1"]) + 
-            Decimal(initial_inputs["ijikanri_unnei_2"]) + 
-            Decimal(initial_inputs["ijikanri_unnei_3"]))
+            Decimal(ijikanri_unnei_1) + 
+            Decimal(ijikanri_unnei_2) + 
+            Decimal(ijikanri_unnei_3))
         ijikanri_unnei_LCC = (
-            Decimal(initial_inputs["ijikanri_unnei_1_LCC"]) + 
-            Decimal(initial_inputs["ijikanri_unnei_2_LCC"]) + 
-            Decimal(initial_inputs["ijikanri_unnei_3_LCC"]))
+            Decimal(ijikanri_unnei_1_LCC) + 
+            Decimal(ijikanri_unnei_2_LCC) + 
+            Decimal(ijikanri_unnei_3_LCC))
         ijikanri_unnei_org = (
-            Decimal(initial_inputs["ijikanri_unnei_1_org"]) + 
-            Decimal(initial_inputs["ijikanri_unnei_2_org"]) + 
-            Decimal(initial_inputs["ijikanri_unnei_3_org"]))
+            Decimal(ijikanri_unnei_1_org) + 
+            Decimal(ijikanri_unnei_2_org) + 
+            Decimal(ijikanri_unnei_3_org))
         ijikanri_unnei_org_LCC = (
-            Decimal(initial_inputs["ijikanri_unnei_1_org_LCC"]) +
-            Decimal(initial_inputs["ijikanri_unnei_2_org_LCC"]) +
-            Decimal(initial_inputs["ijikanri_unnei_3_org_LCC"]))
+            Decimal(ijikanri_unnei_1_org_LCC) +
+            Decimal(ijikanri_unnei_2_org_LCC) +
+            Decimal(ijikanri_unnei_3_org_LCC))
         
-        if initial_inputs["proj_type"] == "DBO(SPCなし)" or initial_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":        
-            final_inputs = {
+        if proj_type == "DBO(SPCなし)" or proj_type == "BT/DB(いずれもSPCなし)":        
+            edit_final_inputs = {
             #return   {
-            "advisory_fee": str(inputs['advisory_fee']),
+            "advisory_fee": str(self.edit_inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
-            "chisai_shoukan_kikan": int(inputs['chisai_shoukan_kikan']),
-            "chisai_sueoki_years": int(inputs['chisai_sueoki_kikan']),
-            "const_start_date_year": int(const_start_date_year),
-            "const_start_date_month": int(const_start_date_month),
-            "const_start_date_day": int(const_start_date_day),
+            "chisai_shoukan_kikan": int(self.edit_inputs['chisai_shoukan_kikan']),
+            "chisai_sueoki_years": int(self.edit_inputs['chisai_sueoki_kikan']),
+            "const_start_date_year": int(self.target_inputs['const_start_date_year']),
+            "const_start_date_month": int(self.target_inputs['const_start_date_month']),
+            "const_start_date_day": int(self.target_inputs['const_start_date_day']),
             "const_start_date": const_start_date, 
             "const_years": int(const_years),
             "discount_rate": str(discount_rate),
-            "first_end_fy": str(first_end_fy),
-            "fudousanshutokuzei_hyoujun": str(initial_inputs["hudousanshutokuzei_hyoujun"]),
-            "fudousanshutokuzei_ritsu": str(initial_inputs["hudousanshutokuzei_ritsu"]),
-            "growth": str(initial_inputs["growth"]),
-            "hojo_ritsu": hojo_ritsu,
-            "houjinzei_ritsu": str(initial_inputs["houjinzei_ritsu"]),
-            "houjinjuminzei_kintou": str(initial_inputs["houjinjuminzei_kintou"]),
-            "houjinjuminzei_ritsu_todouhuken": str(initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
-            "houjinjuminzei_ritsu_shikuchoson": str(initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
+            "first_end_fy": str(self.target_inputs['first_end_fy']),
+            "fudousanshutokuzei_hyoujun": str(self.target_inputs["hudousanshutokuzei_hyoujun"]),
+            "fudousanshutokuzei_ritsu": str(self.target_inputs["hudousanshutokuzei_ritsu"]),
+            "growth": str(self.target_inputs["growth"]),
+            "hojo_ritsu": [self.target_inputs["hojo_ritsu"]],
+            "houjinzei_ritsu": str(self.target_inputs["houjinzei_ritsu"]),
+            "houjinjuminzei_kintou": str(self.target_inputs["houjinjuminzei_kintou"]),
+            "houjinjuminzei_ritsu_todouhuken": str(self.target_inputs["houjinjuminzei_ritsu_todouhuken"]),
+            "houjinjuminzei_ritsu_shikuchoson": str(self.target_inputs["houjinjuminzei_ritsu_shikuchoson"]),
             "ijikanri_unnei": str(ijikanri_unnei),
             "ijikanri_unnei_LCC": str(ijikanri_unnei_LCC),
             "ijikanri_unnei_org": str(ijikanri_unnei_org),
             "ijikanri_unnei_org_LCC": str(ijikanri_unnei_org_LCC),
-            "ijikanri_unnei_1": str(initial_inputs["ijikanri_unnei_1"]),
-            "ijikanri_unnei_1_LCC": str(initial_inputs["ijikanri_unnei_1_LCC"]),
-            "ijikanri_unnei_1_org": str(initial_inputs["ijikanri_unnei_1_org"]),
-            "ijikanri_unnei_1_org_LCC": str(initial_inputs["ijikanri_unnei_1_org_LCC"]),
-            "ijikanri_unnei_2": str(initial_inputs["ijikanri_unnei_2"]),
-            "ijikanri_unnei_2_LCC": str(initial_inputs["ijikanri_unnei_2_LCC"]),
-            "ijikanri_unnei_2_org": str(initial_inputs["ijikanri_unnei_2_org"]),
-            "ijikanri_unnei_2_org_LCC": str(initial_inputs["ijikanri_unnei_2_org_LCC"]),
-            "ijikanri_unnei_3": str(initial_inputs["ijikanri_unnei_3"]),
-            "ijikanri_unnei_3_LCC": str(initial_inputs["ijikanri_unnei_3_LCC"]),
-            "ijikanri_unnei_3_org": str(initial_inputs["ijikanri_unnei_3_org"]),
-            "ijikanri_unnei_3_org_LCC": str(initial_inputs["ijikanri_unnei_3_org_LCC"]),
+            "ijikanri_unnei_1": str(ijikanri_unnei_1),
+            "ijikanri_unnei_1_LCC": str(ijikanri_unnei_1_LCC),
+            "ijikanri_unnei_1_org": str(ijikanri_unnei_1_org),
+            "ijikanri_unnei_1_org_LCC": str(ijikanri_unnei_1_org_LCC),
+            "ijikanri_unnei_2": str(ijikanri_unnei_2),
+            "ijikanri_unnei_2_LCC": str(ijikanri_unnei_2_LCC),
+            "ijikanri_unnei_2_org": str(ijikanri_unnei_2_org),
+            "ijikanri_unnei_2_org_LCC": str(ijikanri_unnei_2_org_LCC),
+            "ijikanri_unnei_3": str(ijikanri_unnei_3),
+            "ijikanri_unnei_3_LCC": str(ijikanri_unnei_3_LCC),
+            "ijikanri_unnei_3_org": str(ijikanri_unnei_3_org),
+            "ijikanri_unnei_3_org_LCC": str(ijikanri_unnei_3_org_LCC),
             "ijikanri_unnei_years": int(ijikanri_unnei_years),
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
             "kijun_kinri": str(kijun_kinri),
-            "kisai_jutou": kisai_jutou,
-            "kisai_koufu": kisai_koufu,
-            "kitai_bukka": str(kitai_bukka), 
-            "koteishisanzei_hyoujun": str(initial_inputs["koteishisanzei_hyoujun"]),
-            "koteishisanzei_ritsu": str(initial_inputs["koteishisanzei_ritsu"]),
+            "kisai_jutou": str(self.target_inputs["kisai_jutou"]),
+            "kisai_koufu": str(self.target_inputs["kisai_koufu"]),
+            "kitai_bukka": str(kitai_bukka),
+            "koteishisanzei_hyoujun": str(self.target_inputs["koteishisanzei_hyoujun"]),
+            "koteishisanzei_ritsu": str(self.target_inputs["koteishisanzei_ritsu"]),
 
-            "lg_spread": str(initial_inputs["lg_spread"]),
-            "mgmt_type": initial_inputs["mgmt_type"],
-            "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
-            "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
+            "lg_spread": str(self.target_inputs["lg_spread"]),
+            "mgmt_type": self.target_inputs["mgmt_type"],
+            "monitoring_costs_PSC": str(self.edit_inputs['monitoring_costs_PSC']),
+            "monitoring_costs_LCC": str(self.edit_inputs['monitoring_costs_LCC']),
 
-            "option_02": str(inputs['option_02']),
-            "pre_kyoukouka": bool(initial_inputs["pre_kyoukouka"]),
-            "proj_ctgry": initial_inputs["proj_ctgry"],
-            "proj_type": initial_inputs["proj_type"],
-            "proj_years": int(initial_inputs["proj_years"]),
-            "rakusatsu_ritsu": str(initial_inputs["rakusatsu_ritsu"]),
-            "reduc_shisetsu": str(initial_inputs["reduc_shisetsu"]),
-            "reduc_ijikanri_1": str(initial_inputs["reduc_ijikanri_1"]),
-            "reduc_ijikanri_2": str(initial_inputs["reduc_ijikanri_2"]),
-            "reduc_ijikanri_3": str(initial_inputs["reduc_ijikanri_3"]),
-            "riyouryoukin_shunyu": str(inputs['riyouryoukin_shunyu']),
+            "option_02": str(self.target_inputs['option_02']),
+            "pre_kyoukouka": bool(self.target_inputs["pre_kyoukouka"]),
+            "proj_ctgry": self.target_inputs["proj_ctgry"],
+            "proj_type": self.target_inputs["proj_type"],
+            "proj_years": int(self.target_inputs["proj_years"]),
+            "rakusatsu_ritsu": str(self.target_inputs["rakusatsu_ritsu"]),
+            "reduc_shisetsu": str(self.edit_inputs["reduc_shisetsu"]),
+            "reduc_ijikanri_1": str(self.edit_inputs["reduc_ijikanri_1"]),
+            "reduc_ijikanri_2": str(self.edit_inputs["reduc_ijikanri_2"]),
+            "reduc_ijikanri_3": str(self.edit_inputs["reduc_ijikanri_3"]),
+            "riyouryoukin_shunyu": str(self.target_inputs['riyouryoukin_shunyu']),
 
-            "shisetsu_seibi": str(initial_inputs["shisetsu_seibi"]),
-            "shisetsu_seibi_LCC": str(initial_inputs["shisetsu_seibi_LCC"]),
-            "shisetsu_seibi_org": str(initial_inputs["shisetsu_seibi_org"]),
-            "shisetsu_seibi_org_LCC": str(initial_inputs["shisetsu_seibi_org_LCC"]),
+            "shisetsu_seibi": str(shisetsu_seibi),
+            "shisetsu_seibi_LCC": str(shisetsu_seibi_LCC),
+            "shisetsu_seibi_org": str(shisetsu_seibi_org),
+            "shisetsu_seibi_org_LCC": str(shisetsu_seibi_org_LCC),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
             "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
@@ -994,86 +784,86 @@ class Edit_result(ft.Stack):
             "SPC_hiyou_nen": str(SPC_hiyou_nen),
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
 
-            "target_years": int(target_years),
-            "tourokumenkyozei_hyoujun": str(initial_inputs["tourokumenkyozei_hyoujun"]),
-            "tourokumenkyozei_ritsu": str(initial_inputs["tourokumenkyozei_ritsu"]),
-            "yosantanka_hiritsu_shisetsu": str(initial_inputs["yosantanka_hiritsu_shisetsu"]),
-            "yosantanka_hiritsu_ijikanri_1": str(initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
-            "yosantanka_hiritsu_ijikanri_2": str(initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
-            "yosantanka_hiritsu_ijikanri_3": str(initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
-            "zei_total": str(initial_inputs["zei_total"]),
+            "target_years": int(self.target_inputs['target_years']),
+            "tourokumenkyozei_hyoujun": str(self.target_inputs["tourokumenkyozei_hyoujun"]),
+            "tourokumenkyozei_ritsu": str(self.target_inputs["tourokumenkyozei_ritsu"]),
+            "yosantanka_hiritsu_shisetsu": str(self.target_inputs["yosantanka_hiritsu_shisetsu"]),
+            "yosantanka_hiritsu_ijikanri_1": str(self.target_inputs["yosantanka_hiritsu_ijikanri_1"]),
+            "yosantanka_hiritsu_ijikanri_2": str(self.target_inputs["yosantanka_hiritsu_ijikanri_2"]),
+            "yosantanka_hiritsu_ijikanri_3": str(self.target_inputs["yosantanka_hiritsu_ijikanri_3"]),
+            "zei_total": str(self.target_inputs["zei_total"]),
 
             }
         else:
-            final_inputs = {
+            edit_final_inputs = {
             #return   {
-            "advisory_fee": str(inputs['advisory_fee']),
+            "advisory_fee": str(self.edit_inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
-            "chisai_shoukan_kikan": int(self.sl1.value),
-            "chisai_sueoki_years": int(initial_inputs["chisai_sueoki_kikan"]),
-            "const_start_date_year": int(inputs['const_start_date_year']),
-            "const_start_date_month": int(inputs['const_start_date_month']),
-            "const_start_date_day": int(inputs['const_start_date_day']),
+            "chisai_shoukan_kikan": int(self.edit_inputs['chisai_shoukan_kikan']),
+            "chisai_sueoki_years": int(self.edit_inputs['chisai_sueoki_kikan']),
+            "const_start_date_year": int(self.target_inputs['const_start_date_year']),
+            "const_start_date_month": int(self.target_inputs['const_start_date_month']),
+            "const_start_date_day": int(self.target_inputs['const_start_date_day']),
             "const_start_date": const_start_date, 
-            "const_years": int(initial_inputs["const_years"]),
+            "const_years": int(self.target_inputs["const_years"]),
             "discount_rate": str(discount_rate),
 
-            "first_end_fy": str(first_end_fy),
-            "fudousanshutokuzei_hyoujun": str(initial_inputs["hudousanshutokuzei_hyoujun"]),
-            "fudousanshutokuzei_ritsu": str(initial_inputs["hudousanshutokuzei_ritsu"]),
-            "growth": str(initial_inputs["growth"]),
-            "hojo_ritsu": hojo_ritsu,
-            "houjinzei_ritsu": str(initial_inputs["houjinzei_ritsu"]),
-            "houjinjuminzei_kintou": str(initial_inputs["houjinjuminzei_kintou"]),
-            "houjinjuminzei_ritsu_todouhuken": str(initial_inputs["houjinjuminzei_ritsu_todouhuken"]),
-            "houjinjuminzei_ritsu_shikuchoson": str(initial_inputs["houjinjuminzei_ritsu_shikuchoson"]),
+            "first_end_fy": str(self.target_inputs["first_end_fy"]),
+            "fudousanshutokuzei_hyoujun": str(self.target_inputs["hudousanshutokuzei_hyoujun"]),
+            "fudousanshutokuzei_ritsu": str(self.target_inputs["hudousanshutokuzei_ritsu"]),
+            "growth": str(self.target_inputs["growth"]),
+            "hojo_ritsu": self.target_inputs["hojo_ritsu"],
+            "houjinzei_ritsu": str(self.target_inputs["houjinzei_ritsu"]),
+            "houjinjuminzei_kintou": str(self.target_inputs["houjinjuminzei_kintou"]),
+            "houjinjuminzei_ritsu_todouhuken": str(self.target_inputs["houjinjuminzei_ritsu_todouhuken"]),
+            "houjinjuminzei_ritsu_shikuchoson": str(self.target_inputs["houjinjuminzei_ritsu_shikuchoson"]),
             "ijikanri_unnei": str(ijikanri_unnei),
             "ijikanri_unnei_LCC": str(ijikanri_unnei_LCC),
             "ijikanri_unnei_org": str(ijikanri_unnei_org),
             "ijikanri_unnei_org_LCC": str(ijikanri_unnei_org_LCC),
-            "ijikanri_unnei_1": str(initial_inputs["ijikanri_unnei_1"]),
-            "ijikanri_unnei_1_LCC": str(initial_inputs["ijikanri_unnei_1_LCC"]),
-            "ijikanri_unnei_1_org": str(initial_inputs["ijikanri_unnei_1_org"]),
-            "ijikanri_unnei_1_org_LCC": str(initial_inputs["ijikanri_unnei_1_org_LCC"]),
-            "ijikanri_unnei_2": str(initial_inputs["ijikanri_unnei_2"]),
-            "ijikanri_unnei_2_LCC": str(initial_inputs["ijikanri_unnei_2_LCC"]),
-            "ijikanri_unnei_2_org": str(initial_inputs["ijikanri_unnei_2_org"]),
-            "ijikanri_unnei_2_org_LCC": str(initial_inputs["ijikanri_unnei_2_org_LCC"]),
-            "ijikanri_unnei_3": str(initial_inputs["ijikanri_unnei_3"]),
-            "ijikanri_unnei_3_LCC": str(initial_inputs["ijikanri_unnei_3_LCC"]),
-            "ijikanri_unnei_3_org": str(initial_inputs["ijikanri_unnei_3_org"]),
-            "ijikanri_unnei_3_org_LCC": str(initial_inputs["ijikanri_unnei_3_org_LCC"]),
+            "ijikanri_unnei_1": str(ijikanri_unnei_1),
+            "ijikanri_unnei_1_LCC": str(ijikanri_unnei_1_LCC),
+            "ijikanri_unnei_1_org": str(ijikanri_unnei_1_org),
+            "ijikanri_unnei_1_org_LCC": str(ijikanri_unnei_1_org_LCC),
+            "ijikanri_unnei_2": str(ijikanri_unnei_2),
+            "ijikanri_unnei_2_LCC": str(ijikanri_unnei_2_LCC),
+            "ijikanri_unnei_2_org": str(ijikanri_unnei_2_org),
+            "ijikanri_unnei_2_org_LCC": str(ijikanri_unnei_2_org_LCC),
+            "ijikanri_unnei_3": str(ijikanri_unnei_3),
+            "ijikanri_unnei_3_LCC": str(ijikanri_unnei_3_LCC),
+            "ijikanri_unnei_3_org": str(ijikanri_unnei_3_org),
+            "ijikanri_unnei_3_org_LCC": str(ijikanri_unnei_3_org_LCC),
             "ijikanri_unnei_years": int(ijikanri_unnei_years),
             "kappu_kinri_spread": str(kappu_kinri_spread),
             "Kappu_kinri": str(Kappu_kinri),
             "kijun_kinri": str(kijun_kinri),
-            "kisai_jutou": kisai_jutou,
-            "kisai_koufu": kisai_koufu,
+            "kisai_jutou": str(self.target_inputs["kisai_jutou"]),
+            "kisai_koufu": str(self.target_inputs["kisai_koufu"]),
             "kitai_bukka": str(kitai_bukka), 
-            "koteishisanzei_hyoujun": str(initial_inputs["koteishisanzei_hyoujun"]),
-            "koteishisanzei_ritsu": str(initial_inputs["koteishisanzei_ritsu"]),
+            "koteishisanzei_hyoujun": str(self.target_inputs["koteishisanzei_hyoujun"]),
+            "koteishisanzei_ritsu": str(self.target_inputs["koteishisanzei_ritsu"]),
 
-            "lg_spread": str(initial_inputs["lg_spread"]),
-            "mgmt_type": initial_inputs["mgmt_type"],
-            "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
-            "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
+            "lg_spread": str(self.target_inputs["lg_spread"]),
+            "mgmt_type": self.target_inputs["mgmt_type"],
+            "monitoring_costs_PSC": str(self.edit_inputs['monitoring_costs_PSC']),
+            "monitoring_costs_LCC": str(self.edit_inputs['monitoring_costs_LCC']),
 
-            "option_02": str(inputs['option_02']),
-            "pre_kyoukouka": bool(initial_inputs["pre_kyoukouka"]),
-            "proj_ctgry": initial_inputs["proj_ctgry"],
-            "proj_type": initial_inputs["proj_type"],
-            "proj_years": int(initial_inputs["proj_years"]),
-            "rakusatsu_ritsu": str(initial_inputs["rakusatsu_ritsu"]),
-            "reduc_shisetsu": str(initial_inputs["reduc_shisetsu"]),
-            "reduc_ijikanri_1": str(initial_inputs["reduc_ijikanri_1"]),
-            "reduc_ijikanri_2": str(initial_inputs["reduc_ijikanri_2"]),
-            "reduc_ijikanri_3": str(initial_inputs["reduc_ijikanri_3"]),
-            "riyouryoukin_shunyu": str(inputs['riyouryoukin_shunyu']),
+            "option_02": str(self.target_inputs['option_02']),
+            "pre_kyoukouka": bool(self.target_inputs["pre_kyoukouka"]),
+            "proj_ctgry": self.target_inputs["proj_ctgry"],
+            "proj_type": self.target_inputs["proj_type"],
+            "proj_years": int(self.target_inputs["proj_years"]),
+            "rakusatsu_ritsu": str(self.target_inputs["rakusatsu_ritsu"]),
+            "reduc_shisetsu": str(self.edit_inputs["reduc_shisetsu"]),
+            "reduc_ijikanri_1": str(self.edit_inputs["reduc_ijikanri_1"]),
+            "reduc_ijikanri_2": str(self.edit_inputs["reduc_ijikanri_2"]),
+            "reduc_ijikanri_3": str(self.edit_inputs["reduc_ijikanri_3"]),
+            "riyouryoukin_shunyu": str(self.target_inputs['riyouryoukin_shunyu']),
 
-            "shisetsu_seibi": str(initial_inputs["shisetsu_seibi"]),
-            "shisetsu_seibi_LCC": str(initial_inputs["shisetsu_seibi_LCC"]),
-            "shisetsu_seibi_org": str(initial_inputs["shisetsu_seibi_org"]),
-            "shisetsu_seibi_org_LCC": str(initial_inputs["shisetsu_seibi_org_LCC"]),
+            "shisetsu_seibi": str(shisetsu_seibi),
+            "shisetsu_seibi_LCC": str(shisetsu_seibi_LCC),
+            "shisetsu_seibi_org": str(shisetsu_seibi_org),
+            "shisetsu_seibi_org_LCC": str(shisetsu_seibi_org_LCC),
             "shisetsu_seibi_paymentschedule_ikkatsu": str(shisetsu_seibi_paymentschedule_ikkatsu),
             "shisetsu_seibi_paymentschedule_kappu": str(shisetsu_seibi_paymentschedule_kappu),
             "shoukan_kaishi_jiki": int(shoukan_kaishi_jiki),
@@ -1086,17 +876,17 @@ class Edit_result(ft.Stack):
             "SPC_hiyou_nen": str(SPC_hiyou_nen),
             "SPC_keihi_LCC": str(SPC_keihi_LCC),
 
-            "target_years": int(target_years),
-            "tourokumenkyozei_hyoujun": str(initial_inputs["tourokumenkyozei_hyoujun"]),
-            "tourokumenkyozei_ritsu": str(initial_inputs["tourokumenkyozei_ritsu"]),
-            "yosantanka_hiritsu_shisetsu": str(initial_inputs["yosantanka_hiritsu_shisetsu"]),
-            "yosantanka_hiritsu_ijikanri_1": str(initial_inputs["yosantanka_hiritsu_ijikanri_1"]),
-            "yosantanka_hiritsu_ijikanri_2": str(initial_inputs["yosantanka_hiritsu_ijikanri_2"]),
-            "yosantanka_hiritsu_ijikanri_3": str(initial_inputs["yosantanka_hiritsu_ijikanri_3"]),
-            "zei_total": str(initial_inputs["zei_total"]),
+            "target_years": int(self.target_inputs['target_years']),
+            "tourokumenkyozei_hyoujun": str(self.target_inputs["tourokumenkyozei_hyoujun"]),
+            "tourokumenkyozei_ritsu": str(self.target_inputs["tourokumenkyozei_ritsu"]),
+            "yosantanka_hiritsu_shisetsu": str(self.target_inputs["yosantanka_hiritsu_shisetsu"]),
+            "yosantanka_hiritsu_ijikanri_1": str(self.target_inputs["yosantanka_hiritsu_ijikanri_1"]),
+            "yosantanka_hiritsu_ijikanri_2": str(self.target_inputs["yosantanka_hiritsu_ijikanri_2"]),
+            "yosantanka_hiritsu_ijikanri_3": str(self.target_inputs["yosantanka_hiritsu_ijikanri_3"]),
+            "zei_total": str(self.target_inputs["zei_total"]),
 
             }
-        return final_inputs
+        return edit_final_inputs
 
 # IIからの_save_to_db
     #def _save_to_db(self, data):
@@ -1107,9 +897,9 @@ class Edit_result(ft.Stack):
 
 # FIからの_save_to_db
     def _save_to_db(self, data):
-        if self.page.session.store.contains_key("final_inputs"):
-            self.page.session.store.remove("final_inputs")
-        self.page.session.store.set("final_inputs",data)
+        if self.page.session.store.contains_key("edit_final_inputs"):
+            self.page.session.store.remove("edit_final_inputs")
+        self.page.session.store.set("edit_final_inputs",data)
 
 
 
