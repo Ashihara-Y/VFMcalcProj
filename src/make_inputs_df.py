@@ -12,7 +12,10 @@ from pathlib import Path
 #import dateutil
 
 def main():
-    if Path("fi_db.json").exists():
+    if Path("ei_db.json").exists():
+        db = TinyDB("ei_db.json")
+        inputs = db.all()[0]
+    elif Path("fi_db.json").exists():
         db = TinyDB("fi_db.json")
         inputs = db.all()[0]
     else:

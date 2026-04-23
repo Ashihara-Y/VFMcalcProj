@@ -19,7 +19,12 @@ def make_empty_pl(cols):
 
     cols_waku = ['year','periods']
 
-    if os.path.exists("fi_db.json"):
+    if os.path.exists("ei_db.json"):
+        db = TinyDB("ei_db.json")
+        edit_final_inputs = db.all()[0]
+        target_years = edit_final_inputs['target_years']
+        first_end_fy = edit_final_inputs['first_end_fy']
+    elif os.path.exists("fi_db.json"):
         db = TinyDB("fi_db.json")
         final_inputs = db.all()[0]
         target_years = final_inputs['target_years']

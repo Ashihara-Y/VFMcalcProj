@@ -2,7 +2,8 @@ import sys
 
 sys.dont_write_bytecode = True
 #import os
-from tinydb import TinyDB, Query
+#from tinydb import TinyDB, Query
+import make_inputs_df
 import save_results as sr
 import PSC_calc
 import PSC_calc_DBO
@@ -28,8 +29,7 @@ import check_SPC_cashForPPayment_BT
 
 
 def VFM_calc():
-    db = TinyDB("fi_db.json")
-    inputs = db.all()[0]
+    inputs = make_inputs_df.main()
 
     proj_type = inputs['proj_type']
 

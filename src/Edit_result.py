@@ -1,5 +1,6 @@
 import sys
 sys.dont_write_bytecode = True
+import os
 import pandas as pd
 import flet as ft
 from simpledt import DataFrame
@@ -345,7 +346,7 @@ class Edit_result(ft.Stack):
             min=0.975*float(self.target_inputs["shisetsu_seibi_ikkatsu_hiritsu"])*100,
             max=100.00,
             divisions=1000,
-            label="{value}％",
+            label="{value}%",
             round=2,
             width=100,
             on_change=handle_slider_change,
@@ -489,7 +490,7 @@ class Edit_result(ft.Stack):
             min=0.95*float(self.target_inputs["kappu_kinri_spread"])*100,
             max=1.05*float(self.target_inputs["kappu_kinri_spread"])*100,
             divisions=100,
-            label="{value}％",
+            label="{value}%",
             round=2,
             width=100,
             on_change=handle_slider_change,
@@ -545,9 +546,7 @@ class Edit_result(ft.Stack):
                     b,
         ]        
 
-# IIからのbutton_clicked
-        
-# FIからのbutton_clicked
+# button_clicked
     async def button_clicked(self, e):
         self._extract_inputs()
 
@@ -557,12 +556,10 @@ class Edit_result(ft.Stack):
         VFM_calc()
         await self.page.push_route("/view_saved")
         
-
+# 編集画面からの_extract_inputs
     def to_dec(val):
             return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
-
-# 編集画面からの_extract_inputs
     def _extract_inputs(self):
 
         proj_years = int(self.target_inputs["proj_years"])
@@ -887,18 +884,17 @@ class Edit_result(ft.Stack):
             }
         return edit_final_inputs
 
-# IIからの_save_to_db
-    #def _save_to_db(self, data):
-    #    if self.page.session.store.contains_key("initial_inputs"):
-    #        self.page.session.store.remove("initial_inputs")
-    #    self.page.session.store.set("initial_inputs",data)
 
-
-# FIからの_save_to_db
+# _save_to_db
     def _save_to_db(self, data):
         if self.page.session.store.contains_key("edit_final_inputs"):
             self.page.session.store.remove("edit_final_inputs")
         self.page.session.store.set("edit_final_inputs",data)
+        if os.path.exists("ei_db.json"):
+            os.remove("ei_db.json")
+        db = TinyDB('ei_db.json')
+        db.insert(data)
+        db.close()
 
 
 
