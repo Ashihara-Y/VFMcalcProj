@@ -86,12 +86,14 @@ async def main(page: ft.Page):
                 )
             )
         elif page.route == "/edit_saved":
+            sel_dtimes = page.session.store.get("selected_datetime") # セッションストレージからselected_datetimeを取得
+            sel_dtime = sel_dtimes[0] if sel_dtimes is not None else "No datetime selected" # 取得できない場合のデフォルト値
             page.views.append(
                 ft.View(
                     route="/edit_saved",
                     controls=[
                         ft.AppBar(title=ft.Text("算定結果調整")),
-                        Edit_result(),
+                        Edit_result(selected_datetime=sel_dtime),
                         #download.download(),
                         #ft.ElevatedButton("詳細を見る", on_click=open_results_detail),
                     ],
@@ -119,8 +121,8 @@ async def main(page: ft.Page):
         await page.push_route("/view_saved")
 
     async def open_edit_result(e):
-        emp_list=[]
-        page.session.store.set("selected_datetime", emp_list) #initialization
+        #emp_list=[]
+        #page.session.store.set("selected_datetime", emp_list) #initialization
         await page.push_route("/edit_saved")
 
     async def open_initial_inputs(e):
