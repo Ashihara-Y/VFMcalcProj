@@ -6,12 +6,12 @@ from simpledt import DataFrame
 from tinydb import TinyDB, Query
 #import openpyxl
 from sqlalchemy import create_engine
-import make_inputs_df
+#import make_inputs_df
 #import decimal
 from decimal import Decimal, ROUND_HALF_UP
-import timeflake
-import datetime
-from zoneinfo import ZoneInfo
+#import timeflake
+#import datetime
+#from zoneinfo import ZoneInfo
 from VFMcalc2 import VFM_calc
 
 @ft.control
@@ -549,11 +549,11 @@ class Edit_result(ft.Stack):
         
 # FIからのbutton_clicked
     async def button_clicked(self, e):
-        input_data = self._extract_inputs()
+        self._extract_inputs()
 
-        calc_results = self._calculate_financials(input_data)
+        edit_results = self._calculate_financials()
         
-        self._save_to_db(calc_results)
+        self._save_to_db(edit_results)
         VFM_calc()
         await self.page.push_route("/view_saved")
         
@@ -620,10 +620,9 @@ class Edit_result(ft.Stack):
         }
 
 # 編集画面からの_calculate_financials
-    def _calculate_financials(self, inputs):
+    def _calculate_financials(self):
         
         const_start_date = self.target_inputs['const_start_date']
-        proj_ctgry = self.target_inputs['proj_ctgry']
         proj_type = self.target_inputs['proj_type']
 
         shisetsu_seibi_org = self.to_dec(self.target_inputs['shisetsu_seibi_org'])
