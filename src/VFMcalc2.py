@@ -28,8 +28,10 @@ import check_SPC_cashForPPayment_BOT
 import check_SPC_cashForPPayment_BT
 
 
-def VFM_calc(inputs):
-    inputs = make_inputs_df.main(inputs)
+def VFM_calc(inputs_raw=None):
+    inputs = make_inputs_df.main(inputs_raw)
+    inputs = inputs.model_dump()
+
 
     proj_type = inputs['proj_type']
 
