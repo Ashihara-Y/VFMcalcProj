@@ -19,5 +19,6 @@ tinydb
 pyxirr
 duckdb
 duckdb-engine
+scipy
 sqlalchemy
 styleframe

@@ -11,6 +11,8 @@ from tinydb import TinyDB, Query
 from decimal import *
 from zoneinfo import ZoneInfo
 import logging
+from scipy.interpolate import PchipInterpolator
+import numpy as np
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -344,13 +346,18 @@ class Initial_Inputs(ft.Column):
         JGB_rates_df = pd.read_csv("src/JGB_rates.csv", sep="\t", encoding="utf-8", header=None, names=["year", "rate"],).set_index("year")
         JRB_rates_df = pd.read_csv("src/JRB_rates.csv", sep="\t", encoding="utf-8", names=[0,1,2,3,4,5], index_col=0)
 
-        y, d = divmod(proj_years, 5)
-        if y >= 1:
-            r_idx = str((y + 1) * 5) + "年" if d > 2 else str(y * 5) + "年"
-        else:
-            r_idx = str(d) + "年"
+        val_array = JGB_rates_df.iloc[0:,0].to_numpy()
+        col_series = JGB_rates_df.T.columns.to_series().apply(lambda x: x[:-1])
+        col_array = col_series.values.astype(int)
+        pchip_interp = PchipInterpolator(col_array, val_array)
+        #y, d = divmod(proj_years, 5)
+        #if y >= 1:
+        #    r_idx = str((y + 1) * 5) + "年" if d > 2 else str(y * 5) + "年"
+        #else:
+        #    r_idx = str(d) + "年"
 
-        r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
+        r1 = Decimal(pchip_interp(proj_years))
+        #r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
         r2 = Decimal(JRB_rates_df.loc[chisai_shoukan_kikan][const_years])
         kitai_bukka_j = Decimal(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
         gonensai_rimawari = Decimal(JGB_rates_df.loc["5年"].iloc[0])

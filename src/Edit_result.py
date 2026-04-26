@@ -40,8 +40,12 @@ class Edit_result(ft.Stack):
 # final_inputs_res_tableの方は、編集前後の入力値等を算定過程も通じて作成するための材料
 # res_summ_res_tableの方は、結果要約の表を作るための材料。
         target_summ_df = self.selected_res_list[0]
-        target_inputs_df = self.selected_res_list[1]
-        self.target_inputs = target_inputs_df.rename(columns={
+        target_inputs_df_j = self.selected_res_list[1]
+        # ここで必要なのは、SimpleDTに入れるためのDFで、日本語見出し。
+        # ただし、この関数内で計算する際に渡すなら、英変数名に切り替えて、辞書にする必要あり。
+        # Targetu_Inputsは、VFMcalcに渡さない。渡すのはEdit_Inputs
+        self.target_inputs = target_inputs_df_j.iloc[0].rename(
+            {
                 'datetime':'datetime',
                 '施設管理者区分':'mgmt_type',
                 '事業形態':'proj_ctgry',
@@ -105,11 +109,10 @@ class Edit_result(ft.Stack):
                 '固定資産税率(%)':'koteishisanzei_ritsu',
                 '登録免許税課税標準(百万円)':'tourokumenkyozei_hyoujun',
                 '登録免許税率(%)':'tourokumenkyozei_ritsu',
-                }
-        ).set_index('項目名')['値'].to_dict()
+            }
+        ).to_dict() 
 
         target_summ_df['discount_rate'] = target_summ_df['discount_rate'] * 100
-
         target_summ_df = target_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
         target_inputs_df = target_inputs_df.drop(['datetime'], axis=1)
 
@@ -133,13 +136,13 @@ class Edit_result(ft.Stack):
             }
         )
         # 最終入力・パラメータの表を作成
-        self.target_inputs_df = target_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
-        simpledt_targetinputs_df = DataFrame(self.target_inputs_df)
+        self.target_inputs_df_t = target_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
+        simpledt_targetinputs_df = DataFrame(self.target_inputs_df_t)
         simpledt_targetinputs_dt = simpledt_targetinputs_df.datatable
         self.table_targetinputs = simpledt_targetinputs_dt
 
         # 編集対象算定結果要約の表を作成
-        target_summ_df_t = target_summ_df.transpose().reset_index()
+        target_summ_df_t = target_summ_df_J.transpose().reset_index()
         target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
         simpledt_target_summ_df = DataFrame(target_summ_df_t)
         simpledt_target_summ_dt = simpledt_target_summ_df.datatable

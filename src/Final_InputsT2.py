@@ -44,7 +44,7 @@ class Final_Inputs(ft.Column):
         slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value13 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value14 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value15 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -308,6 +308,17 @@ class Final_Inputs(ft.Column):
             label="SPC経費の扱い（デフォルト：サービス対価で支払）",
             value=True,
         )
+        tx18 = ft.Text("国債利回りと民間RFレートのスプレッド(BP)")
+        self.sl12 = ft.Slider(
+            value=float(self.initial_inputs["lg_spread"])*10000,
+            min=100,
+            max=200,
+            divisions=100,
+            label="{value}BP",
+            round=1,
+            on_change=handle_slider_change,
+            data=slider_value12,
+        )
         tx19 = ft.Text("アドバイザリー等経費(百万円)")
         self.sl13 = ft.Slider(
             value=0,
@@ -457,6 +468,7 @@ class Final_Inputs(ft.Column):
                     tx15,slider_value09, self.sl9,  ft.Divider(height=1, color="amber"),
                     tx16,slider_value10, self.sl10, ft.Divider(height=1, color="amber"),
                     tx17,slider_value11, self.sl11, ft.Divider(height=1, color="amber"),
+                    tx18,slider_value12, self.sl12, ft.Divider(height=1, color="amber"),
                     self.sw01,ft.Divider(height=1, color="amber"),
                     tx19,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
                     tx20,slider_value14, self.sl14, ft.Divider(height=1, color="amber"),
@@ -496,8 +508,8 @@ class Final_Inputs(ft.Column):
 
         calc_results = self._calculate_financials(input_data)
         
-        self._save_to_db(calc_results)
-        VFM_calc()
+        inputs = self._save_to_db(calc_results)
+        VFM_calc(inputs=inputs)
         await self.page.push_route("/view_saved")
         
        
@@ -518,6 +530,7 @@ class Final_Inputs(ft.Column):
         SPC_fee = Decimal(self.sl9.value)
         SPC_shihon = Decimal(self.sl10.value)
         SPC_yobihi = Decimal(self.sl11.value)
+        lg_spread = Decimal(self.sl12.value)/Decimal(10000)
 
         advisory_fee = Decimal(self.sl13.value)
         riyouryoukin_shunyu = Decimal(self.sl14.value)
@@ -552,7 +565,7 @@ class Final_Inputs(ft.Column):
             'SPC_fee': SPC_fee,
             'SPC_shihon': SPC_shihon,
             'SPC_yobihi': SPC_yobihi,
-
+            'lg_spread': lg_spread,
             'advisory_fee': advisory_fee,
             'riyouryoukin_shunyu': riyouryoukin_shunyu,
             'kappu_kinri_spread': kappu_kinri_spread,
@@ -601,7 +614,7 @@ class Final_Inputs(ft.Column):
         chisai_sueoki_kikan = inputs['chisai_sueoki_kikan']
         shoukan_kaishi_jiki = const_years + chisai_sueoki_kikan + 1
 
-        lg_spread = to_dec(self.initial_inputs['lg_spread'])
+        lg_spread = to_dec(inputs['lg_spread'])
         kappu_kinri_spread = inputs['kappu_kinri_spread']
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = to_dec(Kappu_kinri)
@@ -689,7 +702,7 @@ class Final_Inputs(ft.Column):
             "koteishisanzei_hyoujun": str(self.initial_inputs["koteishisanzei_hyoujun"]),
             "koteishisanzei_ritsu": str(self.initial_inputs["koteishisanzei_ritsu"]),
 
-            "lg_spread": str(self.initial_inputs["lg_spread"]),
+            "lg_spread": str(lg_spread),
             "mgmt_type": self.initial_inputs["mgmt_type"],
             "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
             "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
@@ -836,5 +849,6 @@ class Final_Inputs(ft.Column):
         db.insert(data)
         db.close()
         self.page.session.store.set("final_inputs",data)
+        return data
 
 
