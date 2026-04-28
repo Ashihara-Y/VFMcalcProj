@@ -2,20 +2,27 @@ Business Source License 1.1
 
 Parameters
 
-Licensor:             VFMlab.org.
+Licensor:             VFMlab.org Yoshihiro　Ashihara
 Licensed Work:        VFMcalc 0.5
-                      The Licensed Work is (c) 2025 VFMlab.org.
-Additional Use Grant: You may make use of the Licensed Work, provided that
-                      you may not use the Licensed Work for a VFM or NPV
-                      calculation Service.
+                      The Licensed Work is (c) 2026 VFMlab.org.
+Additional Use Grant: You may make use of the Licensed Work for non-production 
+                      purposes, including code review, testing, auditing, and 
+                      verifying its mathematical accuracy and conformity with 
+                      public procurement guidelines.
 
-                      A “VFM or NPV calculation” is a commercial offering that
-                      allows third parties (other than your employees and
-                      contractors) to access the functionality of the
-                      Licensed Work by calculating VFM/NPV whose parameters are
-                      controlled by such third parties.
+                      You may NOT use the Licensed Work for any Production Use. 
+                      "Production Use" means executing the Licensed Work to 
+                      generate VFM or NPV calculation results for any actual 
+                      public or private project, for providing advisory or 
+                      consulting services to third parties, or for providing 
+                      a SaaS or API service.
+
+                      To execute the Licensed Work for Production Use, you must 
+                      use the officially provided cloud service/API by the 
+                      Licensor, or obtain a separate commercial license.
+
 Change Date:          28 April, 2030
-Change License:       Apache 2.0
+Change License:       Apache License, Version 2.0
 
 Notice
 
@@ -72,14 +79,14 @@ EXPRESS OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 TITLE.
 
-DataClouds.net hereby grants you permission to use this License’s text to license
+Licensor hereby grants you permission to use this License’s text to license
 your works, and to refer to it using the trademark “Business Source License”,
 as long as you comply with the Covenants of Licensor below.
 
 Covenants of Licensor
 
 In consideration of the right to use this License’s text and the “Business
-Source License” name and trademark, Licensor covenants to VFMcalc, and to all
+Source License” name and trademark, Licensor covenants to you, and to all
 other recipients of the licensed work to be provided by Licensor:
 
 1. To specify as the Change License the GPL Version 2.0 or any later version,
