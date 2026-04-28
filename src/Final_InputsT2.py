@@ -508,8 +508,8 @@ class Final_Inputs(ft.Column):
 
         calc_results = self._calculate_financials(input_data)
         
-        inputs = self._save_to_db(calc_results)
-        VFM_calc(inputs=inputs)
+        self._save_to_db(calc_results)
+        VFM_calc()
         await self.page.push_route("/view_saved")
         
        
@@ -849,6 +849,6 @@ class Final_Inputs(ft.Column):
         db.insert(data)
         db.close()
         self.page.session.store.set("final_inputs",data)
-        return data
+        #return data
 
 

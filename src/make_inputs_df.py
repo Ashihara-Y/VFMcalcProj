@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from pathlib import Path
 #import dateutil
 
-def main(inputs):
+def main():
     #if Path("ei_db.json").exists():
     #    db = TinyDB("ei_db.json")
     #    inputs = db.all()[0]

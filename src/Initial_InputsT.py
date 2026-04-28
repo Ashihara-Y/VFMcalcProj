@@ -355,8 +355,8 @@ class Initial_Inputs(ft.Column):
         #    r_idx = str((y + 1) * 5) + "年" if d > 2 else str(y * 5) + "年"
         #else:
         #    r_idx = str(d) + "年"
-
-        r1 = Decimal(pchip_interp(proj_years))
+        r1_fl_str = str(pchip_interp(proj_years))
+        r1 = Decimal(r1_fl_str).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
         #r1 = Decimal(JGB_rates_df.loc[r_idx].iloc[0])
         r2 = Decimal(JRB_rates_df.loc[chisai_shoukan_kikan][const_years])
         kitai_bukka_j = Decimal(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
