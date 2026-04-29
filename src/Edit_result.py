@@ -311,7 +311,7 @@ class Edit_result(ft.Stack):
         slider_value13 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value14 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value15 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
             
         def handle_slider_change(e):
             sl_value = e.control.value

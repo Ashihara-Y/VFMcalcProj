@@ -6,7 +6,7 @@ import pandas as pd
 from ulid import ULID
 import timeflake
 import datetime
-#import tinydb
+import uuid6
 from tinydb import TinyDB, Query
 import make_inputs_df
 #import decimal
@@ -20,7 +20,7 @@ conn = sqlite3.connect('VFM.db')
 c = conn.cursor()
 
 user_id = ULID.from_datetime(datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")))
-calc_id = timeflake.random()
+calc_id = uuid6.uuid7()
 #JST = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
 dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
 
