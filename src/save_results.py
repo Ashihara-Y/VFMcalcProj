@@ -21,8 +21,9 @@ c = conn.cursor()
 
 user_id = ULID.from_datetime(datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")))
 calc_id = uuid6.uuid7()
-#JST = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
-dtime = datetime.datetime.fromtimestamp(calc_id.timestamp // 1000, tz=ZoneInfo("Asia/Tokyo"))
+timestamp = calc_id.int >> 80
+dtime = datetime.datetime.fromtimestamp(timestamp // 1000.0, tz=ZoneInfo("Asia/Tokyo"))
+#fromtimestamp(timestamp_ms / 1000.0, tz=timezone.utc)
 
 df_name_list=[]
 
