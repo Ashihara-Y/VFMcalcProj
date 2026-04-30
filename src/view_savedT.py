@@ -44,7 +44,9 @@ class View_saved(ft.Column):
             'proj_ctgry',
             'proj_type',
             'proj_years',
-            'const_years'
+            'const_years',
+            'calc_id',
+            'user_id'
             ]]
         
         self.res_summ_list = grd_df_exp_ri2.rename(
@@ -67,6 +69,7 @@ class View_saved(ft.Column):
             row_dic = row._asdict()
             row = pd.DataFrame(row_dic, index=[0])
             dtime = row['datetime'].iloc[0]
+            calc_id = row['calc_id'].iloc[0]
             row['datetime'] = row['datetime'].apply(lambda x: datetime.datetime.fromisoformat(x).strftime('%Y-%m-%d %H:%M:%S'))
             row = row.rename(
                 columns={
@@ -84,7 +87,8 @@ class View_saved(ft.Column):
             )
             df = DataFrame(row)
             for i in df.datarows:
-                i.data = dtime                
+                i.data = dtime
+                #i.data = calc_id
                 i.selected=False
                 i.selectable=True
                 i.on_select_change=self.handle_row_selection
@@ -129,7 +133,7 @@ class View_saved(ft.Column):
                     actions=[ft.Button("OK", on_click=lambda e: self.page.dialog(None))],
                 )
             )
-            self.page.update()
+            await self.page.update()
     
     def del_selected(self, e):
             Base = declarative_base()
@@ -159,7 +163,10 @@ class View_saved(ft.Column):
     sel_list = []
     def add_to_sel_list(self, e):
         dtime = e.control.data
+        #calc_id = e.control.data
         if dtime not in self.sel_list:
             self.sel_list.append(dtime)
+        #if calc_id not in self.sel_list:
+        #    self.sel_list.append(calc_id)
 
 
