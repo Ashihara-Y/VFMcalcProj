@@ -61,6 +61,10 @@
 
 ## 免責事項
 本リポジトリのソースコードは「現状有姿（As-Is）」で提供され、特定のプロジェクトへの適合性や完全性を保証するものではありません。算定結果の最終的な利用責任は、利用者に帰属します。
+
+---
+
+## For your help
 Please refer on the detail to the following link made by DeepWiki.
 [Detail by DeepWiki](https://deepwiki.com/Ashihara-Y/VFMcalcProj/1-overview)
 ...
