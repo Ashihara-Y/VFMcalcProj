@@ -70,7 +70,7 @@ class View_saved(ft.Column):
             row = pd.DataFrame(row_dic, index=[0])
             dtime = row['datetime'].iloc[0]
             calc_id = row['calc_id'].iloc[0]
-            control_data = {"dtime":dtime, "calc_id":calcz_id}
+            control_data = {"dtime":dtime, "calc_id":calc_id}
             row['datetime'] = row['datetime'].apply(lambda x: datetime.datetime.fromisoformat(x).strftime('%Y-%m-%d %H:%M:%S'))
             row = row.rename(
                 columns={
