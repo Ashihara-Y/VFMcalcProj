@@ -390,3 +390,8 @@ class Results(ft.Stack):
                 ),
             )
         ]
+
+    def _save_to_db(self, data):
+        if self.page.session.store.contains_key("selected_datetime"):
+            self.page.session.store.remove("selected_datetime")
+        self.page.session.store.set("selected_datetime", self.dtime)
