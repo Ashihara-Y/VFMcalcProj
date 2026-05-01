@@ -59,6 +59,19 @@
 
 ---
 
+## Acknowledgments / Attribution (CC BY 4.0)
+
+The VFM (Value for Money) calculation algorithm implemented in this repository is based on the "VFM Calculation Sheet" (Excel format) trial-distributed by the Cabinet Office, Government of Japan, in March 2025. 
+
+The original material was provided under the Creative Commons Attribution 4.0 International License (CC BY 4.0). 
+- **Original Author:** Cabinet Office, Government of Japan
+- **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **Modifications:** The original spreadsheet-based calculation logic has been adapted and implemented as a Python-based web application and API by this project.
+
+*Note: While the foundational calculation algorithm is attributed to the original CC BY 4.0 material, the specific source code, software implementation, and architecture in this repository (the "Licensed Work") are governed by the Business Source License 1.1 (BSL 1.1), as detailed in the `LICENSE` file.*
+
+---
+
 ## 免責事項
 本リポジトリのソースコードは「現状有姿（As-Is）」で提供され、特定のプロジェクトへの適合性や完全性を保証するものではありません。算定結果の最終的な利用責任は、利用者に帰属します。
 
