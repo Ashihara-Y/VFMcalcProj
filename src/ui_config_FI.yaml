@@ -1,0 +1,25 @@
+ja:
+  sliders:
+    - id: "shisetsu_seibi_r"
+      label: "施設整備費落札価格ベース(百万円)"
+      min: 0
+      max: 50000
+      divisions: 50000
+      default_value: 0
+      unit: "百万円"
+      round: 0
+    - id: "reduc_shisetsu"
+      label: "施設整備費の効率性(%)(推奨:5%)"
+      min: 0.0
+      max: 20.0
+      divisions: 200
+      default_value: 5.0
+      unit: "%"
+      round: 1
+    # ... 残りのスライダー定義を追記 ...
+
+en:
+  sliders:
+    - id: "shisetsu_seibi_r"
+      label: "Facility Construction Cost (Bid Price, JPY Mil)"
+      # (以下略)
