@@ -121,8 +121,10 @@ async def main(page: ft.Page):
         await page.push_route("/view_saved")
 
     async def open_edit_result(e):
-        emp_list=[]
-        page.session.store.set("selected_datetime", emp_list) #initialization
+        dtime = page.session.store.get("selected_datetime") #initialization
+        #e.control.data = dtime
+        #Results.save_to_db(self=Results(selected_datetime=Results.dtime))
+        page.session.store.set("selected_datetime", dtime) #ここでは初期化は不要！
         await page.push_route("/edit_saved")
 
     async def open_initial_inputs(e):
