@@ -91,7 +91,6 @@ class Initial_Inputs(ft.Column):
 
                     slider_value_control = ft.Text("", size=30, weight=ft.FontWeight.W_200)
                     slider_value_control.value = str(current_value)
-                    #slider_value_control.update()
 
                     slider_control = ft.Slider(
                         value=current_value,
@@ -106,7 +105,7 @@ class Initial_Inputs(ft.Column):
                     
                     self.slider_controls[sid] = slider_control
                     divider = ft.Divider(height=1, color="amber")
-                    # slider_controlとslider_value_controlをdeviderとタブルにまとめて、extend()でリストに追加
+                    # slider_controlとslider_value_controlを、表示テキスト、deviderとタブルにまとめて、extend()でリストに追加
                     sliders.extend((ft.Text(slider_cfg['tx']), slider_value_control, slider_control, divider))
 
                 return sliders
