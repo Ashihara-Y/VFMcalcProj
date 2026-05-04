@@ -27,9 +27,10 @@ class Initial_Inputs(ft.Column):
             scroll=ft.ScrollMode.AUTO,
         )
         #self.title = "初期入力"
-        #self.width = 500
-        #self.height = 2000
-        #self.window_height = 2000
+        self.width = 500
+        self.height = 2000
+        self.window_height = 2000
+        self.window_width = 500
         #self.resizable = 1
         #self.expand=True
         #self.scroll=ft.ScrollMode.AUTO
@@ -55,7 +56,6 @@ class Initial_Inputs(ft.Column):
                     else:
                         current_value = dd_cfg['default_value']
 
-                    #current_value = self.ui_init_values.get(dd_id, dd_cfg['default_value'])
                     options = [ft.DropdownOption(opt) for opt in dd_cfg['options']]
                     dropdown_control = ft.Dropdown(
                         label=dd_cfg['label'],
@@ -105,37 +105,26 @@ class Initial_Inputs(ft.Column):
                         )
                     
                     self.slider_controls[sid] = slider_control
-                    sliders.append((ft.Text(slider_cfg['tx']), slider_value_control, slider_control, ft.Divider(height=1, color="amber")))
+                    divider = ft.Divider(height=1, color="amber")
+                    # slider_controlとslider_value_controlをdeviderとタブルにまとめて、extend()でリストに追加
+                    sliders.extend((ft.Text(slider_cfg['tx']), slider_value_control, slider_control, divider))
 
                 return sliders
-
-        #dropdowns = _create_dropdowns_from_yaml(self)
-        #sliders = _create_sliders_from_yaml(self)
-
-        #b = ft.Button(content="初期値の入力", on_click=self.button_clicked)
-
-        #self.controls = [
-        #    *dropdowns,
-        #    ft.Divider(height=1, color="amber"),
-        #    *sliders, 
-        #    b
-        #]
 
     def _build_ui(self):
         """UI部品を生成し、自身(Column)のcontrolsにセットする"""
         # 関数を呼んでリストを取得
         dropdowns_ui = self._create_dropdowns_from_yaml()
         sliders_ui = self._create_sliders_from_yaml()
-        
-        self.b = ft.Button(content="初期値の入力", on_click=self.button_clicked)
 
-        # ★重要: 自身が ft.Column なので、自身の controls プロパティに代入します。
+        b = ft.Button(content="初期値の入力", on_click=self.button_clicked)
+
         # リストの前に `*` (アスタリスク) を付けて、リストの中身を平坦化(アンパック)して渡します。
         self.controls = [
             *dropdowns_ui,
             ft.Divider(height=1, color="amber"),
             *sliders_ui,
-            self.b,
+            b,
         ]
 
     async def button_clicked(self, e):
