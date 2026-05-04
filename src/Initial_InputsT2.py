@@ -136,9 +136,13 @@ class Initial_Inputs(ft.Column):
         
 
     def _extract_inputs(self):
-        mgmt_type = self.dd1.value
-        proj_ctgry = self.dd2.value
-        proj_type = self.dd3.value
+    
+            self.slider_controls = {}
+        self.dropdown_controls = {}
+
+        mgmt_type = self.dropdown_controls['mgmt_type'].value
+        proj_ctgry = self.dropdown_controls['proj_ctgry'].value
+        proj_type = self.dropdown_controls['proj_type'].value
 
         raw_proj_years = self.dd6.value if proj_type == "BT/DB(いずれもSPCなし)" else self.dd4.value
 
