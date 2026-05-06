@@ -268,7 +268,7 @@ def make_df_addID_saveDB():
             addID(i)
 
     for x_df in df_name_list:
-        x_df[0].applymap(lambda x: float(x) if isinstance(x, decimal.Decimal) else x)
+        x_df[0].map(lambda x: float(x) if isinstance(x, decimal.Decimal) else x)
         x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
     
 
