@@ -1,6 +1,7 @@
 import sys
 sys.dont_write_bytecode = True
 import flet as ft
+from Landing_view import LandingContainer
 from Initial_InputsT2 import Initial_Inputs
 from Final_InputsT2 import Final_Inputs
 from Resultview2 import Results
@@ -12,6 +13,7 @@ import download
 import logging
 import pandas as pd
 from sqlalchemy import create_engine
+import asyncio
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -22,24 +24,41 @@ async def main(page: ft.Page):
     page.vertical_alignment = ft.MainAxisAlignment.START
 
     def route_change():
+        #troute = ft.TemplateRoute(page.route)
         #print("Route changed to:", page.route)
         page.views.clear()
+
         page.views.append(
-            ft.View(
-                route="/",
-                controls=[
-                    ft.AppBar(title=ft.Text("初期入力"),
-                            bgcolor=ft.Colors.SURFACE_CONTAINER,
-                            actions=[
-                                ft.Button(content="既存の算定結果を見る", on_click=open_saved_list),
-                            ],
-                    ),
-                    Initial_Inputs(),
-                ],
-                scroll=ft.ScrollMode.ALWAYS,
+                ft.View(
+                    route="/",
+                    controls=[
+                        #ft.Text("Welcome to the VFM Calculator")
+                        LandingContainer(on_action=lambda r: page.push_route(r), current_locale='ja')
+                    ],
+                )
             )
-        )
-        if page.route == "/final_inputs":
+        
+        if page.route == "/initial_inputs":
+            if not page.session.store.get("auth0_sub"):
+                open_landing()
+            page.views.append(
+                ft.View(
+                    route="/initial_inputs", 
+                    controls=[
+                        ft.AppBar(title=ft.Text("初期入力"),
+                                bgcolor=ft.Colors.SURFACE_CONTAINER,
+                                actions=[
+                                    ft.Button(content="既存の算定結果を見る", on_click=open_saved_list),
+                                ],
+                        ),
+                        Initial_Inputs(),
+                    ],
+                    scroll=ft.ScrollMode.ALWAYS,
+                )
+            )
+        
+
+        elif page.route == "/final_inputs":
             initial_inputs = page.session.store.get("initial_inputs") 
             page.views.append(
                 ft.View(
@@ -51,7 +70,8 @@ async def main(page: ft.Page):
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
                 )
-            )
+            )        
+
         elif page.route == "/results_detail":
             sel_dtimes = page.session.store.get("selected_datetime") # セッションストレージからselected_datetimeを取得
             sel_dtime = sel_dtimes[0] if sel_dtimes is not None else "No datetime selected" # 取得できない場合のデフォルト値
@@ -127,7 +147,7 @@ async def main(page: ft.Page):
         page.session.store.set("selected_datetime", dtime) #ここでは初期化は不要！
         await page.push_route("/edit_saved")
 
-    async def open_initial_inputs(e):
+    async def open_landing(e):
         await page.push_route("/")
     
     async def result_to_excel(e):
