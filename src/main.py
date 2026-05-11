@@ -12,7 +12,7 @@ import export_to_excel
 import download
 import logging
 import pandas as pd
-from sqlalchemy import create_engine
+#from sqlalchemy import create_engine
 import asyncio
 
 
@@ -33,14 +33,14 @@ async def main(page: ft.Page):
                     route="/",
                     controls=[
                         #ft.Text("Welcome to the VFM Calculator")
-                        LandingContainer(on_action=lambda r: page.push_route(r), current_locale='ja')
+                        LandingContainer(on_action=lambda r: asyncio.create_task(page.push_route(r)), current_locale='ja')
                     ],
                 )
             )
         
         if page.route == "/initial_inputs":
             if not page.session.store.get("auth0_sub"):
-                open_landing()
+                open_landing(e=None)  # 認証されていない場合はランディングページへ
             page.views.append(
                 ft.View(
                     route="/initial_inputs", 
