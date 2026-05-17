@@ -184,4 +184,4 @@ async def main(page: ft.Page):
     route_change()
 
 
-ft.app(target=main, view=ft.AppView.WEB_BROWSER) 
+ft.app(target=main, view=ft.AppView.WEB_BROWSER, port=8550) 

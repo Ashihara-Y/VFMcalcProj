@@ -1,13 +1,15 @@
 import os
 import flet as ft
 from flet.auth.providers.auth0_oauth_provider import Auth0OAuthProvider
+from dotenv import load_dotenv
+load_dotenv()
 
 # === Auth0 設定情報 ===
 # ※本番環境では必ず .env ファイル等の環境変数から読み込んでください
-AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN", "YOUR_DOMAIN.auth0.com")
-AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID", "YOUR_CLIENT_ID")
-AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET", "YOUR_CLIENT_SECRET")
-REDIRECT_URL = "http://localhost:8550/api/auth/callback" # Flet開発時のデフォルト
+AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
+AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
+AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
+REDIRECT_URL = os.getenv("REDIRECT_URL") # Flet開発時のデフォルト
 
 def get_auth0_provider():
     """Auth0プロバイダのインスタンスを生成して返す"""
