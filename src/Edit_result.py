@@ -16,8 +16,12 @@ import datetime
 #from zoneinfo import ZoneInfo
 from VFMcalc2 import VFM_calc
 from scipy.interpolate import PchipInterpolator
+from flet.auth.providers.auth0_oauth_provider import Auth0OAuthProvider
+from auth_manager import setup_auth, get_auth0_provider
 import save_results as sr
 
+#setup_auth(page: ft.Page, on_login_success)
+#auth0_provider = get_auth0_provider()
 @ft.control
 class Edit_result(ft.Stack):
     def __init__(self, selected_datetime):
@@ -159,6 +163,102 @@ class Edit_result(ft.Stack):
         simpledt_target_summ_df = DataFrame(target_summ_df_t)
         simpledt_target_summ_dt = simpledt_target_summ_df.datatable
         self.table_target_summ = simpledt_target_summ_dt
+
+        def create_comparison_datatable(self, new_df, old_df=None):
+            """
+            DataFrameからft.DataTableを生成する。(itertuplesによる高速化版)
+            old_dfが渡された場合、new_dfと値を比較し、異なれば赤字にする。
+            """
+            columns = [ft.DataColumn(ft.Text(str(col), weight=ft.FontWeight.BOLD)) for col in new_df.columns]
+            rows = []
+        
+            # iterrows() を itertuples(index=True) に変更
+            # name=None とすることで、高速な無名タプルを生成することも可能ですが、
+            # 通常の namedtuple でも十分に高速です。
+            for row in new_df.itertuples(index=True):
+                # row.Index でインデックス（行ラベル）を取得できます
+                current_index = row.Index 
+                cells = []
+            
+                for col_name in new_df.columns:
+                    # getattr を使って、文字列の列名から namedtuple の値を取得
+                    new_val = getattr(row, col_name)
+                    text_color = ft.colors.ON_SURFACE
+                
+                    if old_df is not None and col_name != "項目名":
+                        # old_dfからの取得は loc のままでOK（インデックス検索のため）
+                        old_val = old_df.loc[current_index, col_name]
+                    
+                        if str(new_val) != str(old_val):
+                            text_color = ft.colors.RED_400
+                        
+                    cells.append(ft.DataCell(ft.Text(str(new_val), color=text_color)))
+            
+                rows.append(ft.DataRow(cells=cells))
+            
+            return ft.DataTable(
+                columns=columns, 
+                rows=rows, 
+                border=ft.border.all(1, ft.colors.OUTLINE_VARIANT),
+                vertical_lines=ft.border.BorderSide(1, ft.colors.OUTLINE_VARIANT),
+                horizontal_lines=ft.border.BorderSide(1, ft.colors.OUTLINE_VARIANT)
+                )   
+
+        # 1. 表のインスタンス生成
+        # 元の算定結果要約表（比較対象なし = 黒字）
+        self.original_summ_table = self.create_comparison_datatable(target_summ_df_t)
+        
+        # 再算定結果要約表（初期表示は元データと全く同じものを表示）
+        self.recalc_summ_table = self.create_comparison_datatable(target_summ_df_t)
+
+        # 再算定表は後で差し替えるため、Containerでラップしておく
+        self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
+
+        # 2. 左右のパネルを構築
+        # 【左パネル】表を縦に2つ並べる
+        left_panel = ft.Column(
+            expand=1, 
+            scroll=ft.ScrollMode.AUTO,
+            spacing=20,
+            controls=[
+                ft.Text("元の算定結果", size=18, weight=ft.FontWeight.BOLD),
+                self.original_summ_table,
+                ft.Divider(height=2, color="amber"),
+                ft.Text("再算定結果（シミュレーション）", size=18, weight=ft.FontWeight.BOLD),
+                self.recalc_table_container # ここを更新する
+            ]
+        )
+        
+        # 【右パネル】スライダー群
+        right_panel = ft.Column(
+            expand=1, 
+            scroll=ft.ScrollMode.AUTO,
+            spacing=10,
+            controls=[
+                ft.Text("パラメータ調整", size=18, weight=ft.FontWeight.BOLD),
+                # 既存のListView(fi_lv1)の中身を展開して配置
+                *fi_lv1.controls 
+            ]
+        )
+
+        # 3. 親コンテナ(self)に左右のパネルをセット
+        self.controls = [
+            ft.Row(
+                expand=True,
+                alignment=ft.MainAxisAlignment.START,
+                cross_alignment=ft.CrossAxisAlignment.START,
+                controls=[
+                    ft.Container(content=left_panel, expand=1, padding=10),
+                    ft.VerticalDivider(width=1, color=ft.colors.OUTLINE_VARIANT),
+                    ft.Container(content=right_panel, expand=1, padding=10)
+                ]
+            )
+        ]
+
+
+
+
+
 
         lv_01 = ft.ListView(
             expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False

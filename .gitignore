@@ -15,6 +15,11 @@ downloads/
 .devcontainer
 eggs/
 .eggs/
+.env
+.venv
+ENV/
+env/
+venv/
 lib/
 lib64/
 parts/
@@ -25,8 +30,12 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
-
+AG_made_codes/
+AG_made_codes2/
+.ipynb_checkpoints/
+*.ipynb
+.vscode/
+.github/
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
