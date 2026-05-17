@@ -7,6 +7,7 @@ from simpledt import DataFrame
 from tinydb import TinyDB, Query
 #import openpyxl
 from sqlalchemy import create_engine
+from sqlalchemy.pool import StaticPool
 #import make_inputs_df
 #import decimal
 from decimal import Decimal, ROUND_HALF_UP
@@ -15,6 +16,7 @@ import datetime
 #from zoneinfo import ZoneInfo
 from VFMcalc2 import VFM_calc
 from scipy.interpolate import PchipInterpolator
+import save_results as sr
 
 @ft.control
 class Edit_result(ft.Stack):
@@ -26,20 +28,27 @@ class Edit_result(ft.Stack):
         #self.resizable = True
 
         self.dtime = selected_datetime # コンストラクタでselected_datetimeを受け取るように変更
-        engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
+        self.disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
+        self.memory_engine = create_engine('sqlite:///:memory:', echo=False, connect_args={'check_same_thread': False}, poolclass=StaticPool)
+
+        self.current_calc_id = "temp_calc_id" 
+        # スライダーを動かして編集している間のCalc_id（インメモリー内で次々に変更され保存されない算定結果群は、「直近」だけビューに送るので、識別しない）。
+        # 最終的に編集結果を保存する際には、current_calc_idは保存対象に含めず、save_results.pyのmake_df_addID_saveDB関数を
+        # 通る際に、正式なCalc_idが付与されて、DBファイルに書き込まれる。
 
         table_names = [
             'res_summ_res_table',
             'final_inputs_res_table',
         ]
+        # この２つのテーブルからDFを作成して表示。
+        # final_inputs_res_tableの方は、編集前後の入力値等を算定過程も通じて作成するための材料
+        # res_summ_res_tableの方は、結果要約の表を作るための材料。
+
         self.selected_res_list = []
         for table_name in table_names:
             query = 'select * from ' + table_name + ' where datetime = ' + '"' + self.dtime + '"'
-            table_name = pd.read_sql_query(query, engine)
+            table_name = pd.read_sql_query(query, self.disk_engine)
             self.selected_res_list.append(table_name)
-# この２つのテーブルからDFを作成して表示。
-# final_inputs_res_tableの方は、編集前後の入力値等を算定過程も通じて作成するための材料
-# res_summ_res_tableの方は、結果要約の表を作るための材料。
         target_summ_df = self.selected_res_list[0]
         target_inputs_df_j = self.selected_res_list[1]
         # ここで必要なのは、SimpleDTに入れるためのDFで、日本語見出し。
@@ -564,6 +573,165 @@ class Edit_result(ft.Stack):
         VFM_calc()
         await self.page.push_route("/view_saved")
         
+# Gemini提案のコード
+        self.current_calc_id = "temp_sim_001" # シミュレーション用の一時ID
+        # ... (UI初期化処理など) ...
+    def create_comparison_datatable(self, new_df, old_df=None):
+        """
+        DataFrameからft.DataTableを生成する。
+        old_dfが渡された場合、new_dfと値を比較し、異なれば赤字にする。
+        ※インデックス列(項目名)も表示する想定で記述。
+        """
+        # 列名（ヘッダー）の作成
+        columns = [ft.DataColumn(ft.Text(str(col), weight=ft.FontWeight.BOLD)) for col in new_df.columns]
+        rows = []
+        
+        for index, row in new_df.iterrows():
+            cells = []
+            for col_name in new_df.columns:
+                new_val = row[col_name]
+                text_color = ft.colors.ON_SURFACE # デフォルト（通常）の色
+                
+                # 比較対象があり、かつ「項目名」列以外の場合に値を比較する
+                if old_df is not None and col_name != "項目名":
+                    # old_dfとインデックスで突き合わせる
+                    old_val = old_df.loc[index, col_name]
+                    
+                    # 浮動小数点の表示上の誤差を吸収するため、文字列にして比較するか、
+                    # または特定の小数点以下で丸めて比較します。
+                    if str(new_val) != str(old_val):
+                        text_color = ft.colors.RED_400 # 変更があれば赤色
+                        
+                cells.append(ft.DataCell(ft.Text(str(new_val), color=text_color)))
+            
+            rows.append(ft.DataRow(cells=cells))
+            
+        return ft.DataTable(
+            columns=columns, 
+            rows=rows, 
+            border=ft.border.all(1, ft.colors.OUTLINE_VARIANT), # 表の枠線
+            vertical_lines=ft.border.BorderSide(1, ft.colors.OUTLINE_VARIANT),
+            horizontal_lines=ft.border.BorderSide(1, ft.colors.OUTLINE_VARIANT)
+        )
+
+
+#2. レイアウトの構築（左右2ペイン構造）
+#__init__ メソッドの後半で、先ほどの関数を使って表を生成し、左右の画面（ft.Row）に配置します。
+#Python
+       # --- (前略：target_summ_df_t などのDataFrame準備) ---
+
+        # 1. 表のインスタンス生成
+        # 元の算定結果要約表（比較対象なし = 黒字）
+        self.original_summ_table = self.create_comparison_datatable(target_summ_df_t)
+        
+        # 再算定結果要約表（初期表示は元データと全く同じものを表示）
+        self.recalc_summ_table = self.create_comparison_datatable(target_summ_df_t)
+
+        # 再算定表は後で差し替えるため、Containerでラップしておく
+        self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
+
+        # 2. 左右のパネルを構築
+        # 【左パネル】表を縦に2つ並べる
+        left_panel = ft.Column(
+            expand=1, 
+            scroll=ft.ScrollMode.AUTO,
+            spacing=20,
+            controls=[
+                ft.Text("元の算定結果", size=18, weight=ft.FontWeight.BOLD),
+                self.original_summ_table,
+                ft.Divider(height=2, color="amber"),
+                ft.Text("再算定結果（シミュレーション）", size=18, weight=ft.FontWeight.BOLD),
+                self.recalc_table_container # ここを更新する
+            ]
+        )
+        
+        # 【右パネル】スライダー群
+        right_panel = ft.Column(
+            expand=1, 
+            scroll=ft.ScrollMode.AUTO,
+            spacing=10,
+            controls=[
+                ft.Text("パラメータ調整", size=18, weight=ft.FontWeight.BOLD),
+                # 既存のListView(fi_lv1)の中身を展開して配置
+                *fi_lv1.controls 
+            ]
+        )
+
+        # 3. 親コンテナ(self)に左右のパネルをセット
+        self.controls = [
+            ft.Row(
+                expand=True,
+                alignment=ft.MainAxisAlignment.START,
+                cross_alignment=ft.CrossAxisAlignment.START,
+                controls=[
+                    ft.Container(content=left_panel, expand=1, padding=10),
+                    ft.VerticalDivider(width=1, color=ft.colors.OUTLINE_VARIANT),
+                    ft.Container(content=right_panel, expand=1, padding=10)
+                ]
+            )
+        ]
+
+
+#3. 非同期更新の反映処理
+#前回のデバウンス処理の最後に呼ばれる _update_result_tables を実装します。
+#新しく計算されたDataFrame（new_summ_df_t）と、初期表示時に保存しておいた元のDataFrame（target_summ_df_t）を比較させます。
+#Python
+    def _update_result_tables(self, new_summ_df_t):
+        """
+        計算完了後に呼ばれる。再算定表を、赤字ハイライト付きの新しい表に差し替える。
+        """
+        # 新しいDataFrameと元のDataFrameを渡して、赤字ハイライト付きの表を生成
+        updated_table = self.create_comparison_datatable(
+            new_df=new_summ_df_t, 
+            old_df=target_summ_df_t # __init__で保持している元のDF (self.target_summ_df_t 等にしておくと確実です)
+        )
+        
+        # Containerの中身(content)を、新しい表インスタンスに差し替える
+        self.recalc_table_container.content = updated_table
+        
+        # 画面の更新を要求
+        self.update()
+
+
+    async def _debounced_calculate(self):
+        """スライダーが動いた時のシミュレーション処理（非同期）"""
+        try:
+            # 1. 編集画面の入力値から、VFMcalc用のパラメータを生成
+            params = self._calculate_financials()
+            
+            # 2. VFM_calc を実行し、結果のDataFrameセットを受け取る
+            # ※ VFM_calc が直接DBに書くのではなく、DFを返すように調整されている前提
+            results_dict = VFM_calc(params)
+            
+            # 3. 【インメモリDB】へ書き込み (memory_engineを渡す)
+            save_vfm_results(self.current_calc_id, results_dict, target_engine=self.memory_engine)
+            
+            # 4. 【インメモリDB】から読み出してUIを更新する
+            self._update_result_tables(self.memory_engine)
+            
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def on_save_button_click(self, e):
+        """「最終結果を保存」ボタンが押された時の処理"""
+        # インメモリDBにある最新のシミュレーション結果を読み出す
+        final_df_summ = pd.read_sql_query(f"SELECT * FROM res_summ_res_table WHERE calc_id='{self.current_calc_id}'", self.memory_engine)
+        final_df_inputs = pd.read_sql_query(f"SELECT * FROM final_inputs_res_table WHERE calc_id='{self.current_calc_id}'", self.memory_engine)
+        
+        # 新しい正式な calc_id を発行
+        formal_calc_id = generate_new_calc_id()
+        
+        results_dict = {
+            'res_summ_res_table': final_df_summ,
+            'final_inputs_res_table': final_df_inputs
+        }
+        
+        # 【物理DB】へ書き込み (disk_engineを渡す、あるいは省略してデフォルト挙動にする)
+        save_vfm_results(formal_calc_id, results_dict, target_engine=self.disk_engine)
+        
+        # 保存完了のメッセージ表示など
+
+# Gemini提案以前のコードの残り
 # 編集画面からの_extract_inputs
     def to_dec(self, val):
             return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)

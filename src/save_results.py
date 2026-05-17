@@ -15,19 +15,23 @@ from sqlalchemy import create_engine
 import sqlite3
 from zoneinfo import ZoneInfo
 
-engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
+default_disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
 conn = sqlite3.connect('VFM.db')
 c = conn.cursor()
 
 user_id = ULID.from_datetime(datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")))
-calc_id = uuid6.uuid7()
-timestamp = calc_id.int >> 80
+cal_id = uuid6.uuid7()
+timestamp = cal_id.int >> 80
 dtime = datetime.datetime.fromtimestamp(timestamp // 1000.0, tz=ZoneInfo("Asia/Tokyo"))
 #fromtimestamp(timestamp_ms / 1000.0, tz=timezone.utc)
 
 df_name_list=[]
 
-def make_df_addID_saveDB():
+def make_df_addID_saveDB(current_calc_id=None, target_engine=None):
+#if target_engine is not None:
+    engine = target_engine if target_engine is not None else default_disk_engine
+    calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
+
     inputs_pdt = make_inputs_df.main()
 
     PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)

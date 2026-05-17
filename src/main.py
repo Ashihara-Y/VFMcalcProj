@@ -12,6 +12,7 @@ import download
 import logging
 import pandas as pd
 from sqlalchemy import create_engine
+from auth_manager import setup_auth
 
 
 logging.basicConfig(level=logging.DEBUG)
