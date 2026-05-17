@@ -12,7 +12,6 @@ import export_to_excel
 import download
 import logging
 import pandas as pd
-#from sqlalchemy import create_engine
 import asyncio
 from sqlalchemy import create_engine
 from auth_manager import setup_auth
@@ -25,7 +24,15 @@ async def main(page: ft.Page):
     page.title = "VFM計算アプリ"
     page.vertical_alignment = ft.MainAxisAlignment.START
 
-    def route_change():
+    def on_login_success():
+        logger.info("Login successful")
+        #page.session.store.set("auth0_sub", auth0_provider.get_user_id())  # 認証情報をセッションストレージに保存
+        #page.update()
+        asyncio.create_task(page.push_route("/")) # ログイン成功後にルートを"/"に変更してLandingContainerを表示
+
+    auth_provider = setup_auth(page, on_login_success)
+
+    def route_change(e=None):
         #troute = ft.TemplateRoute(page.route)
         #print("Route changed to:", page.route)
         page.views.clear()
@@ -35,7 +42,10 @@ async def main(page: ft.Page):
                     route="/",
                     controls=[
                         #ft.Text("Welcome to the VFM Calculator")
-                        LandingContainer(on_action=lambda r: asyncio.create_task(page.push_route(r)), current_locale='ja')
+                        LandingContainer(
+                            on_action=lambda r: page.login(auth_provider) if r == "login" else asyncio.create_task(page.push_route(r)),
+                            current_locale='ja'
+                        )
                     ],
                 )
             )
@@ -61,6 +71,8 @@ async def main(page: ft.Page):
         
 
         elif page.route == "/final_inputs":
+            if not page.session.store.get("auth0_sub"):
+                open_landing(e=None)  # 認証されていない場合はランディングページへ
             initial_inputs = page.session.store.get("initial_inputs") 
             page.views.append(
                 ft.View(
@@ -75,6 +87,8 @@ async def main(page: ft.Page):
             )        
 
         elif page.route == "/results_detail":
+            if not page.session.store.get("auth0_sub"):
+                open_landing(e=None)  # 認証されていない場合はランディングページへ
             sel_dtimes = page.session.store.get("selected_datetime") # セッションストレージからselected_datetimeを取得
             sel_dtime = sel_dtimes[0] if sel_dtimes is not None else "No datetime selected" # 取得できない場合のデフォルト値
             page.views.append(
@@ -97,6 +111,8 @@ async def main(page: ft.Page):
                 )
             )
         elif page.route == "/view_saved":
+            if not page.session.store.get("auth0_sub"):
+                open_landing(e=None)  # 認証されていない場合はランディングページへ
             page.views.append(
                 ft.View(
                     route="/view_saved",
@@ -108,6 +124,8 @@ async def main(page: ft.Page):
                 )
             )
         elif page.route == "/edit_saved":
+            if not page.session.store.get("auth0_sub"):
+                open_landing(e=None)  # 認証されていない場合はランディングページへ
             sel_dtimes = page.session.store.get("selected_datetime") # セッションストレージからselected_datetimeを取得
             sel_dtime = sel_dtimes[0] if sel_dtimes is not None else "No datetime selected" # 取得できない場合のデフォルト値
             page.views.append(

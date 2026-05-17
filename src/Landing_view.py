@@ -21,8 +21,8 @@ class LandingContainer(ft.Column):
             content=ft.Column([
                 ft.Text("VFMcalc サービスメニュー", size=22, weight="bold"),
                 ft.Row([
-                    self._action_card(ft.Icons.PERSON_ADD, "新規登録", "Auth0で作成", "/signup"),
-                    self._action_card(ft.Icons.LOGIN, "サインイン", "既存の方", "/login"),
+                    self._action_card(ft.Icons.PERSON_ADD, "新規登録", "Auth0で作成", "login"),
+                    self._action_card(ft.Icons.LOGIN, "サインイン", "既存の方", "login"),
                 ]),
                 ft.Row([
                     self._action_card(ft.Icons.ADD_CHART, "新規算定", "シミュレーション開始", "/initial_inputs"),
