@@ -43,7 +43,7 @@ async def main(page: ft.Page):
                     controls=[
                         #ft.Text("Welcome to the VFM Calculator")
                         LandingContainer(
-                            on_action=lambda r: page.login(auth_provider) if r == "login" else asyncio.create_task(page.push_route(r)),
+                            on_action=lambda r: asyncio.create_task(page.login(auth_provider)) if r == "login" else asyncio.create_task(page.push_route(r)),
                             current_locale='ja'
                         )
                     ],
@@ -184,4 +184,4 @@ async def main(page: ft.Page):
     route_change()
 
 
-ft.run(main)
+ft.app(target=main, view=ft.AppView.WEB_BROWSER) 
