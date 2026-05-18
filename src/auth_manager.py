@@ -36,8 +36,8 @@ def setup_auth(page: ft.Page, on_login_success):
         else:
             # ログイン成功時：Auth0のID(sub)をFletのセッションに保存
             page.session.store.set("auth0_sub", page.auth.user.id)
-            if page.auth.user.email:
-                page.session.store.set("user_email", page.auth.user.email)
+            #if page.auth.user.email:
+            #    page.session.store.set("user_email", page.auth.user.email)
             
             print(f"Login Success! User ID: {page.auth.user.id}")
             
