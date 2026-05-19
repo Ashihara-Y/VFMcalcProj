@@ -19,6 +19,7 @@ from scipy.interpolate import PchipInterpolator
 from flet.auth.providers.auth0_oauth_provider import Auth0OAuthProvider
 from auth_manager import setup_auth, get_auth0_provider
 import save_results as sr
+from Editcalc import VFM_calc
 
 #setup_auth(page: ft.Page, on_login_success)
 #auth0_provider = get_auth0_provider()
