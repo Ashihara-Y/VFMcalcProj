@@ -20,6 +20,7 @@ from flet.auth.providers.auth0_oauth_provider import Auth0OAuthProvider
 from auth_manager import setup_auth, get_auth0_provider
 import save_results as sr
 from Editcalc import VFM_calc
+# 編集プロセス専用のモジュールを使う選択肢を作っておいた
 
 #setup_auth(page: ft.Page, on_login_success)
 #auth0_provider = get_auth0_provider()
@@ -37,9 +38,9 @@ class Edit_result(ft.Stack):
         self.memory_engine = create_engine('sqlite:///:memory:', echo=False, connect_args={'check_same_thread': False}, poolclass=StaticPool)
 
         self.current_calc_id = "temp_calc_id" 
-        # スライダーを動かして編集している間のCalc_id（インメモリー内で次々に変更され保存されない算定結果群は、「直近」だけビューに送るので、識別しない）。
-        # 最終的に編集結果を保存する際には、current_calc_idは保存対象に含めず、save_results.pyのmake_df_addID_saveDB関数を
-        # 通る際に、正式なCalc_idが付与されて、DBファイルに書き込まれる。
+        # スライダーを動かして編集している間のCalc_id（メモリー内で次々に変更される算定結果群は、「直近」だけビューに送るので、識別不要）。
+        # 最終的に編集結果を保存する際には、current_calc_idは保存対象に含めず、編集後のパラメータ群をsave_results.pyのmake_df_addID_saveDB関数を
+        # 渡すと、正式に新たなCalc_idが付与されて、結果保存テーブルのDBファイルに書き込まれる。
 
         table_names = [
             'res_summ_res_table',
@@ -56,11 +57,16 @@ class Edit_result(ft.Stack):
             self.selected_res_list.append(table_name)
         target_summ_df = self.selected_res_list[0]
         target_inputs_df_j = self.selected_res_list[1]
-        # ここで必要なのは、SimpleDTに入れるためのDFで、日本語見出し。
-        # ただし、この関数内で計算する際に渡すなら、英変数名に切り替えて、辞書にする必要あり。
-        # Targetu_Inputsは、VFMcalcに渡さない。渡すのはEdit_Inputs
+        # ここで要約表に必要なのは、SimpleDTに入れるためのDFで、日本語見出し。日本語化はすぐ下で処理している。
+        ♯ 他方で、入力は元のものも編集後も画面に「表の形」では表示はしない。スライダーだけ。
+        # この関数内で計算する際に渡すなら、英変数名で辞書にする必要あり。
+        # Targetu_Inputsは、EditcalcのVFMcalcには渡さない。渡すのはEdit_Inputs
+        # 要約と同じく、テーブルから出した状態は英変数名に直したはず。要確認。
+        # 確認できたら「_j」ははずしておく。
 
         # 以下は、内部の計算やUIへのセットで参照するための辞書
+        # 英変数名が確認できたら、すぐ下のコメントの内容に切り替える。
+        # self.target_inputs = target_inputs_df_j.iloc[0].to_dict()
         self.target_inputs = target_inputs_df_j.iloc[0].rename(
             {
                 'datetime':'datetime',
@@ -129,7 +135,7 @@ class Edit_result(ft.Stack):
             }
         ).to_dict() 
 
-        target_summ_df['discount_rate'] = target_summ_df['discount_rate'] * 100
+        target_summ_df['discount_rate'] = target_summ_df['discount_rate'] * 100　# できれば、こういう処理は消しておきたい。
         target_summ_df = target_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
         target_inputs_df = target_inputs_df_j.drop(['datetime'], axis=1)
 
@@ -152,23 +158,32 @@ class Edit_result(ft.Stack):
                 'SPC_fee':'SPCへの手数料(百万円)',
             }
         )
-        # 最終入力・パラメータの表を作成
+        # 最終入力・パラメータの表を作成　←　これはどこで使うのか？編集算定後の詳細表示なら、データだけで十分
         self.target_inputs_df_t = target_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
         simpledt_targetinputs_df = DataFrame(self.target_inputs_df_t)
         simpledt_targetinputs_dt = simpledt_targetinputs_df.datatable
         self.table_targetinputs = simpledt_targetinputs_dt
 
-        # 編集対象算定結果要約の表を作成
+        # 編集対象になる方の算定結果要約の表を作成
         target_summ_df_t = target_summ_df_J.transpose().reset_index()
         target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
         simpledt_target_summ_df = DataFrame(target_summ_df_t)
         simpledt_target_summ_dt = simpledt_target_summ_df.datatable
         self.table_target_summ = simpledt_target_summ_dt
 
+        # 編集後の算定結果要約の表が必要！Edited_summ_df_Jに格納して、ここでSimpleDTに変換
+        # edited_summ_df_t = edited_summ_df_J.transpose().reset_index()
+        # edited_summ_df_t = edited_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
+        # simpledt_edited_summ_df = DataFrame(edited_summ_df_t)
+        # simpledt_edited_summ_dt = simpledt_edited_summ_df.datatable
+        # self.table_edited_summ = simpledt_edited_summ_dt
+        
         def create_comparison_datatable(self, new_df, old_df=None):
             """
             DataFrameからft.DataTableを生成する。(itertuplesによる高速化版)
-            old_dfが渡された場合、new_dfと値を比較し、異なれば赤字にする。
+            old_dfが渡された場合、new_dfと値を比較し、異なれば赤字にする。←　「赤字」にする必要があるのは、new_dfの方。
+            できれば、実装が簡便なのでSimpleDTを使いたいが、DF段階で、「新旧を比較して差分を把握」する処理は、できれば
+            追加したいので、当面はファイルに残しておく。
             """
             columns = [ft.DataColumn(ft.Text(str(col), weight=ft.FontWeight.BOLD)) for col in new_df.columns]
             rows = []
@@ -192,7 +207,8 @@ class Edit_result(ft.Stack):
                     
                         if str(new_val) != str(old_val):
                             text_color = ft.colors.RED_400
-                        
+                    # ここで、該当セルの字の色を赤にセットしている。単なるDFではこれは無理でも
+                    # simpleDTでも、行ごと、セルごとの処理はできたはず。
                     cells.append(ft.DataCell(ft.Text(str(new_val), color=text_color)))
             
                 rows.append(ft.DataRow(cells=cells))
@@ -237,7 +253,7 @@ class Edit_result(ft.Stack):
             spacing=10,
             controls=[
                 ft.Text("パラメータ調整", size=18, weight=ft.FontWeight.BOLD),
-                # 既存のListView(fi_lv1)の中身を展開して配置
+                # 既存のListView(fi_lv1)の中身を展開して配置　←　展開されるか要確認！
                 *fi_lv1.controls 
             ]
         )
@@ -528,141 +544,9 @@ class Edit_result(ft.Stack):
         ]        
 
 
-
-        if self.target_inputs["proj_type"] == "DBO(SPCなし)" or self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
-            self.controls = [
-                ft.Tabs(
-                    selected_index=0,
-                    length=4,
-                    animation_duration=300,
-                    content = ft.Column(
-                        expand=True,    
-                        controls=[
-                            ft.TabBar(
-                                tabs=[
-                                    ft.Tab(
-                                        label="編集対象結果・入力の要約",
-                                    ),
-                                    ft.Tab(
-                                        label="編集対象入力値等一覧",
-                                    ),
-                                    ft.Tab(
-                                        label="入力値の修正と再計算",
-                                    ),
-                                ],
-                            ),
-                        ft.TabBarView(
-                            expand=True,
-                            controls=[
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls=[
-                                            lv_01,
-                                        ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    margin=10,
-                                    height=1000,
-                                ),
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls=[
-                                            lv_04,
-                                        ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    height=3000,
-                                    margin=10,
-                                ),
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls = [
-                                            fi_lv2,
-                                        ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    height=3000,
-                                    margin=10,
-                                ),
-                            ],
-                        )
-                    ],
-                ),
-            )
-        ]
-        else:
-           self.controls = [
-                ft.Tabs(
-                    selected_index=0,
-                    length=4,
-                    animation_duration=300,
-                    content = ft.Column(
-                        expand=True,    
-                        controls=[
-                            ft.TabBar(
-                                tabs=[
-                                    ft.Tab(
-                                        label="編集対象結果・入力の要約",
-                                    ),
-                                    ft.Tab(
-                                        label="編集対象入力値等一覧",
-                                    ),
-                                    ft.Tab(
-                                        label="入力値の修正と再計算",
-                                    ),
-                                ],
-                            ),
-                        ft.TabBarView(
-                            expand=True,
-                            controls=[
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls=[
-                                            lv_01,
-                                        ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    margin=10,
-                                    height=1000,
-                                ),
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls=[
-                                            lv_04,
-                                        ],
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    height=3000,
-                                    margin=10,
-                                ),
-                                ft.Container(
-                                    content=ft.Column(
-                                        controls = [
-                                            fi_lv1,
-                                        ],   
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                                    ),
-                                    width=2100,
-                                    padding=10,
-                                    height=3000,
-                                    margin=10,
-                                ),
-                            ],       
-                        )
-                    ],
-                ),
-            )
-        ]
+    # Tabは使わないので大半削除したが、新UIでもこの条件分岐は必要なので、判定部分のみ残しておく。
+       # if self.target_inputs["proj_type"] == "DBO(SPCなし)" or self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
+       # else:
 
 # button_clicked
     async def button_clicked(self, e):
@@ -671,7 +555,9 @@ class Edit_result(ft.Stack):
         edit_results = self._calculate_financials()
         
         self._save_to_db(edit_results)
-        VFM_calc()
+        # 呼ばれているのは、Editcalcの関数になっている必要に注意！
+        VFM_calc() # ここで「インメモリ用のcalc_idとＤＢ指定」を引数として渡す必要がある。
+        # ＤＢ書き込み関数を、どう動かせばいいか？
         await self.page.push_route("/view_saved")
         
 # Gemini提案のコード
