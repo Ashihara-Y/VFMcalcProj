@@ -43,7 +43,7 @@ def VFM_calc(current_calc_id=None, target_engine=None):
         risk_adjustment.risk_adj()
         make_present_value.make_pv()
         check_SPC_cashForPPayment.check_cash()
-        sr.make_df_addID_saveDB(current_calc_id=current_calc_id, target_engine=target_engine)
+        sr.make_df_addID_saveDB2(current_calc_id=current_calc_id, target_engine=target_engine)
     
     if proj_type == "DBO(SPCなし)":
 
@@ -53,7 +53,7 @@ def VFM_calc(current_calc_id=None, target_engine=None):
         risk_adjustment_DBO.risk_adj()
         make_present_value.make_pv()
         check_SPC_cashForPPayment_DBO.check_cash()
-        sr.make_df_addID_saveDB(current_calc_id=current_calc_id, target_engine=target_engine)
+        sr.make_df_addID_saveDB2(current_calc_id=current_calc_id, target_engine=target_engine)
     
     if proj_type == "BOT/BOO":
 
@@ -63,7 +63,7 @@ def VFM_calc(current_calc_id=None, target_engine=None):
         risk_adjustment_BOT.risk_adj()
         make_present_value.make_pv()
         check_SPC_cashForPPayment_BOT.check_cash()
-        sr.make_df_addID_saveDB(current_calc_id=current_calc_id, target_engine=target_engine)
+        sr.make_df_addID_saveDB2(current_calc_id=current_calc_id, target_engine=target_engine)
     
     elif proj_type == "BT/DB(いずれもSPCなし)":
         PSC_calc_BT.PSC_calc()
@@ -72,7 +72,7 @@ def VFM_calc(current_calc_id=None, target_engine=None):
         risk_adjustment_BT.risk_adj()
         make_present_value.make_pv()
         check_SPC_cashForPPayment_BT.check_cash()
-        sr.make_df_addID_saveDB(current_calc_id=current_calc_id, target_engine=target_engine)
+        sr.make_df_addID_saveDB2(current_calc_id=current_calc_id, target_engine=target_engine)
 
 
 if __name__ == "__main__":
