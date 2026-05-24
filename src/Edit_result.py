@@ -110,27 +110,15 @@ class Edit_result(ft.Stack):
                 'SPC_fee':'SPCへの手数料(百万円)',
             }
         )
-        # 最終入力・パラメータの表を作成　←　これはどこで使うのか？編集算定後の詳細表示なら、データだけで十分
-#        self.target_inputs_df_t = target_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
-#        simpledt_targetinputs_df = DataFrame(self.target_inputs_df_t)
-#        simpledt_targetinputs_dt = simpledt_targetinputs_df.datatable
-#        self.table_targetinputs = simpledt_targetinputs_dt
 
         # 編集対象になる方の算定結果要約の表を作成
         target_summ_df_t = target_summ_df_J.transpose().reset_index()
-        target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
+        self.target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
         #simpledt_target_summ_df = DataFrame(target_summ_df_t)
         #simpledt_target_summ_dt = simpledt_target_summ_df.datatable
         #self.table_target_summ = simpledt_target_summ_dt
 
-        # 編集算定後には、編集後算定結果要約の表が必要！Edited_summ_df_Jに格納して、ここでSimpleDTに変換
-        # edited_summ_df_t = edited_summ_df_J.transpose().reset_index()
-        # edited_summ_df_t = edited_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
-        # simpledt_edited_summ_df = DataFrame(edited_summ_df_t)
-        # simpledt_edited_summ_dt = simpledt_edited_summ_df.datatable
-        # self.table_edited_summ = simpledt_edited_summ_dt
-
-        new_df = target_summ_df_t
+        new_df = self.target_summ_df_t
         old_df = new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfの該当値だけを更新して、比較できるようにする。       
 
 
@@ -186,6 +174,194 @@ class Edit_result(ft.Stack):
         # 再算定表は後で差し替えるため、Containerでラップしておく
         self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
 
+#FIからのUIの材料⇒主にスライダと、上記表、そしてそれらのレイアウトの材料
+        #slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value05 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value06 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value07 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value08 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value13 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value14 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        slider_value15 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+        #slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
+            
+        def handle_slider_change(e):
+            sl_value = e.control.value
+            target_text_control = e.control.data
+            target_text_control.value = str(sl_value)
+            target_text_control.update()
+
+        tx3 = ft.Text("施設整備費支払 一括払の比率(%)")
+        self.sl3 = ft.Slider(
+            value=float(self.target_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]),
+            min=0.8*float(self.target_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]),
+            max=100.00,
+            divisions=2000,
+            label="{value}%",
+            round=2,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value03,
+        )
+        tx4 = ft.Text("施設整備費の削減率(%)")
+        self.sl4 = ft.Slider(
+            value=float(self.target_inputs["reduc_shisetsu"]),
+            min=0.0,
+            max=5.0,
+            divisions=500,
+            label="{value}%",
+            round=1,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value04,
+        )
+        tx5 = ft.Text("維持管理運営費（人件費）の削減率(%)")
+        self.sl5 = ft.Slider(
+            value=float(self.target_inputs["reduc_ijikanri_1"]),
+            min=0.0,
+            max=5.0,
+            divisions=500,
+            label="{value}%",
+            round=1,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value05,
+        ) 
+        tx6 = ft.Text("維持管理運営費（修繕費）の削減率(%)")
+        self.sl6 = ft.Slider(
+            value=float(self.target_inputs["reduc_ijikanri_2"]),
+            min=0.0,
+            max=5.0,
+            divisions=500,
+            label="{value}%",
+            round=1,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value06,
+        )
+        tx7 = ft.Text("維持管理運営費(動力費)の削減率(%)")
+        self.sl7 = ft.Slider(
+            value=float(self.target_inputs["reduc_ijikanri_3"]),
+            min=0.0,
+            max=5.0,
+            divisions=500,
+            label="{value}%",
+            round=1,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value07,
+        )
+        tx10 = ft.Text("SPC経費年額(百万円)")
+        self.sl10 = ft.Slider(
+            value=float(self.target_inputs["SPC_keihi"]),
+            min=0.95*float(self.target_inputs["SPC_keihi"]),
+            max=1.05*float(self.target_inputs["SPC_keihi"]),
+            divisions=1000,
+            label="{value}百万円",
+            round=1,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value10,
+        )
+        tx11 = ft.Text("SPCへの手数料(百万円)")
+        self.sl11 = ft.Slider(
+            value=float(self.target_inputs["SPC_fee"]),
+            min=0,
+            max=50,
+            divisions=50,
+            label="{value}百万円",
+            round=1,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value11,
+        )
+        tx12 = ft.Text("SPC資本金(百万円)")
+        self.sl12 = ft.Slider(
+            value=float(self.target_inputs["SPC_shihon"]),
+            min=0.95*float(self.target_inputs["SPC_shihon"]),
+            max=1.05*float(self.target_inputs["SPC_shihon"]),
+            divisions=1000,
+            label="{value}百万円",
+            round=1,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value12,
+        )
+        tx13 = ft.Text("SPC予備費(百万円)")
+        self.sl13 = ft.Slider(
+            value=float(self.target_inputs["SPC_yobihi"]),
+            min=0.95*float(self.target_inputs["SPC_yobihi"]),
+            max=1.05*float(self.target_inputs["SPC_yobihi"]),
+            divisions=100,
+            label="{value}百万円",
+            round=1,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value13,
+        )
+        tx15 = ft.Text("割賦金利へのスプレッド(%)")
+        self.sl15 = ft.Slider(
+            value=float(self.target_inputs["kappu_kinri_spread"]),
+            min=0.95*float(self.target_inputs["kappu_kinri_spread"]),
+            max=1.05*float(self.target_inputs["kappu_kinri_spread"]),
+            divisions=100,
+            label="{value}%",
+            round=2,
+            width=200,
+            on_change=handle_slider_change,
+            data=slider_value15,
+        )
+        b = ft.Button(content="修正再計算", on_click=self.button_clicked)
+
+        fi_lv1 = ft.ListView(
+            expand=True,
+            spacing=10,
+            padding=5,
+            #auto_scroll=True,
+            item_extent=500,
+            first_item_prototype=False,
+            horizontal=False,
+        )
+        fi_lv2 = ft.ListView(
+            expand=True,
+            spacing=10,
+            padding=5,
+            #auto_scroll=True,
+            item_extent=500,
+            first_item_prototype=False,
+            horizontal=False,
+        )
+        fi_lv1.controls= [
+                    tx3, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
+                    tx4, slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
+                    tx5, slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    tx6, slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    tx7, slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    tx10,slider_value10, self.sl10, ft.Divider(height=1, color="amber"),
+                    tx11,slider_value11, self.sl11, ft.Divider(height=1, color="amber"),
+                    tx12,slider_value12, self.sl12, ft.Divider(height=1, color="amber"),
+                    tx13,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
+                    tx15,slider_value15, self.sl15, ft.Divider(height=1, color="amber"),
+                    b,
+        ]        
+        fi_lv2.controls= [
+                    tx4, slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
+                    tx5, slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
+                    tx6, slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
+                    tx7, slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
+                    tx13,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
+                    b,
+        ]        
+
+
+
         # 2. 左右のパネルを構築
         # 【左パネル】表を縦に2つ並べる
         left_panel = ft.Column(
@@ -218,7 +394,7 @@ class Edit_result(ft.Stack):
             ft.Row(
                 expand=True,
                 alignment=ft.MainAxisAlignment.START,
-                cross_alignment=ft.CrossAxisAlignment.START,
+                #cross_alignment=ft.CrossAxisAlignment.START,
                 controls=[
                     ft.Container(content=left_panel, expand=1, padding=10),
                     ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
@@ -226,278 +402,6 @@ class Edit_result(ft.Stack):
                 ]
             )
         ]
-
-
-
-
-
-
-        lv_01 = ft.ListView(
-            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
-        )
-        lv_01.controls.append(ft.Text('編集対象算定結果の要約'))
-        lv_01.controls.append(self.table_target_summ)
-
-        #lv_04 = ft.ListView(
-        #    expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
-        #)
-        #lv_04.controls.append(ft.Text('編集対象入力値・パラメータ等一覧'))
-        #lv_04.controls.append(self.table_targetinputs)
-
-#FIからのUIの材料⇒主にスライダと、上記表、そしてそれらのレイアウトの材料
-        slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value05 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value06 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value07 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value08 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value13 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value14 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        slider_value15 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-            
-        def handle_slider_change(e):
-            sl_value = e.control.value
-            target_text_control = e.control.data
-            target_text_control.value = str(sl_value)
-            target_text_control.update()
-
-        tx1 = ft.Text("地方債償還期間(年)")
-        self.sl1 = ft.Slider(
-            value=int(self.target_inputs["chisai_shoukan_kikan"]),
-            min=-2+int(self.target_inputs["chisai_shoukan_kikan"]),
-            max=2+int(self.target_inputs["chisai_shoukan_kikan"]),
-            divisions=5,
-            label="{value}年",
-            round=0,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value01,
-        )
-        tx2 = ft.Text("地方債元本返済据置期間(年)")
-        self.sl2 = ft.Slider(
-            value=int(self.target_inputs["chisai_sueoki_years"]),
-            min=-2+int(self.target_inputs["chisai_sueoki_years"]),
-            max=2+int(self.target_inputs["chisai_sueoki_years"]),
-            divisions=5,
-            label="{value}年",
-            round=0,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value02,
-        )
-        tx3 = ft.Text("施設整備費支払 一括払の比率(%)")
-        self.sl3 = ft.Slider(
-            value=float(self.target_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]),
-            min=0.95*float(self.target_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]),
-            max=100.00,
-            divisions=1000,
-            label="{value}%",
-            round=2,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value03,
-        )
-        tx4 = ft.Text("施設整備費の削減率(%)")
-        self.sl4 = ft.Slider(
-            value=float(self.target_inputs["reduc_shisetsu"]),
-            min=0.0,
-            max=5.0,
-            divisions=50,
-            label="{value}%",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value04,
-        )
-        tx5 = ft.Text("維持管理運営費（人件費）の削減率(%)")
-        self.sl5 = ft.Slider(
-            value=float(self.target_inputs["reduc_ijikanri_1"]),
-            min=0.0,
-            max=5.0,
-            divisions=50,
-            label="{value}%",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value05,
-        ) 
-        tx6 = ft.Text("維持管理運営費（修繕費）の削減率(%)")
-        self.sl6 = ft.Slider(
-            value=float(self.target_inputs["reduc_ijikanri_2"]),
-            min=0.0,
-            max=5.0,
-            divisions=50,
-            label="{value}%",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value06,
-        )
-        tx7 = ft.Text("維持管理運営費(動力費)の削減率(%)")
-        self.sl7 = ft.Slider(
-            value=float(self.target_inputs["reduc_ijikanri_3"]),
-            min=0.0,
-            max=5.0,
-            divisions=50,
-            label="{value}%",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value07,
-        )
-        tx8 = ft.Text("モニタリング等費用(PSC)(百万円、BT/DB:5程度、その他:10程度)")
-        self.sl8 = ft.Slider(
-            value=float(self.target_inputs["monitoring_costs_PSC"]),
-            min=0.975*float(self.target_inputs["monitoring_costs_PSC"]),
-            max=1.025*float(self.target_inputs["monitoring_costs_PSC"]),
-            divisions=500,
-            label="{value}百万円",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value08,
-        )
-        tx9 = ft.Text("モニタリング等費用(PFI-LCC)(百万円、BT/DB:3程度、その他:6程度)")
-        self.sl9 = ft.Slider(
-            value=float(self.target_inputs["monitoring_costs_LCC"]),
-            min=0.975*float(self.target_inputs["monitoring_costs_LCC"]),
-            max=1.025*float(self.target_inputs["monitoring_costs_LCC"]),
-            divisions=500,
-            label="{value}百万円",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value09,
-        )
-        tx10 = ft.Text("SPC経費年額(百万円)")
-        self.sl10 = ft.Slider(
-            value=float(self.target_inputs["SPC_keihi"]),
-            min=0.95*float(self.target_inputs["SPC_keihi"]),
-            max=1.05*float(self.target_inputs["SPC_keihi"]),
-            divisions=1000,
-            label="{value}百万円",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value10,
-        )
-        tx11 = ft.Text("SPCへの手数料(百万円)")
-        self.sl11 = ft.Slider(
-            value=float(self.target_inputs["SPC_fee"]),
-            min=0,
-            max=50,
-            divisions=50,
-            label="{value}百万円",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value11,
-        )
-        tx12 = ft.Text("SPC資本金(百万円)")
-        self.sl12 = ft.Slider(
-            value=float(self.target_inputs["SPC_shihon"]),
-            min=0.95*float(self.target_inputs["SPC_shihon"]),
-            max=1.05*float(self.target_inputs["SPC_shihon"]),
-            divisions=1000,
-            label="{value}百万円",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value12,
-        )
-        tx13 = ft.Text("SPC予備費(百万円)")
-        self.sl13 = ft.Slider(
-            value=float(self.target_inputs["SPC_yobihi"]),
-            min=0.95*float(self.target_inputs["SPC_yobihi"]),
-            max=1.05*float(self.target_inputs["SPC_yobihi"]),
-            divisions=100,
-            label="{value}百万円",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value13,
-        )
-        tx14 = ft.Text("アドバイザリー等経費(百万円)")
-        self.sl14 = ft.Slider(
-            value=float(self.target_inputs["advisory_fee"]),
-            min=0.95*float(self.target_inputs["advisory_fee"]),
-            max=1.05*float(self.target_inputs["advisory_fee"]),
-            divisions=10,
-            label="{value}百万円",
-            round=1,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value14,
-        )
-        tx15 = ft.Text("割賦金利へのスプレッド(%)")
-        self.sl15 = ft.Slider(
-            value=float(self.target_inputs["kappu_kinri_spread"]),
-            min=0.95*float(self.target_inputs["kappu_kinri_spread"]),
-            max=1.05*float(self.target_inputs["kappu_kinri_spread"]),
-            divisions=100,
-            label="{value}%",
-            round=2,
-            width=100,
-            on_change=handle_slider_change,
-            data=slider_value15,
-        )
-        b = ft.Button(content="修正再計算", on_click=self.button_clicked)
-
-        fi_lv1 = ft.ListView(
-            expand=True,
-            spacing=10,
-            padding=5,
-            #auto_scroll=True,
-            item_extent=500,
-            first_item_prototype=False,
-            horizontal=False,
-        )
-        fi_lv2 = ft.ListView(
-            expand=True,
-            spacing=10,
-            padding=5,
-            #auto_scroll=True,
-            item_extent=500,
-            first_item_prototype=False,
-            horizontal=False,
-        )
-        fi_lv1.controls= [
-                    tx1, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx2, slider_value02, self.sl2,  ft.Divider(height=1, color="amber"),
-                    tx3, slider_value03, self.sl3,  ft.Divider(height=1, color="amber"),
-                    tx4, slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                    tx5, slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    tx6, slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    tx7, slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    tx8, slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
-                    tx9, slider_value09, self.sl9,  ft.Divider(height=1, color="amber"),
-                    tx10,slider_value10, self.sl10, ft.Divider(height=1, color="amber"),
-                    tx11,slider_value11, self.sl11, ft.Divider(height=1, color="amber"),
-                    tx12,slider_value12, self.sl12, ft.Divider(height=1, color="amber"),
-                    tx13,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
-                    tx14,slider_value14, self.sl14, ft.Divider(height=1, color="amber"),
-                    tx15,slider_value15, self.sl15, ft.Divider(height=1, color="amber"),
-                    b,
-        ]        
-        fi_lv2.controls= [
-                    tx1, slider_value01, self.sl1,  ft.Divider(height=1, color="amber"), 
-                    tx2, slider_value02, self.sl2,  ft.Divider(height=1, color="amber"),
-                    tx4, slider_value04, self.sl4,  ft.Divider(height=1, color="amber"),
-                    tx5, slider_value05, self.sl5,  ft.Divider(height=1, color="amber"),
-                    tx6, slider_value06, self.sl6,  ft.Divider(height=1, color="amber"),
-                    tx7, slider_value07, self.sl7,  ft.Divider(height=1, color="amber"),
-                    tx9, slider_value08, self.sl8,  ft.Divider(height=1, color="amber"),
-                    tx14,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
-                    b,
-        ]        
-
 
     # Tabは使わないので大半削除したが、新UIでもこの条件分岐は必要なので、判定部分のみ残しておく。
        # if self.target_inputs["proj_type"] == "DBO(SPCなし)" or self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
@@ -624,7 +528,7 @@ class Edit_result(ft.Stack):
         # 新しいDataFrameと元のDataFrameを渡して、赤字ハイライト付きの表を生成
         updated_table = self.create_comparison_datatable(
             new_df=new_summ_df_t, 
-            old_df=self.target_summ_df # __init__で保持している元のDF (self.target_summ_df_t 等にしておくと確実です)
+            old_df=self.target_summ_df_t # __init__で保持している元のDF (self.target_summ_df_t 等にしておくと確実です)
         )
         
         # Containerの中身(content)を、新しい表インスタンスに差し替える
