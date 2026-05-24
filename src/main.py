@@ -30,26 +30,26 @@ async def stripe_webhook(request: Request):
     sig_header = request.headers.get("stripe-signature")
     logger.info("Received Stripe webhook: %s", payload)
 
-    try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, endpoint_secret
-        )
-    except ValueError as e:
-        # Invalid payload
-        logger.error(f"Invalid payload: {e}")
-        raise HTTPException(status_code=400, detail="Invalid payload")
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        logger.error(f"Invalid signature: {e}")
-        raise HTTPException(status_code=400, detail="Invalid signature")
-
-    # Handle the event (例: 支払い成功イベント)
-    if event["type"] == "checkout.session.completed":
-        session = event["data"]["object"]
-        logger.info(f"Checkout session completed: {session['id']}")
-        # ここで支払い完了後の処理を実装（例: ユーザーのサブスクリプションを有効化）
-
-    return {"status": "success"}
+#    try:
+#        event = stripe.Webhook.construct_event(
+#            payload, sig_header, endpoint_secret
+#        )
+#    except ValueError as e:
+#        # Invalid payload
+#        logger.error(f"Invalid payload: {e}")
+#        raise HTTPException(status_code=400, detail="Invalid payload")
+#    except stripe.error.SignatureVerificationError as e:
+#        # Invalid signature
+#        logger.error(f"Invalid signature: {e}")
+#        raise HTTPException(status_code=400, detail="Invalid signature")
+#
+#    # Handle the event (例: 支払い成功イベント)
+#    if event["type"] == "checkout.session.completed":
+#        session = event["data"]["object"]
+#        logger.info(f"Checkout session completed: {session['id']}")
+#        # ここで支払い完了後の処理を実装（例: ユーザーのサブスクリプションを有効化）
+#
+#    return {"status": "success"}
 
 async def main(page: ft.Page):
     page.title = "VFM計算アプリ"
@@ -215,4 +215,4 @@ async def main(page: ft.Page):
     route_change()
 
 
-ft.app(target=main, view=ft.AppView.WEB_BROWSER, port=8550) 
+ft.run(main, view=ft.AppView.WEB_BROWSER, port=8550) 

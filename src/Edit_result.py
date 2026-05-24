@@ -88,75 +88,8 @@ class Edit_result(ft.Stack):
 
         # 以下は、内部の計算やUIへのセットで参照するための辞書
         # 英変数名が確認できたら、すぐ下のコメントの内容に切り替える。
-        # self.target_inputs = target_inputs_df_j.iloc[0].to_dict()
-        self.target_inputs = target_inputs_df_j.iloc[0].rename(
-            {
-                'datetime':'datetime',
-                '施設管理者区分':'mgmt_type',
-                '事業形態':'proj_ctgry',
-                '事業方式':'proj_type',
-                '事業期間':'proj_years',
-                '施設整備期間':'const_years',
-                '施設整備開始日':'const_start_date',
-                '維持管理運営費期間':'ijikanri_unnei_years',
-                '落札率(%)':'rakusatsu_ritsu',
-                '施設整備削減率(%)':'reduc_shisetsu',
-                '維持管理運営費（人件費）削減率(%)':'reduc_ijikanri_1',
-                '維持管理運営費（修繕費）削減率(%)':'reduc_ijikanri_2',
-                '維持管理運営費（動力費）削減率(%)':'reduc_ijikanri_3',
-                '施設整備費(競争効果反映後)(百万円)':'shisetsu_seibi',
-                '施設整備費原額(百万円)':'shisetsu_seibi_org',
-                'LCC施設整備費（削減率適用）(百万円)':'shisetsu_seibi_org_LCC',
-                '維持管理運営費総額(競争効果反映後)(百万円)':'ijikanri_unnei',
-                '維持管理運営費総額原額(百万円)':'ijikanri_unnei_org',
-                'LCC維持管理運営費総額（削減率適用）(百万円)':'ijikanri_unnei_org_LCC',
-                '維持管理運営費(人件費)(競争効果反映後)(百万円)':'ijikanri_unnei_1',
-                '維持管理運営費(人件費)原額(百万円)':'ijikanri_unnei_1_org',
-                'LCC維持管理運営費(人件費)（削減率適用）(百万円)':'ijikanri_unnei_1_org_LCC',
-                '維持管理運営費(修繕費)(競争効果反映後)(百万円)':'ijikanri_unnei_2',
-                '維持管理運営費(修繕費)原額(百万円)':'ijikanri_unnei_2_org',
-                'LCC維持管理運営費(修繕費)（削減率適用）(百万円)':'ijikanri_unnei_2_org_LCC',
-                '維持管理運営費(動力費)(競争効果反映後)(百万円)':'ijikanri_unnei_3',
-                '維持管理運営費(動力費)原額(百万円)':'ijikanri_unnei_3_org',
-                'LCC維持管理運営費(動力費)（削減率適用）(百万円)':'ijikanri_unnei_3_org_LCC',
-                '補助率(%)':'hojo_ritsu',
-                '起債充当率(%)':'kisai_jutou',
-                '起債交付金カバー率(%)':'kisai_koufu',
-                'アドバイザリー手数料(百万円)':'advisory_fee',
-                'PFI-LCCでのモニタリング等費用(百万円)':'monitoring_costs_LCC',
-                'PSCでのモニタリング等費用(百万円)':'monitoring_costs_PSC',
-                'SPC費用の処理（デフォルト：サービス対価に含める）':'SPC_hiyou_atsukai',
-                'SPC手数料(百万円)':'SPC_fee',
-                'SPC経費(百万円)':'SPC_keihi',
-                'SPC設立費用(百万円)':'SPC_setsuritsuhi',
-                'SPC費用総額(百万円)':'SPC_hiyou_total',
-                'SPC費用年額(百万円)':'SPC_hiyou_nen',
-                'LCCでのSPC経費(百万円)':'SPC_keihi_LCC',
-                'SPC資本金(百万円)':'SPC_shihon',
-                'SPC予備費(百万円)':'SPC_yobihi',
-                '利用料金収入(百万円)':'riyouryoukin_shunyu',
-                '施設整備対価一括払比率(%)':'shisetsu_seibi_paymentschedule_ikkatsu',
-                '施設整備対価割賦払比率(%)':'shisetsu_seibi_paymentschedule_kappu',
-                '基準金利(%)':'kijun_kinri',
-                '官民スプレッド(%)':'lg_spread',
-                '期待物価上昇率(%)':'kitai_bukka',
-                '割引率(%)':'discount_rate',
-                '割賦金利(%)':'Kappu_kinri',
-                '割賦スプレッド(%)':'kappu_kinri_spread',
-                '地方債金利(%)':'chisai_kinri',
-                '地方債償還期間':'chisai_shoukan_kikan',
-                '地方債償還据置期間':'chisai_sueoki_years',
-                '法人税率(%)':'houjinzei_ritsu',
-                '法人住民税均等割(百万円)':'houjinjuminzei_kintou',
-                '不動産取得税課税標準(百万円)':'fudousanshutokuzei_hyoujun',
-                '不動産取得税率(%)':'fudousanshutokuzei_ritsu',
-                '固定資産税課税標準(百万円)':'koteishisanzei_hyoujun',
-                '固定資産税率(%)':'koteishisanzei_ritsu',
-                '登録免許税課税標準(百万円)':'tourokumenkyozei_hyoujun',
-                '登録免許税率(%)':'tourokumenkyozei_ritsu',
-            }
-        ).to_dict() 
-
+        self.target_inputs = target_inputs_df_j.iloc[0].to_dict()
+        
         target_summ_df['discount_rate'] = target_summ_df['discount_rate'] * 100 # できれば、こういう処理は消しておきたい。
         target_summ_df = target_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
         target_inputs_df = target_inputs_df_j.drop(['datetime'], axis=1)
@@ -188,7 +121,7 @@ class Edit_result(ft.Stack):
 
         # 編集対象になる方の算定結果要約の表を作成
         target_summ_df_t = target_summ_df_J.transpose().reset_index()
-        target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
+        self.target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
         simpledt_target_summ_df = DataFrame(target_summ_df_t)
         simpledt_target_summ_dt = simpledt_target_summ_df.datatable
         self.table_target_summ = simpledt_target_summ_dt
@@ -221,14 +154,14 @@ class Edit_result(ft.Stack):
                 for col_name in new_df.columns:
                     # getattr を使って、文字列の列名から namedtuple の値を取得
                     new_val = getattr(row, col_name)
-                    text_color = ft.colors.ON_SURFACE
+                    text_color = ft.Colors.ON_SURFACE
                 
                     if old_df is not None and col_name != "項目名":
                         # old_dfからの取得は loc のままでOK（インデックス検索のため）
                         old_val = old_df.loc[current_index, col_name]
                     
                         if str(new_val) != str(old_val):
-                            text_color = ft.colors.RED_400
+                            text_color = ft.Colors.RED_400
                     # ここで、該当セルの字の色を赤にセットしている。単なるDFではこれは無理でも
                     # simpleDTでも、行ごと、セルごとの処理はできたはず。
                     cells.append(ft.DataCell(ft.Text(str(new_val), color=text_color)))
@@ -238,17 +171,17 @@ class Edit_result(ft.Stack):
             return ft.DataTable(
                 columns=columns, 
                 rows=rows, 
-                border=ft.border.all(1, ft.colors.OUTLINE_VARIANT),
-                vertical_lines=ft.border.BorderSide(1, ft.colors.OUTLINE_VARIANT),
-                horizontal_lines=ft.border.BorderSide(1, ft.colors.OUTLINE_VARIANT)
+                border=ft.border.all(1, ft.Colors.OUTLINE_VARIANT),
+                vertical_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT),
+                horizontal_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT)
                 )   
 
         # 1. 表のインスタンス生成
         # 元の算定結果要約表（比較対象なし = 黒字）
-        self.original_summ_table = self.create_comparison_datatable(target_summ_df_t)
+        self.original_summ_table = self.create_comparison_datatable(self.target_summ_df_t)
         
         # 再算定結果要約表（初期表示は元データと全く同じものを表示）
-        self.recalc_summ_table = self.create_comparison_datatable(target_summ_df_t)
+        self.recalc_summ_table = self.create_comparison_datatable(self.target_summ_df_t)
 
         # 再算定表は後で差し替えるため、Containerでラップしておく
         self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
@@ -288,7 +221,7 @@ class Edit_result(ft.Stack):
                 cross_alignment=ft.CrossAxisAlignment.START,
                 controls=[
                     ft.Container(content=left_panel, expand=1, padding=10),
-                    ft.VerticalDivider(width=1, color=ft.colors.OUTLINE_VARIANT),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
                     ft.Container(content=right_panel, expand=1, padding=10)
                 ]
             )
@@ -599,7 +532,7 @@ class Edit_result(ft.Stack):
             cells = []
             for col_name in new_df.columns:
                 new_val = row[col_name]
-                text_color = ft.colors.ON_SURFACE # デフォルト（通常）の色
+                text_color = ft.Colors.ON_SURFACE # デフォルト（通常）の色
                 
                 # 比較対象があり、かつ「項目名」列以外の場合に値を比較する
                 if old_df is not None and col_name != "項目名":
@@ -609,7 +542,7 @@ class Edit_result(ft.Stack):
                     # 浮動小数点の表示上の誤差を吸収するため、文字列にして比較するか、
                     # または特定の小数点以下で丸めて比較します。
                     if str(new_val) != str(old_val):
-                        text_color = ft.colors.RED_400 # 変更があれば赤色
+                        text_color = ft.Colors.RED_400 # 変更があれば赤色
                         
                 cells.append(ft.DataCell(ft.Text(str(new_val), color=text_color)))
             
@@ -618,9 +551,9 @@ class Edit_result(ft.Stack):
         return ft.DataTable(
             columns=columns, 
             rows=rows, 
-            border=ft.border.all(1, ft.colors.OUTLINE_VARIANT), # 表の枠線
-            vertical_lines=ft.border.BorderSide(1, ft.colors.OUTLINE_VARIANT),
-            horizontal_lines=ft.border.BorderSide(1, ft.colors.OUTLINE_VARIANT)
+            border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT), # 表の枠線
+            vertical_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT),
+            horizontal_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT)
         )
 
 
@@ -631,10 +564,10 @@ class Edit_result(ft.Stack):
 
         # 1. 表のインスタンス生成
         # 元の算定結果要約表（比較対象なし = 黒字）
-        self.original_summ_table = self.create_comparison_datatable(target_summ_df_t)
+        self.original_summ_table = self.create_comparison_datatable(self.target_summ_df_t)
         
         # 再算定結果要約表（初期表示は元データと全く同じものを表示）
-        self.recalc_summ_table = self.create_comparison_datatable(target_summ_df_t)
+        self.recalc_summ_table = self.create_comparison_datatable(self.target_summ_df_t)
 
         # 再算定表は後で差し替えるため、Containerでラップしておく
         self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
@@ -674,7 +607,7 @@ class Edit_result(ft.Stack):
                 cross_alignment=ft.CrossAxisAlignment.START,
                 controls=[
                     ft.Container(content=left_panel, expand=1, padding=10),
-                    ft.VerticalDivider(width=1, color=ft.colors.OUTLINE_VARIANT),
+                    ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
                     ft.Container(content=right_panel, expand=1, padding=10)
                 ]
             )
@@ -692,7 +625,7 @@ class Edit_result(ft.Stack):
         # 新しいDataFrameと元のDataFrameを渡して、赤字ハイライト付きの表を生成
         updated_table = self.create_comparison_datatable(
             new_df=new_summ_df_t, 
-            old_df=target_summ_df_t # __init__で保持している元のDF (self.target_summ_df_t 等にしておくと確実です)
+            old_df=self.target_summ_df_t # __init__で保持している元のDF (self.target_summ_df_t 等にしておくと確実です)
         )
         
         # Containerの中身(content)を、新しい表インスタンスに差し替える
