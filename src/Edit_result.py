@@ -78,21 +78,18 @@ class Edit_result(ft.Stack):
             table_name = pd.read_sql_query(query, self.disk_engine)
             self.selected_res_list.append(table_name)
         target_summ_df = self.selected_res_list[0]
-        target_inputs_df_j = self.selected_res_list[1]
+        target_inputs_df = self.selected_res_list[1]
         # ここで要約表に必要なのは、SimpleDTに入れるためのDFで、日本語見出し。日本語化はすぐ下で処理している。
         # 他方で、入力は元のものも編集後も画面に「表の形」では表示はしない。スライダーだけ。
         # この関数内で計算する際に渡すなら、英変数名で辞書にする必要あり。
         # Targetu_Inputsは、EditcalcのVFMcalcには渡さない。渡すのはEdit_Inputs
-        # 要約と同じく、テーブルから出した状態は英変数名に直したはず。要確認。
-        # 確認できたら「_j」ははずしておく。
 
         # 以下は、内部の計算やUIへのセットで参照するための辞書
-        # 英変数名が確認できたら、すぐ下のコメントの内容に切り替える。
-        self.target_inputs = target_inputs_df_j.iloc[0].to_dict()
-        
+        self.target_inputs = target_inputs_df.iloc[0].to_dict()
+
         target_summ_df['discount_rate'] = target_summ_df['discount_rate'] * 100 # できれば、こういう処理は消しておきたい。
         target_summ_df = target_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
-        target_inputs_df = target_inputs_df_j.drop(['datetime'], axis=1)
+        target_inputs_df = target_inputs_df.drop(['datetime'], axis=1)
 
         target_summ_df_J = target_summ_df.rename(
             columns={
@@ -114,38 +111,39 @@ class Edit_result(ft.Stack):
             }
         )
         # 最終入力・パラメータの表を作成　←　これはどこで使うのか？編集算定後の詳細表示なら、データだけで十分
-        self.target_inputs_df_t = target_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
-        simpledt_targetinputs_df = DataFrame(self.target_inputs_df_t)
-        simpledt_targetinputs_dt = simpledt_targetinputs_df.datatable
-        self.table_targetinputs = simpledt_targetinputs_dt
+#        self.target_inputs_df_t = target_inputs_df.transpose().reset_index().rename(columns={"index":"項目名", 0:"値"})
+#        simpledt_targetinputs_df = DataFrame(self.target_inputs_df_t)
+#        simpledt_targetinputs_dt = simpledt_targetinputs_df.datatable
+#        self.table_targetinputs = simpledt_targetinputs_dt
 
         # 編集対象になる方の算定結果要約の表を作成
         target_summ_df_t = target_summ_df_J.transpose().reset_index()
-        self.target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
-        simpledt_target_summ_df = DataFrame(target_summ_df_t)
-        simpledt_target_summ_dt = simpledt_target_summ_df.datatable
-        self.table_target_summ = simpledt_target_summ_dt
+        target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
+        #simpledt_target_summ_df = DataFrame(target_summ_df_t)
+        #simpledt_target_summ_dt = simpledt_target_summ_df.datatable
+        #self.table_target_summ = simpledt_target_summ_dt
 
-        # 編集後の算定結果要約の表が必要！Edited_summ_df_Jに格納して、ここでSimpleDTに変換
+        # 編集算定後には、編集後算定結果要約の表が必要！Edited_summ_df_Jに格納して、ここでSimpleDTに変換
         # edited_summ_df_t = edited_summ_df_J.transpose().reset_index()
         # edited_summ_df_t = edited_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
         # simpledt_edited_summ_df = DataFrame(edited_summ_df_t)
         # simpledt_edited_summ_dt = simpledt_edited_summ_df.datatable
         # self.table_edited_summ = simpledt_edited_summ_dt
-        
-        def create_comparison_datatable(self, new_df, old_df=None):
+
+        new_df = target_summ_df_t
+        old_df = new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfの該当値だけを更新して、比較できるようにする。       
+
+
+        def create_comparison_datatable(new_df, old_df=None):
             """
             DataFrameからft.DataTableを生成する。(itertuplesによる高速化版)
-            old_dfが渡された場合、new_dfと値を比較し、異なれば赤字にする。←　「赤字」にする必要があるのは、new_dfの方。
-            できれば、実装が簡便なのでSimpleDTを使いたいが、DF段階で、「新旧を比較して差分を把握」する処理は、できれば
-            追加したいので、当面はファイルに残しておく。
+            old_dfが渡された場合、new_dfと値を比較し、異なれば赤字にする。← 「赤字」にする必要があるのは、
+            new_dfの方。できれば、実装が簡便なのでSimpleDTを使いたいが、DF段階で、「新旧を比較して差分を
+            把握」する処理は、できれば追加したいので、当面はファイルに残しておく。
             """
             columns = [ft.DataColumn(ft.Text(str(col), weight=ft.FontWeight.BOLD)) for col in new_df.columns]
             rows = []
         
-            # iterrows() を itertuples(index=True) に変更
-            # name=None とすることで、高速な無名タプルを生成することも可能ですが、
-            # 通常の namedtuple でも十分に高速です。
             for row in new_df.itertuples(index=True):
                 # row.Index でインデックス（行ラベル）を取得できます
                 current_index = row.Index 
@@ -155,12 +153,14 @@ class Edit_result(ft.Stack):
                     # getattr を使って、文字列の列名から namedtuple の値を取得
                     new_val = getattr(row, col_name)
                     text_color = ft.Colors.ON_SURFACE
+                    text_color = ft.Colors.ON_SURFACE
                 
                     if old_df is not None and col_name != "項目名":
                         # old_dfからの取得は loc のままでOK（インデックス検索のため）
                         old_val = old_df.loc[current_index, col_name]
                     
                         if str(new_val) != str(old_val):
+                            text_color = ft.Colors.RED_400
                             text_color = ft.Colors.RED_400
                     # ここで、該当セルの字の色を赤にセットしている。単なるDFではこれは無理でも
                     # simpleDTでも、行ごと、セルごとの処理はできたはず。
@@ -171,7 +171,7 @@ class Edit_result(ft.Stack):
             return ft.DataTable(
                 columns=columns, 
                 rows=rows, 
-                border=ft.border.all(1, ft.Colors.OUTLINE_VARIANT),
+                border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT),
                 vertical_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT),
                 horizontal_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT)
                 )   
@@ -238,11 +238,11 @@ class Edit_result(ft.Stack):
         lv_01.controls.append(ft.Text('編集対象算定結果の要約'))
         lv_01.controls.append(self.table_target_summ)
 
-        lv_04 = ft.ListView(
-            expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
-        )
-        lv_04.controls.append(ft.Text('編集対象入力値・パラメータ等一覧'))
-        lv_04.controls.append(self.table_targetinputs)
+        #lv_04 = ft.ListView(
+        #    expand=True, spacing=10, padding=10, auto_scroll=True, horizontal=False
+        #)
+        #lv_04.controls.append(ft.Text('編集対象入力値・パラメータ等一覧'))
+        #lv_04.controls.append(self.table_targetinputs)
 
 #FIからのUIの材料⇒主にスライダと、上記表、そしてそれらのレイアウトの材料
         slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -573,17 +573,17 @@ class Edit_result(ft.Stack):
         self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
 
         # 2. 左右のパネルを構築
-        # 【左パネル】表を縦に2つ並べる
+        # 【左パネル】表を縦に2つ並べる(変動させる側を上に置く)
         left_panel = ft.Column(
             expand=1, 
             scroll=ft.ScrollMode.AUTO,
             spacing=20,
             controls=[
+                ft.Text("再算定結果（シミュレーション）", size=18, weight=ft.FontWeight.BOLD),
+                self.recalc_table_container, # ここを更新する
+                ft.Divider(height=2, color="amber"),
                 ft.Text("元の算定結果", size=18, weight=ft.FontWeight.BOLD),
                 self.original_summ_table,
-                ft.Divider(height=2, color="amber"),
-                ft.Text("再算定結果（シミュレーション）", size=18, weight=ft.FontWeight.BOLD),
-                self.recalc_table_container # ここを更新する
             ]
         )
         
@@ -594,7 +594,7 @@ class Edit_result(ft.Stack):
             spacing=10,
             controls=[
                 ft.Text("パラメータ調整", size=18, weight=ft.FontWeight.BOLD),
-                # 既存のListView(fi_lv1)の中身を展開して配置
+                # 既存のListView(fi_lv1)の中身を展開して配置　←　展開されるか要確認！
                 *fi_lv1.controls 
             ]
         )
@@ -603,16 +603,15 @@ class Edit_result(ft.Stack):
         self.controls = [
             ft.Row(
                 expand=True,
-                alignment=ft.MainAxisAlignment.START,
-                cross_alignment=ft.CrossAxisAlignment.START,
+                #alignment=ft.MainAxisAlignment.START,
+                alignment=ft.CrossAxisAlignment.START,
                 controls=[
                     ft.Container(content=left_panel, expand=1, padding=10),
                     ft.VerticalDivider(width=1, color=ft.Colors.OUTLINE_VARIANT),
-                    ft.Container(content=right_panel, expand=1, padding=10)
+                    ft.Container(content=right_panel, expand=1, padding=10),
                 ]
             )
         ]
-
 
 #3. 非同期更新の反映処理
 #前回のデバウンス処理の最後に呼ばれる _update_result_tables を実装します。
@@ -625,7 +624,7 @@ class Edit_result(ft.Stack):
         # 新しいDataFrameと元のDataFrameを渡して、赤字ハイライト付きの表を生成
         updated_table = self.create_comparison_datatable(
             new_df=new_summ_df_t, 
-            old_df=self.target_summ_df_t # __init__で保持している元のDF (self.target_summ_df_t 等にしておくと確実です)
+            old_df=self.target_summ_df # __init__で保持している元のDF (self.target_summ_df_t 等にしておくと確実です)
         )
         
         # Containerの中身(content)を、新しい表インスタンスに差し替える
@@ -673,11 +672,30 @@ class Edit_result(ft.Stack):
         
         # 保存完了のメッセージ表示など
 
+    # Tabは使わないので大半削除したが、新UIでもこの条件分岐は必要なので、判定部分のみ残しておく。
+       # if self.target_inputs["proj_type"] == "DBO(SPCなし)" or self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
+       # else:
+
+# button_clicked
+    async def button_clicked(self, e):
+        self._extract_inputs()
+
+        edit_results = self._calculate_financials()
+        
+        self._save_to_db(edit_results)
+        # 呼ばれているのは、Editcalcの関数になっている必要に注意！
+        VFM_calc() # ここで「インメモリ用のcalc_idとＤＢ指定」を引数として渡す必要がある。
+        # ＤＢ書き込み関数を、どう動かせばいいか？
+        await self.page.push_route("/view_saved")
+        
+
+
 # Gemini提案以前のコードの残り
 # 編集画面からの_extract_inputs
     def to_dec(self, val):
             return Decimal(val).quantize(Decimal('0.000001'), ROUND_HALF_UP)
 
+# IIの抽出処理？
     def _extract_inputs(self):
 
         proj_years = int(self.target_inputs["proj_years"])
@@ -940,8 +958,8 @@ class Edit_result(ft.Stack):
             "discount_rate": str(discount_rate),
 
             "first_end_fy": str(first_end_fy),
-            "fudousanshutokuzei_hyoujun": str(self.target_inputs["hudousanshutokuzei_hyoujun"]),
-            "fudousanshutokuzei_ritsu": str(self.target_inputs["hudousanshutokuzei_ritsu"]),
+            "fudousanshutokuzei_hyoujun": str(self.target_inputs["fudousanshutokuzei_hyoujun"]),
+            "fudousanshutokuzei_ritsu": str(self.target_inputs["fudousanshutokuzei_ritsu"]),
             "growth": str(self.target_inputs["growth"]),
             "hojo_ritsu": self.target_inputs["hojo_ritsu"],
             "houjinzei_ritsu": str(self.target_inputs["houjinzei_ritsu"]),

@@ -11,15 +11,16 @@ from pydantic import BaseModel
 from pathlib import Path
 #import dateutil
 
-def main():
-    if Path("ei_db.json").exists():
-        db = TinyDB("ei_db.json")
-        inputs = db.all()[0]
-    elif Path("fi_db.json").exists():
-        db = TinyDB("fi_db.json")
-        inputs = db.all()[0]
-    else:
-        inputs = {
+def main(inputs=None):
+    if inputs is None:
+        if Path("ei_db.json").exists():
+            db = TinyDB("ei_db.json")
+            inputs = db.all()[0]
+        elif Path("fi_db.json").exists():
+            db = TinyDB("fi_db.json")
+            inputs = db.all()[0]
+        else:
+            inputs = {
              "advisory_fee": 25.0,
             "chisai_kinri": 0.0175,
             "chisai_shoukan_kikan": 23,
