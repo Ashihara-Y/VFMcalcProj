@@ -57,6 +57,7 @@ class Edit_result(ft.Stack):
         self.height = 1000
         #self.resizable = True
 
+        self.calc_task = None # 非同期タスクの管理用変数
         self.dtime = selected_datetime
         self.disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         self.memory_engine = create_engine('sqlite:///:memory:', echo=False, connect_args={'check_same_thread': False}, poolclass=StaticPool)
