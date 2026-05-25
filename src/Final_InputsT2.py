@@ -293,7 +293,7 @@ class Final_Inputs(ft.Column):
             on_change=handle_slider_change,
             data=slider_value10,
         )
-        tx17 = ft.Text("SPC予備費(百万円)")
+        tx17 = ft.Text("SPC準備金(違約金相当、百万円)")
         self.sl11 = ft.Slider(
             value=float(self.initial_inputs["SPC_yobihi"]),
             min=0,
