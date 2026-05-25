@@ -300,7 +300,7 @@ class Initial_Inputs(ft.Column):
                 SPC_costs = {'fee':to_dec(0), 'shihon':to_dec(0), 'yobihi':to_dec(0)}
                 SPC_hiyou_atsukai = int(1)
             else:
-                SPC_costs = {'keihi':to_dec(20), 'fee':to_dec(20), 'shihon':to_dec(100), 'yobihi':to_dec(456)}
+                SPC_costs = {'keihi':to_dec(20), 'fee':to_dec(20), 'shihon':to_dec(100), 'yobihi':to_dec(50)}
                 SPC_hiyou_atsukai = int(1)
 
             initial_inputs = {
