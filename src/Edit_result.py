@@ -20,7 +20,8 @@ from flet.auth.providers.auth0_oauth_provider import Auth0OAuthProvider
 from auth_manager import setup_auth, get_auth0_provider
 import save_results as sr
 from Editcalc import VFM_calc
-# 編集プロセス専用のモジュールを使う選択肢を作っておいた
+import asyncio
+
 """
 「詳細表示画面でボタンクリックの後」
 ・詳細表示の画面で「調整・再計算」（仮）ボタンをクリック ⇒
@@ -46,6 +47,7 @@ from Editcalc import VFM_calc
 
 #setup_auth(page: ft.Page, on_login_success)
 #auth0_provider = get_auth0_provider()
+
 @ft.control
 class Edit_result(ft.Stack):
     def __init__(self, selected_datetime):
@@ -55,20 +57,16 @@ class Edit_result(ft.Stack):
         self.height = 1000
         #self.resizable = True
 
-        self.dtime = selected_datetime # コンストラクタでselected_datetimeを受け取るように変更
+        self.dtime = selected_datetime
         self.disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         self.memory_engine = create_engine('sqlite:///:memory:', echo=False, connect_args={'check_same_thread': False}, poolclass=StaticPool)
 
         self.current_calc_id = "temp_calc_id" 
-        # スライダーを動かして編集している間のCalc_id（メモリー内で次々に変更される算定結果群は、「直近」だけビューに送るので、識別不要）。
-        # 最終的に編集結果を保存する際には、current_calc_idは保存対象に含めず、編集後のパラメータ群をsave_results.pyのmake_df_addID_saveDB関数を
-        # 渡すと、正式に新たなCalc_idが付与されて、結果保存テーブルのDBファイルに書き込まれる。
 
         table_names = [
             'res_summ_res_table',
             'final_inputs_res_table',
         ]
-        # この２つのテーブルからDFを作成して表示。
         # final_inputs_res_tableの方は、編集前後の入力値等を算定過程も通じて作成するための材料
         # res_summ_res_tableの方は、結果要約の表を作るための材料。
 
@@ -79,9 +77,6 @@ class Edit_result(ft.Stack):
             self.selected_res_list.append(table_name)
         target_summ_df = self.selected_res_list[0]
         target_inputs_df = self.selected_res_list[1]
-        # ここで要約表に必要なのは、SimpleDTに入れるためのDFで、日本語見出し。日本語化はすぐ下で処理している。
-        # 他方で、入力は元のものも編集後も画面に「表の形」では表示はしない。スライダーだけ。
-        # この関数内で計算する際に渡すなら、英変数名で辞書にする必要あり。
         # Targetu_Inputsは、EditcalcのVFMcalcには渡さない。渡すのはEdit_Inputs
 
         # 以下は、内部の計算やUIへのセットで参照するための辞書
@@ -119,7 +114,7 @@ class Edit_result(ft.Stack):
         #self.table_target_summ = simpledt_target_summ_dt
 
         new_df = self.target_summ_df_t
-        old_df = new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfの該当値だけを更新して、比較できるようにする。       
+        old_df = new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfを丸ごと更新して、比較。       
 
 
         def create_comparison_datatable(new_df, old_df=None):
@@ -174,39 +169,35 @@ class Edit_result(ft.Stack):
         # 再算定表は後で差し替えるため、Containerでラップしておく
         self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
 
-#FIからのUIの材料⇒主にスライダと、上記表、そしてそれらのレイアウトの材料
-        #slider_value01 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value02 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value05 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value06 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value07 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value08 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value09 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value10 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value11 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value12 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value13 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value14 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value15 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
-        #slider_value16 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
             
         def handle_slider_change(e):
             sl_value = e.control.value
             target_text_control = e.control.data
             target_text_control.value = str(sl_value)
             target_text_control.update()
+            if self.calc_task and not self.calc_task.done():
+              self.calc_task.cancel()
+            self.calc_task = asyncio.create_task(self._debounced_calculate())
 
         tx3 = ft.Text("施設整備費支払 一括払の比率(%)")
         self.sl3 = ft.Slider(
             value=float(self.target_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]),
-            min=0.8*float(self.target_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]),
+            min=0.5*float(self.target_inputs["shisetsu_seibi_paymentschedule_ikkatsu"]),
             max=100.00,
-            divisions=2000,
+            divisions=750,
             label="{value}%",
             round=2,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value03,
         )
@@ -218,7 +209,7 @@ class Edit_result(ft.Stack):
             divisions=500,
             label="{value}%",
             round=1,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value04,
         )
@@ -230,7 +221,7 @@ class Edit_result(ft.Stack):
             divisions=500,
             label="{value}%",
             round=1,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value05,
         ) 
@@ -242,7 +233,7 @@ class Edit_result(ft.Stack):
             divisions=500,
             label="{value}%",
             round=1,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value06,
         )
@@ -254,19 +245,19 @@ class Edit_result(ft.Stack):
             divisions=500,
             label="{value}%",
             round=1,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value07,
         )
         tx10 = ft.Text("SPC経費年額(百万円)")
         self.sl10 = ft.Slider(
             value=float(self.target_inputs["SPC_keihi"]),
-            min=0.95*float(self.target_inputs["SPC_keihi"]),
-            max=1.05*float(self.target_inputs["SPC_keihi"]),
-            divisions=1000,
+            min=0.75*float(self.target_inputs["SPC_keihi"]),
+            max=1.25*float(self.target_inputs["SPC_keihi"]),
+            divisions=500,
             label="{value}百万円",
             round=1,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value10,
         )
@@ -274,47 +265,47 @@ class Edit_result(ft.Stack):
         self.sl11 = ft.Slider(
             value=float(self.target_inputs["SPC_fee"]),
             min=0,
-            max=50,
-            divisions=50,
+            max=100,
+            divisions=100,
             label="{value}百万円",
             round=1,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value11,
         )
         tx12 = ft.Text("SPC資本金(百万円)")
         self.sl12 = ft.Slider(
             value=float(self.target_inputs["SPC_shihon"]),
-            min=0.95*float(self.target_inputs["SPC_shihon"]),
-            max=1.05*float(self.target_inputs["SPC_shihon"]),
-            divisions=1000,
+            min=0.75*float(self.target_inputs["SPC_shihon"]),
+            max=1.25*float(self.target_inputs["SPC_shihon"]),
+            divisions=500,
             label="{value}百万円",
             round=1,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value12,
         )
-        tx13 = ft.Text("SPC予備費(百万円)")
+        tx13 = ft.Text("SPC準備金(違約金相当、百万円)")
         self.sl13 = ft.Slider(
             value=float(self.target_inputs["SPC_yobihi"]),
-            min=0.95*float(self.target_inputs["SPC_yobihi"]),
-            max=1.05*float(self.target_inputs["SPC_yobihi"]),
-            divisions=100,
+            min=0,
+            max=0.1 * (float(self.target_inputs["shisetsu_seibi_org_LCC"]) + float(self.target_inputs["ijikanri_unnei_org_LCC"])),
+            divisions=1000,
             label="{value}百万円",
             round=1,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value13,
         )
         tx15 = ft.Text("割賦金利へのスプレッド(%)")
         self.sl15 = ft.Slider(
             value=float(self.target_inputs["kappu_kinri_spread"]),
-            min=0.95*float(self.target_inputs["kappu_kinri_spread"]),
-            max=1.05*float(self.target_inputs["kappu_kinri_spread"]),
-            divisions=100,
+            min=0.75*float(self.target_inputs["kappu_kinri_spread"]),
+            max=1.25*float(self.target_inputs["kappu_kinri_spread"]),
+            divisions=500,
             label="{value}%",
             round=2,
-            width=200,
+            width=400,
             on_change=handle_slider_change,
             data=slider_value15,
         )
@@ -369,25 +360,38 @@ class Edit_result(ft.Stack):
             scroll=ft.ScrollMode.AUTO,
             spacing=20,
             controls=[
+                ft.Text("再算定結果（シミュレーション）", size=18, weight=ft.FontWeight.BOLD),
+                self.recalc_table_container, # ここを更新する
+                ft.Divider(height=2, color="amber"),
                 ft.Text("元の算定結果", size=18, weight=ft.FontWeight.BOLD),
                 self.original_summ_table,
-                ft.Divider(height=2, color="amber"),
-                ft.Text("再算定結果（シミュレーション）", size=18, weight=ft.FontWeight.BOLD),
-                self.recalc_table_container # ここを更新する
             ]
         )
         
+        if self.target_inputs["proj_type"] == "DBO(SPCなし)" or self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
         # 【右パネル】スライダー群
-        right_panel = ft.Column(
-            expand=1, 
-            scroll=ft.ScrollMode.AUTO,
-            spacing=10,
-            controls=[
+          right_panel = ft.Column(
+              expand=1, 
+              scroll=ft.ScrollMode.AUTO,
+              spacing=10,
+              controls=[
                 ft.Text("パラメータ調整", size=18, weight=ft.FontWeight.BOLD),
-                # 既存のListView(fi_lv1)の中身を展開して配置　←　展開されるか要確認！
+                # fi_lv2の中身を展開して配置　←　展開されるか要確認！
+                *fi_lv2.controls 
+              ]
+          )
+        else:
+        # 【右パネル】スライダー群
+          right_panel = ft.Column(
+              expand=1, 
+              scroll=ft.ScrollMode.AUTO,
+              spacing=10,
+              controls=[
+                ft.Text("パラメータ調整", size=18, weight=ft.FontWeight.BOLD),
+                # fi_lv1の中身を展開して配置　←　展開されるか要確認！
                 *fi_lv1.controls 
-            ]
-        )
+              ]
+          )
 
         # 3. 親コンテナ(self)に左右のパネルをセット
         self.controls = [
@@ -402,10 +406,6 @@ class Edit_result(ft.Stack):
                 ]
             )
         ]
-
-    # Tabは使わないので大半削除したが、新UIでもこの条件分岐は必要なので、判定部分のみ残しておく。
-       # if self.target_inputs["proj_type"] == "DBO(SPCなし)" or self.target_inputs["proj_type"] == "BT/DB(いずれもSPCなし)":
-       # else:
 
 # button_clicked
     async def button_clicked(self, e):
