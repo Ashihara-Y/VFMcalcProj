@@ -707,7 +707,7 @@ class Final_Inputs(ft.Column):
             "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
             "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
 
-            "option_02": str(inputs['option_02']),
+            #"option_02": str(inputs['option_02']),
             "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.initial_inputs["proj_ctgry"],
             "proj_type": self.initial_inputs["proj_type"],
@@ -799,7 +799,7 @@ class Final_Inputs(ft.Column):
             "monitoring_costs_PSC": str(inputs['monitoring_costs_PSC']),
             "monitoring_costs_LCC": str(inputs['monitoring_costs_LCC']),
 
-            "option_02": str(inputs['option_02']),
+            #"option_02": str(inputs['option_02']),
             "pre_kyoukouka": bool(self.initial_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.initial_inputs["proj_ctgry"],
             "proj_type": self.initial_inputs["proj_type"],

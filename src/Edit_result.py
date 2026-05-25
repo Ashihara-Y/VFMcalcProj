@@ -58,6 +58,9 @@ class Edit_result(ft.Stack):
         #self.resizable = True
 
         self.calc_task = None # 非同期タスクの管理用変数
+        self.recalc_table_container = ft.Container(content=None)
+        self.original_summ_table = None
+        self.recalc_summ_table = None
         self.dtime = selected_datetime
         self.disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         self.memory_engine = create_engine('sqlite:///:memory:', echo=False, connect_args={'check_same_thread': False}, poolclass=StaticPool)
@@ -109,66 +112,10 @@ class Edit_result(ft.Stack):
 
         # 編集対象になる方の算定結果要約の表を作成
         target_summ_df_t = target_summ_df_J.transpose().reset_index()
-        self.target_summ_df_t = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
-        #simpledt_target_summ_df = DataFrame(target_summ_df_t)
-        #simpledt_target_summ_dt = simpledt_target_summ_df.datatable
-        #self.table_target_summ = simpledt_target_summ_dt
+        target_summ_df_t2 = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
 
-        new_df = self.target_summ_df_t
-        old_df = new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfを丸ごと更新して、比較。       
-
-
-    def create_comparison_datatable(new_df, old_df=None):
-            """
-            DataFrameからft.DataTableを生成する。(itertuplesによる高速化版)
-            old_dfが渡された場合、new_dfと値を比較し、異なれば赤字にする。← 「赤字」にする必要があるのは、
-            new_dfの方。できれば、実装が簡便なのでSimpleDTを使いたいが、DF段階で、「新旧を比較して差分を
-            把握」する処理は、できれば追加したいので、当面はファイルに残しておく。
-            """
-            columns = [ft.DataColumn(ft.Text(str(col), weight=ft.FontWeight.BOLD)) for col in new_df.columns]
-            rows = []
-        
-            for row in new_df.itertuples(index=True):
-                # row.Index でインデックス（行ラベル）を取得できます
-                current_index = row.Index 
-                cells = []
-            
-                for col_name in new_df.columns:
-                    # getattr を使って、文字列の列名から namedtuple の値を取得
-                    new_val = getattr(row, col_name)
-                    text_color = ft.Colors.ON_SURFACE
-                    text_color = ft.Colors.ON_SURFACE
-                
-                    if old_df is not None and col_name != "項目名":
-                        # old_dfからの取得は loc のままでOK（インデックス検索のため）
-                        old_val = old_df.loc[current_index, col_name]
-                    
-                        if str(new_val) != str(old_val):
-                            text_color = ft.Colors.RED_400
-                            text_color = ft.Colors.RED_400
-                    # ここで、該当セルの字の色を赤にセットしている。単なるDFではこれは無理でも
-                    # simpleDTでも、行ごと、セルごとの処理はできたはず。
-                    cells.append(ft.DataCell(ft.Text(str(new_val), color=text_color)))
-            
-                rows.append(ft.DataRow(cells=cells))
-            
-            return ft.DataTable(
-                columns=columns, 
-                rows=rows, 
-                border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT),
-                vertical_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT),
-                horizontal_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT)
-                )   
-
-        # 1. 表のインスタンス生成
-        # 元の算定結果要約表（比較対象なし = 黒字）
-        self.original_summ_table = self.create_comparison_datatable(self.target_summ_df_t)
-        
-        # 再算定結果要約表（初期表示は元データと全く同じものを表示）
-        self.recalc_summ_table = self.create_comparison_datatable(self.target_summ_df_t)
-
-        # 再算定表は後で差し替えるため、Containerでラップしておく
-        self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
+        self.new_df = target_summ_df_t2
+        old_df = self.new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfを丸ごと更新して、比較。       
 
         slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -352,8 +299,6 @@ class Edit_result(ft.Stack):
                     b,
         ]        
 
-
-
         # 2. 左右のパネルを構築
         # 【左パネル】表を縦に2つ並べる
         left_panel = ft.Column(
@@ -393,7 +338,6 @@ class Edit_result(ft.Stack):
                 *fi_lv1.controls 
               ]
           )
-
         # 3. 親コンテナ(self)に左右のパネルをセット
         self.controls = [
             ft.Row(
@@ -407,6 +351,52 @@ class Edit_result(ft.Stack):
                 ]
             )
         ]
+
+        # 1. 表のインスタンス生成
+        # 元の算定結果要約表（比較対象なし = 黒字）
+        self.original_summ_table = self.create_comparison_datatable(target_summ_df_t2)
+        
+        # 再算定結果要約表（初期表示は元データと全く同じものを表示）
+        self.recalc_summ_table = self.create_comparison_datatable(target_summ_df_t2)
+
+        # 再算定表は後で差し替えるため、Containerでラップしておく
+        self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
+
+    def create_comparison_datatable(self, new_df, old_df=None):
+        columns = [ft.DataColumn(ft.Text(str(col), weight=ft.FontWeight.BOLD)) for col in new_df.columns]
+        rows = []
+        
+        for row in new_df.itertuples(index=True):
+                # row.Index でインデックス（行ラベル）を取得できます
+            current_index = row.Index 
+            cells = []
+            
+            for col_name in new_df.columns:
+                    # getattr を使って、文字列の列名から namedtuple の値を取得
+                new_val = getattr(row, col_name)
+                text_color = ft.Colors.ON_SURFACE
+                text_color = ft.Colors.ON_SURFACE
+                
+                if old_df is not None and col_name != "項目名":
+                        # old_dfからの取得は loc のままでOK（インデックス検索のため）
+                    old_val = old_df.loc[current_index, col_name]
+                    
+                    if str(new_val) != str(old_val):
+                        text_color = ft.Colors.RED_400
+                        text_color = ft.Colors.RED_400
+                    # ここで、該当セルの字の色を赤にセットしている。単なるDFではこれは無理でも
+                    # simpleDTでも、行ごと、セルごとの処理はできたはず。
+                    cells.append(ft.DataCell(ft.Text(str(new_val), color=text_color)))
+            
+                rows.append(ft.DataRow(cells=cells))
+            
+        return ft.DataTable(
+                columns=columns, 
+                rows=rows, 
+                border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT),
+                vertical_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT),
+                horizontal_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT)
+                )   
 
     async def on_save_button_click(self, e):
         """「最終結果を保存」ボタンが押された時の処理"""
@@ -425,25 +415,14 @@ class Edit_result(ft.Stack):
           await sr.make_df_addID_saveDB2()
           await self.page.push_route("/view_saved")        
 
-# (OLD) button_clicked
-    #async def button_clicked(self, e):
-    #    self._extract_inputs()
-
-    #    edited_inputs = self._calculate_financials()
-        # セッションストレージとTunyDBへ入力データを送る
-    #    self._save_to_db(edited_inputs)
-      
-    #   VFM_calc() 
-    #    await self.page.push_route("/view_saved")
-        
 
 #3. 非同期更新の反映処理
 #新しく計算されたDataFrame（new_summ_df_t）と、初期表示時に保存しておいた元のDataFrame（target_summ_df_t）を比較させます。
-    def _update_result_tables(self, new_summ_df_t):
+    def _update_result_tables(self, new_summ_df_t, target_summ_df_t2=None):
         # 新しいDataFrameと元のDataFrameを渡して、赤字ハイライト付きの表を生成
         updated_table = self.create_comparison_datatable(
             new_df=new_summ_df_t, 
-            old_df=self.target_summ_df_t
+            old_df=target_summ_df_t2
         )
         
         # Containerの中身(content)を、新しい表インスタンスに差し替える
@@ -463,7 +442,7 @@ class Edit_result(ft.Stack):
             VFM_calc(edit_inputs=params)
             new_summ_df = pd.read_sql_query('SELECT * FROM res_summ_res_table', self.memory_engine)            
             new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名","0":"値"})
-            self._update_result_tables(new_summ_df_t)
+            self._update_result_tables(new_summ_df_t, target_summ_df_t2=self.new_df)
             
         except asyncio.CancelledError:
             pass
@@ -668,7 +647,7 @@ class Edit_result(ft.Stack):
             "monitoring_costs_PSC": str(self.edit_inputs['monitoring_costs_PSC']),
             "monitoring_costs_LCC": str(self.edit_inputs['monitoring_costs_LCC']),
 
-            "option_02": str(self.target_inputs['option_02']),
+            #"option_02": str(self.target_inputs['option_02']),
             "pre_kyoukouka": bool(self.target_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.target_inputs["proj_ctgry"],
             "proj_type": self.target_inputs["proj_type"],
@@ -760,7 +739,7 @@ class Edit_result(ft.Stack):
             "monitoring_costs_PSC": str(self.edit_inputs['monitoring_costs_PSC']),
             "monitoring_costs_LCC": str(self.edit_inputs['monitoring_costs_LCC']),
 
-            "option_02": str(self.target_inputs['option_02']),
+            #"option_02": str(self.target_inputs['option_02']),
             "pre_kyoukouka": bool(self.target_inputs["pre_kyoukouka"]),
             "proj_ctgry": self.target_inputs["proj_ctgry"],
             "proj_type": self.target_inputs["proj_type"],
