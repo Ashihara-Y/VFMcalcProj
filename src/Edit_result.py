@@ -118,7 +118,7 @@ class Edit_result(ft.Stack):
         old_df = new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfを丸ごと更新して、比較。       
 
 
-        def create_comparison_datatable(new_df, old_df=None):
+    def create_comparison_datatable(new_df, old_df=None):
             """
             DataFrameからft.DataTableを生成する。(itertuplesによる高速化版)
             old_dfが渡された場合、new_dfと値を比較し、異なれば赤字にする。← 「赤字」にする必要があるのは、
