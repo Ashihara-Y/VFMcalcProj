@@ -10,8 +10,9 @@ from decimal import *
 from collections import deque
 import make_inputs_df, make_3pls_withZero
 from sqlalchemy import create_engine, DECIMAL
+from sqlalchemy.pool import NullPool
 
-engine = create_engine('sqlite:///VFM.db', echo=False)
+engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, connect_args={'check_same_thread': False, 'timeout': 15})
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 
@@ -182,13 +183,14 @@ def LCC_calc():
     #c = conn.cursor()
 
     LCC_r = LCC.reset_index(drop=False)
-    LCC_r.to_sql('LCC_table', engine, if_exists='replace', index=False, dtype={ 
-        'net_payments': DECIMAL, 
-        'hojokin': DECIMAL, 
-        'kouhukin': DECIMAL, 
-        'kisai_gaku': DECIMAL, 
-        'zeishu': DECIMAL,
-        'income_total' : DECIMAL,
+    with engine.begin() as connection:
+        LCC_r.to_sql('LCC_table', con=connection, if_exists='replace', index=False, dtype={ 
+            'net_payments': DECIMAL, 
+            'hojokin': DECIMAL, 
+            'kouhukin': DECIMAL, 
+            'kisai_gaku': DECIMAL, 
+            'zeishu': DECIMAL,
+            'income_total' : DECIMAL,
         'shisetsu_seibihi_ikkatsu'  : DECIMAL,
         'shisetsu_seibihi_kappugoukei' : DECIMAL,
         'shisetsu_seibihi_kappuganpon' : DECIMAL,

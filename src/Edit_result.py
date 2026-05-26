@@ -7,7 +7,7 @@ from simpledt import DataFrame
 from tinydb import TinyDB, Query
 #import openpyxl
 from sqlalchemy import create_engine
-from sqlalchemy.pool import StaticPool
+from sqlalchemy.pool import StaticPool, NullPool
 #import make_inputs_df
 #import decimal
 from decimal import Decimal, ROUND_HALF_UP
@@ -62,10 +62,10 @@ class Edit_result(ft.Stack):
         self.original_summ_table = None
         self.recalc_summ_table = None
         self.dtime = selected_datetime
-        self.disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
+        self.disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False, 'timeout': 15}, poolclass=NullPool)
         self.memory_engine = create_engine('sqlite:///:memory:', echo=False, connect_args={'check_same_thread': False}, poolclass=StaticPool)
 
-        self.current_calc_id = "temp_calc_id" 
+        self.current_calc_id = "temp_calc_id"
 
         table_names = [
             'res_summ_res_table',
@@ -400,21 +400,24 @@ class Edit_result(ft.Stack):
 
     async def on_save_button_click(self, e):
         """「最終結果を保存」ボタンが押された時の処理"""
-        # インメモリDBにある最新のシミュレーション結果を読み出す
-        final_df_summ = pd.read_sql_query(f"SELECT * FROM res_summ_res_table", self.memory_engine)
-        final_df_inputs = pd.read_sql_query(f"SELECT * FROM final_inputs_res_table", self.memory_engine)
+        # ここで、セッションストレージから出して、クラス変数に格納する
+        if ft.page.session.store.contains_key("current_dfs"):
+          current_dfs = ft.page.session.store.get("current_dfs")
 
-        if not final_df_inputs or len(final_df_inputs)==0:
+          with self.disk_engine.begin() as connection:
+            for table_name_pt, df in current_dfs.items():
+              table_name = table_name_pt.replace('_df','_table')
+              df.to_sql(table_name, con=connection, if_exists='append', index=False)
+          await self.page.push_route("/view_saved")        
+        else:
           self._extract_inputs()
           edited_inputs = self._calculate_financials()
-          self._save_to_db(edited_inputs)
-          VFM_calc() 
-          final_df_summ = pd.read_sql_query(f"SELECT * FROM res_summ_res_table", self.memory_engine)
-          final_df_inputs = pd.read_sql_query(f"SELECT * FROM final_inputs_res_table", self.memory_engine)
-        else:          
-          await sr.make_df_addID_saveDB2()
+          current_dfs = VFM_calc(edit_inputs=edited_inputs) 
+          with self.disk_engine.begin() as connection:
+            for table_name_pt, df in current_dfs.items():
+              table_name = table_name_pt.replace('_df','_table')
+              df.to_sql(table_name, con=connection, if_exists='append', index=False)
           await self.page.push_route("/view_saved")        
-
 
 #3. 非同期更新の反映処理
 #新しく計算されたDataFrame（new_summ_df_t）と、初期表示時に保存しておいた元のDataFrame（target_summ_df_t）を比較させます。
@@ -439,8 +442,11 @@ class Edit_result(ft.Stack):
             self._extract_inputs()
             params = self._calculate_financials()
             
-            VFM_calc(target_engine=self.memory_engine, inputs=params)
-            new_summ_df = pd.read_sql_query('SELECT * FROM res_summ_res_table', self.memory_engine)            
+            current_dfs = VFM_calc(edit_inputs=params)
+            #if ft.page.session.store.contains_key("current_dfs"):
+            #  current_dfs = ft.page.session.store.get("current_dfs")
+            
+            new_summ_df = current_dfs["res_summ_res_df"]            
             new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名","0":"値"})
             self._update_result_tables(new_summ_df_t, target_summ_df_t2=self.new_df)
             

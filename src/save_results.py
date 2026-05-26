@@ -2,17 +2,16 @@ import sys
 sys.dont_write_bytecode = True
 #import os
 import pandas as pd
-#import duckdb
+import flet as ft
 from ulid import ULID
 import timeflake
 import datetime
 import uuid6
 from tinydb import TinyDB, Query
 import make_inputs_df
-#import decimal
 import decimal
 from sqlalchemy import create_engine
-from sqlalchemy.pool import StaticPool
+from sqlalchemy.pool import StaticPool, NullPool
 import sqlite3
 from zoneinfo import ZoneInfo
 
@@ -252,11 +251,23 @@ def make_df_addID_saveDB(current_calc_id=None, target_engine=None):
 
     for x_df in df_name_list:
         x_df[0].map(lambda x: float(x) if isinstance(x, decimal.Decimal) else x)
-        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', target_engine, if_exists='append', index=False)
-    
-def make_df_addID_saveDB2(current_calc_id=None, target_engine=None):
-#if target_engine is not None:
-    engine = mem_engine
+        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
+
+
+def make_df_addID_saveDB2(current_calc_id=None):
+    current_dfs = {
+        "PSC_res_df": None,
+        "PSC_pv_res_df": None,
+        "LCC_res_df": None,
+        "LCC_pv_res_df": None,
+        "SPC_res_df": None,
+        "SPC_check_res_df": None,
+        "Risk_res_df": None,
+        "VFM_res_df": None,
+        "PIRR_res_df": None, 
+        "res_summ_res_df": None,
+        "final_inputs_res_df": None
+        }
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
 
     inputs_pdt = make_inputs_df.main()
@@ -459,17 +470,17 @@ def make_df_addID_saveDB2(current_calc_id=None, target_engine=None):
         final_inputs_df
         ]
     df_name_list = [
-        (PSC_df,'PSC_df'),
-        (PSC_pv_df,'PSC_pv_df'),
-        (LCC_df,'LCC_df'),
-        (LCC_pv_df,'LCC_pv_df'),
-        (SPC_df,'SPC_df'),
-        (SPC_check_df,'SPC_check_df'),
-        (Risk_df,'Risk_df'),
-        (VFM_df,'VFM_df'),
+        (PSC_df,'PSC_res_df'),
+        (PSC_pv_df,'PSC_pv_res_df'),
+        (LCC_df,'LCC_res_df'),
+        (LCC_pv_df,'LCC_pv_res_df'),
+        (SPC_df,'SPC_res_df'),
+        (SPC_check_df,'SPC_check_res_df'),
+        (Risk_df,'Risk_res_df'),
+        (VFM_df,'VFM_res_df'),
         (PIRR_df,'PIRR_df'),
-        (res_summ_df,'res_summ_df'),
-        (final_inputs_df,'final_inputs_df')
+        (res_summ_df,'res_summ_res_df'),
+        (final_inputs_df,'final_inputs_res_df')
         ]
 
     for i in df_list:
@@ -477,7 +488,7 @@ def make_df_addID_saveDB2(current_calc_id=None, target_engine=None):
 
     for x_df in df_name_list:
         x_df[0].map(lambda x: float(x) if isinstance(x, decimal.Decimal) else x)
-        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', target_engine, if_exists='replace', index=False)
+        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='replace', index=False)
     
 
 

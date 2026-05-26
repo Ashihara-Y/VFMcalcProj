@@ -7,8 +7,9 @@ from pydantic import BaseModel
 from collections import deque
 import make_inputs_df
 from sqlalchemy import create_engine, DECIMAL
+from sqlalchemy.pool import NullPool
 
-engine = create_engine('sqlite:///VFM.db', echo=False)
+engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, connect_args={'check_same_thread': False, 'timeout': 15})
 
 
 #conn = duckdb.connect('VFM.duckdb')
@@ -59,7 +60,8 @@ def make_pv():
     #print(VFM, VFM_percent)
 
     VFM_df = pd.DataFrame({'VFM': [VFM], 'VFM_percent': [VFM_percent]})
-    VFM_df.to_sql('VFM_table', engine, if_exists='replace', index=False, dtype={'VFM': DECIMAL, 'VFM_percent': DECIMAL})
+    with engine.begin() as connection:
+        VFM_df.to_sql('VFM_table', con=connection, if_exists='replace', index=False, dtype={'VFM': DECIMAL, 'VFM_percent': DECIMAL})
     PSC_netpayments_df.to_sql('PSC_pv_table', engine, if_exists='replace', index=True, index_label='period', dtype={'present_value': DECIMAL, 'discount_factor': DECIMAL, 'net_payments': DECIMAL})
     LCC_netpayments_df.to_sql('LCC_pv_table', engine, if_exists='replace', index=True, index_label='period', dtype={'present_value': DECIMAL, 'discount_factor': DECIMAL, 'net_payments': DECIMAL})
 
