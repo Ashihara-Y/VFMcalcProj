@@ -489,6 +489,7 @@ def make_df_addID_saveDB2(current_calc_id=None):
         current_dfs[x_df[1]] = x_df[0]
     # （クラスがなくクラス変数への格納ができないので）セッションストレージに格納してみる
     ft.page.session.store.set("current_dfs": current_dfs)
+    return current_dfs
 
 
 if __name__ == "__main__":
