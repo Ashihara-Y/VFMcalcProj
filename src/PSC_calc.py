@@ -101,7 +101,7 @@ def PSC_calc():
     #c = conn.cursor()
 
     PSC_r = PSC.reset_index(drop=False)
-    with engine.begin as connection:
+    with engine.begin() as connection:
         PSC_r.to_sql('PSC_table', con=connection, if_exists='replace', index=False, dtype={
             'hojokin' : DECIMAL,
             'kouhukin' : DECIMAL,
