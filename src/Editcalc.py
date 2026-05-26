@@ -28,8 +28,8 @@ import check_SPC_cashForPPayment_BOT
 import check_SPC_cashForPPayment_BT
 
 
-def VFM_calc(current_calc_id=None, target_engine=None):
-    inputs = make_inputs_df.main()
+def VFM_calc(current_calc_id=None, target_engine=None, inputs=None):
+    inputs = make_inputs_df.main(inputs=inputs)
     #inputs = inputs.model_dump()
 
 

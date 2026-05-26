@@ -252,9 +252,9 @@ def make_df_addID_saveDB(current_calc_id=None, target_engine=None):
 
     for x_df in df_name_list:
         x_df[0].map(lambda x: float(x) if isinstance(x, decimal.Decimal) else x)
-        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
+        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', target_engine, if_exists='append', index=False)
     
-def make_df_addID_saveDB2(current_calc_id=None):
+def make_df_addID_saveDB2(current_calc_id=None, target_engine=None):
 #if target_engine is not None:
     engine = mem_engine
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
@@ -477,7 +477,7 @@ def make_df_addID_saveDB2(current_calc_id=None):
 
     for x_df in df_name_list:
         x_df[0].map(lambda x: float(x) if isinstance(x, decimal.Decimal) else x)
-        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='replace', index=False)
+        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', target_engine, if_exists='replace', index=False)
     
 
 

@@ -439,7 +439,7 @@ class Edit_result(ft.Stack):
             self._extract_inputs()
             params = self._calculate_financials()
             
-            VFM_calc(edit_inputs=params)
+            VFM_calc(target_engine=self.memory_engine, inputs=params)
             new_summ_df = pd.read_sql_query('SELECT * FROM res_summ_res_table', self.memory_engine)            
             new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名","0":"値"})
             self._update_result_tables(new_summ_df_t, target_summ_df_t2=self.new_df)
