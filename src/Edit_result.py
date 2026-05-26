@@ -455,7 +455,7 @@ class Edit_result(ft.Stack):
             pass
         except Exception as e:
             print(f"再計算エラー: {e}")
-            traceback.print_exc() # ★これを必ず入れる（赤字でエラー発生行が出力されます）
+            traceback.print_exc()
 
 # 編集画面からの_extract_inputs
     def to_dec(self, val):
