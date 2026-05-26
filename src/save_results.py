@@ -254,7 +254,7 @@ def make_df_addID_saveDB(current_calc_id=None, target_engine=None):
         x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
 
 
-def make_df_addID_saveDB2(current_calc_id=None):
+def make_df_addID_saveDB2(current_calc_id=None, inputs=None):
     current_dfs = {
         "PSC_res_df": None,
         "PSC_pv_res_df": None,
@@ -270,7 +270,7 @@ def make_df_addID_saveDB2(current_calc_id=None):
         }
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
 
-    inputs_pdt = make_inputs_df.main()
+    inputs_pdt = make_inputs_df.main(inputs=inputs)
 
     PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)
     PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", engine)
