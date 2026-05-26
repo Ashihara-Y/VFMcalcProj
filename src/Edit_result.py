@@ -65,7 +65,7 @@ class Edit_result(ft.Stack):
         self.disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
         self.memory_engine = create_engine('sqlite:///:memory:', echo=False, connect_args={'check_same_thread': False}, poolclass=StaticPool)
 
-        self.current_calc_id = "temp_calc_id" 
+        self.current_calc_id = "temp_calc_id"
 
         table_names = [
             'res_summ_res_table',
@@ -401,18 +401,24 @@ class Edit_result(ft.Stack):
     async def on_save_button_click(self, e):
         """「最終結果を保存」ボタンが押された時の処理"""
         # インメモリDBにある最新のシミュレーション結果を読み出す
-        final_df_summ = pd.read_sql_query(f"SELECT * FROM res_summ_res_table", self.memory_engine)
-        final_df_inputs = pd.read_sql_query(f"SELECT * FROM final_inputs_res_table", self.memory_engine)
+        # ここで、セッションストレージから出して、クラス変数に格納する
+        if ft.page.session.store.contains_key("current_dfs"):
+          current_dfs = ft.page.session.store.get("current_dfs")
+
+        final_df_summ = current_dfs["res_summ_df"]
+        final_df_inputs = current_dfs["dinal_inputs_df"]
 
         if not final_df_inputs or len(final_df_inputs)==0:
           self._extract_inputs()
           edited_inputs = self._calculate_financials()
           self._save_to_db(edited_inputs)
           VFM_calc() 
-          final_df_summ = pd.read_sql_query(f"SELECT * FROM res_summ_res_table", self.memory_engine)
-          final_df_inputs = pd.read_sql_query(f"SELECT * FROM final_inputs_res_table", self.memory_engine)
+          if ft.page.session.store.contains_key("current_dfs"):
+            current_dfs = ft.page.session.store.get("current_dfs")
+          final_df_summ = current_dfs["res_summ_df"]
+          final_df_inputs = current_dfs["dinal_inputs_df"]
         else:          
-          await sr.make_df_addID_saveDB2()
+          # await sr.make_df_addID_saveDB2()
           await self.page.push_route("/view_saved")        
 
 
@@ -440,7 +446,10 @@ class Edit_result(ft.Stack):
             params = self._calculate_financials()
             
             VFM_calc(edit_inputs=params)
-            new_summ_df = pd.read_sql_query('SELECT * FROM res_summ_res_table', self.memory_engine)            
+            if ft.page.session.store.contains_key("current_dfs"):
+              current_dfs = ft.page.session.store.get("current_dfs")
+            
+            new_summ_df = current_dfs["res_summ_df"]            
             new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名","0":"値"})
             self._update_result_tables(new_summ_df_t, target_summ_df_t2=self.new_df)
             
