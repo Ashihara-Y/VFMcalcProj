@@ -7,8 +7,9 @@ from pydantic import BaseModel
 from collections import deque
 import make_inputs_df
 from sqlalchemy import create_engine, DECIMAL
+from sqlalchemy.pool import NullPool
 
-engine = create_engine('sqlite:///VFM.db', echo=False)
+engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, connect_args={'check_same_thread': False, 'timeout': 15})
 
 
 #conn = duckdb.connect('VFM.duckdb')
@@ -46,7 +47,8 @@ def risk_adj():
     risk_adjust_gaku = ribaraihiyou_sa_sum + SPC_keihi_sum + SPC_seturitsuhi_sum + inputs_pdt.SPC_yobihi
     #print(risk_adjust_gaku)
     Risk_adjust_gaku_df = pd.DataFrame({'risk_adjust_gaku': [risk_adjust_gaku]})
-    Risk_adjust_gaku_df.to_sql('Risk_table', engine, if_exists='replace', index=False, dtype={'risk_adjust_gaku': DECIMAL})
+    with engine.begin() as connection:
+        Risk_adjust_gaku_df.to_sql('Risk_table', con=connection, if_exists='replace', index=False, dtype={'risk_adjust_gaku': DECIMAL})
     #c.execute('CREATE OR REPLACE TABLE Risk_table AS SELECT * from Risk_adjust_gaku_df')
     #c.close()
     #Risk_df = c.sql("SELECT * FROM Risk_table").df()
