@@ -10,6 +10,7 @@ from decimal import *
 from collections import deque
 import make_inputs_df, make_3pls_withZero
 from sqlalchemy import create_engine, DECIMAL
+from sqlalchemy.pool import NullPool
 
 engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, connect_args={'check_same_thread': False, 'timeout': 15})
 
