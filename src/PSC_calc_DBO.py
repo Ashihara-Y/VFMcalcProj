@@ -10,9 +10,9 @@ from decimal import *
 from collections import deque
 import make_inputs_df, make_3pls_withZero
 from sqlalchemy import create_engine, DECIMAL
+from sqlalchemy.pool import NullPool
 
-engine = create_engine('sqlite:///VFM.db', echo=False)
-
+engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, connect_args={'check_same_thread': False, 'timeout': 15})
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 
 def PSC_calc():
@@ -100,22 +100,23 @@ def PSC_calc():
     #c = conn.cursor()
 
     PSC_r = PSC.reset_index(drop=False)
-    PSC_r.to_sql('PSC_table', engine, if_exists='replace', index=False, dtype={
-        'hojokin' : DECIMAL,
-        'kouhukin' : DECIMAL,
-        'kisai_gaku' : DECIMAL,
-        'riyou_ryoukin' : DECIMAL,
-        'income_total' : DECIMAL,
-        'shisetsu_seibihi' : DECIMAL,
-        'ijikanri_unneihi' : DECIMAL,
-        'monitoring_costs' : DECIMAL,
-        'chisai_zansai' : DECIMAL,
-        'kisai_shoukan_gaku' : DECIMAL,
-        'kisai_shoukansumi_gaku' : DECIMAL,
-        'kisai_risoku_gaku' : DECIMAL,
-        'payments_total' : DECIMAL,
-        'net_payments' : DECIMAL,
-    })
+    with engine.begin() as connection:
+        PSC_r.to_sql('PSC_table', con=connection, if_exists='replace', index=False, dtype={
+            'hojokin' : DECIMAL,
+            'kouhukin' : DECIMAL,
+            'kisai_gaku' : DECIMAL,
+            'riyou_ryoukin' : DECIMAL,
+            'income_total' : DECIMAL,
+            'shisetsu_seibihi' : DECIMAL,
+            'ijikanri_unneihi' : DECIMAL,
+            'monitoring_costs' : DECIMAL,
+            'chisai_zansai' : DECIMAL,
+            'kisai_shoukan_gaku' : DECIMAL,
+            'kisai_shoukansumi_gaku' : DECIMAL,
+            'kisai_risoku_gaku' : DECIMAL,
+            'payments_total' : DECIMAL,
+            'net_payments' : DECIMAL,
+        })
     # c.sql("SELECT * FROM LCC_table").df()
         #c.execute('CREATE OR REPLACE TABLE PSC_table AS SELECT * FROM PSC_r')
         #c.close()
