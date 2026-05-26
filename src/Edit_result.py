@@ -445,9 +445,9 @@ class Edit_result(ft.Stack):
             self._extract_inputs()
             params = self._calculate_financials()
             
-            VFM_calc(edit_inputs=params)
-            if ft.page.session.store.contains_key("current_dfs"):
-              current_dfs = ft.page.session.store.get("current_dfs")
+            current_dfs = VFM_calc(edit_inputs=params)
+            #if ft.page.session.store.contains_key("current_dfs"):
+            #  current_dfs = ft.page.session.store.get("current_dfs")
             
             new_summ_df = current_dfs["res_summ_df"]            
             new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名","0":"値"})
