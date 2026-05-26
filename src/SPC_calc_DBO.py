@@ -189,7 +189,7 @@ def SPC_calc():
 
     SPC_r = SPC.reset_index(drop=False)
     with engine.begin() as connection:
-        SPC_r.to_sql('SPC_table', engine, if_exists='replace', index=False, dtype={
+        SPC_r.to_sql('SPC_table', con=connection, if_exists='replace', index=False, dtype={
             'shisetsu_seibihi_taika_ikkatsu' : DECIMAL,
             'shisetsu_seibihi_taika_kappuganpon' : DECIMAL,
             'shisetsu_seibihi_taika_kappukinri' : DECIMAL,
