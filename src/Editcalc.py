@@ -74,6 +74,8 @@ def VFM_calc(current_calc_id=None, target_engine=None, inputs=None):
         check_SPC_cashForPPayment_BT.check_cash()
         sr.make_df_addID_saveDB2(current_calc_id=current_calc_id)
 
+    return current_dfs
+
 
 if __name__ == "__main__":
     VFM_calc()
