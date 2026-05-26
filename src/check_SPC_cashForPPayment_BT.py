@@ -8,8 +8,9 @@ from pydantic import BaseModel
 #import openpyxl
 import make_inputs_df
 from sqlalchemy import create_engine, DECIMAL, BOOLEAN
+from sqlalchemy.pool import NullPool
 
-engine = create_engine('sqlite:///VFM.db', echo=False)
+engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, connect_args={'check_same_thread': False, 'timeout': 15})
 
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()
@@ -62,19 +63,21 @@ def check_cash():
     #print(EIRR, EIRR_percent)
 
     PIRR_df = pd.DataFrame({'PIRR': [PIRR], 'PIRR_percent': [PIRR_percent]})
-    PIRR_df.to_sql('PIRR_table', engine, if_exists='replace', index=False, dtype={
-        'PIRR': DECIMAL,
-        'PIRR_percent': DECIMAL})
-    SPC_df.to_sql('SPC_check_table', engine, if_exists='replace', index=False, dtype={
-        'income_total': DECIMAL,
-        'kariire_ganpon_hensai': DECIMAL,
-        'payments_total': DECIMAL,
-        'payments_total_full': DECIMAL,
-        'net_income': DECIMAL,
-        'net_income_full': DECIMAL,
-        'Cash_for_P_payment': DECIMAL,
-        'P_payment_check': BOOLEAN,
-    })
+    with engine.begin() as connection:
+        PIRR_df.to_sql('PIRR_table', engine, if_exists='replace', index=False, dtype={
+            'PIRR': DECIMAL,
+            'PIRR_percent': DECIMAL})
+    with engine.begin() as connection:
+        SPC_df.to_sql('SPC_check_table', engine, if_exists='replace', index=False, dtype={
+            'income_total': DECIMAL,
+            'kariire_ganpon_hensai': DECIMAL,
+            'payments_total': DECIMAL,
+            'payments_total_full': DECIMAL,
+            'net_income': DECIMAL,
+            'net_income_full': DECIMAL,
+            'Cash_for_P_payment': DECIMAL,
+            'P_payment_check': BOOLEAN,
+        })
 
     #c.execute('CREATE OR REPLACE TABLE PIRR_table AS SELECT * from PIRR_df')
     #c.execute('CREATE OR REPLACE TABLE SPC_check_table AS SELECT * from SPC_df')
