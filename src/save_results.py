@@ -268,19 +268,20 @@ def make_df_addID_saveDB2(current_calc_id=None, inputs=None):
         "res_summ_res_df": None,
         "final_inputs_res_df": None
         }
+    #engine = target_engine if target_engine is not None else default_disk_engine
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
 
     inputs_pdt = make_inputs_df.main(inputs=inputs)
 
-    PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)
-    PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", engine)
-    LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", engine)
-    LCC_pv_df = pd.read_sql_query("SELECT * FROM LCC_pv_table", engine)
-    SPC_df = pd.read_sql_query("SELECT * FROM SPC_table", engine)
-    SPC_check_df = pd.read_sql_query("SELECT * FROM SPC_check_table", engine)
-    Risk_df = pd.read_sql_query("SELECT * FROM Risk_table", engine)
-    VFM_df = pd.read_sql_query("SELECT * FROM VFM_table", engine)
-    PIRR_df = pd.read_sql_query("SELECT * FROM PIRR_table", engine)
+    PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", default_disk_engine)
+    PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", default_disk_engine)
+    LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", default_disk_engine)
+    LCC_pv_df = pd.read_sql_query("SELECT * FROM LCC_pv_table", default_disk_engine)
+    SPC_df = pd.read_sql_query("SELECT * FROM SPC_table", default_disk_engine)
+    SPC_check_df = pd.read_sql_query("SELECT * FROM SPC_check_table", default_disk_engine)
+    Risk_df = pd.read_sql_query("SELECT * FROM Risk_table", default_disk_engine)
+    VFM_df = pd.read_sql_query("SELECT * FROM VFM_table", default_disk_engine)
+    PIRR_df = pd.read_sql_query("SELECT * FROM PIRR_table", default_disk_engine)
 
     # make summary
     PSC_pv_summary_org = PSC_pv_df[['present_value']].sum()
@@ -488,9 +489,10 @@ def make_df_addID_saveDB2(current_calc_id=None, inputs=None):
 
     for x_df in df_name_list:
         x_df[0].map(lambda x: float(x) if isinstance(x, decimal.Decimal) else x)
-        x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='replace', index=False)
-    
-
+        #x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='replace', index=False)
+        current_dfs[x_df[1]] = x_df[0]
+        
+    return current_dfs
 
 if __name__ == "__main__":
     make_df_addID_saveDB()
