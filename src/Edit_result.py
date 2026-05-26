@@ -412,7 +412,7 @@ class Edit_result(ft.Stack):
         else:
           self._extract_inputs()
           edited_inputs = self._calculate_financials()
-          current_dfs = VFM_calc(edit_inputs=edited_inputs) 
+          current_dfs = VFM_calc(inputs=edited_inputs) 
           with self.disk_engine.begin() as connection:
             for table_name_pt, df in current_dfs.items():
               table_name = table_name_pt.replace('_df','_table')
@@ -442,7 +442,7 @@ class Edit_result(ft.Stack):
             self._extract_inputs()
             params = self._calculate_financials()
             
-            current_dfs = VFM_calc(edit_inputs=params)
+            current_dfs = VFM_calc(inputs=params)
             #if ft.page.session.store.contains_key("current_dfs"):
             #  current_dfs = ft.page.session.store.get("current_dfs")
             
