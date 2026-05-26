@@ -21,6 +21,7 @@ from auth_manager import setup_auth, get_auth0_provider
 import save_results as sr
 from Editcalc import VFM_calc
 import asyncio
+import traceback
 
 """
 「詳細表示画面でボタンクリックの後」
@@ -454,7 +455,7 @@ class Edit_result(ft.Stack):
             pass
         except Exception as e:
             print(f"再計算エラー: {e}")
-
+            traceback.print_exc() # ★これを必ず入れる（赤字でエラー発生行が出力されます）
 
 # 編集画面からの_extract_inputs
     def to_dec(self, val):
