@@ -64,11 +64,11 @@ def check_cash():
 
     PIRR_df = pd.DataFrame({'PIRR': [PIRR], 'PIRR_percent': [PIRR_percent]})
     with engine.begin() as connection:
-        PIRR_df.to_sql('PIRR_table', engine, if_exists='replace', index=False, dtype={
+        PIRR_df.to_sql('PIRR_table', con=connection, if_exists='replace', index=False, dtype={
             'PIRR': DECIMAL,
             'PIRR_percent': DECIMAL})
     with engine.begin() as connection:
-        SPC_df.to_sql('SPC_check_table', engine, if_exists='replace', index=False, dtype={
+        SPC_df.to_sql('SPC_check_table', con=connection, if_exists='replace', index=False, dtype={
             'income_total': DECIMAL,
             'kariire_ganpon_hensai': DECIMAL,
             'payments_total': DECIMAL,
