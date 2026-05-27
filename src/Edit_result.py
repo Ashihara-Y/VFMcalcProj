@@ -23,28 +23,6 @@ from Editcalc import VFM_calc
 import asyncio
 import traceback
 
-"""
-「詳細表示画面でボタンクリックの後」
-・詳細表示の画面で「調整・再計算」（仮）ボタンをクリック ⇒
-・当該算定結果のdatetimeとcalc_idがセッションストレージに格納され、「調整画面」に渡される ⇒
-「調整画面が表示されるまで」
-・datetimeとcalc_idで指定された算定結果から、「結果要約」「入力データ」が抽出される ⇒
-・この２つのデータを、スライダー付きレイアウトの画面に表示する ⇒
-「スライダー操作された後」
-・スライダーが動いている最中は、その値は後の計算過程には渡されない ⇒
-・スライダーの移動が停止してから0.2秒（？）後に、その変更値（スライダー変更の手が一度止まれば一度計算されるので、
-  一度の算定で対象となる入力パラメータの変更箇所は１つだけ！）を反映した「編集後の入力データ」を抽出・計算に通す ⇒
-・抽出・計算に通した後の辞書を、VFM算定過程（Editcalc）に渡す ⇒
-・編集した入力によるVFM算定結果を、インメモリのDBにReplaceで書き込む（Editcalcの最後の関数に、インメモリ保存用のcalc_idを渡す） ⇒
-・DBから、上記算定結果のうち、「算定結果要約」と「入力値」を抽出する。
-・DBからの抽出条件は？ メモリ用の書き込みはReplaceにしたので、各テーブルのレコードは１つだけのはず。それならば、条件なしでfrom _sqlを実施してDFに格納するだけで十分か？ ⇒
-・前者は「編集後の算定結果」表の更新へ、後者は元のUI部品で、スライダーの位置だけ入力した値の場所にするのに使う（「元に戻せる」
-  観点から、UIは元のままで値だけ最後の入力値のままにする） ⇒
-「算定結果保存がクリックされた後」
-・「この算定結果を保存」（仮）ボタンをクリックすると、その時点での「編集後算定結果」（インメモリＤＢ上の各テーブルに残っている）を抽出して、
-  ファイルＤＢに書き込む。この処理コードも新たに追加する必要がある ⇒
-・新たに保存した算定結果を含む要約リスト画面に遷移する。
-"""
 
 #setup_auth(page: ft.Page, on_login_success)
 #auth0_provider = get_auth0_provider()
@@ -59,9 +37,9 @@ class Edit_result(ft.Stack):
         #self.resizable = True
 
         self.calc_task = None # 非同期タスクの管理用変数
-        self.recalc_table_container = ft.Container(content=None)
-        self.original_summ_table = None
-        self.recalc_summ_table = None
+        #self.recalc_table_container = ft.Container(content=None)
+        #self.original_summ_table = None
+        #self.recalc_summ_table = None
         self.dtime = selected_datetime
         self.disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False, 'timeout': 15}, poolclass=NullPool)
         self.memory_engine = create_engine('sqlite:///:memory:', echo=False, connect_args={'check_same_thread': False}, poolclass=StaticPool)
@@ -112,12 +90,62 @@ class Edit_result(ft.Stack):
         )
 
         # 編集対象になる方の算定結果要約の表を作成
-        target_summ_df_t = target_summ_df_J.transpose().reset_index()
-        target_summ_df_t2 = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
+        #target_summ_df_t = target_summ_df_J.transpose().reset_index()
+        target_summ_df_t = target_summ_df.transpose().reset_index()
+        self.target_summ_df_t2 = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
 
-        self.new_df = target_summ_df_t2
-        old_df = self.new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfを丸ごと更新して、比較。       
+        self.new_df = self.target_summ_df_t2
+        self.old_df = self.new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfを丸ごと更新して、比較。       
 
+    def create_comparison_datatable(self, new_df, old_df=None):
+ 
+        columns = [ft.DataColumn(ft.Text(str(col), weight=ft.FontWeight.BOLD)) for col in new_df.columns]
+        rows = []
+        target_rows = [
+            'VFM_percent',
+            'PSC_present_value',
+            'LCC_present_value',
+            'PIRR','SPC_payment_cash',
+            'mgmt_type',
+            'proj_ctgry',
+            'proj_type',
+            'const_years',
+            'proj_years',
+            'discount_rate',
+            'kariire_kinri',
+            'Kappu_kinri',
+            'kappu_kinri_spread',
+            'SPC_fee'
+            ]
+        new_df_dic = new_df.loc[new_df.index.isin(target_rows)].to_dict(orient="index")
+        old_df_dic = old_df.loc[old_df.index.isin(target_rows)].to_dict(orient="index")
+
+        changed_keys = [k for k, v in new_df_dic.items() if old_df_dic[k] != v]
+
+        for row in new_df.itertuples(index=True):
+            # row.Index でインデックス（行ラベル）を取得できます
+            row_key =row.Index
+
+            if row_key in changed_keys:            
+                    text_color = ft.Colors.AMBER_400
+            else:
+                    text_color = ft.Colors.ON_SURFACE
+
+            cells = [ft.DataCell(ft.Text(str(val), color=text_color)) for val in row[1:]]
+            rows.append(ft.DataRow(cells=cells))
+            
+        return ft.DataTable(
+                columns=columns, 
+                rows=rows, 
+                border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT),
+                vertical_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT),
+                horizontal_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT)
+                )   
+
+        # 2. 左右のパネルを構築
+        # 【左パネル】表を縦に2つ並べる
+
+    def build(self):
         slider_value03 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value04 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
         slider_value05 = ft.Text("", size=30, weight=ft.FontWeight.W_200)
@@ -299,9 +327,18 @@ class Edit_result(ft.Stack):
                     tx13,slider_value13, self.sl13, ft.Divider(height=1, color="amber"),
                     b,
         ]        
+     
+            # 1. 表のインスタンス生成
+        # 元の算定結果要約表（比較対象なし = 黒字）
+        self.original_summ_table = DataFrame(self.old_df).datatable
+        
+        # 再算定結果要約表（初期表示は元データと全く同じものを表示）
+        self.recalc_summ_table = self.create_comparison_datatable(self.target_summ_df_t2, old_df=self.target_summ_df_t2)
 
-        # 2. 左右のパネルを構築
-        # 【左パネル】表を縦に2つ並べる
+        # 再算定表は後で差し替えるため、Containerでラップしておく
+        self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
+
+ 
         left_panel = ft.Column(
             expand=1, 
             scroll=ft.ScrollMode.AUTO,
@@ -353,51 +390,6 @@ class Edit_result(ft.Stack):
             )
         ]
 
-        # 1. 表のインスタンス生成
-        # 元の算定結果要約表（比較対象なし = 黒字）
-        self.original_summ_table = self.create_comparison_datatable(target_summ_df_t2)
-        
-        # 再算定結果要約表（初期表示は元データと全く同じものを表示）
-        self.recalc_summ_table = self.create_comparison_datatable(target_summ_df_t2)
-
-        # 再算定表は後で差し替えるため、Containerでラップしておく
-        self.recalc_table_container = ft.Container(content=self.recalc_summ_table)
-
-    def create_comparison_datatable(self, new_df, old_df=None):
-        columns = [ft.DataColumn(ft.Text(str(col), weight=ft.FontWeight.BOLD)) for col in new_df.columns]
-        rows = []
-        
-        for row in new_df.itertuples(index=True):
-                # row.Index でインデックス（行ラベル）を取得できます
-            current_index = row.Index 
-            cells = []
-            
-            for col_name in new_df.columns:
-                    # getattr を使って、文字列の列名から namedtuple の値を取得
-                new_val = getattr(row, col_name)
-                text_color = ft.Colors.ON_SURFACE
-                text_color = ft.Colors.ON_SURFACE
-                
-                if old_df is not None and col_name != "項目名":
-                        # old_dfからの取得は loc のままでOK（インデックス検索のため）
-                    old_val = old_df.loc[current_index, col_name]
-                    
-                    if str(new_val) != str(old_val):
-                        text_color = ft.Colors.RED_400
-                        text_color = ft.Colors.RED_400
-                    # ここで、該当セルの字の色を赤にセットしている。単なるDFではこれは無理でも
-                    # simpleDTでも、行ごと、セルごとの処理はできたはず。
-                    cells.append(ft.DataCell(ft.Text(str(new_val), color=text_color)))
-            
-                rows.append(ft.DataRow(cells=cells))
-            
-        return ft.DataTable(
-                columns=columns, 
-                rows=rows, 
-                border=ft.Border.all(1, ft.Colors.OUTLINE_VARIANT),
-                vertical_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT),
-                horizontal_lines=ft.border.BorderSide(1, ft.Colors.OUTLINE_VARIANT)
-                )   
 
     async def on_save_button_click(self, e):
         """「最終結果を保存」ボタンが押された時の処理"""
@@ -422,19 +414,18 @@ class Edit_result(ft.Stack):
 
 #3. 非同期更新の反映処理
 #新しく計算されたDataFrame（new_summ_df_t）と、初期表示時に保存しておいた元のDataFrame（target_summ_df_t）を比較させます。
-    def _update_result_tables(self, new_summ_df_t, target_summ_df_t2=None):
+    def _update_result_tables(self, new_df=None, old_df=None):
         # 新しいDataFrameと元のDataFrameを渡して、赤字ハイライト付きの表を生成
         updated_table = self.create_comparison_datatable(
-            new_df=new_summ_df_t, 
-            old_df=target_summ_df_t2
+            new_df,
+            old_df
         )
         
         # Containerの中身(content)を、新しい表インスタンスに差し替える
         self.recalc_table_container.content = updated_table
         
         # 画面の更新を要求
-        self.update()
-
+        self.recalc_table_container.update()
 
     async def _debounced_calculate(self):
         """スライダーが動いた時のシミュレーション処理（非同期）"""
@@ -447,9 +438,28 @@ class Edit_result(ft.Stack):
             #if ft.page.session.store.contains_key("current_dfs"):
             #  current_dfs = ft.page.session.store.get("current_dfs")
             
-            new_summ_df = current_dfs["res_summ_res_df"]            
-            new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名","0":"値"})
-            self._update_result_tables(new_summ_df_t, target_summ_df_t2=self.new_df)
+            new_summ_df = current_dfs["res_summ_res_df"].drop(['datetime', 'user_id', 'calc_id'], axis=1)
+            new_summ_df = new_summ_df.rename(
+                columns={
+                'VFM_percent':'VFM(％)', 
+                'PSC_present_value':'PSCでの公共キャッシュ・フロー現在価値', 
+                'LCC_present_value':'PFI-LCCでの公共キャッシュ・フロー現在価値', 
+                'PIRR':'プロジェクト内部収益率(％)',
+                'SPC_payment_cash':'SPCの元本返済可否', 
+                'mgmt_type':'発注者区分', 
+                'proj_ctgry':'事業形態', 
+                'proj_type':'事業方式',
+                'const_years':'施設整備期間', 
+                'proj_years':'事業期間', 
+                'discount_rate':'割引率(％)', 
+                'kariire_kinri':'借入コスト(％)',
+                'Kappu_kinri':'割賦金利(％)',
+                'kappu_kinri_spread':'割賦スプレッド(％)',
+                'SPC_fee':'SPCへの手数料(百万円)',
+                }
+            )
+            new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名",0:"値"})
+            self._update_result_tables(new_summ_df_t, old_df=self.new_df)
             
         except asyncio.CancelledError:
             pass
@@ -788,15 +798,15 @@ class Edit_result(ft.Stack):
 
 
 # _save_to_db
-    def _save_to_db(self, data):
-        if self.page.session.store.contains_key("edit_final_inputs"):
-            self.page.session.store.remove("edit_final_inputs")
-        self.page.session.store.set("edit_final_inputs",data)
-        if os.path.exists("ei_db.json"):
-            os.remove("ei_db.json")
-        db = TinyDB('ei_db.json')
-        db.insert(data)
-        db.close()
+    #def _save_to_db(self, data):
+    #    if self.page.session.store.contains_key("edit_final_inputs"):
+    #        self.page.session.store.remove("edit_final_inputs")
+    #    self.page.session.store.set("edit_final_inputs",data)
+    #    if os.path.exists("ei_db.json"):
+    #        os.remove("ei_db.json")
+    #    db = TinyDB('ei_db.json')
+    #    db.insert(data)
+    #    db.close()
 
 
 
