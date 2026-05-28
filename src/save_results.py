@@ -28,13 +28,14 @@ dtime = datetime.datetime.fromtimestamp(timestamp // 1000.0, tz=ZoneInfo("Asia/T
 
 df_name_list=[]
 
-def make_df_addID_saveDB(current_calc_id=None, target_engine=None):
+def make_df_addID_saveDB(current_calc_id=None, target_engine=None, inputs=None):
 #if target_engine is not None:
     engine = target_engine if target_engine is not None else default_disk_engine
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
 
-    inputs_pdt = make_inputs_df.main()
-
+    #inputs_pdt = make_inputs_df.main()
+    inputs_pdt = inputs
+    
     PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)
     PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", engine)
     LCC_df = pd.read_sql_query("SELECT * FROM LCC_table", engine)
