@@ -17,9 +17,10 @@ zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_paymen
 
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()
-def SPC_calc():
-    inputs_pdt = make_inputs_df.main()
-
+def SPC_calc(inputs=None):
+    #inputs_pdt = make_inputs_df.main()
+    inputs_pdt = inputs
+    
     LCC_df = pd.read_sql_table('LCC_table', engine)
     #LCC_df = LCC_df.set_index('periods')
     LCC_df['hojokin'] = LCC_df['hojokin'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
