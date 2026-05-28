@@ -14,9 +14,10 @@ engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, conne
 
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()
-def check_cash():
-    inputs_pdt = make_inputs_df.main()
-
+def check_cash(inputs=None):
+    #inputs_pdt = make_inputs_df.main()
+    inputs_pdt = inputs
+    
     SPC_df = pd.read_sql_query("SELECT periods, year, income_total, kariire_ganpon_hensai, payments_total, payments_total_full, net_income FROM SPC_table", engine)
     #SPC_df = c.sql("SELECT  periods, year, income_total, kariire_ganpon_hensai, payments_total, payments_total_full, net_income FROM SPC_table").df()
     SPC_df['income_total'] = SPC_df['income_total'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))
