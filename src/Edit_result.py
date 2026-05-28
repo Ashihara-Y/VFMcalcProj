@@ -426,6 +426,7 @@ class Edit_result(ft.Stack):
         
         # 画面の更新を要求
         self.recalc_table_container.update()
+        #self.page.update()
 
     async def _debounced_calculate(self):
         """スライダーが動いた時のシミュレーション処理（非同期）"""
@@ -439,7 +440,7 @@ class Edit_result(ft.Stack):
             #  current_dfs = ft.page.session.store.get("current_dfs")
             
             new_summ_df = current_dfs["res_summ_res_df"].drop(['datetime', 'user_id', 'calc_id'], axis=1)
-            new_summ_df = new_summ_df.rename(
+            new_summ_df_J = new_summ_df.rename(
                 columns={
                 'VFM_percent':'VFM(％)', 
                 'PSC_present_value':'PSCでの公共キャッシュ・フロー現在価値', 
