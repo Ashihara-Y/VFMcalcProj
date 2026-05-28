@@ -465,6 +465,8 @@ class Edit_result(ft.Stack):
             new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名","0":"値"})
             self._update_result_tables(new_summ_df_t, old_df=self.new_df)
             
+            print(new_summ_df_t)
+
         except asyncio.CancelledError:
             pass
         except Exception as e:
