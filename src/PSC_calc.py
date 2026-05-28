@@ -16,9 +16,10 @@ engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, conne
 
 zero_pl_PSC_income, zero_pl_PSC_payments, zero_pl_LCC_income, zero_pl_LCC_payments, zero_pl_SPC_income, zero_pl_SPC_payments = make_3pls_withZero.output()
 
-def PSC_calc():
-    inputs_pdt = make_inputs_df.main()
-
+def PSC_calc(inputs=None):
+    #inputs_pdt = make_inputs_df.main()
+    inputs_pdt = inputs
+    
     PSC_shuushi_income = zero_pl_PSC_income
     PSC_shuushi_payments = zero_pl_PSC_payments
 
