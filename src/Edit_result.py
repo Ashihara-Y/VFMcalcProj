@@ -437,8 +437,10 @@ class Edit_result(ft.Stack):
             await asyncio.sleep(0.3)
             self._extract_inputs()
             params = self._calculate_financials()
+            print(params)
             
             current_dfs = VFM_calc(inputs=params)
+            print(current_dfs["res_summ_res_df"])
             #if ft.page.session.store.contains_key("current_dfs"):
             #  current_dfs = ft.page.session.store.get("current_dfs")
             
