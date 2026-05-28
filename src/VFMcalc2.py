@@ -37,13 +37,13 @@ def VFM_calc(current_calc_id=None, target_engine=None):
 
     if proj_type == "BTO":
 
-        PSC_calc.PSC_calc()
-        LCC_calc.LCC_calc()
-        SPC_calc.SPC_calc()
-        risk_adjustment.risk_adj()
-        make_present_value.make_pv()
-        check_SPC_cashForPPayment.check_cash()
-        sr.make_df_addID_saveDB(current_calc_id=current_calc_id, target_engine=target_engine)
+        PSC_calc.PSC_calc(inputs=inputs)
+        LCC_calc.LCC_calc(inputs=inputs)
+        SPC_calc.SPC_calc(inputs=inputs)
+        risk_adjustment.risk_adj(inputs=inputs)
+        make_present_value.make_pv(inputs=inputs)
+        check_SPC_cashForPPayment.check_cash(inputs=inputs)
+        sr.make_df_addID_saveDB(current_calc_id=current_calc_id, target_engine=target_engine, inputs=inputs)
     
     if proj_type == "DBO(SPCなし)":
 
