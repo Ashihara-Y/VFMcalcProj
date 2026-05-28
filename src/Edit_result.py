@@ -92,7 +92,7 @@ class Edit_result(ft.Stack):
         # 編集対象になる方の算定結果要約の表を作成
         #target_summ_df_t = target_summ_df_J.transpose().reset_index()
         target_summ_df_t = target_summ_df.transpose().reset_index()
-        self.target_summ_df_t2 = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
+        self.target_summ_df_t2 = target_summ_df_t.rename(columns={"index":"項目名", "0":"値"})
 
         self.new_df = self.target_summ_df_t2
         self.old_df = self.new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfを丸ごと更新して、比較。       
@@ -416,17 +416,20 @@ class Edit_result(ft.Stack):
 #新しく計算されたDataFrame（new_summ_df_t）と、初期表示時に保存しておいた元のDataFrame（target_summ_df_t）を比較させます。
     def _update_result_tables(self, new_df=None, old_df=None):
         # 新しいDataFrameと元のDataFrameを渡して、赤字ハイライト付きの表を生成
-        updated_table = self.create_comparison_datatable(
-            new_df,
-            old_df
-        )
+        try:
+            updated_table = self.create_comparison_datatable(
+                new_df,
+                old_df
+            )
         
-        # Containerの中身(content)を、新しい表インスタンスに差し替える
-        self.recalc_table_container.content = updated_table
+            # Containerの中身(content)を、新しい表インスタンスに差し替える
+            self.recalc_table_container.content = updated_table
         
-        # 画面の更新を要求
-        self.recalc_table_container.update()
-        #self.page.update()
+            # 画面の更新を要求
+            self.recalc_table_container.update()
+        except Exception as e:
+            print(f"更新エラー: {e}")
+            traceback.print_exc()
 
     async def _debounced_calculate(self):
         """スライダーが動いた時のシミュレーション処理（非同期）"""
@@ -459,7 +462,7 @@ class Edit_result(ft.Stack):
                 'SPC_fee':'SPCへの手数料(百万円)',
                 }
             )
-            new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名",0:"値"})
+            new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名","0":"値"})
             self._update_result_tables(new_summ_df_t, old_df=self.new_df)
             
         except asyncio.CancelledError:
