@@ -38,7 +38,7 @@ class Edit_result(ft.Stack):
 
         self.calc_task = None # 非同期タスクの管理用変数
         #self.recalc_table_container = ft.Container(content=None)
-        #self.original_summ_table = None
+        self.current_dfs = None
         #self.recalc_summ_table = None
         self.dtime = selected_datetime
         self.disk_engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False, 'timeout': 15}, poolclass=NullPool)
@@ -64,6 +64,7 @@ class Edit_result(ft.Stack):
 
         # 以下は、内部の計算やUIへのセットで参照するための辞書
         self.target_inputs = target_inputs_df.iloc[0].to_dict()
+        print(self.target_inputs['lg_spread'])
 
         target_summ_df['discount_rate'] = target_summ_df['discount_rate'] * 100 # できれば、こういう処理は消しておきたい。
         target_summ_df = target_summ_df.drop(['datetime', 'user_id', 'calc_id'], axis=1)
@@ -90,9 +91,9 @@ class Edit_result(ft.Stack):
         )
 
         # 編集対象になる方の算定結果要約の表を作成
-        #target_summ_df_t = target_summ_df_J.transpose().reset_index()
-        target_summ_df_t = target_summ_df.transpose().reset_index()
-        self.target_summ_df_t2 = target_summ_df_t.rename(columns={"index":"項目名", "0":"値"})
+        target_summ_df_t = target_summ_df_J.transpose().reset_index()
+        #target_summ_df_t = target_summ_df.transpose().reset_index()
+        self.target_summ_df_t2 = target_summ_df_t.rename(columns={"index":"項目名", 0:"値"})
 
         self.new_df = self.target_summ_df_t2
         self.old_df = self.new_df.copy() # 初期状態では、比較対象は同じDF。スライダー操作後に、new_dfを丸ごと更新して、比較。       
@@ -393,21 +394,18 @@ class Edit_result(ft.Stack):
 
     async def on_save_button_click(self, e):
         """「最終結果を保存」ボタンが押された時の処理"""
-        # ここで、セッションストレージから出して、クラス変数に格納する
-        if ft.page.session.store.contains_key("current_dfs"):
-          current_dfs = ft.page.session.store.get("current_dfs")
-
+        if self.current_dfs is not None:
           with self.disk_engine.begin() as connection:
-            for table_name_pt, df in current_dfs.items():
+            for table_name_pt, df in self.current_dfs.items():
               table_name = table_name_pt.replace('_df','_table')
               df.to_sql(table_name, con=connection, if_exists='append', index=False)
           await self.page.push_route("/view_saved")        
         else:
           self._extract_inputs()
           edited_inputs = self._calculate_financials()
-          current_dfs = VFM_calc(inputs=edited_inputs) 
+          self.current_dfs = VFM_calc(inputs=edited_inputs) 
           with self.disk_engine.begin() as connection:
-            for table_name_pt, df in current_dfs.items():
+            for table_name_pt, df in self.current_dfs.items():
               table_name = table_name_pt.replace('_df','_table')
               df.to_sql(table_name, con=connection, if_exists='append', index=False)
           await self.page.push_route("/view_saved")        
@@ -435,16 +433,17 @@ class Edit_result(ft.Stack):
         """スライダーが動いた時のシミュレーション処理（非同期）"""
         try:
             await asyncio.sleep(0.3)
-            self._extract_inputs()
-            params = self._calculate_financials()
-            print(params)
+            edited_inputs = self._extract_inputs()
+            params = self._calculate_financials(edit_inputs=edited_inputs)
+            print(params['lg_spread'])
             
-            current_dfs = VFM_calc(inputs=params)
-            print(current_dfs["res_summ_res_df"])
+            self.current_dfs = VFM_calc(inputs=params)
+            print(self.current_dfs["final_inputs_res_df"]['lg_spread'])
+            print(self.current_dfs["res_summ_res_df"])
             #if ft.page.session.store.contains_key("current_dfs"):
             #  current_dfs = ft.page.session.store.get("current_dfs")
             
-            new_summ_df = current_dfs["res_summ_res_df"].drop(['datetime', 'user_id', 'calc_id'], axis=1)
+            new_summ_df = self.current_dfs["res_summ_res_df"].drop(['datetime', 'user_id', 'calc_id'], axis=1)
             new_summ_df_J = new_summ_df.rename(
                 columns={
                 'VFM_percent':'VFM(％)', 
@@ -457,14 +456,14 @@ class Edit_result(ft.Stack):
                 'proj_type':'事業方式',
                 'const_years':'施設整備期間', 
                 'proj_years':'事業期間', 
-                'discount_rate':'割引率(％)', 
+                'discount_rate':'割引率(％)',
                 'kariire_kinri':'借入コスト(％)',
                 'Kappu_kinri':'割賦金利(％)',
                 'kappu_kinri_spread':'割賦スプレッド(％)',
                 'SPC_fee':'SPCへの手数料(百万円)',
                 }
             )
-            new_summ_df_t = new_summ_df.transpose().reset_index().rename(columns={"index":"項目名","0":"値"})
+            new_summ_df_t = new_summ_df_J.transpose().reset_index().rename(columns={"index":"項目名",0:"値"})
             self._update_result_tables(new_summ_df_t, old_df=self.new_df)
             
             print(new_summ_df_t)
@@ -498,13 +497,14 @@ class Edit_result(ft.Stack):
         SPC_yobihi = self.to_dec(str(self.sl13.value))    
         advisory_fee = self.to_dec(str(self.target_inputs["advisory_fee"]))
         kappu_kinri_spread = self.to_dec(str(self.sl15.value))  / self.to_dec(100)
+        lg_spread = self.to_dec(str(self.target_inputs["lg_spread"]))  / self.to_dec(100)
 
         kijun_kinri = self.to_dec(str(self.target_inputs["kijun_kinri"]))
         chisai_kinri = self.to_dec(str(self.target_inputs["chisai_kinri"]))
         #kitai_bukka_j = self.to_dec(pd.read_csv("src/BOJ_ExpInflRate_down.csv", encoding="shift-jis", skiprows=1).dropna().iloc[-1, 1])
         #gonensai_rimawari = self.to_dec(JGB_rates_df.loc["5年"].iloc[0])
 
-        self.edit_inputs = {        
+        return  {        
             'chisai_shoukan_kikan': chisai_shoukan_kikan,
             'chisai_sueoki_kikan': chisai_sueoki_kikan,
             'chisai_kinri': chisai_kinri,
@@ -524,10 +524,11 @@ class Edit_result(ft.Stack):
             'SPC_yobihi': SPC_yobihi,
             'advisory_fee': advisory_fee,
             'kappu_kinri_spread': kappu_kinri_spread,
+            'lg_spread': lg_spread
         }
 
 # 編集画面からの_calculate_financials
-    def _calculate_financials(self):
+    def _calculate_financials(self, edit_inputs=None):
         
         const_start_date = self.target_inputs['const_start_date']
         const_start_date_year = int(const_start_date[:4])
@@ -552,28 +553,28 @@ class Edit_result(ft.Stack):
         ijikanri_unnei_3_org = self.to_dec(self.target_inputs['ijikanri_unnei_3_org'])
         ijikanri_unnei_3 = self.to_dec(self.target_inputs['ijikanri_unnei_3'])
     
-        shisetsu_seibi_org_LCC = self.to_dec(shisetsu_seibi_org * (Decimal(1.00) - self.edit_inputs['reduc_shisetsu']))
-        shisetsu_seibi_LCC = self.to_dec(shisetsu_seibi * (Decimal(1.00) - self.edit_inputs['reduc_shisetsu']))
-        ijikanri_unnei_1_org_LCC = self.to_dec(ijikanri_unnei_1_org * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_1']))
-        ijikanri_unnei_1_LCC = self.to_dec(ijikanri_unnei_1 * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_1']))
-        ijikanri_unnei_2_org_LCC = self.to_dec(ijikanri_unnei_2_org * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_2']))
-        ijikanri_unnei_2_LCC = self.to_dec(ijikanri_unnei_2 * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_2']))
-        ijikanri_unnei_3_org_LCC = self.to_dec(ijikanri_unnei_3_org * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_3']))
-        ijikanri_unnei_3_LCC = self.to_dec(ijikanri_unnei_3 * (Decimal(1.00) - self.edit_inputs['reduc_ijikanri_3']))
+        shisetsu_seibi_org_LCC = self.to_dec(shisetsu_seibi_org * (Decimal(1.00) - edit_inputs['reduc_shisetsu']))
+        shisetsu_seibi_LCC = self.to_dec(shisetsu_seibi * (Decimal(1.00) - edit_inputs['reduc_shisetsu']))
+        ijikanri_unnei_1_org_LCC = self.to_dec(ijikanri_unnei_1_org * (Decimal(1.00) - edit_inputs['reduc_ijikanri_1']))
+        ijikanri_unnei_1_LCC = self.to_dec(ijikanri_unnei_1 * (Decimal(1.00) - edit_inputs['reduc_ijikanri_1']))
+        ijikanri_unnei_2_org_LCC = self.to_dec(ijikanri_unnei_2_org * (Decimal(1.00) - edit_inputs['reduc_ijikanri_2']))
+        ijikanri_unnei_2_LCC = self.to_dec(ijikanri_unnei_2 * (Decimal(1.00) - edit_inputs['reduc_ijikanri_2']))
+        ijikanri_unnei_3_org_LCC = self.to_dec(ijikanri_unnei_3_org * (Decimal(1.00) - edit_inputs['reduc_ijikanri_3']))
+        ijikanri_unnei_3_LCC = self.to_dec(ijikanri_unnei_3 * (Decimal(1.00) - edit_inputs['reduc_ijikanri_3']))
 
-        chisai_sueoki_kikan = int(self.edit_inputs['chisai_sueoki_kikan']) if self.edit_inputs['chisai_sueoki_kikan'] else int(0)
+        chisai_sueoki_kikan = int(edit_inputs['chisai_sueoki_kikan']) if edit_inputs['chisai_sueoki_kikan'] else int(0)
         kitai_bukka = self.to_dec(self.target_inputs['kitai_bukka'])
-        lg_spread = self.to_dec(self.target_inputs["lg_spread"])
+        lg_spread = self.to_dec(edit_inputs["lg_spread"])
 
         if proj_type == "DBO(SPCなし)" or proj_type == "BT/DB(いずれもSPCなし)":
             shisetsu_seibi_paymentschedule_ikkatsu = self.to_dec(1)
         else:         
-            shisetsu_seibi_paymentschedule_ikkatsu = self.to_dec(self.edit_inputs['shisetsu_seibi_ikkatsu_hiritsu'])
+            shisetsu_seibi_paymentschedule_ikkatsu = self.to_dec(edit_inputs['shisetsu_seibi_ikkatsu_hiritsu'])
 
         shisetsu_seibi_paymentschedule_kappu = self.to_dec(Decimal(1) - shisetsu_seibi_paymentschedule_ikkatsu)
 
-        chisai_kinri = Decimal(self.edit_inputs['chisai_kinri'])/Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
-        kijun_kinri = Decimal(self.edit_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        chisai_kinri = Decimal(edit_inputs['chisai_kinri'])/Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
+        kijun_kinri = Decimal(edit_inputs["kijun_kinri"]) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
         kitai_bukka = Decimal(kitai_bukka) /Decimal(100) # CSVの％表記を採取しているため、実数表記に切り替える。
 
         discount_rate = self.to_dec(kijun_kinri + kitai_bukka)
@@ -582,7 +583,7 @@ class Edit_result(ft.Stack):
         shoukan_kaishi_jiki = const_years + chisai_sueoki_kikan + 1
         ijikanri_unnei_years = self.target_inputs['ijikanri_unnei_years']
 
-        kappu_kinri_spread = self.edit_inputs['kappu_kinri_spread']
+        kappu_kinri_spread =edit_inputs['kappu_kinri_spread']
         Kappu_kinri = kijun_kinri + lg_spread + kappu_kinri_spread
         Kappu_kinri = self.to_dec(Kappu_kinri)
 
@@ -592,10 +593,10 @@ class Edit_result(ft.Stack):
             SPC_shihon = Decimal(0)
             SPC_yobihi = Decimal(0)
         else:
-            SPC_keihi = self.to_dec(self.edit_inputs['SPC_keihi'])
-            SPC_fee = self.to_dec(self.edit_inputs['SPC_fee'])
-            SPC_shihon = self.to_dec(self.edit_inputs['SPC_shihon'])
-            SPC_yobihi = self.to_dec(self.edit_inputs['SPC_yobihi'])
+            SPC_keihi = self.to_dec(edit_inputs['SPC_keihi'])
+            SPC_fee = self.to_dec(edit_inputs['SPC_fee'])
+            SPC_shihon = self.to_dec(edit_inputs['SPC_shihon'])
+            SPC_yobihi = self.to_dec(edit_inputs['SPC_yobihi'])
 
         SPC_hiyou_total = SPC_keihi * self.to_dec(ijikanri_unnei_years) + SPC_shihon
         SPC_hiyou_nen = SPC_fee + SPC_keihi #公共がSPCに毎年払うコスト
@@ -622,10 +623,10 @@ class Edit_result(ft.Stack):
         if proj_type == "DBO(SPCなし)" or proj_type == "BT/DB(いずれもSPCなし)":        
             edit_final_inputs = {
             #return   {
-            "advisory_fee": str(self.edit_inputs['advisory_fee']),
+            "advisory_fee": str(edit_inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
-            "chisai_shoukan_kikan": int(self.edit_inputs['chisai_shoukan_kikan']),
-            "chisai_sueoki_years": int(self.edit_inputs['chisai_sueoki_kikan']),
+            "chisai_shoukan_kikan": int(edit_inputs['chisai_shoukan_kikan']),
+            "chisai_sueoki_years": int(edit_inputs['chisai_sueoki_kikan']),
             "const_start_date_year": const_start_date_year,
             "const_start_date_month": const_start_date_month,
             "const_start_date_day": const_start_date_day,
@@ -667,10 +668,10 @@ class Edit_result(ft.Stack):
             "koteishisanzei_hyoujun": str(self.target_inputs["koteishisanzei_hyoujun"]),
             "koteishisanzei_ritsu": str(self.target_inputs["koteishisanzei_ritsu"]),
 
-            "lg_spread": str(self.target_inputs["lg_spread"]),
+            "lg_spread": str(edit_inputs["lg_spread"]),
             "mgmt_type": self.target_inputs["mgmt_type"],
-            "monitoring_costs_PSC": str(self.edit_inputs['monitoring_costs_PSC']),
-            "monitoring_costs_LCC": str(self.edit_inputs['monitoring_costs_LCC']),
+            "monitoring_costs_PSC": str(edit_inputs['monitoring_costs_PSC']),
+            "monitoring_costs_LCC": str(edit_inputs['monitoring_costs_LCC']),
 
             #"option_02": str(self.target_inputs['option_02']),
             "pre_kyoukouka": bool(self.target_inputs["pre_kyoukouka"]),
@@ -678,10 +679,10 @@ class Edit_result(ft.Stack):
             "proj_type": self.target_inputs["proj_type"],
             "proj_years": int(self.target_inputs["proj_years"]),
             "rakusatsu_ritsu": str(self.target_inputs["rakusatsu_ritsu"]),
-            "reduc_shisetsu": str(self.edit_inputs["reduc_shisetsu"]),
-            "reduc_ijikanri_1": str(self.edit_inputs["reduc_ijikanri_1"]),
-            "reduc_ijikanri_2": str(self.edit_inputs["reduc_ijikanri_2"]),
-            "reduc_ijikanri_3": str(self.edit_inputs["reduc_ijikanri_3"]),
+            "reduc_shisetsu": str(edit_inputs["reduc_shisetsu"]),
+            "reduc_ijikanri_1": str(edit_inputs["reduc_ijikanri_1"]),
+            "reduc_ijikanri_2": str(edit_inputs["reduc_ijikanri_2"]),
+            "reduc_ijikanri_3": str(edit_inputs["reduc_ijikanri_3"]),
             "riyouryoukin_shunyu": str(self.target_inputs['riyouryoukin_shunyu']),
 
             "shisetsu_seibi": str(shisetsu_seibi),
@@ -713,10 +714,10 @@ class Edit_result(ft.Stack):
         else:
             edit_final_inputs = {
             #return   {
-            "advisory_fee": str(self.edit_inputs['advisory_fee']),
+            "advisory_fee": str(edit_inputs['advisory_fee']),
             "chisai_kinri": str(chisai_kinri), 
-            "chisai_shoukan_kikan": int(self.edit_inputs['chisai_shoukan_kikan']),
-            "chisai_sueoki_years": int(self.edit_inputs['chisai_sueoki_kikan']),
+            "chisai_shoukan_kikan": int(edit_inputs['chisai_shoukan_kikan']),
+            "chisai_sueoki_years": int(edit_inputs['chisai_sueoki_kikan']),
             "const_start_date_year": const_start_date_year,
             "const_start_date_month": const_start_date_month,
             "const_start_date_day": const_start_date_day,
@@ -759,10 +760,10 @@ class Edit_result(ft.Stack):
             "koteishisanzei_hyoujun": str(self.target_inputs["koteishisanzei_hyoujun"]),
             "koteishisanzei_ritsu": str(self.target_inputs["koteishisanzei_ritsu"]),
 
-            "lg_spread": str(self.target_inputs["lg_spread"]),
+            "lg_spread": str(edit_inputs["lg_spread"]),
             "mgmt_type": self.target_inputs["mgmt_type"],
-            "monitoring_costs_PSC": str(self.edit_inputs['monitoring_costs_PSC']),
-            "monitoring_costs_LCC": str(self.edit_inputs['monitoring_costs_LCC']),
+            "monitoring_costs_PSC": str(edit_inputs['monitoring_costs_PSC']),
+            "monitoring_costs_LCC": str(edit_inputs['monitoring_costs_LCC']),
 
             #"option_02": str(self.target_inputs['option_02']),
             "pre_kyoukouka": bool(self.target_inputs["pre_kyoukouka"]),
@@ -770,10 +771,10 @@ class Edit_result(ft.Stack):
             "proj_type": self.target_inputs["proj_type"],
             "proj_years": int(self.target_inputs["proj_years"]),
             "rakusatsu_ritsu": str(self.target_inputs["rakusatsu_ritsu"]),
-            "reduc_shisetsu": str(self.edit_inputs["reduc_shisetsu"]),
-            "reduc_ijikanri_1": str(self.edit_inputs["reduc_ijikanri_1"]),
-            "reduc_ijikanri_2": str(self.edit_inputs["reduc_ijikanri_2"]),
-            "reduc_ijikanri_3": str(self.edit_inputs["reduc_ijikanri_3"]),
+            "reduc_shisetsu": str(edit_inputs["reduc_shisetsu"]),
+            "reduc_ijikanri_1": str(edit_inputs["reduc_ijikanri_1"]),
+            "reduc_ijikanri_2": str(edit_inputs["reduc_ijikanri_2"]),
+            "reduc_ijikanri_3": str(edit_inputs["reduc_ijikanri_3"]),
             "riyouryoukin_shunyu": str(self.target_inputs['riyouryoukin_shunyu']),
 
             "shisetsu_seibi": str(shisetsu_seibi),
@@ -803,18 +804,6 @@ class Edit_result(ft.Stack):
 
             }
         return edit_final_inputs
-
-
-# _save_to_db
-    #def _save_to_db(self, data):
-    #    if self.page.session.store.contains_key("edit_final_inputs"):
-    #        self.page.session.store.remove("edit_final_inputs")
-    #    self.page.session.store.set("edit_final_inputs",data)
-    #    if os.path.exists("ei_db.json"):
-    #        os.remove("ei_db.json")
-    #    db = TinyDB('ei_db.json')
-    #    db.insert(data)
-    #    db.close()
 
 
 

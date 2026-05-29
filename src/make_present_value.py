@@ -14,9 +14,9 @@ engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, conne
 
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()
-def make_pv(inputs=None):
+def make_pv(inputs_pdt=None):
     #inputs_pdt = make_inputs_df.main()
-    inputs_pdt = inputs
+    #inputs_pdt = inputs
     
     Risk_df = pd.read_sql_query("SELECT * FROM Risk_table", engine)
     Risk_adjust_gaku = Risk_df['risk_adjust_gaku'].loc[0]

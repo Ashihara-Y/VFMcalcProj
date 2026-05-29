@@ -28,13 +28,13 @@ dtime = datetime.datetime.fromtimestamp(timestamp // 1000.0, tz=ZoneInfo("Asia/T
 
 df_name_list=[]
 
-def make_df_addID_saveDB(current_calc_id=None, target_engine=None, inputs=None):
+def make_df_addID_saveDB(current_calc_id=None, target_engine=None, inputs_pdt=None):
 #if target_engine is not None:
     engine = target_engine if target_engine is not None else default_disk_engine
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
 
     #inputs_pdt = make_inputs_df.main()
-    inputs_pdt = inputs
+    #inputs_pdt = inputs
     
     PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", engine)
     PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", engine)
@@ -91,7 +91,7 @@ def make_df_addID_saveDB(current_calc_id=None, target_engine=None, inputs=None):
         'SPC_fee': round(float(inputs_pdt.SPC_fee),1),
     }
 
-    final_inputs_short_df = pd.DataFrame(final_inputs_short_dic, index=['0'])
+    final_inputs_short_df = pd.DataFrame(final_inputs_short_dic, index=[0])
     #print(inputs_pdt.kijun_kinri, inputs_pdt.lg_spread)
     res_summ_df = VFM_calc_summary_df.join(final_inputs_short_df)
 
@@ -255,7 +255,7 @@ def make_df_addID_saveDB(current_calc_id=None, target_engine=None, inputs=None):
         x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='append', index=False)
 
 
-def make_df_addID_saveDB2(current_calc_id=None, inputs=None):
+def make_df_addID_saveDB2(current_calc_id=None, inputs_pdt=None):
     current_dfs = {
         "PSC_res_df": None,
         "PSC_pv_res_df": None,
@@ -272,7 +272,7 @@ def make_df_addID_saveDB2(current_calc_id=None, inputs=None):
     #engine = target_engine if target_engine is not None else default_disk_engine
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
 
-    inputs_pdt = make_inputs_df.main(inputs=inputs)
+    #inputs_pdt = make_inputs_df.main(inputs=inputs)
 
     PSC_df = pd.read_sql_query("SELECT * FROM PSC_table", default_disk_engine)
     PSC_pv_df = pd.read_sql_query("SELECT * FROM PSC_pv_table", default_disk_engine)
@@ -322,14 +322,14 @@ def make_df_addID_saveDB2(current_calc_id=None, inputs=None):
         'proj_type': inputs_pdt.proj_type,
         'const_years': inputs_pdt.const_years,
         'proj_years': inputs_pdt.proj_years,
-        'discount_rate': round(float(inputs_pdt.discount_rate),6),
+        'discount_rate': round(float(inputs_pdt.discount_rate)*100,6),
         'kariire_kinri': round(float(kariire_kinri),6),
         'Kappu_kinri': round(float(inputs_pdt.Kappu_kinri)*100,6),
         'kappu_kinri_spread': round(float(inputs_pdt.kappu_kinri_spread)*100,6),
         'SPC_fee': round(float(inputs_pdt.SPC_fee),1),
     }
 
-    final_inputs_short_df = pd.DataFrame(final_inputs_short_dic, index=['0'])
+    final_inputs_short_df = pd.DataFrame(final_inputs_short_dic, index=["0"])
     #print(inputs_pdt.kijun_kinri, inputs_pdt.lg_spread)
     res_summ_df = VFM_calc_summary_df.join(final_inputs_short_df)
 
@@ -412,7 +412,7 @@ def make_df_addID_saveDB2(current_calc_id=None, inputs=None):
                 'ijikanri_unnei_LCC',
                 'ijikanri_unnei_1_LCC',
                 'ijikanri_unnei_2_LCC',
-               'ijikanri_unnei_3_LCC',
+                'ijikanri_unnei_3_LCC',
                 'pre_kyoukouka',
                 'shisetsu_seibi_LCC',
                 'target_years',

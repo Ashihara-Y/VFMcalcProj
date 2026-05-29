@@ -29,21 +29,25 @@ import check_SPC_cashForPPayment_BT
 
 
 def VFM_calc(current_calc_id=None, target_engine=None, inputs=None):
-    inputs = make_inputs_df.main(inputs=inputs)
+    Inputs_pdt = make_inputs_df.main(inputs=inputs)
     #inputs = inputs.model_dump()
 
-
-    proj_type = inputs.proj_type
+    proj_type = Inputs_pdt.proj_type
 
     if proj_type == "BTO":
 
-        PSC_calc.PSC_calc(inputs=inputs)
-        LCC_calc.LCC_calc(inputs=inputs)
-        SPC_calc.SPC_calc(inputs=inputs)
-        risk_adjustment.risk_adj(inputs=inputs)
-        make_present_value.make_pv(inputs=inputs)
-        check_SPC_cashForPPayment.check_cash(inputs=inputs)
-        current_dfs = sr.make_df_addID_saveDB2(current_calc_id=current_calc_id, inputs=inputs)
+        PSC_calc.PSC_calc(inputs_pdt=Inputs_pdt)
+        LCC_calc.LCC_calc(inputs_pdt=Inputs_pdt)
+        SPC_calc.SPC_calc(inputs_pdt=Inputs_pdt)
+        risk_adjustment.risk_adj(inputs_pdt=Inputs_pdt)
+        make_present_value.make_pv(inputs_pdt=Inputs_pdt)
+        check_SPC_cashForPPayment.check_cash(inputs_pdt=Inputs_pdt)
+        current_dfs = sr.make_df_addID_saveDB2(current_calc_id=current_calc_id, inputs_pdt=Inputs_pdt)
+
+    elif proj_type == "BOT":
+
+        PSC_calc.PSC_calc(inputs_pdt=Inputs_pdt)
+        LCC_calc.LCC_calc(inputs_pdt=Inputs_pdt)
     
     if proj_type == "DBO(SPCなし)":
 

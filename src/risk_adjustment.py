@@ -14,9 +14,9 @@ engine = create_engine('sqlite:///VFM.db', echo=False, poolclass=NullPool, conne
 
 #conn = duckdb.connect('VFM.duckdb')
 #c = conn.cursor()
-def risk_adj(inputs=None):
+def risk_adj(inputs_pdt=None):
     #inputs_pdt = make_inputs_df.main()
-    inputs_pdt = inputs
+    #inputs_pdt = inputs
     
     LCC_kappuganpon_df = pd.read_sql_query("SELECT periods, shisetsu_seibihi_kappuganpon FROM LCC_table", engine)
     LCC_kappuganpon_df['shisetsu_seibihi_kappuganpon'] = LCC_kappuganpon_df['shisetsu_seibihi_kappuganpon'].map(lambda i: Decimal(i).quantize(Decimal('0.000001'), ROUND_HALF_UP))

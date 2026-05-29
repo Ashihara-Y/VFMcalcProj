@@ -73,7 +73,7 @@ class LandingContainer(ft.Column):
                 ft.TextField(label="メールアドレス"),
                 ft.TextField(label="件名"),
                 ft.TextField(label="内容", multiline=True, min_lines=3),
-                ft.ElevatedButton("送信する", icon=ft.Icons.SEND),
+                ft.Button(content="送信する", icon=ft.Icons.SEND),
             ], spacing=15)
         )
 

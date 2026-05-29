@@ -118,8 +118,10 @@ async def main(page: ft.Page):
             )        
 
         elif page.route == "/results_detail":
-            if not page.session.store.get("auth0_sub"):
-                open_landing(e=None)  # 認証されていない場合はランディングページへ
+            #if not page.session.store.get("auth0_sub"):
+                #asyncio.create_task(open_landing(e=None))
+            #    open_landing(e=None)
+                #  # 認証されていない場合はランディングページへ
             sel_dtimes = page.session.store.get("selected_datetime") # セッションストレージからselected_datetimeを取得
             sel_dtime = sel_dtimes[0] if sel_dtimes is not None else "No datetime selected" # 取得できない場合のデフォルト値
             page.views.append(
