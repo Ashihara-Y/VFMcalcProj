@@ -471,27 +471,25 @@ def make_df_addID_saveDB2(current_calc_id=None, inputs_pdt=None):
         res_summ_df,
         final_inputs_df
         ]
-    df_name_list = [
-        (PSC_df,'PSC_res_df'),
-        (PSC_pv_df,'PSC_pv_res_df'),
-        (LCC_df,'LCC_res_df'),
-        (LCC_pv_df,'LCC_pv_res_df'),
-        (SPC_df,'SPC_res_df'),
-        (SPC_check_df,'SPC_check_res_df'),
-        (Risk_df,'Risk_res_df'),
-        (VFM_df,'VFM_res_df'),
-        (PIRR_df,'PIRR_df'),
-        (res_summ_df,'res_summ_res_df'),
-        (final_inputs_df,'final_inputs_res_df')
-        ]
-
+    
     for i in df_list:
             addID(i)
 
-    for x_df in df_name_list:
-        x_df[0].map(lambda x: float(x) if isinstance(x, decimal.Decimal) else x)
-        #x_df[0].to_sql(x_df[1].replace('_df','') + '_res_table', engine, if_exists='replace', index=False)
-        current_dfs[x_df[1]] = x_df[0]
+    df_dict = {
+        'PSC_res_df': PSC_df,
+        'PSC_pv_res_df': PSC_pv_df,
+        'LCC_res_df': LCC_df,
+        'LCC_pv_res_df': LCC_pv_df,
+        'SPC_res_df': SPC_df,
+        'SPC_check_res_df': SPC_check_df,
+        'Risk_res_df': Risk_df,
+        'VFM_res_df': VFM_df,
+        'PIRR_res_df': PIRR_df,
+        'res_summ_res_df': res_summ_df,
+        'final_inputs_res_df': final_inputs_df
+        }
+
+    current_dfs = df_dict
 
     return current_dfs
 
