@@ -399,6 +399,7 @@ class Edit_result(ft.Stack):
             for table_name_pt, df in self.current_dfs.items():
               table_name = table_name_pt.replace('_df','_table')
               df.to_sql(table_name, con=connection, if_exists='append', index=False)
+              #df.iloc[0].to_sql(table_name, con=connection, if_exists='append', index=False)
           await self.page.push_route("/view_saved")        
         else:
           self._extract_inputs()
