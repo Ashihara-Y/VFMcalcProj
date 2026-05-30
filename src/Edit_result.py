@@ -415,6 +415,7 @@ class Edit_result(ft.Stack):
 #新しく計算されたDataFrame（new_summ_df_t）と、初期表示時に保存しておいた元のDataFrame（target_summ_df_t）を比較させます。
     def _update_result_tables(self, new_df=None, old_df=None):
         # 新しいDataFrameと元のDataFrameを渡して、赤字ハイライト付きの表を生成
+        new_df = new_df.rename(columns={'0': '値', 0: '値'})
         try:
             updated_table = self.create_comparison_datatable(
                 new_df,
@@ -436,13 +437,12 @@ class Edit_result(ft.Stack):
             await asyncio.sleep(0.3)
             edited_inputs = self._extract_inputs()
             params = self._calculate_financials(edit_inputs=edited_inputs)
-            print(params['lg_spread'])
+            print(f'rakusatsu_ritsu in params: {params['rakusatsu_ritsu']}')
+            while Decimal(params['rakusatsu_ritsu']) > Decimal(100.00):
+                params['rakusatsu_ritsu'] = str(Decimal(params['rakusatsu_ritsu']) / Decimal(100))
             
             self.current_dfs = VFM_calc(inputs=params)
-            print(self.current_dfs["final_inputs_res_df"]['lg_spread'])
-            print(self.current_dfs["res_summ_res_df"])
-            #if ft.page.session.store.contains_key("current_dfs"):
-            #  current_dfs = ft.page.session.store.get("current_dfs")
+            print(f'rakusatsu_ritsu in current_dfs: {self.current_dfs["final_inputs_res_df"]['rakusatsu_ritsu']}')
             
             new_summ_df = self.current_dfs["res_summ_res_df"].drop(['datetime', 'user_id', 'calc_id'], axis=1)
             new_summ_df_J = new_summ_df.rename(
