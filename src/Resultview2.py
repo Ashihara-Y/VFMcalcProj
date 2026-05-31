@@ -469,6 +469,17 @@ class Results(ft.Stack):
             )
         ]
 
+    def did_mount(self):
+        if self.selected_dict:
+            self.page.session.store.set("selected_dict", self.selected_dict)
+        else:
+            self.page.add(
+                    ft.AlertDialog(
+                        title=ft.Text("エラー"),
+                        content=ft.Text("Excelに保存する算定結果の抽出に失敗しました。"),
+                    )
+            )
+    
     def save_to_ds(self):
         self.page.session.store.set("selected_dict", self.selected_dict) #initialization
         if self.selected_dict:
@@ -482,6 +493,6 @@ class Results(ft.Stack):
                     )
             )
     
-    save_to_ds(self)
+    #save_to_ds(self)
 
     #save_to_db(self=self)
