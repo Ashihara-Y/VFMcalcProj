@@ -9,17 +9,25 @@ from fastapi.responses import FileResponse
 import flet.fastapi as flet_fastapi
 import styleframe
 from styleframe import StyleFrame, Styler, utils
+from google.cloud import storage
+from dotenv import load_dotenv
+import tempfile
+import os
+import shutil
+import pathlib
 
+load_dotenv()
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
 engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
         
-def export_to_excel():
+def export_to_excel(user_id:str, calc_id:str):
+    env = os.environ.get('APP_ENV', 'local')
+
     df_res = pd.read_sql_table('sel_res', engine_m)
     dtime = df_res['selected_datetime'].iloc[0]
     #dtime = con.all()[0]['selected_datetime']
     #con.close()
-
     table_names = [
         'PSC_res_table', 
         'PSC_pv_res_table', 
@@ -35,21 +43,19 @@ def export_to_excel():
     ]
 
     selected_res_list = []
+
     for table_name in table_names:
         query = 'select * from ' + table_name + ' where datetime = ' + '"' + dtime + '"'
         table_name = pd.read_sql_query(query, engine)
         selected_res_list.append(table_name)
 
     dtime_w = dtime.replace(' ', '_').replace(':', '_').replace('+09_00', '')
-    file_name = 'VFM_result_sheet_' + dtime_w + '.xlsx'
-    save_path = '/mnt/gcs/' + file_name
+    file_name = f'VFM_result_{dtime_w}.xlsx'
 
-    wb = openpyxl.Workbook()
-    ws = wb['Sheet']
-    ws.title = '算定結果概要'
-    wb.save(save_path)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx') as tmp:
+        temp_path = tmp.name
 
-    download_df = pd.DataFrame({'file_name': file_name, 'save_path': save_path, 'datetime': dtime_w}, index=[0])
+    download_df = pd.DataFrame({'file_name': file_name, 'save_path': temp_path, 'datetime': dtime_w}, index=[0])
     download_df.to_sql('download_table', engine, if_exists='replace', index=False)
 
     PSC_res_df = selected_res_list[0]
@@ -222,7 +228,13 @@ def export_to_excel():
     len_final_inputs_df = len(final_inputs_df)
     len_res_summ_df = len(res_summ_df)
 
-    with StyleFrame.ExcelWriter(save_path, if_sheet_exists='overlay', mode='a') as writer:
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = '算定結果概要'
+    wb.save(temp_path)
+
+    with StyleFrame.ExcelWriter(temp_path, if_sheet_exists='overlay', mode='a') as writer:
+    #with StyleFrame.ExcelWriter(save_path, if_sheet_exists='overlay', mode='a') as writer:
         sf_res_summ_df = StyleFrame(res_summ_df)
         sf_PSC_res_df = StyleFrame(PSC_res_df)
         sf_PSC_pv_df = StyleFrame(PSC_pv_df)
@@ -292,8 +304,50 @@ def export_to_excel():
         sf_PIRR_res_df.to_excel(writer, sheet_name='PIRR算定結果', index=False, startrow=1, startcol=1)
         sf_final_inputs_df.to_excel(writer, sheet_name='最終入力等', index=False, startrow=1, startcol=1)
     
+    saved_info ={}
 
+    if env == 'production':
+        bucket_name = os.environ.get('GCS_BUCKET_NAME')
+        if not bucket_name:
+            raise ValueError('GCS_BUCKET_NAME is not set')
+        client = storage.Client()
+        bucket = client.bucket(bucket_name)
+        gcs_blob_name = f'excels/{user_id}/{calc_id}/{file_name}'
+        blob = bucket.blob(gcs_blob_name)
+        blob.upload_from_filename(temp_path)
 
+        saved_info = {
+            'storage_type': 'gcs',
+            'bucket': bucket_name,
+            'blob_name': gcs_blob_name,
+            'file_name': file_name,
+        }
+
+    else:
+        save_dir = os.path.join(os.getcwd(), 'excels')
+        os.makedirs(save_dir, exist_ok=True)
+        local_save_path = os.path.join(save_dir, file_name)
+        shutil.copy2(temp_path, local_save_path)
+
+        saved_info = {
+            'storage_type': 'local',
+            'file_path': local_save_path,
+            'file_name': file_name
+        }
+
+    os.remove(temp_path)
+
+    download_df = pd.DataFrame({
+        'file_name': file_name, 
+        'storage_type': saved_info['storage_type'], 
+        'location': saved_info.get('blob_name') or saved_info.get('file_path'),
+        'bucket_name': saved_info.get('bucket',''),
+        'datetime': dtime_w
+        }, index=[0])
+
+    download_df.to_sql('download_table', engine, if_exists='replace', index=False)
+
+    return saved_info
 
 if __name__ == '__main__':
     export_to_excel()

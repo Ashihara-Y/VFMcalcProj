@@ -1,25 +1,25 @@
 dateutils
+duckdb
+duckdb-engine
 flet[all]
-#flet-cli =< 0.27
-#flet-core =< 0.27
-#flet-desktop  < 0.27
-#flet-runtime < 0.27
-#flet-web < 0.27
 flet-datatable2
-pydantic
+google-cloud-firestore
 numpy
 pandas
 pyarrow
+pydantic
 pymupdf
+python-dotenv
 python-ulid
-pyyaml
-simpledatatable
-timeflake
-tinydb
 pyxirr
-duckdb
-duckdb-engine
+pyyaml
 scipy
+shutil
+simpledatatable
 sqlalchemy
 styleframe
+tempfile
+timeflake
+tinydb
+traceback
 uuid6

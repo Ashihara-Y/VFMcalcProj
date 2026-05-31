@@ -8,6 +8,7 @@ import openpyxl
 from sqlalchemy import create_engine
 import make_inputs_df
 import decimal
+#import session_set
 
 # savedir = pathlib.Path(mkdtemp(prefix=None, suffix=None, dir='.')) # 一時ディレクトリを作成
 @ft.control
@@ -20,8 +21,9 @@ class Results(ft.Stack):
         #self.resizable = True
 
         self.dtime = selected_datetime # コンストラクタでselected_datetimeを受け取るように変更
-        engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
+        self.engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
 
+    def build(self):
         table_names = [
             'PSC_res_table', 
             'PSC_pv_res_table', 
@@ -38,7 +40,7 @@ class Results(ft.Stack):
         self.selected_res_list = []
         for table_name in table_names:
             query = 'select * from ' + table_name + ' where datetime = ' + '"' + self.dtime + '"'
-            table_name = pd.read_sql_query(query, engine)
+            table_name = pd.read_sql_query(query, self.engine)
             self.selected_res_list.append(table_name)
 
     #def build(self):
@@ -53,6 +55,12 @@ class Results(ft.Stack):
         PIRR_res_df = self.selected_res_list[8]
         res_summ_df = self.selected_res_list[9]
         final_inputs_df = self.selected_res_list[10]
+
+        self.selected_dict = {
+            'datetime': final_inputs_df['datetime'].iloc[0],
+            'user_id': final_inputs_df['user_id'].iloc[0],
+            'calc_id': final_inputs_df['calc_id'].iloc[0],
+        }
 
         PSC_res_df['year'] = PSC_res_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
         LCC_res_df['year'] = LCC_res_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))
@@ -462,15 +470,18 @@ class Results(ft.Stack):
         ]
 
     def save_to_ds(self):
-        if self.page.session.store.contains_key("selected_datetime"):
-            if self.page.session.store.get("selected_datetime") == self.dtime:
-                pass
-            else:    
-                self.page.session.store.remove("selected_datetime")
-                self.page.session.store.set("selected_datetime", self.dtime)
+        self.page.session.store.set("selected_dict", self.selected_dict) #initialization
+        if self.selected_dict:
+            pass
         else:
-            self.page.session.store.set("selected_datetime", self.dtime)
-
-        self.page.update()
+            self.page.add(
+                    ft.AlertDialog(
+                        title=ft.Text("エラー"),
+                        content=ft.Text("excelに保存する算定結果を選択してください。"),
+                        actions=[ft.Button("OK", on_click=lambda e: self.page.dialog(None))],
+                    )
+            )
     
+    save_to_ds(self)
+
     #save_to_db(self=self)

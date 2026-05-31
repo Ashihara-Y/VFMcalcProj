@@ -20,7 +20,7 @@ mem_engine = create_engine('sqlite:///:memory:', echo=False, connect_args={'chec
 conn = sqlite3.connect('VFM.db')
 c = conn.cursor()
 
-user_id = ULID.from_datetime(datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")))
+
 cal_id = uuid6.uuid7()
 timestamp = cal_id.int >> 80
 dtime = datetime.datetime.fromtimestamp(timestamp // 1000.0, tz=ZoneInfo("Asia/Tokyo"))
@@ -28,10 +28,14 @@ dtime = datetime.datetime.fromtimestamp(timestamp // 1000.0, tz=ZoneInfo("Asia/T
 
 df_name_list=[]
 
-def make_df_addID_saveDB(current_calc_id=None, target_engine=None, inputs_pdt=None):
+def make_df_addID_saveDB(page: ft.Page, current_calc_id=None, target_engine=None, inputs_pdt=None):
 #if target_engine is not None:
     engine = target_engine if target_engine is not None else default_disk_engine
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
+    if page.session.store.get('auth0_sub"') is None:
+        user_id = ULID.from_datetime(datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")))
+    else:
+        user_id = page.session.store.get('auth0_sub"')
 
     #inputs_pdt = make_inputs_df.main()
     #inputs_pdt = inputs

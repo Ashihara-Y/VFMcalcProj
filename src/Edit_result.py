@@ -437,12 +437,12 @@ class Edit_result(ft.Stack):
             await asyncio.sleep(0.3)
             edited_inputs = self._extract_inputs()
             params = self._calculate_financials(edit_inputs=edited_inputs)
-            print(f'rakusatsu_ritsu in params: {params['rakusatsu_ritsu']}')
+            #print(f'rakusatsu_ritsu in params: {params['rakusatsu_ritsu']}')
             while Decimal(params['rakusatsu_ritsu']) > Decimal(100.00):
                 params['rakusatsu_ritsu'] = str(Decimal(params['rakusatsu_ritsu']) / Decimal(100))
             
             self.current_dfs = VFM_calc(inputs=params)
-            print(f'rakusatsu_ritsu in current_dfs: {self.current_dfs["final_inputs_res_df"]['rakusatsu_ritsu']}')
+            #print(f'rakusatsu_ritsu in current_dfs: {self.current_dfs["final_inputs_res_df"]['rakusatsu_ritsu']}')
             
             new_summ_df = self.current_dfs["res_summ_res_df"].drop(['datetime', 'user_id', 'calc_id'], axis=1)
             new_summ_df_J = new_summ_df.rename(
@@ -467,7 +467,7 @@ class Edit_result(ft.Stack):
             new_summ_df_t = new_summ_df_J.transpose().reset_index().rename(columns={"index":"項目名",0:"値"})
             self._update_result_tables(new_summ_df_t, old_df=self.new_df)
             
-            print(new_summ_df_t)
+            #print(new_summ_df_t)
 
         except asyncio.CancelledError:
             pass
