@@ -123,7 +123,7 @@ async def main(page: ft.Page):
             #    open_landing(e=None)
                 #  # 認証されていない場合はランディングページへ
             sel_dtimes = page.session.store.get("selected_datetime") 
-            sel_dict = page.session.store.get("selected_dict") # セッションストレージからselected_datetimeを取得
+            #sel_dict = page.session.store.get("selected_dict") # セッションストレージからselected_datetimeを取得
             sel_dtime = sel_dtimes[0] if sel_dtimes is not None else "No datetime selected" # 取得できない場合のデフォルト値
             page.views.append(
                 ft.View(
@@ -138,7 +138,7 @@ async def main(page: ft.Page):
                         ),
                         Results(selected_datetime=sel_dtime), # Resultsクラスにselected_datetimeを渡す
                         ft.Button(content="結果リストへ戻る", on_click=open_saved_list),
-                        ft.Button(content="この結果をExcelに書き出す", on_click=result_to_excel(sel_dict=sel_dict)),
+                        ft.Button(content="この結果をExcelに書き出す", on_click=result_to_excel),
                         ft.Button(content="出力したファイルをダウンロード", on_click=download_excel),
                     ],
                     scroll=ft.ScrollMode.ALWAYS,
@@ -204,8 +204,17 @@ async def main(page: ft.Page):
     async def open_landing(e):
         await page.push_route("/")
     
-    async def result_to_excel(e, sel_dict):
-        await export_to_excel.export_to_excel(user_id=sel_dict['user_id'], calc_id=sel_dict['calc_id'])
+    async def result_to_excel(e):
+        sel_dict = page.session.store.get("selected_dict")
+        if sel_dict and "user_id" in sel_dict and "calc_id" in sel_dict:
+            await export_to_excel.export_to_excel(user_id=sel_dict['user_id'], calc_id=sel_dict['calc_id'])
+            page.snack_bar = ft.SnackBar(
+                content=ft.Text("Excelファイルへの書き出しが完了しました。")
+            )
+            page.snack_bar.open = True
+            page.update()
+        else:
+            print("エラー： 必要なデータがセッションに見つかりませんでした。")
 
     async def download_excel(e):  
         await page.push_route("/download")
