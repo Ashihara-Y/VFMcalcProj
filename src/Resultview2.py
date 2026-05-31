@@ -58,8 +58,8 @@ class Results(ft.Stack):
 
         self.selected_dict = {
             'datetime': self.dtime,
-            'user_id': final_inputs_df['user_id'].iloc[0],
-            'calc_id': final_inputs_df['calc_id'].iloc[0],
+            'user_id': final_inputs_df['user_id'],
+            'calc_id': final_inputs_df['calc_id'],
         }
 
         PSC_res_df['year'] = PSC_res_df['year'].apply(lambda x: str(x).replace('00:00:00.000000',''))

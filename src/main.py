@@ -82,8 +82,8 @@ async def main(page: ft.Page):
             )
         
         if page.route == "/initial_inputs":
-            if not page.session.store.get("auth0_sub"):
-                open_landing(e=None)  # 認証されていない場合はランディングページへ
+            if not page.session.store.contains_key("auth0_sub"):
+                asyncio.to_thread(open_landing, e=None)  # 認証されていない場合はランディングページへ
             page.views.append(
                 ft.View(
                     route="/initial_inputs", 
@@ -103,7 +103,7 @@ async def main(page: ft.Page):
 
         elif page.route == "/final_inputs":
             if not page.session.store.get("auth0_sub"):
-                open_landing(e=None)  # 認証されていない場合はランディングページへ
+                asyncio.to_thread(open_landing, e=None)  # 認証されていない場合はランディングページへ
             initial_inputs = page.session.store.get("initial_inputs") 
             page.views.append(
                 ft.View(
@@ -146,7 +146,7 @@ async def main(page: ft.Page):
             )
         elif page.route == "/view_saved":
             if not page.session.store.get("auth0_sub"):
-                open_landing(e=None)  # 認証されていない場合はランディングページへ
+                asyncio.to_thread(open_landing, e=None)  # 認証されていない場合はランディングページへ
             page.views.append(
                 ft.View(
                     route="/view_saved",
@@ -159,7 +159,7 @@ async def main(page: ft.Page):
             )
         elif page.route == "/edit_saved":
             if not page.session.store.get("auth0_sub"):
-                open_landing(e=None)  # 認証されていない場合はランディングページへ
+                asyncio.to_thread(open_landing, e=None)  # 認証されていない場合はランディングページへ
             sel_dtimes = page.session.store.get("selected_datetime") # セッションストレージからselected_datetimeを取得
             sel_dtime = sel_dtimes[0] if sel_dtimes is not None else "No datetime selected" # 取得できない場合のデフォルト値
             page.views.append(
@@ -211,7 +211,7 @@ async def main(page: ft.Page):
             calc_id = sel_dict["calc_id"]
             datetime = sel_dict["datetime"]
 
-            await export_to_excel.export_to_excel(datetime=datetime, user_id=user_id, calc_id=calc_id)
+            await asyncio.to_thread(export_to_excel.export_to_excel, datetime=datetime, user_id=user_id, calc_id=calc_id)
             page.snack_bar = ft.SnackBar(
                 content=ft.Text("Excelファイルへの書き出しが完了しました。")
             )
