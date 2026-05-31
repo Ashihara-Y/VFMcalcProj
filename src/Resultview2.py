@@ -57,7 +57,7 @@ class Results(ft.Stack):
         final_inputs_df = self.selected_res_list[10]
 
         self.selected_dict = {
-            'datetime': final_inputs_df['datetime'].iloc[0],
+            'datetime': self.dtime,
             'user_id': final_inputs_df['user_id'].iloc[0],
             'calc_id': final_inputs_df['calc_id'].iloc[0],
         }

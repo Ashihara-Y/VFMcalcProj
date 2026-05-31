@@ -4,6 +4,7 @@ duckdb-engine
 flet[all]
 flet-datatable2
 google-cloud-firestore
+google-cloud-storage
 numpy
 pandas
 pyarrow

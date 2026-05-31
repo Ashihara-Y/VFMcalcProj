@@ -20,12 +20,14 @@ load_dotenv()
 
 engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
 engine_m = create_engine('sqlite:///sel_res.db', echo=False, connect_args={'check_same_thread': False})
+
+
         
-def export_to_excel(user_id:str, calc_id:str):
+def export_to_excel(datetime:str, user_id:str, calc_id:str):
     env = os.environ.get('APP_ENV', 'local')
 
     df_res = pd.read_sql_table('sel_res', engine_m)
-    dtime = df_res['selected_datetime'].iloc[0]
+    dtime = datetime
     #dtime = con.all()[0]['selected_datetime']
     #con.close()
     table_names = [
@@ -253,10 +255,10 @@ def export_to_excel(user_id:str, calc_id:str):
         sf_res_summ_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
         sf_res_summ_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
         sf_final_inputs_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
-        sf_final_inputs_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
+        #sf_final_inputs_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
 
         sf_res_summ_df.set_column_width(columns='項目名', width=55)
-        sf_res_summ_df.set_column_width(columns='値', width=20)
+        #sf_res_summ_df.set_column_width(columns='値', width=20)
         sf_final_inputs_df.set_column_width(columns='項目名', width=55)
         sf_final_inputs_df.set_column_width(columns='値', width=20)
         sf_res_summ_df.set_row_height(rows=list(range(2, len_res_summ_df+2)), height=20)
@@ -265,7 +267,7 @@ def export_to_excel(user_id:str, calc_id:str):
         sf_res_summ_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
         sf_res_summ_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
         sf_final_inputs_df.apply_column_style(cols_to_style=['項目名'], styler_obj=style_l_ali)
-        sf_final_inputs_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
+        #sf_final_inputs_df.apply_column_style(cols_to_style=['値'], styler_obj=style_r_ali)
 
         sf_PSC_pv_df.set_column_width(columns=['収支（キャッシュ・フロー）', '割引係数', '収支（キャッシュ・フロー）現在価値'], width=14)
         sf_PSC_pv_df.apply_column_style(cols_to_style=['収支（キャッシュ・フロー）', '割引係数', '収支（キャッシュ・フロー）現在価値'], styler_obj=style_r_ali)
@@ -302,7 +304,7 @@ def export_to_excel(user_id:str, calc_id:str):
         sf_Risk_res_df.to_excel(writer, sheet_name='リスク調整額', index=False, startrow=1, startcol=1)
         sf_VFM_res_df.to_excel(writer, sheet_name='VFM算定結果', index=False, startrow=1, startcol=1)
         sf_PIRR_res_df.to_excel(writer, sheet_name='PIRR算定結果', index=False, startrow=1, startcol=1)
-        sf_final_inputs_df.to_excel(writer, sheet_name='最終入力等', index=False, startrow=1, startcol=1)
+        #sf_final_inputs_df.to_excel(writer, sheet_name='最終入力等', index=False, startrow=1, startcol=1)
     
     saved_info ={}
 

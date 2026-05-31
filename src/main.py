@@ -207,7 +207,11 @@ async def main(page: ft.Page):
     async def result_to_excel(e):
         sel_dict = page.session.store.get("selected_dict")
         if sel_dict and "user_id" in sel_dict and "calc_id" in sel_dict:
-            await export_to_excel.export_to_excel(user_id=sel_dict['user_id'], calc_id=sel_dict['calc_id'])
+            user_id = sel_dict["user_id"]
+            calc_id = sel_dict["calc_id"]
+            datetime = sel_dict["datetime"]
+
+            await export_to_excel.export_to_excel(datetime=datetime, user_id=user_id, calc_id=calc_id)
             page.snack_bar = ft.SnackBar(
                 content=ft.Text("Excelファイルへの書き出しが完了しました。")
             )
