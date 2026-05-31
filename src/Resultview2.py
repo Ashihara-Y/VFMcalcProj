@@ -489,7 +489,7 @@ class Results(ft.Stack):
                     ft.AlertDialog(
                         title=ft.Text("エラー"),
                         content=ft.Text("excelに保存する算定結果を選択してください。"),
-                        actions=[ft.Button("OK", on_click=lambda e: self.page.dialog(None))],
+                        actions=[ft.Button("OK", on_click=lambda e: self.page.close_dialog())],
                     )
             )
     
