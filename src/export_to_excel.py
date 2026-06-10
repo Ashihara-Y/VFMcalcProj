@@ -14,7 +14,9 @@ from dotenv import load_dotenv
 import tempfile
 import os
 import shutil
-import pathlib
+from pathlib import Path
+import io
+import datetime
 
 load_dotenv()
 
@@ -233,9 +235,10 @@ def export_to_excel(datetime:str, user_id:str, calc_id:str):
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = '算定結果概要'
-    wb.save(temp_path)
+    excel_buffer = io.BytesIO()
+    wb.save(excel_buffer)
 
-    with StyleFrame.ExcelWriter(temp_path, if_sheet_exists='overlay', mode='a') as writer:
+    with StyleFrame.ExcelWriter(excel_buffer, mode='w') as writer:
     #with StyleFrame.ExcelWriter(save_path, if_sheet_exists='overlay', mode='a') as writer:
         sf_res_summ_df = StyleFrame(res_summ_df)
         sf_PSC_res_df = StyleFrame(PSC_res_df)
@@ -306,6 +309,7 @@ def export_to_excel(datetime:str, user_id:str, calc_id:str):
         sf_PIRR_res_df.to_excel(writer, sheet_name='PIRR算定結果', index=False, startrow=1, startcol=1)
         #sf_final_inputs_df.to_excel(writer, sheet_name='最終入力等', index=False, startrow=1, startcol=1)
     
+    excel_buffer.seek(0)
     saved_info ={}
 
     if env == 'production':
@@ -316,7 +320,7 @@ def export_to_excel(datetime:str, user_id:str, calc_id:str):
         bucket = client.bucket(bucket_name)
         gcs_blob_name = f'excels/{user_id}/{calc_id}/{file_name}'
         blob = bucket.blob(gcs_blob_name)
-        blob.upload_from_filename(temp_path)
+        blob.upload_from_filename(excel_buffer, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
         saved_info = {
             'storage_type': 'gcs',
@@ -326,10 +330,10 @@ def export_to_excel(datetime:str, user_id:str, calc_id:str):
         }
 
     else:
-        save_dir = os.path.join(os.getcwd(), 'excels')
-        os.makedirs(save_dir, exist_ok=True)
-        local_save_path = os.path.join(save_dir, file_name)
-        shutil.copy2(temp_path, local_save_path)
+        save_dir = Path.cwd() / 'excels'
+        save_dir.mkdir(parents=True, exist_ok=True)
+        local_save_path = save_dir / file_name
+        local_save_path.write_bytes(excel_buffer.getvalue())
 
         saved_info = {
             'storage_type': 'local',
@@ -337,7 +341,8 @@ def export_to_excel(datetime:str, user_id:str, calc_id:str):
             'file_name': file_name
         }
 
-    os.remove(temp_path)
+    excel_buffer.close()
+    wb.close()
 
     download_df = pd.DataFrame({
         'file_name': file_name, 
