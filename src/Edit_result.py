@@ -444,7 +444,8 @@ class Edit_result(ft.Stack):
             self.current_dfs = VFM_calc(inputs=params)
             #print(f'rakusatsu_ritsu in current_dfs: {self.current_dfs["final_inputs_res_df"]['rakusatsu_ritsu']}')
             
-            new_summ_df = self.current_dfs["res_summ_res_df"].drop(['datetime', 'user_id', 'calc_id'], axis=1)
+            #new_summ_df = self.current_dfs["res_summ_res_df"].drop(['datetime', 'user_id', 'calc_id'], axis=1)
+            new_summ_df = self.current_dfs["res_summ_res_df"]
             new_summ_df_J = new_summ_df.rename(
                 columns={
                 'VFM_percent':'VFM(％)', 

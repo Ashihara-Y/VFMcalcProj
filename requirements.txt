@@ -15,12 +15,10 @@ python-ulid
 pyxirr
 pyyaml
 scipy
-shutil
 simpledatatable
 sqlalchemy
 styleframe
-tempfile
 timeflake
 tinydb
-traceback
+#traceback
 uuid6

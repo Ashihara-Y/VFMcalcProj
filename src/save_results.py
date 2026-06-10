@@ -32,6 +32,7 @@ def make_df_addID_saveDB(page: ft.Page, current_calc_id=None, target_engine=None
 #if target_engine is not None:
     engine = target_engine if target_engine is not None else default_disk_engine
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
+    # 20260609　以下は要修正：　user_idは、ログインした時点でauth0_subとは別に、ULIDで生成する方向に改変する必要がある、
     if page.session.store.get('auth0_sub"') is None:
         user_id = ULID.from_datetime(datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")))
     else:
@@ -275,6 +276,13 @@ def make_df_addID_saveDB2(current_calc_id=None, inputs_pdt=None):
         }
     #engine = target_engine if target_engine is not None else default_disk_engine
     calc_id = current_calc_id if current_calc_id is not None else uuid6.uuid7()
+    
+    # 20260609　以下は要修正（現時点の仮置きのみ）
+    # user_idは、ログインした時点でauth0_subとは別に、ULIDで生成する方向に改変する必要がある、
+    #if page.session.store.get('auth0_sub"') is None:
+    #    user_id = ULID.from_datetime(datetime.datetime.now(tz=ZoneInfo("Asia/Tokyo")))
+    #else:
+    #    user_id = page.session.store.get('auth0_sub"')
 
     #inputs_pdt = make_inputs_df.main(inputs=inputs)
 
@@ -455,12 +463,12 @@ def make_df_addID_saveDB2(current_calc_id=None, inputs_pdt=None):
 
         #final_inputs_df.to_sql('final_inputs_table', engine, if_exists='replace', index=False)
 
-    def addID(x_df):
-        x_df['datetime'] = str(dtime)
-        x_df['user_id'] = str(user_id)
-        x_df['calc_id'] = str(calc_id)
+    #def addID(x_df):
+    #    x_df['datetime'] = str(dtime)
+    #    x_df['user_id'] = str(user_id)
+    #    x_df['calc_id'] = str(calc_id)
 
-        return x_df
+    #    return x_df
 
     df_list = [
         PSC_df,
@@ -476,8 +484,8 @@ def make_df_addID_saveDB2(current_calc_id=None, inputs_pdt=None):
         final_inputs_df
         ]
     
-    for i in df_list:
-            addID(i)
+    #for i in df_list:
+    #        addID(i)
 
     df_dict = {
         'PSC_res_df': PSC_df,
