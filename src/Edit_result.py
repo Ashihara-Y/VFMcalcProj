@@ -394,22 +394,26 @@ class Edit_result(ft.Stack):
 
     async def on_save_button_click(self, e):
         """「最終結果を保存」ボタンが押された時の処理"""
-        if self.current_dfs is not None:
-          with self.disk_engine.begin() as connection:
-            for table_name_pt, df in self.current_dfs.items():
-              table_name = table_name_pt.replace('_df','_table')
-              df.to_sql(table_name, con=connection, if_exists='append', index=False)
-              #df.iloc[0].to_sql(table_name, con=connection, if_exists='append', index=False)
-          await self.page.push_route("/view_saved")        
-        else:
-          self._extract_inputs()
-          edited_inputs = self._calculate_financials()
-          self.current_dfs = VFM_calc(inputs=edited_inputs) 
-          with self.disk_engine.begin() as connection:
-            for table_name_pt, df in self.current_dfs.items():
-              table_name = table_name_pt.replace('_df','_table')
-              df.to_sql(table_name, con=connection, if_exists='append', index=False)
-          await self.page.push_route("/view_saved")        
+        try:
+            if self.current_dfs is not None:
+                with self.disk_engine.begin() as connection:
+                    for table_name_pt, df in self.current_dfs.items():
+                        table_name = table_name_pt.replace('_df','_table')
+                        df.to_sql(table_name, con=connection, if_exists='append', index=False)
+                        #df.iloc[0].to_sql(table_name, con=connection, if_exists='append', index=False)
+                await self.page.push_route("/view_saved")        
+            else:
+                self._extract_inputs()
+                edited_inputs = self._calculate_financials()
+                self.current_dfs = VFM_calc(inputs=edited_inputs) 
+                with self.disk_engine.begin() as connection:
+                    for table_name_pt, df in self.current_dfs.items():
+                        table_name = table_name_pt.replace('_df','_table')
+                        df.to_sql(table_name, con=connection, if_exists='append', index=False)
+                await self.page.push_route("/view_saved")        
+        except Exception as e:
+            print(f"DB保存書き込みエラー: {e}")
+            traceback.print_exc()
 
 #3. 非同期更新の反映処理
 #新しく計算されたDataFrame（new_summ_df_t）と、初期表示時に保存しておいた元のDataFrame（target_summ_df_t）を比較させます。
