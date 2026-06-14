@@ -4,35 +4,15 @@ from fastapi.responses import FileResponse
 import flet.fastapi as flet_fastapi
 from fastapi import FastAPI
 import pandas as pd
-
-#def s_h(page: ft.Page):
-#        page.launch_url("/download")
-
-#app = flet_fastapi.app()
-
-#@app.get("/download")
-#def download():
-#    engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
-#    download_df = pd.read_sql_table('download_table', engine)
-
-#    filename = download_df['file_name'].iloc[0]
-#    save_path = download_df['save_path'].iloc[0]
-#    dtime_w = download_df['datetime'].iloc[0]
-
-    #def s_h(page: ft.Page):
-    #    page.add(ft.Text(""))
+import os
 
 app = FastAPI()
     #app = flet_fastapi()
 
-@app.get("/download")
-async def main():
-        engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={'check_same_thread': False})
-        download_df = pd.read_sql_table('download_table', engine)
-
-        filename = download_df['file_name'].iloc[0]
-        save_path = download_df['save_path'].iloc[0]
-
-        return FileResponse(path=save_path, filename=filename)
-
-#download(filenamw  = filename)
+@app.get("/api/download_local/{filename}")
+async def download_local_file(filename: str):
+    file_path = os.path.join(os.getcwd(), 'excels', filename)
+    if os.path.exists(filename):
+        return FileResponse(path=file_path, filename=filename, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    else:
+        return {"error": "File not found"}
