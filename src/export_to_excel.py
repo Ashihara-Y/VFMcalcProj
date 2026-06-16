@@ -335,9 +335,10 @@ def export_to_excel(datetime:str, user_id:str, calc_id:str):
         local_save_path = save_dir / file_name
         local_save_path.write_bytes(excel_buffer.getvalue())
 
+        #user_id, calc-IDを付けて、「算定社本人によるダウンロード」を検証する必要はないか？
         saved_info = {
             'storage_type': 'local',
-            'file_path': local_save_path,
+            'file_path': str(local_save_path),
             'file_name': file_name
         }
 
