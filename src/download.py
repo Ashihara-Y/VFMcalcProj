@@ -16,3 +16,8 @@ async def download_local_file(filename: str):
         return FileResponse(path=file_path, filename=filename, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     else:
         return {"error": "File not found"}
+# この内容については、Main.pyに移す。Main.pyには
+# 他にStripeのWebhookを受信するルートも同じように設けておく必要がある。
+# このモジュールには、「ダウンロードボタン」で
+# 起動するハンドラーの内容を入れる。それは、「エンドポイントをDB上のSaved_infoから
+# 構成して、アクセス、ダウンロード」のはず。
