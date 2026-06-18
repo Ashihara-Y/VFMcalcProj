@@ -19,6 +19,8 @@ import os
 from fastapi import FastAPI, Request, HTTPException
 import flet.fastapi as flet_fastapi
 from fastapi.responses import FileResponse
+from datetime import timedelta
+from google.cloud import storage
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -194,9 +196,31 @@ async def main(page: ft.Page):
         else:
             print("エラー： 必要なデータがセッションに見つかりませんでした。")
 
-    async def download_excel(e):  
-        await page.push_route("/download")
-        await download.download()
+engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={"check_same_thread": False})
+    
+    def download_excel(e):  
+        try:
+            download_df = pd.read_sql_table('download_table', engine)
+            info = download_df.iloc[0]
+            if info['storage_type'] == 'gcs':
+                client = storage.Client()
+                bucket = client.bucket(info['bucket_name'])
+                blob = buvket.blob(info['location'])
+                signed_url = blob.generate_signed_url(
+                    version="v4",
+                    expiration=timedelta(minutes=15),
+                    method="GET",
+                    response_disposition=f'attachment; filename="{info["file_name"]}"
+                )
+                page.launch_url(signed_url)
+            else:
+                local_url=f"/api/download_local/{info['file_name']}"
+                page.launch_url(local_url)
+        except Exception as ex:
+            print(f'Download Error: {ex}')
+            page.snack_bar = ft.SnackBar(ft.Text(f"ダウンロードに失敗しました: {ex}"))
+            page.snack_bar.open = True
+            page.update()
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
