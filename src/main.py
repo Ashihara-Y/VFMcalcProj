@@ -205,7 +205,7 @@ engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={"check_same
             if info['storage_type'] == 'gcs':
                 client = storage.Client()
                 bucket = client.bucket(info['bucket_name'])
-                blob = buvket.blob(info['location'])
+                blob = bucket.blob(info['location'])
                 signed_url = blob.generate_signed_url(
                     version="v4",
                     expiration=timedelta(minutes=15),
@@ -269,5 +269,6 @@ async def stripe_webhook(request: Request):
 #    return {"status": "success"}
 
 app.mount("/", flet_fastapi.FletApp(main))
-
-ft.run(main, view=ft.AppView.WEB_BROWSER, port=8550) 
+if __name__ == "__main__":
+    # ローカル実行時のみポートを指定して直接起動
+    ft.run(main, view=ft.AppView.WEB_BROWSER, port=8550)
