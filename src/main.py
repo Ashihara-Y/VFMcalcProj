@@ -18,6 +18,7 @@ from auth_manager import setup_auth
 import os
 from fastapi import FastAPI, Request, HTTPException
 import flet.fastapi as flet_fastapi
+from fastapi.responses import FileResponse
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -230,11 +231,6 @@ async def main(page: ft.Page):
     #await page.push_route(page.route)
     route_change()
 
-from fastapi.responses import FileResponse
-import flet.fastapi as flet_fastapi
-from fastapi import FastAPI
-import pandas as pd
-import os
 
 app = FastAPI()
     #app = flet_fastapi()
