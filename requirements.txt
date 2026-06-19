@@ -20,5 +20,5 @@ sqlalchemy
 styleframe
 timeflake
 tinydb
-#traceback
 uuid6
+pyjwt
