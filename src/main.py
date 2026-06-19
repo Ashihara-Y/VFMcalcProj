@@ -18,38 +18,14 @@ from auth_manager import setup_auth
 import os
 from fastapi import FastAPI, Request, HTTPException
 import flet.fastapi as flet_fastapi
+from fastapi.responses import FileResponse
+from datetime import timedelta
+from google.cloud import storage
 
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
-@app.post("/api/webhook/stripe")
-async def stripe_webhook(request: Request):
-    payload = await request.body()
-    sig_header = request.headers.get("stripe-signature")
-    logger.info("Received Stripe webhook: %s", payload)
-
-#    try:
-#        event = stripe.Webhook.construct_event(
-#            payload, sig_header, endpoint_secret
-#        )
-#    except ValueError as e:
-#        # Invalid payload
-#        logger.error(f"Invalid payload: {e}")
-#        raise HTTPException(status_code=400, detail="Invalid payload")
-#    except stripe.error.SignatureVerificationError as e:
-#        # Invalid signature
-#        logger.error(f"Invalid signature: {e}")
-#        raise HTTPException(status_code=400, detail="Invalid signature")
-#
-#    # Handle the event (例: 支払い成功イベント)
-#    if event["type"] == "checkout.session.completed":
-#        session = event["data"]["object"]
-#        logger.info(f"Checkout session completed: {session['id']}")
-#        # ここで支払い完了後の処理を実装（例: ユーザーのサブスクリプションを有効化）
-#
-#    return {"status": "success"}
 
 async def main(page: ft.Page):
     page.title = "VFM計算アプリ"
@@ -220,9 +196,31 @@ async def main(page: ft.Page):
         else:
             print("エラー： 必要なデータがセッションに見つかりませんでした。")
 
-    async def download_excel(e):  
-        await page.push_route("/download")
-        await download.download()
+engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={"check_same_thread": False})
+    
+    def download_excel(e):  
+        try:
+            download_df = pd.read_sql_table('download_table', engine)
+            info = download_df.iloc[0]
+            if info['storage_type'] == 'gcs':
+                client = storage.Client()
+                bucket = client.bucket(info['bucket_name'])
+                blob = bucket.blob(info['location'])
+                signed_url = blob.generate_signed_url(
+                    version="v4",
+                    expiration=timedelta(minutes=15),
+                    method="GET",
+                    response_disposition=f'attachment; filename="{info["file_name"]}"
+                )
+                page.launch_url(signed_url)
+            else:
+                local_url=f"/api/download_local/{info['file_name']}"
+                page.launch_url(local_url)
+        except Exception as ex:
+            print(f'Download Error: {ex}')
+            page.snack_bar = ft.SnackBar(ft.Text(f"ダウンロードに失敗しました: {ex}"))
+            page.snack_bar.open = True
+            page.update()
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
@@ -231,4 +229,46 @@ async def main(page: ft.Page):
     route_change()
 
 
-ft.run(main, view=ft.AppView.WEB_BROWSER, port=8550) 
+app = FastAPI()
+    #app = flet_fastapi()
+
+@app.get("/api/download_local/{filename}")
+async def download_local_file(filename: str):
+    file_path = os.path.join(os.getcwd(), 'excels', filename)
+    if os.path.exists(file_path):
+        return FileResponse(path=file_path, filename=filename, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    else:
+        return {"error": "File not found"}
+
+#app = FastAPI()
+@app.post("/api/webhook/stripe")
+async def stripe_webhook(request: Request):
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature")
+    logger.info("Received Stripe webhook: %s", payload)
+
+#    try:
+#        event = stripe.Webhook.construct_event(
+#            payload, sig_header, endpoint_secret
+#        )
+#    except ValueError as e:
+#        # Invalid payload
+#        logger.error(f"Invalid payload: {e}")
+#        raise HTTPException(status_code=400, detail="Invalid payload")
+#    except stripe.error.SignatureVerificationError as e:
+#        # Invalid signature
+#        logger.error(f"Invalid signature: {e}")
+#        raise HTTPException(status_code=400, detail="Invalid signature")
+#
+#    # Handle the event (例: 支払い成功イベント)
+#    if event["type"] == "checkout.session.completed":
+#        session = event["data"]["object"]
+#        logger.info(f"Checkout session completed: {session['id']}")
+#        # ここで支払い完了後の処理を実装（例: ユーザーのサブスクリプションを有効化）
+#
+#    return {"status": "success"}
+
+app.mount("/", flet_fastapi.FletApp(main))
+if __name__ == "__main__":
+    # ローカル実行時のみポートを指定して直接起動
+    ft.run(main, view=ft.AppView.WEB_BROWSER, port=8550)
