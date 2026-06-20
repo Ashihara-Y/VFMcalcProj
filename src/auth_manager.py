@@ -2,6 +2,10 @@ import os
 import flet as ft
 from flet.auth.providers.auth0_oauth_provider import Auth0OAuthProvider
 from dotenv import load_dotenv
+from datetime import datetime, timezone
+from google.cloud import firestore
+import ulid
+
 load_dotenv()
 
 # === Auth0 設定情報 ===
@@ -10,6 +14,8 @@ AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
 AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
 REDIRECT_URL = os.getenv("REDIRECT_URL") # Flet開発時のデフォルト
+
+db = firestore.client()
 
 def get_auth0_provider():
     """Auth0プロバイダのインスタンスを生成して返す"""
@@ -35,15 +41,40 @@ def setup_auth(page: ft.Page, on_login_success):
             page.update()
         else:
             # ログイン成功時：Auth0のID(sub)をFletのセッションに保存
-            page.session.store.set("auth0_sub", page.auth.user.id)
-            #if page.auth.user.email:
-            #    page.session.store.set("user_email", page.auth.user.email)
+            auth0_sub = page.auth.user.id
+            auth_doc_ref = db.collection("auth_identities").document(auth0_sub)
+            auth_doc = auth_doc_ref.get()
             
-            print(f"Login Success! User ID: {page.auth.user.id}")
-            
+            if auth_doc.exists:
+                # 既存ユーザーのログイン処理（内部IDを取得）
+                user_id = auth_doc.to_dict().get("user_id")
+                print(f"Existing User Login Internal_Id: {user_id}")
+            else:
+                # 新規ユーザー登録（内部IDを新規発行）
+                user_id = ulid.new().str
+                now = datetime.now(timezone.utc)
+                
+                # usersコレクションに新規ユーザーを作成
+                db.collection("users").document(user_id).set({
+                    "stripe_customer_id": None,
+                    "is_active": True,
+                    "created_at": now
+                })
+
+                # auth_identitiesコレクションにも登録（内部IDと紐付け）
+                auth_doc_ref.set({
+                    "user_id": user_id,
+                    "provider": "auth0",
+                    "created_at": now
+                })
+                print(f"New User Registered Internal_Id: {user_id}")
+
+            # セッションに内部IDを保存
+            page.session.store.set("user_id", user_id)
+
             # 成功時のコールバック関数（ダッシュボード等への遷移）を実行
             on_login_success()
-
+        
     # Pageにイベントを登録
     page.on_login = on_login
     
