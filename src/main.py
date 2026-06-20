@@ -25,6 +25,7 @@ from google.cloud import storage
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={"check_same_thread": False})
 
 
 async def main(page: ft.Page):
@@ -196,7 +197,6 @@ async def main(page: ft.Page):
         else:
             print("エラー： 必要なデータがセッションに見つかりませんでした。")
 
-engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={"check_same_thread": False})
     
     def download_excel(e):  
         try:
@@ -210,7 +210,7 @@ engine = create_engine('sqlite:///VFM.db', echo=False, connect_args={"check_same
                     version="v4",
                     expiration=timedelta(minutes=15),
                     method="GET",
-                    response_disposition=f'attachment; filename="{info["file_name"]}"
+                    response_disposition=f'attachment; filename="{info["file_name"]}"'
                 )
                 page.launch_url(signed_url)
             else:
@@ -268,7 +268,7 @@ async def stripe_webhook(request: Request):
 #
 #    return {"status": "success"}
 
-app.mount("/", flet_fastapi.FletApp(main))
+app.mount("/", flet_fastapi.app(main))
 if __name__ == "__main__":
     # ローカル実行時のみポートを指定して直接起動
     ft.run(main, view=ft.AppView.WEB_BROWSER, port=8550)

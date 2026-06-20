@@ -4,7 +4,7 @@ from flet.auth.providers.auth0_oauth_provider import Auth0OAuthProvider
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 from google.cloud import firestore
-import ulid
+from ulid import ULID
 
 load_dotenv()
 
@@ -15,7 +15,7 @@ AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
 REDIRECT_URL = os.getenv("REDIRECT_URL") # Flet開発時のデフォルト
 
-db = firestore.client()
+db = firestore.Client()
 
 def get_auth0_provider():
     """Auth0プロバイダのインスタンスを生成して返す"""
@@ -51,8 +51,8 @@ def setup_auth(page: ft.Page, on_login_success):
                 print(f"Existing User Login Internal_Id: {user_id}")
             else:
                 # 新規ユーザー登録（内部IDを新規発行）
-                user_id = ulid.new().str
                 now = datetime.now(timezone.utc)
+                user_id = str(ULID.from_datetime(now))
                 
                 # usersコレクションに新規ユーザーを作成
                 db.collection("users").document(user_id).set({
