@@ -11,7 +11,7 @@ def verify_access_permission(page: ft.Page, calc_id: str) -> bool:
     # record = pd.read_query("SELECT user_id, is_shared FROM results WHERE id = :calc_id", calc_id=calc_id)
     if not record:
         return False
-    if record['user_id']
+    if record['user_id']:
 
 def check_page_permission(page: ft.Page, current_route: str) ->bool:
     troute = ft.TemplateRoute(current_route)
