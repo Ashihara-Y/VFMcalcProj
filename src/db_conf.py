@@ -11,7 +11,7 @@ db = firestore.Client()
 
 def check_data_ownership(calc_id: str, user_id: str) ->bool:
   if not clac_id or user_id:
-    logger.warning("検証エラー：　必須の引数が不足しています")
+    logger.warning("検証エラー：必須の引数が不足しています")
     return False
   try:
     doc_ref = db.collection("calc_histories").document(calc_id)
@@ -25,7 +25,7 @@ def check_data_ownership(calc_id: str, user_id: str) ->bool:
 
     db_calc_id = record.get("calc_id")
     if db_calc_id != calc_id:
-      logger.error(f"セキュリティ警告：　ドキュメントIDとレコード内のcalc_idが不一致です。　"f"要求ID:{calc_id}, DB内ID：{db_calc_id}")
+      logger.error(f"セキュリティ警告：ドキュメントIDとレコード内のcalc_idが不一致です。 "f"要求ID:{calc_id}, DB内ID：{db_calc_id}")
       return False
 
     owner_id = record.get("user_id")
