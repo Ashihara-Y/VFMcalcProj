@@ -4,6 +4,9 @@ import asyncio
 #import pandas as pd
 #from google.cloud import firestore
 from db_conf import check_data_ownership
+import logging
+
+logger = logging.getLogger(__name__)
 
 #engine = create_engine('sqlite///VFM.db', echo=False, connect_args={"check_same_thread": False})
 #db = firestore.Client()
