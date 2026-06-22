@@ -21,6 +21,7 @@ import flet.fastapi as flet_fastapi
 from fastapi.responses import FileResponse
 from datetime import timedelta
 from google.cloud import storage
+import stripe
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -245,21 +246,25 @@ async def download_local_file(filename: str):
 async def stripe_webhook(request: Request):
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature")
-    logger.info("Received Stripe webhook: %s", payload)
+    logger.info("Stripe webhook received!")
 
-#    try:
-#        event = stripe.Webhook.construct_event(
-#            payload, sig_header, endpoint_secret
-#        )
-#    except ValueError as e:
-#        # Invalid payload
-#        logger.error(f"Invalid payload: {e}")
-#        raise HTTPException(status_code=400, detail="Invalid payload")
-#    except stripe.error.SignatureVerificationError as e:
-#        # Invalid signature
-#        logger.error(f"Invalid signature: {e}")
-#        raise HTTPException(status_code=400, detail="Invalid signature")
-#
+    if not sig_header:
+        raise HTTPException(status_code=400, detail="signature_header missing")
+        
+    # Check if this is a valid Stripe webhook
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        logger.error(f"Invalid payload: {e}")
+        raise HTTPException(status_code=400, detail="Invalid payload")
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        logger.error(f"Invalid signature: {e}")
+        raise HTTPException(status_code=400, detail="Invalid signature")
+
 #    # Handle the event (例: 支払い成功イベント)
 #    if event["type"] == "checkout.session.completed":
 #        session = event["data"]["object"]
